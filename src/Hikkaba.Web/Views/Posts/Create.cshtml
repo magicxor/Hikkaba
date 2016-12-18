@@ -1,0 +1,7 @@
+﻿@model Hikkaba.Web.ViewModels.PostsViewModels.PostAnonymousCreateViewModel
+
+@Html.EditorFor(model => model)
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

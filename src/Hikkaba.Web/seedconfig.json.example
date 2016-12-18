@@ -1,0 +1,6 @@
+﻿{
+  "SeedConfiguration": {
+    "AdministratorEmail": "your@email.domain",
+    "AdministratorPassword": "your_password"
+  } 
+}

@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Delete all content";
+}
+
+<form asp-controller="Administration" asp-action="DeleteAllContent" method="post" class="form-horizontal" enctype="multipart/form-data">
+    <h4>@ViewData["Title"]</h4>
+    <hr />
+
+    <p>Are you sure?</p>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-danger">Yes, delete all content</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

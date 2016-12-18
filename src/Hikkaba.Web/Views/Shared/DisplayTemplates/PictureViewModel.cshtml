@@ -1,0 +1,17 @@
+﻿@using System.Threading.Tasks
+@using Hikkaba.Web.Utils
+@model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.PictureViewModel
+
+@{
+    var fileSizeString = FileSizeStringifier.Stringify(@Model.Size);
+    var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}, {Model.Width}x{Model.Height}";
+}
+
+<li>
+    <a href="@await Component.InvokeAsync("StorageToUri", new {containerName = @Model.ThreadId.ToString(), blobName = @Model.Id.ToString()})" target="_blank">
+        <div>
+            <p>@filePropertiesString</p>
+            <img src="@await Component.InvokeAsync("StorageToUri", new {containerName = @Model.ThreadId.ToString(), blobName = @Model.Id.ToString(), getThumbnail = true })" alt="Attached image (@filePropertiesString)" />
+        </div>
+    </a>
+</li>

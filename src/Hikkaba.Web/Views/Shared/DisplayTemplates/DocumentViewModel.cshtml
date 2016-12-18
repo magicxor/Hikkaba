@@ -1,0 +1,14 @@
+﻿@using System.Threading.Tasks
+@using Hikkaba.Web.Utils
+@model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.DocumentViewModel
+
+@{
+    var fileSizeString = FileSizeStringifier.Stringify(@Model.Size);
+    var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
+}
+
+<li>
+    <div>
+        <a href="@await Component.InvokeAsync("StorageToUri", new {containerName = @Model.ThreadId.ToString(), blobName = @Model.Id.ToString()})" download="@Model.Id.ToString().@Model.FileExtension" class="btn btn-default">Document (@filePropertiesString)</a>
+    </div>
+</li>

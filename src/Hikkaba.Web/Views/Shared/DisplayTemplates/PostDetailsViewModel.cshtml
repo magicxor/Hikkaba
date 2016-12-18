@@ -1,0 +1,50 @@
+﻿@using System.Threading.Tasks
+@using Hikkaba.Common.Constants
+@model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title post-title">
+                    @if (Model.ThreadShowThreadLocalUserHash)
+                    {
+                        @await Component.InvokeAsync("ThreadLocalUserHashGenerator", new { threadId = @Model.ThreadId.ToString(), userIpAddress = @Model.UserIpAddress })
+                    }
+                    else
+                    {
+                       @(Defaults.DefaultAnonymousUserName)
+                    }
+                    @if (Model.IsSageEnabled)
+                    {
+                        <b>&nbsp;SAGE</b>
+                    }
+                    <!-- todo: show post number here -->
+                    &nbsp;
+                    <time datetime="@Html.DisplayFor(model => model.Created)" class="timestamp time-localizable">@Html.DisplayFor(model => model.Created)</time>
+                    &nbsp;
+                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title" href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId})#@Model.Id">@Html.DisplayFor(model => model.Id)</a>
+                </h3>
+            </div>
+            <div class="panel-body">
+                @if (Model.Audio.Any()
+             || Model.Documents.Any()
+             || Model.Notices.Any()
+             || Model.Pictures.Any()
+             || Model.Video.Any())
+                {
+                    <ul class="list-inline">
+                        @Html.DisplayFor(model => model.Audio)
+                        @Html.DisplayFor(model => model.Documents)
+                        @Html.DisplayFor(model => model.Notices)
+                        @Html.DisplayFor(model => model.Pictures)
+                        @Html.DisplayFor(model => model.Video)
+                    </ul>
+                }
+                <span class="visible-line-breaks">
+                    @Model.Message
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+﻿@using System.Threading.Tasks
+@using Hikkaba.Web.ViewModels
+@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryDetailsViewModel
+@{
+    ViewData["Title"] = $"/{Model.Category.Alias} - {Model.Category.Name}";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+<hr />
+@Html.ActionLink("Create new thread", "Create", "Threads", new { categoryAlias = Model.Category.Alias })
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+        @if ((Model.Threads.TotalItemsCount > 0) && (Model.Threads.CurrentPage.PageNumber > 0))
+        {
+            @Html.DisplayFor(model => model.Threads.CurrentPageItems)
+            @Html.Partial("_PagerPartial", new PageInfoViewModel()
+                                           {
+                                               CurrentPageNumber = Model.Threads.CurrentPage.PageNumber,
+                                               TotalPageCount = Model.Threads.TotalPageCount
+                                           }
+            )
+        }
+        else
+        {
+            <p class="text-center">There is no threads yet.</p>
+        }
+    </div>
+</div>

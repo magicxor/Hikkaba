@@ -1,0 +1,7 @@
+﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryViewModel
+
+<li class="list-group-item col-xs-6 col-sm-4 col-md-3 borderless">
+    <b>
+        <a href="@Url.Action("Details", "Categories", new {categoryAlias = Model.Alias})">/@Model.Alias - @Model.Name</a>
+    </b>
+</li>
