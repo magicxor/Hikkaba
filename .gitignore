@@ -250,3 +250,6 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+src/Hikkaba.Web/wwwroot/AttachmentsStorage/
+src/Hikkaba.Web/Properties/PublishProfiles/
