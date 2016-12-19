@@ -13,11 +13,15 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
         public string Title { get; set; }
 
         [DataType(DataType.MultilineText)]
+        [MinLength(4)]
         [MaxLength(4000)]
+        [Required]
         [Display(Name = @"Message")]
         public string Message { get; set; }
 
         [DataType(DataType.Upload)]
+        //[FileExtensions(Extensions = "jpg,jpeg,png,gif")]
+        [Required]
         [Display(Name = @"Attachments")]
         public IFormFileCollection Attachments { get; set; }
 
