@@ -25,10 +25,6 @@ namespace Hikkaba.Web.Filters
                 .SelectMany(modelStateEntry => modelStateEntry.Errors.Select(modelError => modelError.ErrorMessage))
                 .Join();
             var displayUrl = context.HttpContext.Request.GetDisplayUrl();
-            if (ex is HttpResponseException)
-            {
-                context.HttpContext.Response.StatusCode = (int) ((ex as HttpResponseException).HttpStatusCode);
-            }
 
             _logger?.LogError($"{ex} | {nameof(actionName)}={actionName} | {nameof(isModelValid)}={isModelValid} | {nameof(modelErrors)}={modelErrors} | {nameof(displayUrl)}={displayUrl} | {nameof(context.HttpContext.Response.StatusCode)}={context.HttpContext.Response.StatusCode}");
 

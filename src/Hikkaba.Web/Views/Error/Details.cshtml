@@ -1,0 +1,19 @@
+﻿@using Hikkaba.Common.Exceptions
+@model Exception
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="jumbotron">
+    @if (Model is HttpResponseException)
+    {
+        var customException = Model as HttpResponseException;
+        <h1>Error @((int)customException.HttpStatusCode) - @(customException.HttpStatusCode)</h1>
+        <h3>@(customException.Message)</h3>
+    }
+    else
+    {
+        <h1>Error 500</h1>
+        <h3>Unknown exception occurred</h3>
+    }
+</div>
