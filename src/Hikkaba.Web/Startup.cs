@@ -138,6 +138,8 @@ namespace Hikkaba.Web
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseApplicationInsightsExceptionTelemetry();
             app.UseIdentity();
+
+            Directory.CreateDirectory(Path.Combine(env.WebRootPath, Defaults.AttachmentsStorageDirectoryName));
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
