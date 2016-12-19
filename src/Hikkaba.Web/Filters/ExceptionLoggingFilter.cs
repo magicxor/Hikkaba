@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Hikkaba.Common.Exceptions;
+using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -21,9 +22,7 @@ namespace Hikkaba.Web.Filters
             var ex = context.Exception;
             var actionName = context.ActionDescriptor.DisplayName;
             var isModelValid = context.ModelState.IsValid;
-            var modelErrors = context.ModelState.Values
-                .SelectMany(modelStateEntry => modelStateEntry.Errors.Select(modelError => modelError.ErrorMessage))
-                .Join();
+            var modelErrors = context.ModelState.ModelErrorsToString();
             var displayUrl = context.HttpContext.Request.GetDisplayUrl();
 
             _logger?.LogError($"{ex} | {nameof(actionName)}={actionName} | {nameof(isModelValid)}={isModelValid} | {nameof(modelErrors)}={modelErrors} | {nameof(displayUrl)}={displayUrl} | {nameof(context.HttpContext.Response.StatusCode)}={context.HttpContext.Response.StatusCode}");

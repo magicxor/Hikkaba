@@ -13,6 +13,7 @@ using Hikkaba.Service;
 using Hikkaba.Service.Base;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.HomeViewModels;
@@ -93,7 +94,8 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
             else
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return await Create(categoryAlias, threadId);
             }
         }
 

@@ -13,5 +13,7 @@
 
         public const string DefaultAdminUserName = "Administrator";
         public const string DefaultAdminRoleName = "administrator";
+
+        public const string HtmlNewPostFormId = "NewPostForm";
     }
 }

@@ -11,6 +11,7 @@ using Hikkaba.Common.Exceptions;
 using Hikkaba.Service;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,7 @@ namespace Hikkaba.Web.Controllers.Mvc
     [Authorize]
     public class ThreadsController : BaseMvcController
     {
+        private readonly ILogger<ThreadsController> _logger;
         private readonly IMapper _mapper;
         private readonly ICategoryService _categoryService;
         private readonly IThreadService _threadService;
@@ -33,11 +35,13 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         public ThreadsController(
             UserManager<ApplicationUser> userManager,
+            ILogger<ThreadsController> logger,
             IMapper mapper,
             ICategoryService categoryService,
             IThreadService threadService,
             IPostService postService) : base(userManager)
         {
+            _logger = logger;
             _mapper = mapper;
             _categoryService = categoryService;
             _threadService = threadService;
@@ -76,7 +80,6 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Create(string categoryAlias)
         {
             var category = await _categoryService.GetAsync(categoryAlias);
-            ViewBag.Category = category;
             var threadAnonymousCreateViewModel = new ThreadAnonymousCreateViewModel()
             {
                 CategoryAlias = category.Alias,
@@ -95,7 +98,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Create(string categoryAlias,
             ThreadAnonymousCreateViewModel threadAnonymousCreateViewModel)
         {
-            if (ModelState.IsValid && !string.IsNullOrWhiteSpace(categoryAlias))
+            if (ModelState.IsValid)
             {
                 var category = await _categoryService.GetAsync(categoryAlias);
 
@@ -117,6 +120,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError($"Can't create new post due to exception: {ex}. Thread creation failed.");
                     await _threadService.DeleteAsync(threadId);
                     throw;
                 }
@@ -125,7 +129,8 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
             else
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return await Create(categoryAlias);
             }
         }
 

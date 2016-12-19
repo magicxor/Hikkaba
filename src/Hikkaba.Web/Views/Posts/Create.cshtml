@@ -1,4 +1,7 @@
 ﻿@model Hikkaba.Web.ViewModels.PostsViewModels.PostAnonymousCreateViewModel
+@{
+    ViewData["Title"] = $"Create a new post in the category «{Model.CategoryName}»";
+}
 
 @Html.EditorFor(model => model)
 
