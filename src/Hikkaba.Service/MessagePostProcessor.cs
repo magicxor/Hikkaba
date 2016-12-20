@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Hikkaba.Common.Extensions;
+using Hikkaba.Service.Extensions;
 using Markdig;
+using Markdig.Helpers;
+using Markdig.Parsers;
+using Markdig.Parsers.Inlines;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
@@ -22,20 +27,23 @@ namespace Hikkaba.Service
         {
             var pipeline = new MarkdownPipelineBuilder()
                             .DisableHtml()
+                            .DisableHeadings()
+                            .UseAutoLinks()
+                            .UseEmphasisExtras()
                             .Build();
             var parsedMessage = Markdown.Parse(message, pipeline);
-            RemoveDangerousLinks(parsedMessage);
+            ProcessNode(parsedMessage);
 
             var builder = new StringBuilder();
             var textwriter = new StringWriter(builder);
             var renderer = new HtmlRenderer(textwriter);
             renderer.Render(parsedMessage);
 
-            var result = builder.ToString();
-            return result.Trim();
+            var result = builder.ToString().Trim();
+            return result;
         }
 
-        static void RemoveDangerousLinks(MarkdownObject markdownObject)
+        static void ProcessNode(MarkdownObject markdownObject)
         {
             foreach (MarkdownObject child in markdownObject.Descendants())
             {
@@ -47,10 +55,9 @@ namespace Hikkaba.Service
                     || !(link.Url.StartsWith("http://") || link.Url.StartsWith("https://") || link.Url.StartsWith("ftp://")))
                     {
                         link.Url = "#";
-                        link.Label = "Denied link";
                     }
                 }
-                RemoveDangerousLinks(child);
+                ProcessNode(child);
             }
         }
     }
