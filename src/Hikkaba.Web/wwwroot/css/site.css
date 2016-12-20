@@ -59,6 +59,11 @@ li.borderless {
     white-space: pre-line;
 }
 
+span.visible-line-breaks p {
+    margin-bottom: 0;
+    white-space: pre-line;
+}
+
 .timestamp {
     padding: 2px 4px;
     font-size: 90%;
