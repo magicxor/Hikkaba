@@ -9,6 +9,7 @@
     "Hikkaba.Service": "1.0.0-*",
     "Humanizer.Core": "2.1.0",
     "MailKit": "1.10.1",
+    "Markdig": "0.10.4",
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.2",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.1.0",
     "Microsoft.AspNetCore.Diagnostics": "1.1.0",
