@@ -18,6 +18,7 @@ using Hikkaba.Web.ViewModels;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.HomeViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
+using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -101,26 +102,22 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [Route("Search")]
         [AllowAnonymous]
-        public async Task<IActionResult> Search(string query, int page = 1, int size = 10)
+        public async Task<IActionResult> Search(SearchRequestViewModel request, int page = 1, int size = 10)
         {
-            var pageDto = new PageDto(page, size);
-
-            if (string.IsNullOrWhiteSpace(query))
+            if (!ModelState.IsValid)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, "query is empty");
-            }
-            else if (query.Trim().Length < 3)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, "query is too short");
+                return RedirectToAction("Details", "Error", new { message = ModelState.ModelErrorsToString() });
             }
             else
             {
+                var pageDto = new PageDto(page, size);
+                var query = request.Query;
                 var latestPostsDtoList = await _postService
                                            .PagedListAsync(
-                                               post => 
-                                                    (!post.IsDeleted) && 
+                                               post =>
+                                                    (!post.IsDeleted) &&
                                                         ((post.Message.Contains(query)) ||
-                                                            (post.Thread.Title.Contains(query) && 
+                                                            (post.Thread.Title.Contains(query) &&
                                                             (post == post.Thread.Posts.OrderBy(tp => tp.Created).FirstOrDefault()))
                                                         ),
                                                post => post.Created,

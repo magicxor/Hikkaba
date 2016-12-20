@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Hikkaba.Service.Base;
+﻿using Hikkaba.Service.Base;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 
-namespace Hikkaba.Web.ViewModels
+namespace Hikkaba.Web.ViewModels.SearchViewModels
 {
     public class SearchResultViewModel
     {

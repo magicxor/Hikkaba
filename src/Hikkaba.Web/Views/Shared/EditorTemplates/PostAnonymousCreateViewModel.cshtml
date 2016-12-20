@@ -1,8 +1,6 @@
 ﻿@using Hikkaba.Common.Constants
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostAnonymousCreateViewModel
 
-@Html.Partial("_ErrorMessagePartial")
-
 <form asp-controller="Posts" asp-action="Create" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.ThreadId" method="post" class="form-horizontal" enctype="multipart/form-data" id="@Defaults.HtmlNewPostFormId">
     <h4>Reply to thread</h4>
     <hr />
