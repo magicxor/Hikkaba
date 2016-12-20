@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Hikkaba.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,6 +32,13 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
             var exception = feature?.Error;
+            return View(exception);
+        }
+
+        [Route("Error/Details/{message}")]
+        public IActionResult Details(string message)
+        {
+            var exception = new HttpResponseException(HttpStatusCode.BadRequest, message);
             return View(exception);
         }
     }

@@ -13,7 +13,3 @@
 {
     @Html.Partial("_ReplyForm", new PostAnonymousCreateViewModel() { ThreadId = Model.Id, CategoryAlias = Model.CategoryAlias })
 }
-
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}

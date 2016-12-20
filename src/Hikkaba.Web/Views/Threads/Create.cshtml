@@ -3,8 +3,6 @@
     ViewData["Title"] = $"Create a new thread in the category «{Model.CategoryName}»";
 }
 
-@Html.Partial("_ErrorMessagePartial")
-
 <form asp-controller="Threads" asp-action="Create" asp-route-categoryAlias="@Model.CategoryAlias" method="post" class="form-horizontal" enctype="multipart/form-data">
     <h4>@ViewData["Title"]</h4>
     <hr />
@@ -63,7 +61,3 @@
         </div>
     </div>
 </form>
-
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}

@@ -23,27 +23,6 @@
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
 <body>
-@*<div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">@Defaults.BoardName</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-                @await Html.PartialAsync("_LoginPartial")
-            </div>
-        </div>
-    </div>*@
     @Html.Partial("_NavbarPartial")
     <div class="container body-content">
         @RenderBody()
@@ -71,7 +50,8 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
         <script src="~/lib/moment/min/moment.min.js"></script>
     </environment>
-
+    
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     @RenderSection("scripts", required: false)
 </body>
 </html>

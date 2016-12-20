@@ -2,6 +2,7 @@
 @using Hikkaba.Common.Constants
 @using Hikkaba.Common.Entities
 @using Hikkaba.Service
+@using Hikkaba.Web.ViewModels.SearchViewModels
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject ICategoryService CategoryService
@@ -41,11 +42,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <form asp-controller="Posts" asp-action="Search" method="get" class="form-group">
-                <div class="input-group">
-                    <input class="form-control search-input" type="text" name="query" placeholder="Search for..."><span class="input-group-btn"><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button></span>
-                </div>
-            </form>
+            @Html.Partial("_SearchPartial", new SearchRequestViewModel())
         </div>
     </div>
 </div>

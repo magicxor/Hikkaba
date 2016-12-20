@@ -1,4 +1,4 @@
 ﻿@if (ViewBag.ErrorMessage != null)
 {
-    <div class="alert alert-danger visible-line-breaks" role="alert">@if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage)){@("Unknown error")}else{@ViewBag.ErrorMessage}</div>
+    <div class="alert alert-danger alert-dismissible visible-line-breaks" role="alert"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>@if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage)){@("Unknown error")}else{@ViewBag.ErrorMessage}</div>
 }
