@@ -24,7 +24,7 @@ namespace Hikkaba.Service
         string Process(string message);
     }
 
-    // todo: add strikeout; add spoilers; blockquote should be one-line
+    // todo: add spoilers; blockquote should be one-line
     public class MessagePostProcessor: IMessagePostProcessor
     {
         private readonly StringBuilder _stringBuilder;
@@ -38,11 +38,11 @@ namespace Hikkaba.Service
             _htmlRenderer = new HtmlRenderer(stringWriter);
             _htmlRenderer.ReplaceRenderer<HeadingRenderer, PlainTextHeadingRenderer>();
             _htmlRenderer.ReplaceRenderer<QuoteBlockRenderer, WakabaStyleQuoteBlockRenderer>();
-            
+
             var pipelineBuilder = new MarkdownPipelineBuilder()
                 .UseAutoLinks()
                 .UseSoftlineBreakAsHardlineBreak()
-                //.UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Superscript)
+                .UseEmphasisExtras()
                 .DisableHtml() // due to security reasons
                 .DisableBlockParser<ThematicBreakParser>() // it's overkill for imageboard
                 .DisableBlockParser<ListBlockParser>()
@@ -53,34 +53,10 @@ namespace Hikkaba.Service
 
         public string Process(string message)
         {
-            var parsedMessage = Markdown.Parse(message, _markdownPipeline);
-            _htmlRenderer.Render(parsedMessage);
-            var result = _stringBuilder.ToString().Trim();
+            var parsedMessage = Markdown.Convert(message, _htmlRenderer, _markdownPipeline);            
+            var result = parsedMessage.ToString().Trim();
             _stringBuilder.Clear();
             return result;
         }
-
-        //private void OnDocumentProcessed(MarkdownDocument document)
-        //{
-        //    ProcessNode(document);
-        //}
-
-        //private void ProcessNode(MarkdownObject markdownObject)
-        //{
-        //    foreach (MarkdownObject child in markdownObject.Descendants())
-        //    {
-        //        // LinkInline can be both an image or a <a href="...">
-        //        var link = child as LinkInline;
-        //        if (link != null)
-        //        {
-        //            if ((link.IsImage)
-        //            || !(link.Url.StartsWith("http://") || link.Url.StartsWith("https://") || link.Url.StartsWith("ftp://")))
-        //            {
-        //                link.Url = "#";
-        //            }
-        //        }
-        //        ProcessNode(child);
-        //    }
-        //}
     }
 }
