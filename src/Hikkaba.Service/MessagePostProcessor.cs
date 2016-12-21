@@ -13,6 +13,7 @@ using Markdig.Parsers;
 using Markdig.Parsers.Inlines;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
+using Markdig.Renderers.Html.Inlines;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 
@@ -37,9 +38,12 @@ namespace Hikkaba.Service
             _htmlRenderer = new HtmlRenderer(stringWriter);
             _htmlRenderer.ReplaceRenderer<HeadingRenderer, PlainTextHeadingRenderer>();
             _htmlRenderer.ReplaceRenderer<QuoteBlockRenderer, WakabaStyleQuoteBlockRenderer>();
+            _htmlRenderer.ReplaceRenderer<ParagraphRenderer, BrParagraphRenderer>();
+            _htmlRenderer.ImplicitParagraph = true;
 
             var pipelineBuilder = new MarkdownPipelineBuilder()
                 .UseAutoLinks()
+                .UseSoftlineBreakAsHardlineBreak()
                 //.UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Superscript)
                 .DisableHtml() // due to security reasons
                 .DisableBlockParser<ThematicBreakParser>() // it's overkill for imageboard

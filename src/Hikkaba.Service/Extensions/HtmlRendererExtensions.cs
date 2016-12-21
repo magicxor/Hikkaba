@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
+using Markdig.Renderers.Html.Inlines;
 using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 
 namespace Hikkaba.Service.Extensions
 {
@@ -13,7 +15,7 @@ namespace Hikkaba.Service.Extensions
         protected override void Write(HtmlRenderer renderer, HeadingBlock obj)
         {
             renderer.WriteLeafInline(obj);
-            renderer.WriteLine();
+            renderer.WriteLine("<br />");
         }
     }
 
@@ -31,19 +33,34 @@ namespace Hikkaba.Service.Extensions
         }
     }
 
+    public class BrParagraphRenderer : ParagraphRenderer
+    {
+        protected override void Write(HtmlRenderer renderer, ParagraphBlock obj)
+        {
+            renderer.WriteLeafInline((LeafBlock)obj);
+            renderer.WriteLine("<br/>");
+        }
+    }
+
     public static class HtmlRendererExtensions
     {
-        public static void ReplaceRenderer<TOldRenderer, TNewRenderer>(this HtmlRenderer htmlRenderer) 
-            where TOldRenderer : IMarkdownObjectRenderer 
+        public static void ReplaceRenderer<TOldRenderer, TNewRenderer>(this HtmlRenderer htmlRenderer)
+            where TOldRenderer : IMarkdownObjectRenderer
             where TNewRenderer : TOldRenderer, new()
         {
-            var oldRenderer = htmlRenderer.ObjectRenderers.Find<TOldRenderer>();
+            TOldRenderer newRenderer = new TNewRenderer();
+            ReplaceRenderer<TOldRenderer>(htmlRenderer, newRenderer);
+        }
+
+        public static void ReplaceRenderer<TRenderer>(this HtmlRenderer htmlRenderer, TRenderer newRenderer)
+            where TRenderer : IMarkdownObjectRenderer
+        {
+            var oldRenderer = htmlRenderer.ObjectRenderers.Find<TRenderer>();
             if (oldRenderer != null)
             {
                 htmlRenderer.ObjectRenderers.Remove(oldRenderer);
             }
-            TOldRenderer newRenderer = new TNewRenderer();
-            htmlRenderer.ObjectRenderers.AddIfNotAlready<TOldRenderer>(newRenderer);
+            htmlRenderer.ObjectRenderers.AddIfNotAlready<TRenderer>(newRenderer);
         }
     }
 }
