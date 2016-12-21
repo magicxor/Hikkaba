@@ -24,7 +24,7 @@ namespace Hikkaba.Service
         string Process(string message);
     }
 
-    // todo: add strikeout. and spoilers. make blockquote > mark one-line
+    // todo: add strikeout; add spoilers; blockquote should be one-line
     public class MessagePostProcessor: IMessagePostProcessor
     {
         private readonly StringBuilder _stringBuilder;
@@ -38,9 +38,7 @@ namespace Hikkaba.Service
             _htmlRenderer = new HtmlRenderer(stringWriter);
             _htmlRenderer.ReplaceRenderer<HeadingRenderer, PlainTextHeadingRenderer>();
             _htmlRenderer.ReplaceRenderer<QuoteBlockRenderer, WakabaStyleQuoteBlockRenderer>();
-            _htmlRenderer.ReplaceRenderer<ParagraphRenderer, BrParagraphRenderer>();
-            _htmlRenderer.ImplicitParagraph = true;
-
+            
             var pipelineBuilder = new MarkdownPipelineBuilder()
                 .UseAutoLinks()
                 .UseSoftlineBreakAsHardlineBreak()

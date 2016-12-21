@@ -33,15 +33,6 @@ namespace Hikkaba.Service.Extensions
         }
     }
 
-    public class BrParagraphRenderer : ParagraphRenderer
-    {
-        protected override void Write(HtmlRenderer renderer, ParagraphBlock obj)
-        {
-            renderer.WriteLeafInline((LeafBlock)obj);
-            renderer.WriteLine("<br/>");
-        }
-    }
-
     public static class HtmlRendererExtensions
     {
         public static void ReplaceRenderer<TOldRenderer, TNewRenderer>(this HtmlRenderer htmlRenderer)
