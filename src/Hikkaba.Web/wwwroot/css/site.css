@@ -54,15 +54,9 @@ li.borderless {
   border: none;
 }
 
-/* Show line breaks */
-/*.visible-line-breaks {
-    white-space: pre-line;
-}
-
 span.visible-line-breaks p {
-    margin-bottom: 0;
-    white-space: pre-line;
-}*/
+    margin: 0 0 0 0;
+}
 
 .timestamp {
     padding: 2px 4px;

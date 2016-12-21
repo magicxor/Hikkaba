@@ -24,7 +24,7 @@ namespace Hikkaba.Service
         string Process(string message);
     }
 
-    // todo: add spoilers; blockquote should be one-line
+    // todo: add spoilers; show > before blockquote; insert <br> between spans; try to disable TryParseSetexHeading in ParagraphBlockParser
     public class MessagePostProcessor: IMessagePostProcessor
     {
         private readonly StringBuilder _stringBuilder;
@@ -37,16 +37,18 @@ namespace Hikkaba.Service
             var stringWriter = new StringWriter(_stringBuilder);
             _htmlRenderer = new HtmlRenderer(stringWriter);
             _htmlRenderer.ReplaceRenderer<HeadingRenderer, PlainTextHeadingRenderer>();
-            _htmlRenderer.ReplaceRenderer<QuoteBlockRenderer, WakabaStyleQuoteBlockRenderer>();
+            _htmlRenderer.ReplaceRenderer<ParagraphRenderer, BrParagraphRenderer>();
 
             var pipelineBuilder = new MarkdownPipelineBuilder()
                 .UseAutoLinks()
                 .UseSoftlineBreakAsHardlineBreak()
                 .UseEmphasisExtras()
+                .UseSingleQuoteBlock()
                 .DisableHtml() // due to security reasons
                 .DisableBlockParser<ThematicBreakParser>() // it's overkill for imageboard
                 .DisableBlockParser<ListBlockParser>()
                 .DisableBlockParser<IndentedCodeBlockParser>()
+                .DisableBlockParser<QuoteBlockParser>()
                 .DisableInlineParser<LinkInlineParser>(); // due to security reasons: no external pictures and javascript: links
             _markdownPipeline = pipelineBuilder.Build();
         }

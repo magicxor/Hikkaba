@@ -19,17 +19,26 @@ namespace Hikkaba.Service.Extensions
         }
     }
 
-    public class WakabaStyleQuoteBlockRenderer : QuoteBlockRenderer
+    public class BrParagraphRenderer : ParagraphRenderer
     {
-        protected override void Write(HtmlRenderer renderer, QuoteBlock obj)
+        protected override void Write(HtmlRenderer renderer, ParagraphBlock obj)
         {
-            renderer.EnsureLine();
-            renderer.Write("<span class=\"text-success\"").WriteAttributes((MarkdownObject)obj).WriteLine(">");
-            bool implicitParagraph = renderer.ImplicitParagraph;
-            renderer.ImplicitParagraph = false;
-            renderer.WriteChildren((ContainerBlock)obj);
-            renderer.ImplicitParagraph = implicitParagraph;
-            renderer.WriteLine("</span>");
+            if (!renderer.ImplicitParagraph)
+            {
+                if (!renderer.IsFirstInContainer)
+                {
+                    renderer.EnsureLine();
+                    renderer.Write("<br/>");
+                }
+            }
+            renderer.WriteLeafInline(obj);
+            if (!renderer.ImplicitParagraph)
+            {
+                if (!renderer.IsLastInContainer)
+                {
+                    renderer.WriteLine("<br/>");
+                }
+            }
         }
     }
 

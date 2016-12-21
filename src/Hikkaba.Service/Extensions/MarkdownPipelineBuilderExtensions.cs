@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hikkaba.Service.Extensions.SingleQuoteBlock;
 using Markdig;
+using Markdig.Extensions.AutoLinks;
 using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Parsers.Inlines;
 using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 
 namespace Hikkaba.Service.Extensions
 {
@@ -67,6 +70,12 @@ namespace Hikkaba.Service.Extensions
             {
                 pipeline.InlineParsers.Remove(inlineParser);
             }
+            return pipeline;
+        }
+
+        public static MarkdownPipelineBuilder UseSingleQuoteBlock(this MarkdownPipelineBuilder pipeline)
+        {
+            pipeline.Extensions.AddIfNotAlready<SingleQuoteBlockExtension>();
             return pipeline;
         }
     }
