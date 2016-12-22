@@ -54,10 +54,31 @@ li.borderless {
   border: none;
 }
 
-/* Show line breaks */
+/* post styles */
 .visible-line-breaks {
-    white-space: pre-line;
+    white-space: pre-line;  
 }
+
+span.visible-line-breaks pre {
+    margin-top: 10px;
+}
+
+/* spoiler */
+.censored {
+	color:black;
+	background-color:black;
+	padding:1px 
+}
+.censored a {
+	color:black;
+	text-decoration:underline;
+	padding:1px 
+}
+.censored:hover {
+	color:inherit;
+	background-color:inherit !important 
+}
+
 
 .timestamp {
     padding: 2px 4px;
@@ -71,6 +92,10 @@ li.borderless {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+pre {
+    display: inline-block;
 }
 
 .post-title {

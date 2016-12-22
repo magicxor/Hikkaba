@@ -4,6 +4,7 @@
   "dependencies": {
     "AutoMapper": "5.2.0",
     "AutoMapper.Extensions.Microsoft.DependencyInjection": "1.1.2",
+    "CodeKicker.BBCodeMod": "1.0.0-*",
     "DNTCaptcha.Core": "1.0.1",
     "Hikkaba.Common": "1.0.0-*",
     "Hikkaba.Service": "1.0.0-*",

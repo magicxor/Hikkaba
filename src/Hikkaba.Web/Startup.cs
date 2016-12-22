@@ -22,6 +22,7 @@ using Hikkaba.Common.Storage;
 using Hikkaba.Service;
 using Hikkaba.Web.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using NLog.Config;
@@ -91,7 +92,9 @@ namespace Hikkaba.Web
             // File storage
             services.AddScoped<IStoragePathProvider, LocalStoragePathProvider>();
             services.AddScoped<ILocalStorageProviderFactory, LocalStorageProviderFactory>();
-            
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IMessagePostProcessor, MessagePostProcessor>();
+
             // AutoMapper
             services.AddAutoMapper(typeof(MapProfile), typeof(MvcMapProfile));
 
