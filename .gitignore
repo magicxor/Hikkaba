@@ -253,3 +253,4 @@ paket-files/
 
 src/Hikkaba.Web/wwwroot/AttachmentsStorage/
 src/Hikkaba.Web/Properties/PublishProfiles/
+src/Hikkaba.Web/wwwroot/css/site.min.css
