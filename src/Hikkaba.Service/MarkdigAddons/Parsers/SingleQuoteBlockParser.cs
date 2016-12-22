@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Syntax;
-using Markdig.Helpers;
 
-namespace Hikkaba.Service.Extensions.SingleQuoteBlock
+namespace Hikkaba.Service.MarkdigAddons.Parsers
 {
     public class SingleQuoteBlockParser : BlockParser, IAttributesParseable
     {
@@ -46,7 +42,7 @@ namespace Hikkaba.Service.Extensions.SingleQuoteBlock
             if (leadingCount > 0 && leadingCount <= 6 && (c.IsSpaceOrTab() || c == '\0'))
             {
                 // Move to the content
-                var singleQuoteBlock = new SingleQuoteBlock(this)
+                var singleQuoteBlock = new MarkdigAddons.Blocks.SingleQuoteBlock(this)
                 {
                     HeaderChar = matchingChar,
                     Level = leadingCount,
@@ -55,13 +51,7 @@ namespace Hikkaba.Service.Extensions.SingleQuoteBlock
                 };
                 processor.NewBlocks.Push(singleQuoteBlock);
                 processor.GoToColumn(column + leadingCount + 1);
-
-                // Gives a chance to parse attributes
-                if (TryParseAttributes != null)
-                {
-                    TryParseAttributes(processor, ref processor.Line, singleQuoteBlock);
-                }
-
+                
                 // The optional closing sequence of #s must be preceded by a space and may be followed by spaces only.
                 int endState = 0;
                 int countClosingTags = 0;
@@ -111,7 +101,7 @@ namespace Hikkaba.Service.Extensions.SingleQuoteBlock
 
         public override bool Close(BlockProcessor processor, Block block)
         {
-            var singleQuoteBlock = (SingleQuoteBlock)block;
+            var singleQuoteBlock = (MarkdigAddons.Blocks.SingleQuoteBlock)block;
             singleQuoteBlock.Lines.Trim();
             return true;
         }

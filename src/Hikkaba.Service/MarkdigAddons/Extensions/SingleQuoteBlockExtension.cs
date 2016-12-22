@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Hikkaba.Service.MarkdigAddons.Parsers;
+using Hikkaba.Service.MarkdigAddons.Renderers;
 using Markdig;
-using Markdig.Extensions.Figures;
-using Markdig.Extensions.Footers;
 using Markdig.Parsers;
 using Markdig.Renderers;
-using Markdig.Syntax;
 
-namespace Hikkaba.Service.Extensions.SingleQuoteBlock
+namespace Hikkaba.Service.MarkdigAddons.Extensions
 {
     public class SingleQuoteBlockExtension : IMarkdownExtension
     {

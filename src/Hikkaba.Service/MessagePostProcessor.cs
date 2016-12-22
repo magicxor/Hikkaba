@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
-using Hikkaba.Common.Extensions;
-using Hikkaba.Service.Extensions;
+using Hikkaba.Service.MarkdigAddons;
+using Hikkaba.Service.MarkdigAddons.Blocks;
+using Hikkaba.Service.MarkdigAddons.Parsers;
+using Hikkaba.Service.MarkdigAddons.Renderers;
 using Markdig;
-using Markdig.Extensions.EmphasisExtras;
-using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Parsers.Inlines;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
-using Markdig.Renderers.Html.Inlines;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 
@@ -24,7 +20,7 @@ namespace Hikkaba.Service
         string Process(string message);
     }
 
-    // todo: add spoilers; show > before blockquote; insert <br> between spans; try to disable TryParseSetexHeading in ParagraphBlockParser
+    // todo: add spoilers; insert <br> between spans
     public class MessagePostProcessor: IMessagePostProcessor
     {
         private readonly StringBuilder _stringBuilder;
@@ -36,21 +32,52 @@ namespace Hikkaba.Service
             _stringBuilder = new StringBuilder();
             var stringWriter = new StringWriter(_stringBuilder);
             _htmlRenderer = new HtmlRenderer(stringWriter);
-            _htmlRenderer.ReplaceRenderer<HeadingRenderer, PlainTextHeadingRenderer>();
             _htmlRenderer.ReplaceRenderer<ParagraphRenderer, BrParagraphRenderer>();
 
             var pipelineBuilder = new MarkdownPipelineBuilder()
                 .UseAutoLinks()
                 .UseSoftlineBreakAsHardlineBreak()
                 .UseEmphasisExtras()
-                .UseSingleQuoteBlock()
-                .DisableHtml() // due to security reasons
-                .DisableBlockParser<ThematicBreakParser>() // it's overkill for imageboard
-                .DisableBlockParser<ListBlockParser>()
-                .DisableBlockParser<IndentedCodeBlockParser>()
-                .DisableBlockParser<QuoteBlockParser>()
-                .DisableInlineParser<LinkInlineParser>(); // due to security reasons: no external pictures and javascript: links
+                .ReplaceBlockParser<ParagraphBlockParser, NoSetextParagraphBlockParser>() // disable setext headers
+                .DisableHtml()                                 // due to security reasons
+                .DisableBlockParser<ThematicBreakParser>()     // it's overkill for imageboard
+                .DisableBlockParser<ListBlockParser>()         // it's overkill for imageboard
+                .DisableBlockParser<IndentedCodeBlockParser>() // it's overkill for imageboard
+                .DisableBlockParser<QuoteBlockParser>()        // replaced by SingleQuoteBlockParser
+                .DisableBlockParser<HeadingBlockParser>()      // it's overkill for imageboard
+                .DisableInlineParser<LinkInlineParser>();      // due to security reasons: no external pictures and javascript: links
+            pipelineBuilder.DocumentProcessed += OnDocumentProcessed;
             _markdownPipeline = pipelineBuilder.Build();
+        }
+
+        private void OnDocumentProcessed(MarkdownDocument document)
+        {
+            ProcessTree(document);
+        }
+
+        private void ProcessTree(MarkdownObject markdownObject)
+        {
+            Type previousDescendantType = null;
+            foreach (MarkdownObject child in markdownObject.Descendants())
+            {
+                ProcessNode(child, previousDescendantType);
+                if (!(child is LiteralInline))
+                {
+                    previousDescendantType = child.GetType();
+                }
+            }
+            foreach (MarkdownObject child in markdownObject.Descendants())
+            {
+                ProcessTree(child);
+            }
+        }
+
+        private void ProcessNode(MarkdownObject markdownObject, Type previousType)
+        {
+            if ((previousType != null) && (markdownObject is SingleQuoteBlock) && (markdownObject.GetType() == previousType))
+            {
+                ((SingleQuoteBlock) markdownObject).Inline.InsertBefore(new LineBreakInline() { IsHard = true });
+            }
         }
 
         public string Process(string message)

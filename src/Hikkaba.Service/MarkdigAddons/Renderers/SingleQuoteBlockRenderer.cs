@@ -1,15 +1,14 @@
-﻿using System.Globalization;
-using Markdig.Renderers;
+﻿using Markdig.Renderers;
 using Markdig.Renderers.Html;
-using Markdig.Syntax;
+using Hikkaba.Service.MarkdigAddons.Blocks;
 
-namespace Hikkaba.Service.Extensions.SingleQuoteBlock
+namespace Hikkaba.Service.MarkdigAddons.Renderers
 {
     public class SingleQuoteBlockRenderer : HtmlObjectRenderer<SingleQuoteBlock>
     {
         protected override void Write(HtmlRenderer renderer, SingleQuoteBlock obj)
         {
-            renderer.Write("<span class=\"text-success\">");
+            renderer.Write("<span class=\"text-success\">&gt; ");
             renderer.WriteLeafInline(obj);
             renderer.WriteLine("</span>");
         }
