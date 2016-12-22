@@ -11,7 +11,6 @@
   "dependencies": {
     "AutoMapper": "5.2.0",
     "Hikkaba.Common": "1.0.0-*",
-    "Markdig": "0.10.4",
     "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.1.0",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.1.0",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.1.0",

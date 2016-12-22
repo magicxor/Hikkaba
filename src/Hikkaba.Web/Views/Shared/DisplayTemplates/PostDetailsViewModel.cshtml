@@ -1,6 +1,7 @@
 ﻿@using System.Threading.Tasks
 @using Hikkaba.Common.Constants
 @using Hikkaba.Service
+@using Hikkaba.Web.Services
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IMessagePostProcessor MessagePostProcessor
 
@@ -43,7 +44,7 @@
                         @Html.DisplayFor(model => model.Video)
                     </ul>
                 }
-                <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.Message))</span>
+                <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.CategoryAlias, Model.ThreadId, Model.Message))</span>
             </div>
         </div>
     </div>

@@ -54,13 +54,31 @@ li.borderless {
   border: none;
 }
 
-/*.visible-line-breaks {
+/* post styles */
+.visible-line-breaks {
     white-space: pre-line;  
-}*/
+}
 
-span.visible-line-breaks code {
+span.visible-line-breaks pre {
     margin-top: 10px;
 }
+
+/* spoiler */
+.censored {
+	color:black;
+	background-color:black;
+	padding:1px 
+}
+.censored a {
+	color:black;
+	text-decoration:underline;
+	padding:1px 
+}
+.censored:hover {
+	color:inherit;
+	background-color:inherit !important 
+}
+
 
 .timestamp {
     padding: 2px 4px;
