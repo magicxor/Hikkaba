@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 // todo: add posts numeration
-// todo: add cross-links to/from posts (>>234234 - convert to "post in this thread" link; otherwise - >>/a/Threads/35345#0000)
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -47,7 +46,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var page = new PageDto();
             var latestPostsDtoList = await _postService
                                         .PagedListAsync(
-                                            post => (!post.IsDeleted) && (!post.Thread.Category.IsHidden),
+                                            post => (!post.IsDeleted) && (!post.Thread.IsDeleted) && (!post.Thread.Category.IsHidden),
                                             post => post.Created,
                                             true,
                                             page);

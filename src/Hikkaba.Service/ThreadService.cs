@@ -52,7 +52,7 @@ namespace Hikkaba.Service
                     .OrderBy(post => post.Created)
                     .Take(thread.BumpLimit).
                     OrderByDescending(post => post.Created)
-                    .FirstOrDefault(post => !post.IsSageEnabled)
+                    .FirstOrDefault(post => (!post.IsSageEnabled) && (!post.IsDeleted))
                     .Created);
 
             var pagedQuery = query
