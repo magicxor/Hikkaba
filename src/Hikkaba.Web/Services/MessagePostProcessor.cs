@@ -38,7 +38,7 @@ namespace Hikkaba.Web.Services
         private string UriToHtmlLinks(string text)
         {
             return Regex.Replace(text,
-                @"(https?|ftp)(:\/\/[^:()\s,]+)",
+                @"(https?|ftp)(:\/\/[^:(),!{}""\[\]\t\r\n\v\s]+)(\s|$|&#xD|&#xA;|(https?|ftp)(:\/\/))",
                 @"<a href=""$1$2"">$1$2</a>");
         }
 
