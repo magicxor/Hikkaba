@@ -55,10 +55,6 @@ li.borderless {
 }
 
 /* post styles */
-.visible-line-breaks {
-    white-space: pre-line;  
-}
-
 span.visible-line-breaks pre {
     margin-top: 10px;
 }

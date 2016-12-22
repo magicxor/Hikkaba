@@ -38,8 +38,8 @@ namespace Hikkaba.Web.Services
         private string UriToHtmlLinks(string text)
         {
             return Regex.Replace(text,
-                @"(https?|ftp)(:\/\/[^:(),!{}""\[\]\t\r\n\v\s]+)(\s|$|&#xD|&#xA;|(https?|ftp)(:\/\/))",
-                @"<a href=""$1$2"">$1$2</a>");
+                @"(https?|ftp)(:\/\/[^:;(),!{}""\s]+)(\s|$|\&\#x[a-zA-Z0-9]+?;|\&quot;|!|,|\?|\(|\))",
+                @"<a href=""$1$2"">$1$2</a>$3");
         }
 
         private string CrossLinksToHtmlLinks(string categoryAlias, Guid threadId, string text)
@@ -55,13 +55,19 @@ namespace Hikkaba.Web.Services
                  @"<a href=""" + threadUri + "#$1" + @""">&gt;&gt;$1</a>");
         }
 
+        private string LineBreaksToHtmlTags(string text)
+        {
+            return text.Replace("&#xA;", "<br/>").Replace("&#xD;", "");
+        }
+
         public string Process(string categoryAlias, Guid threadId, string text)
         {
             var bbParsed = _bbCodeParser.ToHtml(text);
             var uriParsed = UriToHtmlLinks(bbParsed);
             var crossLinksParsed = CrossLinksToHtmlLinks(categoryAlias, threadId, uriParsed);
+            var lineBreaksParsed = LineBreaksToHtmlTags(crossLinksParsed);
 
-            var result = crossLinksParsed;
+            var result = lineBreaksParsed;
             return result;
         }
     }
