@@ -1,0 +1,33 @@
+﻿@model string
+
+<div class="btn-toolbar" role="toolbar">
+    <div class="btn-group">
+        <button type="button" class="btn btn-default" title="Bold" onclick="insertTag('@(Model)', 'm-bold')">
+            <i class="fa fa-bold"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Cursive" onclick="insertTag('@(Model)', 'm-italic')">
+            <i class="fa fa-italic"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Underline" onclick="insertTag('@(Model)', 'm-underline')">
+            <i class="fa fa-underline"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Strikeout" onclick="insertTag('@(Model)', 'm-strikeout')">
+            <i class="fa fa-strikethrough"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Quote" onclick="insertTag('@(Model)', 'm-quote')">
+            <i class="fa fa-chevron-right"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Spoiler" onclick="insertTag('@(Model)', 'm-spoiler')">
+            <i class="fa fa-square"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Code" onclick="insertTag('@(Model)', 'm-code')">
+            <i class="fa fa-code"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Subscript" onclick="insertTag('@(Model)', 'm-subscript')">
+            <i class="fa fa-subscript"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Superscript" onclick="insertTag('@(Model)', 'm-superscript')">
+            <i class="fa fa-superscript"></i>
+        </button>
+    </div>
+</div>

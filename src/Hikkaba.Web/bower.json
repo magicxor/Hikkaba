@@ -6,7 +6,8 @@
     "jquery": "2.2.3",
     "jquery-validation": "1.15.0",
     "jquery-validation-unobtrusive": "3.2.6",
-    "moment": "2.13.0"
+    "moment": "2.13.0",
+    "font-awesome": "4.6.1"
   },
   "resolutions": {
     "jquery": ">=1.8",

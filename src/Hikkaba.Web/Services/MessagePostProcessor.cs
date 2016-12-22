@@ -25,6 +25,8 @@ namespace Hikkaba.Web.Services
                     new BBTag("u", "<u>", "</u>"),
                     new BBTag("s", "<s>", "</s>"),
                     new BBTag("pre", "<pre>", "</pre>"),
+                    new BBTag("sub", "<sub>", "</sub>"),
+                    new BBTag("sup", "<sup>", "</sup>"),
                     new BBTag("spoiler", "<span class=\"censored\">", "</span>"),
                     new BBTag("quote", "<span class=\"text-success\">", "</span>"),
                 });

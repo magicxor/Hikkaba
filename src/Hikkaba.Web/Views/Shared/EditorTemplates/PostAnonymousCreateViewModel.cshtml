@@ -14,15 +14,22 @@
             <span asp-validation-for="IsSageEnabled" class="text-danger"></span>
         </div>
     </div>
+    
+    <div class="form-group">
+        <div class="col-md-2"></div>
+        <div class="col-md-10">
+            @Html.Partial("_MarkupPanelPartial", "new-post-message-input")
+        </div>
+    </div>
 
     <div class="form-group">
         <label asp-for="Message" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <textarea asp-for="Message" class="form-control"></textarea>
+            <textarea asp-for="Message" class="form-control" id="new-post-message-input"></textarea>
             <span asp-validation-for="Message" class="text-danger"></span>
         </div>
     </div>
-
+    
     <div class="form-group">
         <label asp-for="Attachments" class="col-md-2 control-label"></label>
         <div class="col-md-10">

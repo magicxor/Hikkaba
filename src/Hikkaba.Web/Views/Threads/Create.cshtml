@@ -19,9 +19,16 @@
     </div>
     
     <div class="form-group">
+        <div class="col-md-2"></div>
+        <div class="col-md-10">
+            @Html.Partial("_MarkupPanelPartial", "new-thread-message-input")
+        </div>
+    </div>
+    
+    <div class="form-group">
         <label asp-for="Message" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <textarea asp-for="Message" class="form-control"></textarea>
+            <textarea asp-for="Message" class="form-control" id="new-thread-message-input"></textarea>
             <span asp-validation-for="Message" class="text-danger"></span>
         </div>
     </div>
