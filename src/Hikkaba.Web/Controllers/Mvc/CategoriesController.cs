@@ -124,8 +124,8 @@ namespace Hikkaba.Web.Controllers.Mvc
             throw new NotImplementedException();
         }
 
-        [Route("Categories/{categoryId}/Delete")]
-        [HttpPost, ActionName("Delete")]
+        [Route("Categories/{categoryId}/DeleteConfirmed")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid categoryId)
         {

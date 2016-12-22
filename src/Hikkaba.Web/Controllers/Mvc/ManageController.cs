@@ -52,7 +52,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
             var model = new IndexViewModel
             {
@@ -106,7 +106,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await _smsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
@@ -153,11 +153,18 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, phoneNumber);
             // Send an SMS to verify the phone number
-            return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
+            if (phoneNumber == null)
+            {
+                return RedirectToAction("Details", "Error", new {message = $"phone number is empty"});
+            }
+            else
+            {
+                return View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
+            }
         }
 
         //
@@ -284,7 +291,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
             var userLogins = await _userManager.GetLoginsAsync(user);
             var otherLogins = _signInManager.GetExternalAuthenticationSchemes().Where(auth => userLogins.All(ul => auth.AuthenticationScheme != ul.LoginProvider)).ToList();
@@ -316,7 +323,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
             if (info == null)

@@ -247,12 +247,12 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             if (userId == null || code == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"{nameof(userId)} and {nameof(code)} can't be empty"});
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"{nameof(userId)} {userId} not found" });
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
@@ -311,7 +311,14 @@ namespace Hikkaba.Web.Controllers.Mvc
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
         {
-            return code == null ? View("Error") : View();
+            if (code == null)
+            {
+                return RedirectToAction("Details", "Error", new {message = $"{nameof(code)} can't be empty"});
+            }
+            else
+            {
+                return View();
+            }
         }
 
         //
@@ -358,7 +365,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
             var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
@@ -380,14 +387,14 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
 
             // Generate the token and send it
             var code = await _userManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
             if (string.IsNullOrWhiteSpace(code))
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"code is empty" });
             }
 
             var message = "Your security code is: " + code;
@@ -413,7 +420,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return RedirectToAction("Details", "Error", new { message = $"user not found" });
             }
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
