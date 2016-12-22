@@ -94,6 +94,10 @@ span.visible-line-breaks pre {
     box-sizing: border-box;
 }
 
+pre {
+    display: inline-block;
+}
+
 .post-title {
     word-wrap: break-word;
 }
