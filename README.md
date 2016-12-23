@@ -21,6 +21,7 @@ Features
 - [x] Captcha ([DNTCaptcha.Core](https://github.com/VahidN/DNTCaptcha.Core))
 - [x] Thread-local user hashes (can be enabled for each thread separately)
 - [x] Search
+- [x] Display a datetime in current user timezone (using [Moment.js](http://momentjs.com/))
 - [ ] Administration panel
 - [ ] Moderator powers customization
 - [ ] Moderation functions
