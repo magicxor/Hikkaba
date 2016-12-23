@@ -20,6 +20,7 @@ Features
    * http://, https://, ftp:// links autodetection
 - [x] Captcha ([DNTCaptcha.Core](https://github.com/VahidN/DNTCaptcha.Core))
 - [x] Thread-local user hashes (can be enabled for each thread separately)
+- [x] Search
 - [ ] Administration panel
 - [ ] Moderator powers customization
 - [ ] Moderation functions
@@ -38,3 +39,11 @@ Features
 - [ ] Display thread-local user hashes as google docs-like colored animals
 - [ ] Support for multiple file storage engines and multiple database engines
 - [ ] Primary key types - GUID or BIGINT
+
+Screenshots
+========
+
+![Home page](http://i.imgur.com/VSqxCqE.png)
+![Reply form](http://i.imgur.com/aVO3paD.png)
+![Thread](http://i.imgur.com/OLJ8YS6.png)
+![Search](http://i.imgur.com/wkp4WoR.png)
