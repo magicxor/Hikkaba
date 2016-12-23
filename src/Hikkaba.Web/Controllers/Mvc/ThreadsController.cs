@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -64,6 +65,10 @@ namespace Hikkaba.Web.Controllers.Mvc
             {
                 postDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
                 postDetailsViewModel.CategoryAlias = categoryDto.Alias;
+                postDetailsViewModel.Answers = new List<Guid>(
+                    postDetailsViewModels
+                        .Where(answer => answer.Message.Contains(">>"+ postDetailsViewModel.Id.ToString()))
+                        .Select(answer => answer.Id));
             }
 
             var threadDetailsViewModel = _mapper.Map<ThreadDetailsViewModel>(threadDto);

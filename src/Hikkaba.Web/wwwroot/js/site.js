@@ -1,11 +1,29 @@
 ﻿// Write your Javascript code.
 
+var navigationFn = {
+    goToSection: function (id) {
+        $('html, body').animate({
+            scrollTop: $('#'+id).offset().top
+        }, 0);
+    }
+}
+
 $(function () {
     $("time.time-localizable").each(function () {
         var el = $(this);
         var dt = moment(el.attr("datetime"));
         el.text(dt.format("DD.MM.YYYY ddd HH:mm:ss"));
     });
+    // if js is enabled and post form exists, prevent href=... and insert >>post id to form
+    var inputId = "new-post-message-input";
+    if ($("#" + inputId).length) {
+        $(".post-id-link").attr("onclick", "return false;");
+        $(".post-id-link").click(function () {
+            var el = $(this);
+            wrapText("new-post-message-input", ">>" + el.text(), "");
+            navigationFn.goToSection('new-post-message-input');
+        });
+    }
 });
 
 function wrapText(inputId, openTag, closeTag) {

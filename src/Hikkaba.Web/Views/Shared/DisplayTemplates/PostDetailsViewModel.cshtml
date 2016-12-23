@@ -26,15 +26,15 @@
                     &nbsp;
                     <time datetime="@Html.DisplayFor(model => model.Created)" class="timestamp time-localizable">@Html.DisplayFor(model => model.Created)</time>
                     &nbsp;
-                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title" href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId})#@Model.Id">@Html.DisplayFor(model => model.Id)</a>
+                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId})#@Model.Id">@Html.DisplayFor(model => model.Id)</a>
                 </h3>
             </div>
             <div class="panel-body">
                 @if (Model.Audio.Any()
-             || Model.Documents.Any()
-             || Model.Notices.Any()
-             || Model.Pictures.Any()
-             || Model.Video.Any())
+                     || Model.Documents.Any()
+                     || Model.Notices.Any()
+                     || Model.Pictures.Any()
+                     || Model.Video.Any())
                 {
                     <ul class="list-inline">
                         @Html.DisplayFor(model => model.Audio)
@@ -46,6 +46,19 @@
                 }
                 <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.CategoryAlias, Model.ThreadId, Model.Message))</span>
             </div>
+            @if ((Model.Answers != null) && (Model.Answers.Any()))
+            {
+                <div class="panel-footer">
+                    <ul class="list-inline">
+                        @foreach (var answer in Model.Answers)
+                        {
+                            <li>
+                                <a href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias,threadId = Model.ThreadId})#@(answer.ToString())">&gt;&gt;@(answer.ToString())</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
         </div>
     </div>
 </div>
