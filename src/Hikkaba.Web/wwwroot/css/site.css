@@ -54,12 +54,13 @@ li.borderless {
   border: none;
 }
 
-/* post styles */
+/* Fix PRE tag in post body */
 span.visible-line-breaks pre {
     margin-top: 10px;
+    display: inline-block;
 }
 
-/* spoiler */
+/* Spoiler */
 .censored {
 	color:black;
 	background-color:black;
@@ -75,7 +76,7 @@ span.visible-line-breaks pre {
 	background-color:inherit !important 
 }
 
-
+/* Post/thread datetime */
 .timestamp {
     padding: 2px 4px;
     font-size: 90%;
@@ -90,14 +91,12 @@ span.visible-line-breaks pre {
     box-sizing: border-box;
 }
 
-pre {
-    display: inline-block;
-}
-
+/* Long identifiers */
 .post-title {
     word-wrap: break-word;
 }
 
+/* Set standard style for links in post title */
 a.post-title {
     color: #337ab7;
     text-decoration: none;
@@ -106,6 +105,10 @@ a.post-title {
 a.post-title:hover, a.post-title:focus {
     color: #23527c;
     text-decoration: underline;
+}
+
+.post-content {
+    overflow: auto;
 }
 
 .display-inline {
