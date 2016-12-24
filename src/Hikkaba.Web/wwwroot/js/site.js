@@ -2,8 +2,8 @@
 
 var navigationFn = {
     goToSection: function (id) {
-        $('html, body').animate({
-            scrollTop: $('#'+id).offset().top
+        $("html, body").animate({
+            scrollTop: $("#"+id).offset().top
         }, 0);
     }
 }
@@ -14,17 +14,48 @@ $(function () {
         var dt = moment(el.attr("datetime"));
         el.text(dt.format("DD.MM.YYYY ddd HH:mm:ss"));
     });
+
     // if js is enabled and post form exists, prevent href=... and insert >>post id to form
     var inputId = "new-post-message-input";
     if ($("#" + inputId).length) {
         $(".post-id-link").attr("onclick", "return false;");
         $(".post-id-link").click(function () {
             var el = $(this);
-            wrapText("new-post-message-input", ">>" + el.text(), "");
-            navigationFn.goToSection('new-post-message-input');
+            writeLineToInput("new-post-message-input", ">>" + el.text(), "");
+            writeSelectionLineToInput("new-post-message-input");
+            navigationFn.goToSection("new-post-message-input");
         });
     }
 });
+
+function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type !== "Control") {
+        text = document.selection.createRange().text;
+    }
+    return text;
+}
+
+function writeSelectionLineToInput(inputId) {
+    var textArea = document.getElementById(inputId);
+
+    if (typeof (textArea) != "undefined") {
+        var selectionText = getSelectionText();
+        if (selectionText) {
+            textArea.value += "[quote]" + getSelectionText() + "[/quote]\n";
+        }
+    }
+}
+
+function writeLineToInput(inputId, text) {
+    var textArea = document.getElementById(inputId);
+
+    if (typeof (textArea) != "undefined") {
+        textArea.value += text + "\n";
+    }
+}
 
 function wrapText(inputId, openTag, closeTag) {
     var textArea = document.getElementById(inputId);
