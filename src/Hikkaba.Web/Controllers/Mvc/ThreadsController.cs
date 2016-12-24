@@ -54,11 +54,18 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Details(string categoryAlias, Guid threadId)
         {
             var threadDto = await _threadService.GetAsync(threadId);
+            var categoryDto = await _categoryService.GetAsync(categoryAlias);
+
+            if (threadDto.CategoryId != categoryDto.Id)
+            {
+                categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                return RedirectToAction("Details", new {categoryAlias = categoryDto.Alias, threadId = threadDto.Id});
+            }
+
             var postDtoList =
                 await
                     _postService.ListAsync(post => (!post.IsDeleted) && (post.Thread.Id == threadId),
                         post => post.Created);
-            var categoryDto = await _categoryService.GetAsync(categoryAlias);
 
             var postDetailsViewModels = _mapper.Map<IList<PostDetailsViewModel>>(postDtoList);
             foreach (var postDetailsViewModel in postDetailsViewModels)
