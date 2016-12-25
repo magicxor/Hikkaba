@@ -41,88 +41,52 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        public async Task<Guid> CreateAsync(TDto dto)
+        public virtual async Task<Guid> CreateAsync(TDto dto)
         {
-            if (dto == null)
+            return await CreateAsync(dto, entity =>
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)} is null.");
-            }
-
-            var entity = MapDtoToNewEntity(dto);
-            entity.Created = DateTime.UtcNow;
-
-            await GetDbSet(Context).AddAsync(entity);
-            await Context.SaveChangesAsync();
-
-            return entity.Id;
+                entity.Created = DateTime.UtcNow;
+            });
         }
 
-        public async Task<Guid> CreateAsync(TDto dto, TUserKey currentUserId)
+        public virtual async Task<Guid> CreateAsync(TDto dto, TUserKey currentUserId)
         {
-            var currentUser = GetUserEntityByIdAsync(currentUserId);
-            if (dto == null)
+            var currentUser = await GetUserEntityByIdAsync(currentUserId);
+            return await CreateAsync(dto, entity =>
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)} is null.");
-            }
-
-            var entity = MapDtoToNewEntity(dto);
-            entity.Created = DateTime.UtcNow;
-            entity.CreatedBy = await currentUser;
-
-            await GetDbSet(Context).AddAsync(entity);
-            await Context.SaveChangesAsync();
-
-            return entity.Id;
+                entity.Created = DateTime.UtcNow;
+                entity.CreatedBy = currentUser;
+            });
         }
 
-        public async Task EditAsync(TDto dto, TUserKey currentUserId)
+        public virtual async Task EditAsync(TDto dto, TUserKey currentUserId)
         {
-            var currentUser = GetUserEntityByIdAsync(currentUserId);
-            if (dto == null)
+            var currentUser = await GetUserEntityByIdAsync(currentUserId);
+            await EditAsync(dto, entity =>
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)} is null.");
-            }
-            else if (dto.Id == default(Guid) || dto.Id == Guid.Empty)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)}.{nameof(dto.Id)} is default or empty.");
-            }
-
-            var entity = await GetEntityByIdAsync(dto.Id);
-            MapDtoToExistingEntity(dto, entity);
-            entity.Modified = DateTime.UtcNow;
-            entity.ModifiedBy = await currentUser;
-
-            await Context.SaveChangesAsync();
+                entity.Modified = DateTime.UtcNow;
+                entity.ModifiedBy = currentUser;
+            });
         }
 
-        public async Task DeleteAsync(Guid id, TUserKey currentUserId)
+        public virtual async Task DeleteAsync(Guid id)
         {
-            var currentUser = GetUserEntityByIdAsync(currentUserId);
-            if (id == default(Guid) || id == Guid.Empty)
+            await DeleteAsync(id, entity =>
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(id)} is default or empty.");
-            }
-
-            var entity = await GetEntityByIdAsync(id);
-            entity.IsDeleted = true;
-            entity.Modified = DateTime.UtcNow;
-            entity.ModifiedBy = await currentUser;
-
-            await Context.SaveChangesAsync();
+                entity.IsDeleted = true;
+                entity.Modified = DateTime.UtcNow;
+            });
         }
 
-        public async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(Guid id, TUserKey currentUserId)
         {
-            if (id == default(Guid) || id == Guid.Empty)
+            var currentUser = await GetUserEntityByIdAsync(currentUserId);
+            await DeleteAsync(id, entity =>
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(id)} is default or empty.");
-            }
-
-            var entity = await GetEntityByIdAsync(id);
-            entity.IsDeleted = true;
-            entity.Modified = DateTime.UtcNow;
-
-            await Context.SaveChangesAsync();
+                entity.IsDeleted = true;
+                entity.Modified = DateTime.UtcNow;
+                entity.ModifiedBy = currentUser;
+            });
         }
     }
 }

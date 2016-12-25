@@ -11,5 +11,6 @@ namespace Hikkaba.Common.Dto
         public string UpperIpAddress { get; set; }
         public string Reason { get; set; }
         public PostDto RelatedPost { get; set; }
+        public CategoryDto Category { get; set; }
     }
 }

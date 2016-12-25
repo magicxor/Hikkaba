@@ -19,6 +19,7 @@ using Hikkaba.Service.Attachments;
 using Hikkaba.Service.Base;
 using ImageSharp;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -26,12 +27,12 @@ using TwentyTwenty.Storage;
 
 namespace Hikkaba.Service
 {
-    public interface IPostService : IBaseMutableEntityService<PostDto, Post, Guid>
+    public interface IPostService : IBaseModeratedMutableEntityService<PostDto, Post, Guid>
     {
         Task<Guid> CreateAsync(IFormFileCollection attachments, PostDto dto);
     }
 
-    public class PostService : BaseMutableEntityService<PostDto, Post, Guid>, IPostService
+    public class PostService : BaseModeratedMutableEntityService<PostDto, Post, Guid>, IPostService
     {
         private readonly IStorageProvider _storageProvider;
         private readonly ILogger<PostService> _logger;
@@ -44,6 +45,7 @@ namespace Hikkaba.Service
         private readonly IVideoService _videoService;
         private readonly IThumbnailGenerator _thumbnailGenerator;
         private readonly IAttachmentCategorizer _attachmentCategorizer;
+        private readonly ICategoryToModeratorService _categoryToModeratorService;
 
         public PostService(
             ILocalStorageProviderFactory localStorageProviderFactory,
@@ -58,7 +60,9 @@ namespace Hikkaba.Service
             IThumbnailGenerator thumbnailGenerator,
             IAttachmentCategorizer attachmentCategorizer,
             IMapper mapper,
-            ApplicationDbContext context) : base(mapper, context)
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
         {
             _storageProvider = localStorageProviderFactory.CreateLocalStorageProvider();
             _logger = logger;
@@ -71,6 +75,7 @@ namespace Hikkaba.Service
             _videoService = videoService;
             _thumbnailGenerator = thumbnailGenerator;
             _attachmentCategorizer = attachmentCategorizer;
+            _categoryToModeratorService = categoryToModeratorService;
         }
 
         protected override DbSet<Post> GetDbSet(ApplicationDbContext context)
@@ -101,18 +106,22 @@ namespace Hikkaba.Service
             context.Entry(entityEntry).Collection(post => post.Video).Load();
         }
 
+        protected override Guid GetCategoryId(Post entity)
+        {
+            return entity.Thread.Category.Id;
+        }
+
+        protected override IBaseManyToManyService<Guid, Guid> GetManyToManyService()
+        {
+            return _categoryToModeratorService;
+        }
+
         public async Task<Guid> CreateAsync(IFormFileCollection attachments, PostDto dto)
         {
-            var bans = await Context.Bans.ToListAsync();
-            var relatedBan = bans
-                .FirstOrDefault(ban =>
-                    _banService.IsInRange(
-                        dto.UserIpAddress,
-                        ban.LowerIpAddress,
-                        ban.UpperIpAddress));
-            if (relatedBan != null)
+            var isPostingAllowed = await _banService.IsPostingAllowedAsync(dto.ThreadId, dto.UserIpAddress);
+            if (!isPostingAllowed.Item1)
             {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, relatedBan.Reason);
+                throw new HttpResponseException(HttpStatusCode.Forbidden, isPostingAllowed.Item2);
             }
             else if (attachments == null)
             {

@@ -143,5 +143,52 @@ namespace Hikkaba.Service.Base
             };
             return pagedList;
         }
+
+        public virtual async Task<Guid> CreateAsync(TDto dto, Action<TEntity> setProperties)
+        {
+            if (dto == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)} is null.");
+            }
+
+            var entity = MapDtoToNewEntity(dto);
+            setProperties(entity);
+
+            await GetDbSet(Context).AddAsync(entity);
+            await Context.SaveChangesAsync();
+
+            return entity.Id;
+        }
+        
+        public virtual async Task EditAsync(TDto dto, Action<TEntity> setProperties)
+        {
+            if (dto == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)} is null.");
+            }
+            else if (dto.Id == default(Guid) || dto.Id == Guid.Empty)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)}.{nameof(dto.Id)} is default or empty.");
+            }
+
+            var entity = await GetEntityByIdAsync(dto.Id);
+            MapDtoToExistingEntity(dto, entity);
+            setProperties(entity);
+
+            await Context.SaveChangesAsync();
+        }
+
+        public virtual async Task DeleteAsync(Guid id, Action<TEntity> setProperties)
+        {
+            if (id == default(Guid) || id == Guid.Empty)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(id)} is default or empty.");
+            }
+
+            var entity = await GetEntityByIdAsync(id);
+            setProperties(entity);
+
+            await Context.SaveChangesAsync();
+        }
     }
 }

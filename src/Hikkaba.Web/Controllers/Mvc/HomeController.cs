@@ -15,7 +15,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 // todo: add posts numeration
-
+// todo: fix svg
+// todo: merge empty lines to one line
+// todo: enlarge post form
 namespace Hikkaba.Web.Controllers.Mvc
 {
     [TypeFilter(typeof(ExceptionLoggingFilter))]

@@ -2,25 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Hikkaba.Common.Constants;
 using Hikkaba.Common.Data;
 using Hikkaba.Common.Dto;
 using Hikkaba.Common.Entities;
+using Hikkaba.Common.Exceptions;
 using Hikkaba.Service.Base;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service
 {
-    public interface IThreadService : IBaseMutableEntityService<ThreadDto, Thread, Guid>
+    public interface IThreadService : IBaseModeratedMutableEntityService<ThreadDto, Thread, Guid>
     {
         Task<BasePagedList<ThreadDto>> PagedListCategoryThreadsOrdered(Guid categoryId, PageDto page = null);
     }
 
-    public class ThreadService : BaseMutableEntityService<ThreadDto, Thread, Guid>, IThreadService
+    public class ThreadService : BaseModeratedMutableEntityService<ThreadDto, Thread, Guid>, IThreadService
     {
-        public ThreadService(IMapper mapper, ApplicationDbContext context) : base(mapper, context)
+        private readonly ICategoryToModeratorService _categoryToModeratorService;
+
+        public ThreadService(IMapper mapper, 
+            ApplicationDbContext context, 
+            UserManager<ApplicationUser> userManager,
+            ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
         {
+            _categoryToModeratorService = categoryToModeratorService;
+        }
+
+        protected override Guid GetCategoryId(Thread entity)
+        {
+            return entity.Category.Id;
+        }
+
+        protected override IBaseManyToManyService<Guid, Guid> GetManyToManyService()
+        {
+            return _categoryToModeratorService;
         }
 
         protected override DbSet<Thread> GetDbSet(ApplicationDbContext context)
@@ -38,7 +58,7 @@ namespace Hikkaba.Service
         {
             context.Entry(entityEntry).Reference(thread => thread.Category).Load();
         }
-
+        
         public async Task<BasePagedList<ThreadDto>> PagedListCategoryThreadsOrdered(Guid categoryId, PageDto page = null)
         {
             page = page ?? new PageDto();

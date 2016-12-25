@@ -23,31 +23,22 @@ namespace Hikkaba.Service.Base
         {
         }
 
-        public async Task<Guid> CreateAsync(TDto dto)
+        public virtual async Task<Guid> CreateAsync(TDto dto)
         {
-            if (dto == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)} is null.");
-            }
-
-            var entity = MapDtoToNewEntity(dto);
-            
-            await GetDbSet(Context).AddAsync(entity);
-            await Context.SaveChangesAsync();
-
-            return entity.Id;
+            return await CreateAsync(dto, entity => {});
         }
 
-        public async Task DeleteAsync(Guid id)
+        public virtual async Task EditAsync(TDto dto)
         {
-            if (id == default(Guid) || id == Guid.Empty)
+            await EditAsync(dto, entity => {});
+        }
+        
+        public virtual async Task DeleteAsync(Guid id)
+        {
+            await DeleteAsync(id, entity =>
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(id)} is default or empty.");
-            }
-
-            var entity = await GetEntityByIdAsync(id);
-            Context.Remove(entity);
-            await Context.SaveChangesAsync();
+                Context.Remove(entity);
+            });
         }
     }
 }
