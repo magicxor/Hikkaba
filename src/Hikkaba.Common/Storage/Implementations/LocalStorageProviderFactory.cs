@@ -1,14 +1,10 @@
-﻿using TwentyTwenty.Storage;
+﻿using Hikkaba.Common.Storage.Interfaces;
+using TwentyTwenty.Storage;
 using TwentyTwenty.Storage.Local;
 
-namespace Hikkaba.Common.Storage
+namespace Hikkaba.Common.Storage.Implementations
 {
-    public interface ILocalStorageProviderFactory
-    {
-        IStorageProvider CreateLocalStorageProvider();
-    }
-
-    public class LocalStorageProviderFactory: ILocalStorageProviderFactory
+    public class LocalStorageProviderFactory : IStorageProviderFactory
     {
         private readonly IStoragePathProvider _storagePathProvider;
 
@@ -17,7 +13,7 @@ namespace Hikkaba.Common.Storage
             _storagePathProvider = storagePathProvider;
         }
 
-        public IStorageProvider CreateLocalStorageProvider()
+        public IStorageProvider CreateStorageProvider()
         {
             return new LocalStorageProvider(_storagePathProvider.GetPath());
         }

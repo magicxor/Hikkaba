@@ -18,16 +18,17 @@ using Scrutor;
 using DNTCaptcha.Core;
 using Hikkaba.Common.Configuration;
 using Hikkaba.Common.Constants;
-using Hikkaba.Common.Storage;
+using Hikkaba.Common.Storage.Implementations;
+using Hikkaba.Common.Storage.Interfaces;
 using Hikkaba.Service;
 using Hikkaba.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using NLog.Config;
 using NLog.Extensions.Logging;
 using Sakura.AspNetCore.Mvc;
+using TwentyTwenty.Storage;
 
 namespace Hikkaba.Web
 {
@@ -91,7 +92,7 @@ namespace Hikkaba.Web
 
             // File storage
             services.AddScoped<IStoragePathProvider, LocalStoragePathProvider>();
-            services.AddScoped<ILocalStorageProviderFactory, LocalStorageProviderFactory>();
+            services.AddScoped<IStorageProviderFactory, LocalStorageProviderFactory>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IMessagePostProcessor, MessagePostProcessor>();
 

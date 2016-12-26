@@ -14,6 +14,8 @@
         public const string DefaultAdminUserName = "Administrator";
         public const string DefaultAdminRoleName = "administrator";
 
+        public const string DefaultMimeType = "application/octet-stream";
+
         public const string HtmlNewPostFormId = "NewPostForm";
     }
 }

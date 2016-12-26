@@ -1,4 +1,4 @@
-﻿namespace Hikkaba.Common.Storage
+﻿namespace Hikkaba.Common.Storage.Interfaces
 {
     public interface IStoragePathProvider
     {

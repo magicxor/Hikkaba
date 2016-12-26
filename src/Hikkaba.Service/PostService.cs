@@ -15,6 +15,7 @@ using Hikkaba.Common.Dto.Attachments.Base;
 using Hikkaba.Common.Entities;
 using Hikkaba.Common.Exceptions;
 using Hikkaba.Common.Storage;
+using Hikkaba.Common.Storage.Interfaces;
 using Hikkaba.Service.Attachments;
 using Hikkaba.Service.Base;
 using ImageSharp;
@@ -48,7 +49,7 @@ namespace Hikkaba.Service
         private readonly ICategoryToModeratorService _categoryToModeratorService;
 
         public PostService(
-            ILocalStorageProviderFactory localStorageProviderFactory,
+            IStorageProviderFactory storageProviderFactory,
             ILogger<PostService> logger,
             IOptions<HikkabaConfiguration> settings,
             IBanService banService,
@@ -64,7 +65,7 @@ namespace Hikkaba.Service
             UserManager<ApplicationUser> userManager,
             ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
         {
-            _storageProvider = localStorageProviderFactory.CreateLocalStorageProvider();
+            _storageProvider = storageProviderFactory.CreateStorageProvider();
             _logger = logger;
             _banService = banService;
             _hikkabaConfiguration = settings.Value;

@@ -5,6 +5,7 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Common.Data;
 using Hikkaba.Common.Entities;
 using Hikkaba.Common.Storage;
+using Hikkaba.Common.Storage.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,7 +35,7 @@ namespace Hikkaba.Service
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
             IOptions<SeedConfiguration> seedConfOptions,
-            ILocalStorageProviderFactory localStorageProviderFactory,
+            IStorageProviderFactory storageProviderFactory,
             IThreadService threadService)
         {
             _logger = logger;
@@ -42,8 +43,8 @@ namespace Hikkaba.Service
             _userManager = userManager;
             _roleManager = roleManager;
             _seedConfOptions = seedConfOptions;
+            _storageProvider = storageProviderFactory.CreateStorageProvider();
             _threadService = threadService;
-            _storageProvider = localStorageProviderFactory.CreateLocalStorageProvider();
         }
 
         public async Task DeleteAllContentAsync()
