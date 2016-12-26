@@ -46,7 +46,7 @@ namespace Hikkaba.Web.Controllers.Api
             var cached = HttpContext.Request.Headers.ContainsKey(HeaderNames.IfModifiedSince);
             if (cached)
             {
-                return StatusCode(304);
+                return StatusCode(StatusCodes.Status304NotModified);
             }
             else
             {
