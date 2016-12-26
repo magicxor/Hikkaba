@@ -50,12 +50,12 @@ namespace Hikkaba.Web.Controllers.Api
             }
             else
             {
-                HttpContext.Response.Headers.AddOrReplaceHeaderKey(HeaderNames.ContentDisposition, "inline");
+                var fileName = blobName + "." + fileExtension;
+                HttpContext.Response.Headers.AddOrReplaceHeaderKey(HeaderNames.ContentDisposition, "inline; filename=" + fileName);
                 if (getThumbnail)
                 {
                     containerName = containerName + Defaults.ThumbnailPostfix;
                 }
-                var fileName = blobName + "." + fileExtension;
                 var contentType = GetContentTypeByFileName(fileName);
                 var blobStream = await _storageProvider.GetBlobStreamAsync(containerName, blobName);
                 return new FileStreamResult(blobStream, contentType);
