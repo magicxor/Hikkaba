@@ -7,6 +7,10 @@ using Hikkaba.Common.Storage.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
+using System.Net;
+using Hikkaba.Common.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using TwentyTwenty.Storage;
 
 namespace Hikkaba.Web.Controllers.Api
@@ -33,18 +37,29 @@ namespace Hikkaba.Web.Controllers.Api
                 return Defaults.DefaultMimeType;
             }
         }
-
+        
         [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Any, Duration = 31556926)]
-        public async Task<FileStreamResult> Get(string containerName, string blobName, string fileExtension, bool getThumbnail)
+        public async Task<IActionResult> Get(string containerName, string blobName, string fileExtension, bool getThumbnail)
         {
-            if (getThumbnail)
+            HttpContext.Response.Headers.AddOrReplaceHeaderKey(HeaderNames.LastModified, Defaults.DefaultLastModified);
+
+            var cached = HttpContext.Request.Headers.ContainsKey(HeaderNames.IfModifiedSince);
+            if (cached)
             {
-                containerName = containerName + Defaults.ThumbnailPostfix;
+                return StatusCode(304);
             }
-            var fileName = blobName + "." + fileExtension;
-            var contentType = GetContentTypeByFileName(fileName);
-            var blobStream = await _storageProvider.GetBlobStreamAsync(containerName, blobName);
-            return new FileStreamResult(blobStream, contentType);
+            else
+            {
+                HttpContext.Response.Headers.AddOrReplaceHeaderKey(HeaderNames.ContentDisposition, "inline");
+                if (getThumbnail)
+                {
+                    containerName = containerName + Defaults.ThumbnailPostfix;
+                }
+                var fileName = blobName + "." + fileExtension;
+                var contentType = GetContentTypeByFileName(fileName);
+                var blobStream = await _storageProvider.GetBlobStreamAsync(containerName, blobName);
+                return new FileStreamResult(blobStream, contentType);
+            }
         }
     }
 }
