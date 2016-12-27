@@ -27,7 +27,7 @@
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="display-inline">
-                        <a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+                        <a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">@UserManager.GetUserName(User)</a>
                         @("|")
                         <button type="submit" class="btn-link">Log off</button>
                     </form>

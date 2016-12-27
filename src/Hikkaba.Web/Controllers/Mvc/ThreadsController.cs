@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    // todo: add moderation buttons: delete thread, delete post, add notice
+    // todo: add moderation buttons: delete post, add notice
 
     [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize]
@@ -33,6 +33,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         private readonly ICategoryService _categoryService;
         private readonly IThreadService _threadService;
         private readonly IPostService _postService;
+        private readonly ICategoryToModeratorService _categoryToModeratorService;
 
         public ThreadsController(
             UserManager<ApplicationUser> userManager,
@@ -40,13 +41,15 @@ namespace Hikkaba.Web.Controllers.Mvc
             IMapper mapper,
             ICategoryService categoryService,
             IThreadService threadService,
-            IPostService postService) : base(userManager)
+            IPostService postService,
+            ICategoryToModeratorService categoryToModeratorService) : base(userManager)
         {
             _logger = logger;
             _mapper = mapper;
             _categoryService = categoryService;
             _threadService = threadService;
             _postService = postService;
+            _categoryToModeratorService = categoryToModeratorService;
         }
 
         [Route("{categoryAlias}/Threads/{threadId}")]
@@ -55,6 +58,13 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var categoryDto = await _categoryService.GetAsync(categoryAlias);
+
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+            if (threadDto.IsDeleted && (!isCurrentUserCategoryModerator))
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, $"Thread {threadId} not found.");
+            }
 
             if (threadDto.CategoryId != categoryDto.Id)
             {
@@ -172,6 +182,66 @@ namespace Hikkaba.Web.Controllers.Mvc
         public IActionResult Delete(string categoryAlias, Guid threadId, ThreadEditViewModel threadEditViewModel)
         {
             throw new NotImplementedException();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleIsPinnedOption(Guid threadId)
+        {
+            var threadDto = await _threadService.GetAsync(threadId);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                threadDto.IsPinned = !threadDto.IsPinned;
+                await _threadService.EditAsync(threadDto, CurrentUserId);
+                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleIsClosedOption(Guid threadId)
+        {
+            var threadDto = await _threadService.GetAsync(threadId);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                threadDto.IsClosed = !threadDto.IsClosed;
+                await _threadService.EditAsync(threadDto, CurrentUserId);
+                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleIsDeletedOption(Guid threadId)
+        {
+            var threadDto = await _threadService.GetAsync(threadId);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                threadDto.IsDeleted = !threadDto.IsDeleted;
+                await _threadService.EditAsync(threadDto, CurrentUserId);
+                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                return RedirectToAction("Details", "Categories", new {categoryAlias = categoryDto.Alias});
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
     }
 }

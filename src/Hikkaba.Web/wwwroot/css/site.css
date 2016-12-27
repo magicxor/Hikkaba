@@ -25,33 +25,33 @@ textarea {
 
 /* buttons and links extension to use brackets: [ click me ] */
 .btn-bracketed::before {
-    display:inline-block;
+    display: inline-block;
     content: "[";
     padding-right: 0.5em;
 }
+
 .btn-bracketed::after {
-    display:inline-block;
+    display: inline-block;
     content: "]";
     padding-left: 0.5em;
 }
 
 /* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"]
-{
+.carousel-inner .item img[src$=".svg"] {
     width: 100%;
 }
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
-  /* Hide captions */
-  .carousel-caption {
-    display: none
-  }
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
 }
 
 /* Remove borders from list-group */
 li.borderless {
-  border: none;
+    border: none;
 }
 
 /* Fix PRE tag in post body */
@@ -62,19 +62,21 @@ span.visible-line-breaks pre {
 
 /* Spoiler */
 .censored {
-	color:black;
-	background-color:black;
-	padding:1px 
+    color: black;
+    background-color: black;
+    padding: 1px;
 }
-.censored a {
-	color:black;
-	text-decoration:underline;
-	padding:1px 
-}
-.censored:hover {
-	color:inherit;
-	background-color:inherit !important 
-}
+
+    .censored a {
+        color: black;
+        text-decoration: underline;
+        padding: 1px;
+    }
+
+    .censored:hover {
+        color: inherit;
+        background-color: inherit !important;
+    }
 
 /* Post/thread datetime */
 .timestamp {
@@ -102,10 +104,10 @@ a.post-title {
     text-decoration: none;
 }
 
-a.post-title:hover, a.post-title:focus {
-    color: #23527c;
-    text-decoration: underline;
-}
+    a.post-title:hover, a.post-title:focus {
+        color: #23527c;
+        text-decoration: underline;
+    }
 
 .post-content {
     overflow: auto;
@@ -115,6 +117,15 @@ a.post-title:hover, a.post-title:focus {
     display: inline;
 }
 
+.thread-moderation-panel {
+    margin: 0.5em;
+}
+
 .search-input {
-     width: 100%; max-width: 100%;
-} 
+    width: 100%;
+    max-width: 100%;
+}
+
+/*.fa-sm {
+    font-size:0.63em;
+}*/

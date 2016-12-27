@@ -1,4 +1,8 @@
-﻿@model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadDetailsViewModel
+﻿@using Hikkaba.Common.Constants
+@using Hikkaba.Common.Entities
+@using Hikkaba.Service
+@model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadDetailsViewModel
+@inject ICategoryToModeratorService CategoryToModeratorService
 
 <div class="row">
     <div class="col-md-12">
@@ -23,6 +27,60 @@
                         <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                     }
                 </h4>
+                @if (await CategoryToModeratorService.IsUserCategoryModerator(Model.CategoryId, User))
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="btn-group thread-moderation-panel" role="group">
+                                <form asp-controller="Threads" asp-action="ToggleIsPinnedOption" method="post" class="display-inline">
+                                    <input name="threadId" type="hidden" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-primary">
+                                        @if (Model.IsPinned)
+                                        {
+                                            <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                                            @("Unpin")
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+                                            @("Pin")
+                                        }
+                                    </button>
+                                </form>
+                                <form asp-controller="Threads" asp-action="ToggleIsClosedOption" method="post" class="display-inline">
+                                    <input name="threadId" type="hidden" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-warning">
+                                        @if (Model.IsClosed)
+                                        {
+                                            <i class="fa fa-unlock" aria-hidden="true"></i>
+                                            @("Open")
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-lock" aria-hidden="true"></i>
+                                            @("Close")
+                                        }
+                                    </button>
+                                </form>
+                                <form asp-controller="Threads" asp-action="ToggleIsDeletedOption" method="post" class="display-inline">
+                                    <input name="threadId" type="hidden" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-danger">
+                                        @if (Model.IsDeleted)
+                                        {
+                                            <i class="fa fa-history" aria-hidden="true"></i>
+                                            @("Restore")
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                            @("Delete")
+                                        }
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
                 @Html.DisplayFor(model => model.Posts)
             </div>
         </div>

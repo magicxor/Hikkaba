@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Common.Data;
@@ -9,11 +10,15 @@ using Hikkaba.Common.Entities;
 using Hikkaba.Service.Base;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Hikkaba.Common.Constants;
+using Microsoft.AspNetCore.Identity;
 
 namespace Hikkaba.Service
 {
+    // todo: check ALL async method names in ALL services
     public interface ICategoryToModeratorService : IBaseManyToManyService<Guid, Guid>
     {
+        Task<bool> IsUserCategoryModerator(Guid categoryId, ClaimsPrincipal user);
         Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModerators();
         Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategories();
     }
@@ -21,11 +26,14 @@ namespace Hikkaba.Service
     public class CategoryToModeratorService : BaseManyToManyService<CategoryToModerator, Guid, Guid>, ICategoryToModeratorService
     {
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public CategoryToModeratorService(ApplicationDbContext context,
-            IMapper mapper) : base(context)
+            IMapper mapper,
+            UserManager<ApplicationUser> userManager) : base(context)
         {
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         protected override DbSet<CategoryToModerator> GetManyToManyDbSet(ApplicationDbContext context)
@@ -82,6 +90,28 @@ namespace Hikkaba.Service
                 moderatorsCategoriesDto.Add(moderatorDto, categoriesDto);
             }
             return moderatorsCategoriesDto;
+        }
+
+        public async Task<bool> IsUserCategoryModerator(Guid categoryId, ClaimsPrincipal user)
+        {
+            if ((user != null) && user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole(Defaults.DefaultAdminRoleName))
+                {
+                    return true;
+                }
+                else
+                {
+                    var userId = user.Identity.IsAuthenticated
+                                    ? Guid.Parse(_userManager.GetUserId(user))
+                                    : default(Guid);
+                    return await AreRelatedAsync(categoryId, userId);
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
