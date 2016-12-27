@@ -4,6 +4,7 @@
 @using Hikkaba.Web.Services
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IMessagePostProcessor MessagePostProcessor
+@inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator
 
 <div class="row">
     <div class="col-md-12">
@@ -12,7 +13,7 @@
                 <h3 class="panel-title post-title">
                     @if (Model.ThreadShowThreadLocalUserHash)
                     {
-                        @await Component.InvokeAsync("ThreadLocalUserHashGenerator", new { threadId = @Model.ThreadId.ToString(), userIpAddress = @Model.UserIpAddress })
+                        @(ThreadLocalUserHashGenerator.Generate(Model.ThreadId.ToString(), Model.UserIpAddress))
                     }
                     else
                     {
