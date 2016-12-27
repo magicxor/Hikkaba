@@ -10,7 +10,7 @@ namespace Hikkaba.Service
         string Generate(string threadId, string userIpAddress);
     }
 
-    public class ThreadLocalUserHashGenerator
+    public class ThreadLocalUserHashGenerator: IThreadLocalUserHashGenerator
     {
         private readonly ICryptoService _cryptoService;
 
