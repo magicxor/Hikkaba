@@ -1,4 +1,7 @@
-﻿@using Hikkaba.Common.Exceptions
+﻿@using System.Net
+@using Hikkaba.Common.Exceptions
+@using Microsoft.AspNetCore.Http
+@using TwentyTwenty.Storage
 @model Exception
 @{
     ViewData["Title"] = "Error";
@@ -7,13 +10,34 @@
 <div class="jumbotron">
     @if (Model is HttpResponseException)
     {
-        var customException = Model as HttpResponseException;
-        <h1>Error @((int)customException.HttpStatusCode) - @(customException.HttpStatusCode)</h1>
-        <h3>@(customException.Message)</h3>
+        var customException = (HttpResponseException) Model;
+        <h1>Error @((int)customException.HttpStatusCode) - @customException.HttpStatusCode</h1>
+        <h3>@customException.Message</h3>
+    }
+    else if (Model is StorageException)
+    {
+        var customException = (StorageException) Model;
+        HttpStatusCode httpStatusCode;
+        switch (customException.ErrorCode)
+        {
+            case (int)StorageErrorCode.InvalidCredentials:
+            case (int)StorageErrorCode.NoCredentialsProvided:
+                httpStatusCode = HttpStatusCode.BadGateway;
+                break;
+            case (int)StorageErrorCode.NotFound:
+            case (int)StorageErrorCode.InvalidName:
+                httpStatusCode = HttpStatusCode.NotFound;
+                break;
+            default:
+                httpStatusCode = HttpStatusCode.InternalServerError;
+                break;
+        }
+        <h1>Error @((int)httpStatusCode) - @httpStatusCode</h1>
+        <h3>@customException.Message</h3>
     }
     else
     {
-        <h1>Error 500</h1>
+        <h1>Error @((int)HttpStatusCode.InternalServerError) - @HttpStatusCode.InternalServerError</h1>
         <h3>Unknown exception occurred</h3>
     }
 </div>
