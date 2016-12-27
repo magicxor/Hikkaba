@@ -14,17 +14,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service.Base
 {
-    public interface IBaseEntityService<TDto, TEntity>
+    public interface IBaseEntityService<TDto, TEntity, TPrimaryKey>
     {
-        Task<TDto> GetAsync(Guid id);
+        Task<TDto> GetAsync(TPrimaryKey id);
         Task<IList<TDto>> ListAsync(Expression<Func<TEntity, bool>> where = null);
         Task<IList<TDto>> ListAsync<TOrderKey>(Expression<Func<TEntity, bool>> where = null, Expression<Func<TEntity, TOrderKey>> orderBy = null, bool isDescending = false);
         Task<BasePagedList<TDto>> PagedListAsync<TOrderKey>(Expression<Func<TEntity, bool>> where = null, Expression<Func<TEntity, TOrderKey>> orderBy = null, bool isDescending = false, PageDto page = null);
     }
 
-    public abstract class BaseEntityService<TDto, TEntity> : IBaseEntityService<TDto, TEntity>
-        where TDto : BaseDto 
-        where TEntity : BaseEntity
+    public abstract class BaseEntityService<TDto, TEntity, TPrimaryKey> : IBaseEntityService<TDto, TEntity, TPrimaryKey>
+        where TDto : class, IBaseDto<TPrimaryKey>
+        where TEntity : class, IBaseEntity<TPrimaryKey>
     {
         protected IMapper Mapper { get; set; }
         protected ApplicationDbContext Context { get; set; }
@@ -38,7 +38,7 @@ namespace Hikkaba.Service.Base
             Context = context;
         }
 
-        protected async Task<TEntity> GetEntityByIdAsync(Guid id)
+        protected async Task<TEntity> GetEntityByIdAsync(TPrimaryKey id)
         {
             var resultEntity = await GetDbSetWithReferences(Context).FirstOrDefaultAsync(entity => entity.Id.Equals(id));
             if (resultEntity == null)
@@ -67,7 +67,7 @@ namespace Hikkaba.Service.Base
         protected TEntity MapDtoToNewEntity(TDto dto)
         {
             var entity = Mapper.Map<TEntity>(dto);
-            entity.Id = Guid.NewGuid();
+            entity.Id = entity.GenerateNewId();
             return entity;
         }
 
@@ -78,7 +78,7 @@ namespace Hikkaba.Service.Base
         }
         #endregion
 
-        public async Task<TDto> GetAsync(Guid id)
+        public async Task<TDto> GetAsync(TPrimaryKey id)
         {
             var entity = await GetEntityByIdAsync(id);
             LoadReferenceFields(Context, entity);
@@ -144,7 +144,7 @@ namespace Hikkaba.Service.Base
             return pagedList;
         }
 
-        public virtual async Task<Guid> CreateAsync(TDto dto, Action<TEntity> setProperties)
+        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto, Action<TEntity> setProperties)
         {
             if (dto == null)
             {
@@ -166,7 +166,7 @@ namespace Hikkaba.Service.Base
             {
                 throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)} is null.");
             }
-            else if (dto.Id == default(Guid) || dto.Id == Guid.Empty)
+            else if (dto.Id.Equals(default(TPrimaryKey)))
             {
                 throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(dto)}.{nameof(dto.Id)} is default or empty.");
             }
@@ -178,9 +178,9 @@ namespace Hikkaba.Service.Base
             await Context.SaveChangesAsync();
         }
 
-        public virtual async Task DeleteAsync(Guid id, Action<TEntity> setProperties)
+        public virtual async Task DeleteAsync(TPrimaryKey id, Action<TEntity> setProperties)
         {
-            if (id == default(Guid) || id == Guid.Empty)
+            if (id.Equals(default(TPrimaryKey)))
             {
                 throw new HttpResponseException(HttpStatusCode.BadRequest, $"{nameof(id)} is default or empty.");
             }

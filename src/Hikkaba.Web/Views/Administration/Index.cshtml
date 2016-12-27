@@ -1,38 +1,5 @@
-﻿@using Hikkaba.Common.Constants
-@model Hikkaba.Web.ViewModels.HomeViewModels.HomeIndexViewModel
+﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.DashboardViewModel
 
 @{
-    ViewData["Title"] = "Start page";
+    ViewData["Title"] = "Administration";
 }
-
-<h1 class="text-center">🔰 @Defaults.BoardName</h1>
-<h2 class="text-center">Welcome. Once again.</h2>
-
-<hr/>
-
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="text-center">What is @Defaults.BoardName?</h3>
-        <p>@Defaults.BoardName is a simple image-based bulletin board where anyone can post comments and share images. There are boards dedicated to a variety of topics, from Japanese animation and culture to videogames, music, and photography. Users do not need to register an account before participating in the community. Feel free to click on a board below that interests you and jump right in!</p>
-    </div>
-</div>
-
-<hr />
-
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="text-center">@Html.DisplayNameFor(model => model.Categories)</h3>
-        <ul class="list-group row">
-            @Html.DisplayFor(model => model.Categories)
-        </ul>
-    </div>
-</div>
-
-<hr />
-
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="text-center">@Html.DisplayNameFor(model => model.Posts)</h3>
-        @Html.DisplayFor(model => model.Posts)
-    </div>
-</div>

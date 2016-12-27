@@ -11,24 +11,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service.Base
 {
-    public interface IBaseMutableEntityService<TDto, TEntity, TUserKey> : IBaseEntityService<TDto, TEntity>
+    public interface IBaseMutableEntityService<TDto, TEntity, TPrimaryKey> : IBaseEntityService<TDto, TEntity, TPrimaryKey>
     {
-        Task<Guid> CreateAsync(TDto dto);
-        Task<Guid> CreateAsync(TDto dto, TUserKey currentUserId);
-        Task EditAsync(TDto dto, TUserKey currentUserId);
-        Task DeleteAsync(Guid id);
-        Task DeleteAsync(Guid id, TUserKey currentUserId);
+        Task<TPrimaryKey> CreateAsync(TDto dto);
+        Task<TPrimaryKey> CreateAsync(TDto dto, TPrimaryKey currentUserId);
+        Task EditAsync(TDto dto, TPrimaryKey currentUserId);
+        Task DeleteAsync(TPrimaryKey id);
+        Task DeleteAsync(TPrimaryKey id, TPrimaryKey currentUserId);
     }
 
-    public abstract class BaseMutableEntityService<TDto, TEntity, TUserKey> : BaseEntityService<TDto, TEntity>, IBaseMutableEntityService<TDto, TEntity, TUserKey>
-        where TDto : BaseMutableDto 
-        where TEntity : BaseMutableEntity
+    public abstract class BaseMutableEntityService<TDto, TEntity, TPrimaryKey> : BaseEntityService<TDto, TEntity, TPrimaryKey>, IBaseMutableEntityService<TDto, TEntity, TPrimaryKey>
+        where TDto : class, IBaseMutableDto<TPrimaryKey> 
+        where TEntity : class, IBaseMutableEntity<TPrimaryKey>
     {
         protected BaseMutableEntityService(IMapper mapper, ApplicationDbContext context) : base(mapper, context)
         {
         }
 
-        protected async Task<ApplicationUser> GetUserEntityByIdAsync(TUserKey userId)
+        protected async Task<ApplicationUser> GetUserEntityByIdAsync(TPrimaryKey userId)
         {
             var userEntity = await Context.Users.FirstOrDefaultAsync(user => user.Id.Equals(userId));
             if (userEntity == null)
@@ -41,7 +41,7 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        public virtual async Task<Guid> CreateAsync(TDto dto)
+        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto)
         {
             return await CreateAsync(dto, entity =>
             {
@@ -49,7 +49,7 @@ namespace Hikkaba.Service.Base
             });
         }
 
-        public virtual async Task<Guid> CreateAsync(TDto dto, TUserKey currentUserId)
+        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto, TPrimaryKey currentUserId)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
             return await CreateAsync(dto, entity =>
@@ -59,7 +59,7 @@ namespace Hikkaba.Service.Base
             });
         }
 
-        public virtual async Task EditAsync(TDto dto, TUserKey currentUserId)
+        public virtual async Task EditAsync(TDto dto, TPrimaryKey currentUserId)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
             await EditAsync(dto, entity =>
@@ -69,7 +69,7 @@ namespace Hikkaba.Service.Base
             });
         }
 
-        public virtual async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(TPrimaryKey id)
         {
             await DeleteAsync(id, entity =>
             {
@@ -78,7 +78,7 @@ namespace Hikkaba.Service.Base
             });
         }
 
-        public virtual async Task DeleteAsync(Guid id, TUserKey currentUserId)
+        public virtual async Task DeleteAsync(TPrimaryKey id, TPrimaryKey currentUserId)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
             await DeleteAsync(id, entity =>

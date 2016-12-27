@@ -7,11 +7,17 @@ using System.Threading.Tasks;
 
 namespace Hikkaba.Common.Entities.Base
 {
-    public abstract class BaseEntity
+    public interface IBaseMutableEntity: IBaseGuidMutableEntity { }
+    public abstract class BaseMutableEntity : BaseGuidMutableEntity, IBaseMutableEntity
     {
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public override Guid Id { get; set; } = Guid.NewGuid();
+
+        public override Guid GenerateNewId()
+        {
+            return Guid.NewGuid();
+        }
     }
 }

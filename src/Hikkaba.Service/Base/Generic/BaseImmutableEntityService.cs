@@ -9,21 +9,22 @@ using Hikkaba.Common.Exceptions;
 
 namespace Hikkaba.Service.Base
 {
-    public interface IBaseImmutableEntityService<TDto, TEntity> : IBaseEntityService<TDto, TEntity>
+    public interface IBaseImmutableEntityService<TDto, TEntity, TPrimaryKey> : IBaseEntityService<TDto, TEntity, TPrimaryKey>
     {
-        Task<Guid> CreateAsync(TDto dto);
-        Task DeleteAsync(Guid id);
+        Task<TPrimaryKey> CreateAsync(TDto dto);
+        Task EditAsync(TDto dto);
+        Task DeleteAsync(TPrimaryKey id);
     }
 
-    public abstract class BaseImmutableEntityService<TDto, TEntity> : BaseEntityService<TDto, TEntity>, IBaseImmutableEntityService<TDto, TEntity>
-        where TDto : BaseDto 
-        where TEntity : BaseEntity
+    public abstract class BaseImmutableEntityService<TDto, TEntity, TPrimaryKey> : BaseEntityService<TDto, TEntity, TPrimaryKey>, IBaseImmutableEntityService<TDto, TEntity, TPrimaryKey>
+        where TDto : class, IBaseDto<TPrimaryKey>
+        where TEntity : class, IBaseEntity<TPrimaryKey>
     {
         protected BaseImmutableEntityService(IMapper mapper, ApplicationDbContext context) : base(mapper, context)
         {
         }
 
-        public virtual async Task<Guid> CreateAsync(TDto dto)
+        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto)
         {
             return await CreateAsync(dto, entity => {});
         }
@@ -33,7 +34,7 @@ namespace Hikkaba.Service.Base
             await EditAsync(dto, entity => {});
         }
         
-        public virtual async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(TPrimaryKey id)
         {
             await DeleteAsync(id, entity =>
             {

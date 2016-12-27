@@ -8,9 +8,9 @@ namespace Hikkaba.Service.Base
 {
     public interface IBaseManyToManyService<TLeftKey, TRightKey>
     {
-        Task<bool> AreRelatedAsync(TLeftKey leftEntityId, TRightKey rightEntityId);
-        Task CreateAsync(TLeftKey leftEntityId, TRightKey rightEntityId);
-        void Delete(TLeftKey leftEntityId, TRightKey rightEntityId);
+        Task<bool> AreRelatedAsync(TLeftKey leftId, TRightKey rightId);
+        Task CreateAsync(TLeftKey leftId, TRightKey rightId);
+        void Delete(TLeftKey leftId, TRightKey rightId);
     }
 
     public abstract class BaseManyToManyService<TManyToManyEntity, TLeftKey, TRightKey>: IBaseManyToManyService<TLeftKey, TRightKey>
@@ -24,7 +24,7 @@ namespace Hikkaba.Service.Base
         }
 
         protected abstract DbSet<TManyToManyEntity> GetManyToManyDbSet(ApplicationDbContext context);
-        protected abstract TManyToManyEntity CreateManyToManyEntity(TLeftKey leftEntity, TRightKey rightEntity);
+        protected abstract TManyToManyEntity CreateManyToManyEntity(TLeftKey leftId, TRightKey rightId);
         protected abstract TLeftKey GetLeftEntityKey(TManyToManyEntity manyToManyEntity);
         protected abstract TRightKey GetRightEntityKey(TManyToManyEntity manyToManyEntity);
 
@@ -33,27 +33,27 @@ namespace Hikkaba.Service.Base
             return ((GetLeftEntityKey(manyToManyEntity).Equals(leftId)) && (GetRightEntityKey(manyToManyEntity).Equals(rightId)));
         }
 
-        public async Task<bool> AreRelatedAsync(TLeftKey leftEntityId, TRightKey rightEntityId)
+        public async Task<bool> AreRelatedAsync(TLeftKey leftId, TRightKey rightId)
         {
-            return await GetManyToManyDbSet(Context).AnyAsync(x => HasKeys(x, leftEntityId, rightEntityId));
+            return await GetManyToManyDbSet(Context).AnyAsync(x => HasKeys(x, leftId, rightId));
         }
 
-        public async Task CreateAsync(TLeftKey leftEntityId, TRightKey rightEntityId)
+        public async Task CreateAsync(TLeftKey leftId, TRightKey rightId)
         {
-            var areRelated = await AreRelatedAsync(leftEntityId, rightEntityId);
+            var areRelated = await AreRelatedAsync(leftId, rightId);
             if (!areRelated)
             {
-                var manyToManyEntity = CreateManyToManyEntity(leftEntityId, rightEntityId);
+                var manyToManyEntity = CreateManyToManyEntity(leftId, rightId);
                 await GetManyToManyDbSet(Context).AddAsync(manyToManyEntity);
             }
         }
 
-        public void Delete(TLeftKey leftEntityId, TRightKey rightEntityId)
+        public void Delete(TLeftKey leftId, TRightKey rightId)
         {
             GetManyToManyDbSet(Context)
                 .RemoveRange(
                     GetManyToManyDbSet(Context)
-                    .Where(manyToManyEntity => HasKeys(manyToManyEntity, leftEntityId, rightEntityId))
+                    .Where(manyToManyEntity => HasKeys(manyToManyEntity, leftId, rightId))
                 );
         }
     }

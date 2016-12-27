@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 namespace Hikkaba.Common.Dto.Base
 {
-    public abstract class BaseDto
-    {
-        public Guid Id { get; set; }
-    }
+    public interface IBaseGuidDto: IBaseDto<Guid> { }
+    public abstract class BaseGuidDto : BaseDto<Guid>, IBaseGuidDto { }
 }

@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace Hikkaba.Common.Entities.Base
 {
-    public abstract class BaseMutableEntity : BaseEntity
+    public interface IBaseMutableEntity<TPrimaryKey>: IBaseEntity<TPrimaryKey>
+    {
+        bool IsDeleted { get; set; }
+        DateTime Created { get; set; }
+        DateTime? Modified { get; set; }
+        ApplicationUser CreatedBy { get; set; }
+        ApplicationUser ModifiedBy { get; set; }
+    }
+
+    public abstract class BaseMutableEntity<TPrimaryKey> : BaseEntity<TPrimaryKey>, IBaseMutableEntity<TPrimaryKey>
     {
         [Required]
         public bool IsDeleted { get; set; }

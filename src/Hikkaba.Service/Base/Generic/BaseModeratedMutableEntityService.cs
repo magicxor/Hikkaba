@@ -16,15 +16,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service.Base
 {
-    public interface IBaseModeratedMutableEntityService<TDto, TEntity, TUserKey> : IBaseMutableEntityService<TDto, TEntity, TUserKey>
+    public interface IBaseModeratedMutableEntityService<TDto, TEntity, TPrimaryKey> : IBaseMutableEntityService<TDto, TEntity, TPrimaryKey>
     {
     }
 
-    public abstract class BaseModeratedMutableEntityService<TDto, TEntity, TUserKey> :
-        BaseMutableEntityService<TDto, TEntity, TUserKey>, 
-        IBaseModeratedMutableEntityService<TDto, TEntity, TUserKey>
-        where TDto : BaseMutableDto
-        where TEntity : BaseMutableEntity
+    public abstract class BaseModeratedMutableEntityService<TDto, TEntity, TPrimaryKey> :
+        BaseMutableEntityService<TDto, TEntity, TPrimaryKey>, 
+        IBaseModeratedMutableEntityService<TDto, TEntity, TPrimaryKey>
+        where TDto : class, IBaseMutableDto<TPrimaryKey>
+        where TEntity : class, IBaseMutableEntity<TPrimaryKey>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         
@@ -35,10 +35,10 @@ namespace Hikkaba.Service.Base
             _userManager = userManager;
         }
 
-        protected abstract Guid GetCategoryId(TEntity entity);
-        protected abstract IBaseManyToManyService<Guid, TUserKey> GetManyToManyService();
+        protected abstract TPrimaryKey GetCategoryId(TEntity entity);
+        protected abstract IBaseManyToManyService<TPrimaryKey, TPrimaryKey> GetManyToManyService();
 
-        protected async Task<bool> HasPermissionToEdit(Guid entityId, TUserKey currentUserId)
+        protected async Task<bool> HasPermissionToEdit(TPrimaryKey entityId, TPrimaryKey currentUserId)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
             var isAdmin = await _userManager.IsInRoleAsync(currentUser, Defaults.DefaultAdminRoleName);
@@ -49,7 +49,7 @@ namespace Hikkaba.Service.Base
             else
             {
                 var isCategoryModerator = false;
-                var requestedEntity = await GetDbSetWithReferences(Context).FirstOrDefaultAsync(entity => entity.Id == entityId);
+                var requestedEntity = await GetDbSetWithReferences(Context).FirstOrDefaultAsync(entity => entity.Id.Equals(entityId));
                 if (requestedEntity != null)
                 {
                     var categoryId = GetCategoryId(requestedEntity);
@@ -60,7 +60,7 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        public override async Task EditAsync(TDto dto, TUserKey currentUserId)
+        public override async Task EditAsync(TDto dto, TPrimaryKey currentUserId)
         {
             if (dto == null)
             {
@@ -80,7 +80,7 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        public override async Task DeleteAsync(Guid entityId, TUserKey currentUserId)
+        public override async Task DeleteAsync(TPrimaryKey entityId, TPrimaryKey currentUserId)
         {
             var hasPermissionToEdit = await HasPermissionToEdit(entityId, currentUserId);
             if (hasPermissionToEdit)
