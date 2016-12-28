@@ -115,8 +115,6 @@ namespace Hikkaba.Common.Utils
             return
                 Bits.GE(this.Begin.GetAddressBytes(), range.Begin.GetAddressBytes()) &&
                 Bits.LE(this.End.GetAddressBytes(), range.End.GetAddressBytes());
-
-            throw new NotImplementedException();
         }
 
         public static IPAddressRange Parse(string ipRangeString)

@@ -139,11 +139,17 @@ namespace Hikkaba.Service
             }
             else if (attachments == null)
             {
-                return await CreateAsync(dto, (post) => {});
+                return await CreateAsync(dto, (post) =>
+                {
+                    post.Thread = Context.Threads.FirstOrDefault(thread => thread.Id == dto.ThreadId);
+                });
             }
             else
             {
-                var postId = await CreateAsync(dto, (post) => { });
+                var postId = await CreateAsync(dto, (post) =>
+                {
+                    post.Thread = Context.Threads.FirstOrDefault(thread => thread.Id == dto.ThreadId);
+                });
 
                 try
                 {

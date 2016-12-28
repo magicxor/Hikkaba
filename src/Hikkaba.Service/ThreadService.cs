@@ -70,9 +70,13 @@ namespace Hikkaba.Service
                 });
         }
 
-        public Task EditAsync(ThreadDto dto, Guid currentUserId)
+        public async Task EditAsync(ThreadDto dto, Guid currentUserId)
         {
-            throw new NotImplementedException();
+            await base.EditAsync(dto, currentUserId,
+                thread =>
+                {
+                    thread.Category = Context.Categories.FirstOrDefault(category => category.Id == dto.CategoryId);
+                });
         }
         
         public async Task<BasePagedList<ThreadDto>> PagedListCategoryThreadsOrdered(Guid categoryId, PageDto page = null)
