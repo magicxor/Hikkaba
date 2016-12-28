@@ -68,6 +68,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 {
                     latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDetailsViewModel.ShowThreadLocalUserHash;
                     latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
+                    latestPostDetailsViewModel.CategoryId = categoryDto.Id;
                 }
 
                 threadDetailsViewModel.Posts = postDetailsViewModels;

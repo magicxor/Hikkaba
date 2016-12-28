@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace Hikkaba.Common.Dto
 {
-    public class CategoryModeratorsDto
+    public class ThreadPostsAggregationDto
     {
         public CategoryDto Category { get; set; }
-        public IList<ApplicationUserDto> Moderators { get; set; }
+        public ThreadDto Thread { get; set; }
+        public IList<PostDto> Posts { get; set; }
     }
 }

@@ -30,7 +30,6 @@ namespace Hikkaba.Common.Data
             builder.Entity<ApplicationUser>().HasIndex(e => e.Email).IsUnique();
             builder.Entity<ApplicationRole>().HasIndex(e => e.Name).IsUnique();
 
-            //builder.Entity<Ban>().HasIndex(e => new { e.LowerIpAddress, e.UpperIpAddress, e.RelatedPost }).IsUnique();
             //builder.Entity<Audio>().HasIndex(e => new { e.Size, e.Hash, e.Post }).IsUnique();
             //builder.Entity<Document>().HasIndex(e => new { e.Size, e.Hash, e.Post }).IsUnique();
             //builder.Entity<Picture>().HasIndex(e => new { e.Size, e.Hash, e.Post }).IsUnique();

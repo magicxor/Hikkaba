@@ -13,9 +13,9 @@ namespace Hikkaba.Service.Base
 {
     public interface IBaseMutableEntityService<TDto, TEntity, TPrimaryKey> : IBaseEntityService<TDto, TEntity, TPrimaryKey>
     {
-        Task<TPrimaryKey> CreateAsync(TDto dto);
-        Task<TPrimaryKey> CreateAsync(TDto dto, TPrimaryKey currentUserId);
-        Task EditAsync(TDto dto, TPrimaryKey currentUserId);
+        Task<TPrimaryKey> CreateAsync(TDto dto, Action<TEntity> setForeignKeys);
+        Task<TPrimaryKey> CreateAsync(TDto dto, TPrimaryKey currentUserId, Action<TEntity> setForeignKeys);
+        Task EditAsync(TDto dto, TPrimaryKey currentUserId, Action<TEntity> setForeignKeys);
         Task DeleteAsync(TPrimaryKey id);
         Task DeleteAsync(TPrimaryKey id, TPrimaryKey currentUserId);
     }
@@ -41,52 +41,52 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto)
+        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto, Action<TEntity> setForeignKeys)
         {
-            return await CreateAsync(dto, entity =>
+            return await base.CreateAsync(dto, entity =>
             {
                 entity.Created = DateTime.UtcNow;
-            });
+            }, setForeignKeys);
         }
 
-        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto, TPrimaryKey currentUserId)
+        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto, TPrimaryKey currentUserId, Action<TEntity> setForeignKeys)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
-            return await CreateAsync(dto, entity =>
+            return await base.CreateAsync(dto, entity =>
             {
                 entity.Created = DateTime.UtcNow;
                 entity.CreatedBy = currentUser;
-            });
+            }, setForeignKeys);
         }
 
-        public virtual async Task EditAsync(TDto dto, TPrimaryKey currentUserId)
+        public virtual async Task EditAsync(TDto dto, TPrimaryKey currentUserId, Action<TEntity> setForeignKeys)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
-            await EditAsync(dto, entity =>
+            await base.EditAsync(dto, entity =>
             {
                 entity.Modified = DateTime.UtcNow;
                 entity.ModifiedBy = currentUser;
-            });
+            }, setForeignKeys);
         }
 
         public virtual async Task DeleteAsync(TPrimaryKey id)
         {
-            await DeleteAsync(id, entity =>
+            await base.DeleteAsync(id, entity =>
             {
                 entity.IsDeleted = true;
                 entity.Modified = DateTime.UtcNow;
-            });
+            }, entity => { });
         }
 
         public virtual async Task DeleteAsync(TPrimaryKey id, TPrimaryKey currentUserId)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
-            await DeleteAsync(id, entity =>
+            await base.DeleteAsync(id, entity =>
             {
                 entity.IsDeleted = true;
                 entity.Modified = DateTime.UtcNow;
                 entity.ModifiedBy = currentUser;
-            });
+            }, entity => { });
         }
     }
 }

@@ -12,5 +12,9 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         [MaxLength(4000)]
         [Display(Name = @"Message")]
         public string Message { get; set; }
+
+        [Required]
+        public string CategoryAlias { get; set; }
+        public Guid ThreadId { get; set; }
     }
 }

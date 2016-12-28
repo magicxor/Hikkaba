@@ -82,6 +82,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             {
                 postDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
                 postDetailsViewModel.CategoryAlias = categoryDto.Alias;
+                postDetailsViewModel.CategoryId = categoryDto.Id;
                 postDetailsViewModel.Answers = new List<Guid>(
                     postDetailsViewModels
                         .Where(answer => answer.Message.Contains(">>"+ postDetailsViewModel.Id.ToString()))

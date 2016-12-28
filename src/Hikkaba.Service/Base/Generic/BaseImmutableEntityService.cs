@@ -11,8 +11,8 @@ namespace Hikkaba.Service.Base
 {
     public interface IBaseImmutableEntityService<TDto, TEntity, TPrimaryKey> : IBaseEntityService<TDto, TEntity, TPrimaryKey>
     {
-        Task<TPrimaryKey> CreateAsync(TDto dto);
-        Task EditAsync(TDto dto);
+        Task<TPrimaryKey> CreateAsync(TDto dto, Action<TEntity> setForeignKeys);
+        Task EditAsync(TDto dto, Action<TEntity> setForeignKeys);
         Task DeleteAsync(TPrimaryKey id);
     }
 
@@ -24,14 +24,14 @@ namespace Hikkaba.Service.Base
         {
         }
 
-        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto)
+        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto, Action<TEntity> setForeignKeys)
         {
-            return await CreateAsync(dto, entity => {});
+            return await CreateAsync(dto, entity => {}, setForeignKeys);
         }
 
-        public virtual async Task EditAsync(TDto dto)
+        public virtual async Task EditAsync(TDto dto, Action<TEntity> setForeignKeys)
         {
-            await EditAsync(dto, entity => {});
+            await EditAsync(dto, entity => {}, setForeignKeys);
         }
         
         public virtual async Task DeleteAsync(TPrimaryKey id)
@@ -39,7 +39,7 @@ namespace Hikkaba.Service.Base
             await DeleteAsync(id, entity =>
             {
                 Context.Remove(entity);
-            });
+            }, (entity) => {});
         }
     }
 }

@@ -61,6 +61,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
                 latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
+                latestPostDetailsViewModel.CategoryId = categoryDto.Id;
             }
             var categoriesDtoList = await _categoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
             var categoryViewModels = _mapper.Map<List<CategoryViewModel>>(categoriesDtoList);

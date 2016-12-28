@@ -60,7 +60,7 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        public override async Task EditAsync(TDto dto, TPrimaryKey currentUserId)
+        public override async Task EditAsync(TDto dto, TPrimaryKey currentUserId, Action<TEntity> setForeignKeys)
         {
             if (dto == null)
             {
@@ -71,7 +71,7 @@ namespace Hikkaba.Service.Base
                 var hasPermissionToEdit = await HasPermissionToEdit(dto.Id, currentUserId);
                 if (hasPermissionToEdit)
                 {
-                    await base.EditAsync(dto, currentUserId);
+                    await base.EditAsync(dto, currentUserId, setForeignKeys);
                 }
                 else
                 {

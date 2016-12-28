@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Hikkaba.Common.Configuration;
 using Hikkaba.Common.Constants;
 using Hikkaba.Common.Data;
+using Hikkaba.Common.Dto;
+using Hikkaba.Common.Dto.Administration;
 using Hikkaba.Common.Entities;
 using Hikkaba.Common.Storage;
 using Hikkaba.Common.Storage.Interfaces;
@@ -16,6 +21,7 @@ namespace Hikkaba.Service
 {
     public interface IAdministrationService
     {
+        DashboardDto GetDashboard();
         Task DeleteAllContentAsync();
     }
 
@@ -27,7 +33,7 @@ namespace Hikkaba.Service
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IOptions<SeedConfiguration> _seedConfOptions;
-        private readonly IThreadService _threadService;
+        private readonly IMapper _mapper;
 
         public AdministrationService(
             ILogger<AdministrationService> logger,
@@ -36,29 +42,55 @@ namespace Hikkaba.Service
             RoleManager<ApplicationRole> roleManager,
             IOptions<SeedConfiguration> seedConfOptions,
             IStorageProviderFactory storageProviderFactory,
-            IThreadService threadService)
+            IMapper mapper)
         {
             _logger = logger;
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _seedConfOptions = seedConfOptions;
+            _mapper = mapper;
             _storageProvider = storageProviderFactory.CreateStorageProvider();
-            _threadService = threadService;
+        }
+
+        public DashboardDto GetDashboard()
+        {
+            var dashboardItems = _context.Categories
+                .Include(category => category.Moderators)
+                .OrderBy(category => category.Alias)
+                .Select(
+                    category => 
+                    new { Category = category,
+                          Moderators = category.Moderators
+                            .OrderBy(moderator => moderator.ApplicationUser.UserName)
+                            .Select(categoryToModerator => categoryToModerator.ApplicationUser),
+                    })
+                 .ToList()
+                 .Select(categoryModerators => new CategoryModeratorsDto()
+                 {
+                    Category = _mapper.Map<CategoryDto>(categoryModerators.Category),
+                    Moderators = _mapper.Map<List<ModeratorDto>>(categoryModerators.Moderators),
+                 })
+                 .ToList();
+
+            return new DashboardDto()
+            {
+                CategoriesModerators = dashboardItems
+            };
         }
 
         public async Task DeleteAllContentAsync()
         {
             _logger.LogInformation("Wiping all database tables and media files...");
-            var threadsDtoList = await _threadService.ListAsync();
+            var threadIdList = await _context.Threads.AsNoTracking().Select(thread => thread.Id).ToListAsync();
             
-            _logger.LogDebug($"Deleting content files (media) from {threadsDtoList.Count} threads");
-            foreach (var threadDto in threadsDtoList)
+            _logger.LogDebug($"Deleting content files (media) from {threadIdList.Count} threads");
+            foreach (var threadId in threadIdList)
             {
-                _logger.LogDebug($"Processing of {threadDto.Id} container...");
+                _logger.LogDebug($"Processing of {threadId} container...");
                 try
                 {
-                    await _storageProvider.DeleteContainerAsync(threadDto.Id.ToString());
+                    await _storageProvider.DeleteContainerAsync(threadId.ToString());
                 }
                 catch (Exception ex)
                 {
@@ -66,10 +98,10 @@ namespace Hikkaba.Service
                 }
                 _logger.LogDebug("OK");
 
-                _logger.LogDebug($"Processing of {threadDto.Id + Defaults.ThumbnailPostfix} container...");
+                _logger.LogDebug($"Processing of {threadId + Defaults.ThumbnailPostfix} container...");
                 try
                 {
-                    await _storageProvider.DeleteContainerAsync(threadDto.Id + Defaults.ThumbnailPostfix);
+                    await _storageProvider.DeleteContainerAsync(threadId + Defaults.ThumbnailPostfix);
                 }
                 catch (Exception ex)
                 {

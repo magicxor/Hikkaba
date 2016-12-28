@@ -58,6 +58,8 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         [Display(Name = @"Category alias")]
         public string CategoryAlias { get; set; }
 
+        public Guid CategoryId { get; set; }
+
         [Display(Name = @"Answers")]
         public ICollection<Guid> Answers { get; set; }
     }

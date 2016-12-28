@@ -40,7 +40,7 @@ namespace Hikkaba.Service
 
         protected async Task<Category> GetCategoryByAliasAsync(string alias)
         {
-            var resultEntity = await GetDbSet(Context).FirstOrDefaultAsync(entity => entity.Alias == alias);
+            var resultEntity = await GetDbSetWithReferences(Context).AsNoTracking().FirstOrDefaultAsync(entity => entity.Alias == alias);
             if (resultEntity == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound, $"{typeof(Category)} {alias} not found.");
@@ -54,7 +54,6 @@ namespace Hikkaba.Service
         public async Task<CategoryDto> GetAsync(string alias)
         {
             var entity = await GetCategoryByAliasAsync(alias);
-            LoadReferenceFields(Context, entity);
             return MapEntityToDto(entity);
         }
     }

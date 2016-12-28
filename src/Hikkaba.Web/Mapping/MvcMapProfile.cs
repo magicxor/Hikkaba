@@ -14,6 +14,7 @@ namespace Hikkaba.Web.Mapping
         public MvcMapProfile()
         {
             CreateMap<ThreadDto, ThreadDetailsViewModel>();
+            CreateMap<ThreadDto, ThreadEditViewModel>().ReverseMap();
             CreateMap<PostDto, PostDetailsViewModel>()
                 .AfterMap((src, dest) =>
                 {
@@ -23,6 +24,7 @@ namespace Hikkaba.Web.Mapping
                     dest.Pictures.ForEach(destElement => destElement.ThreadId = src.ThreadId);
                     dest.Video.ForEach(destElement => destElement.ThreadId = src.ThreadId);
                 });
+            CreateMap<PostDto, PostEditViewModel>().ReverseMap();
             CreateMap<CategoryDto, CategoryViewModel>();
             CreateMap<AudioDto, AudioViewModel>();
             CreateMap<DocumentDto, DocumentViewModel>();

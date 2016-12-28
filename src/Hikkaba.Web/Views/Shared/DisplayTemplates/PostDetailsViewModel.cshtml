@@ -5,6 +5,7 @@
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IMessagePostProcessor MessagePostProcessor
 @inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator
+@inject ICategoryToModeratorService CategoryToModeratorService
 
 <div class="row">
     <div class="col-md-12">
@@ -31,6 +32,36 @@
                 </h3>
             </div>
             <div class="panel-body post-content">
+                @if (await CategoryToModeratorService.IsUserCategoryModerator(Model.CategoryId, User))
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="btn-group thread-moderation-panel" role="group">
+                                <form asp-controller="Posts" asp-action="Edit" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.ThreadId" asp-route-postId="@Model.Id" method="get" class="display-inline">
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        @("Edit")
+                                    </button>
+                                </form>
+                                <form asp-controller="Posts" asp-action="ToggleIsDeletedOption" method="post" class="display-inline">
+                                    <input name="postId" type="hidden" value="@Model.Id"/>
+                                    <button type="submit" class="btn btn-danger">
+                                        @if (Model.IsDeleted)
+                                        {
+                                            <i class="fa fa-history" aria-hidden="true"></i>
+                                            @("Restore")
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                            @("Delete")
+                                        }
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
                 @if (Model.Audio.Any()
                      || Model.Documents.Any()
                      || Model.Notices.Any()

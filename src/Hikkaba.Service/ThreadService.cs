@@ -18,6 +18,8 @@ namespace Hikkaba.Service
 {
     public interface IThreadService : IBaseModeratedMutableEntityService<ThreadDto, Thread, Guid>
     {
+        Task<Guid> CreateAsync(ThreadDto dto);
+        Task EditAsync(ThreadDto dto, Guid currentUserId);
         Task<BasePagedList<ThreadDto>> PagedListCategoryThreadsOrdered(Guid categoryId, PageDto page = null);
     }
 
@@ -58,12 +60,26 @@ namespace Hikkaba.Service
         {
             context.Entry(entityEntry).Reference(thread => thread.Category).Load();
         }
+
+        public async Task<Guid> CreateAsync(ThreadDto dto)
+        {
+            return await base.CreateAsync(dto,
+                thread =>
+                {
+                    thread.Category = Context.Categories.FirstOrDefault(category => category.Id == dto.CategoryId);
+                });
+        }
+
+        public Task EditAsync(ThreadDto dto, Guid currentUserId)
+        {
+            throw new NotImplementedException();
+        }
         
         public async Task<BasePagedList<ThreadDto>> PagedListCategoryThreadsOrdered(Guid categoryId, PageDto page = null)
         {
             page = page ?? new PageDto();
 
-            var query = Context.Threads
+            var query = Context.Threads.AsNoTracking()
                 .Include(thread => thread.Category)
                 .Include(thread => thread.Posts)
                 .Where(thread => (!thread.IsDeleted) && (thread.Category.Id == categoryId))

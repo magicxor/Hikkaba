@@ -33,18 +33,21 @@ namespace Hikkaba.Web.Controllers.Mvc
         private readonly ICategoryService _categoryService;
         private readonly IThreadService _threadService;
         private readonly IPostService _postService;
-        
+        private readonly ICategoryToModeratorService _categoryToModeratorService;
+
         public PostsController(
             UserManager<ApplicationUser> userManager,
             IMapper mapper,
             ICategoryService categoryService,
             IThreadService threadService,
-            IPostService postService) : base(userManager)
+            IPostService postService,
+            ICategoryToModeratorService categoryToModeratorService) : base(userManager)
         {
             _mapper = mapper;
             _categoryService = categoryService;
             _threadService = threadService;
             _postService = postService;
+            _categoryToModeratorService = categoryToModeratorService;
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Posts/Create")]
@@ -149,7 +152,32 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Edit")]
         public async Task<IActionResult> Edit(string categoryAlias, Guid threadId, Guid postId)
         {
-            throw new NotImplementedException();
+            var postDto = await _postService.GetAsync(postId);
+            var threadDto = await _threadService.GetAsync(postDto.ThreadId);
+            var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+
+            if ((threadDto.Id != threadId) || (categoryDto.Alias != categoryAlias))
+            {
+                return RedirectToAction("Edit", new
+                {
+                    categoryAlias = categoryDto.Alias,
+                    threadId = threadDto.Id,
+                    postId = postDto.Id
+                });
+            }
+
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                var postEditViewModel = _mapper.Map<PostEditViewModel>(postDto);
+                postEditViewModel.CategoryAlias = categoryDto.Alias;
+                return View(postEditViewModel);
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Edit")]
@@ -157,7 +185,32 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string categoryAlias, Guid threadId, Guid postId, PostEditViewModel postEditViewModel)
         {
-            throw new NotImplementedException();
+            var postDto = await _postService.GetAsync(postId);
+            var threadDto = await _threadService.GetAsync(postDto.ThreadId);
+            var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+
+            if ((threadDto.Id != threadId) || (categoryDto.Alias != categoryAlias))
+            {
+                return RedirectToAction("Edit", new
+                {
+                    categoryAlias = categoryDto.Alias,
+                    threadId = threadDto.Id,
+                    postId = postDto.Id
+                });
+            }
+
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                postDto = _mapper.Map(postEditViewModel, postDto);
+                await _postService.EditAsync(postDto, CurrentUserId);
+                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Delete")]
@@ -172,6 +225,25 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Delete(string categoryAlias, Guid threadId, Guid postId, PostEditViewModel postEditViewModel)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IActionResult> ToggleIsDeletedOption(Guid postId)
+        {
+            var postDto = await _postService.GetAsync(postId);
+            var threadDto = await _threadService.GetAsync(postDto.ThreadId);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                postDto.IsDeleted = !postDto.IsDeleted;
+                await _postService.EditAsync(postDto, CurrentUserId);
+                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
     }
 }

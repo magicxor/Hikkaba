@@ -31,6 +31,7 @@ namespace Hikkaba.Service
     public interface IPostService : IBaseModeratedMutableEntityService<PostDto, Post, Guid>
     {
         Task<Guid> CreateAsync(IFormFileCollection attachments, PostDto dto);
+        Task EditAsync(PostDto dto, Guid currentUserId);
     }
 
     public class PostService : BaseModeratedMutableEntityService<PostDto, Post, Guid>, IPostService
@@ -117,6 +118,18 @@ namespace Hikkaba.Service
             return _categoryToModeratorService;
         }
 
+        public async Task EditAsync(PostDto dto, Guid currentUserId)
+        {
+            await base.EditAsync(dto, currentUserId, post =>
+            {
+                var audioList = Context.Audio.Where(entity => entity.Post.Id == dto.Id);
+                var pictureList = Context.Pictures.Where(entity => entity.Post.Id == dto.Id);
+                var videoList = Context.Video.Where(entity => entity.Post.Id == dto.Id);
+                var documentsList = Context.Documents.Where(entity => entity.Post.Id == dto.Id);
+                var noticesList = Context.Notices.Where(entity => entity.Post.Id == dto.Id);
+            });
+        }
+
         public async Task<Guid> CreateAsync(IFormFileCollection attachments, PostDto dto)
         {
             var isPostingAllowed = await _banService.IsPostingAllowedAsync(dto.ThreadId, dto.UserIpAddress);
@@ -126,11 +139,11 @@ namespace Hikkaba.Service
             }
             else if (attachments == null)
             {
-                return await CreateAsync(dto);
+                return await CreateAsync(dto, (post) => {});
             }
             else
             {
-                var postId = await CreateAsync(dto);
+                var postId = await CreateAsync(dto, (post) => { });
 
                 try
                 {
@@ -154,7 +167,10 @@ namespace Hikkaba.Service
                         if (attachmentParentDto is AudioDto)
                         {
                             var attachmentDto = (AudioDto)attachmentParentDto;
-                            blobName = (await _audioService.CreateAsync(attachmentDto)).ToString();
+                            blobName = (await _audioService.CreateAsync(attachmentDto, entity =>
+                            {
+                                entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
+                            })).ToString();
                         }
                         else if (attachmentParentDto is PictureDto)
                         {
@@ -166,7 +182,10 @@ namespace Hikkaba.Service
                                 Image image = new Image(attachment.OpenReadStream());
                                 attachmentDto.Width = image.Width;
                                 attachmentDto.Height = image.Height;
-                                blobName = (await _pictureService.CreateAsync(attachmentDto)).ToString();
+                                blobName = (await _pictureService.CreateAsync(attachmentDto, entity =>
+                                {
+                                    entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
+                                })).ToString();
 
                                 var thumbnail = _thumbnailGenerator.GenerateThumbnail(
                                     image,
@@ -180,7 +199,10 @@ namespace Hikkaba.Service
                             else
                             {
                                 // otherwise save the same image as thumbnail
-                                blobName = (await _pictureService.CreateAsync(attachmentDto)).ToString();
+                                blobName = (await _pictureService.CreateAsync(attachmentDto, entity =>
+                                {
+                                    entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
+                                })).ToString();
                                 await _storageProvider.SaveBlobStreamAsync(
                                         containerName + Defaults.ThumbnailPostfix,
                                         blobName,
@@ -190,12 +212,18 @@ namespace Hikkaba.Service
                         else if (attachmentParentDto is VideoDto)
                         {
                             var attachmentDto = (VideoDto)attachmentParentDto;
-                            blobName = (await _videoService.CreateAsync(attachmentDto)).ToString();
+                            blobName = (await _videoService.CreateAsync(attachmentDto, entity =>
+                            {
+                                entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
+                            })).ToString();
                         }
                         else if (attachmentParentDto is DocumentDto)
                         {
                             var attachmentDto = (DocumentDto)attachmentParentDto;
-                            blobName = (await _documentService.CreateAsync(attachmentDto)).ToString();
+                            blobName = (await _documentService.CreateAsync(attachmentDto, entity =>
+                            {
+                                entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
+                            })).ToString();
                         }
                         else
                         {
