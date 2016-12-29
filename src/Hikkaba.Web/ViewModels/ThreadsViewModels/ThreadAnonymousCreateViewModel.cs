@@ -7,15 +7,15 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
 {
     public class ThreadAnonymousCreateViewModel
     {
-        [MinLength(3)]
-        [MaxLength(100)]
+        [MinLength(Defaults.MinTitleLength)]
+        [MaxLength(Defaults.MaxTitleLength)]
         [Required]
         [Display(Name = @"Title")]
         public string Title { get; set; }
 
         [DataType(DataType.MultilineText)]
-        [MinLength(4)]
-        [MaxLength(4000)]
+        [MinLength(Defaults.MinMessageLength)]
+        [MaxLength(Defaults.MaxMessageLength)]
         [Required]
         [Display(Name = @"Message")]
         public string Message { get; set; }

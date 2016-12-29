@@ -12,8 +12,8 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         public bool IsSageEnabled { get; set; }
 
         [DataType(DataType.MultilineText)]
-        [MinLength(4)]
-        [MaxLength(4000)]
+        [MinLength(Defaults.MinMessageLength)]
+        [MaxLength(Defaults.MaxMessageLength)]
         [Required]
         [Display(Name = @"Message")]
         public string Message { get; set; }

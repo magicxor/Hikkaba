@@ -20,6 +20,11 @@ namespace Hikkaba.Common.Constants
         public const int MaxAttachmentsTotalSize = 20000000;
         public const int MaxAttachmentsCount = 6;
 
+        public const int MinMessageLength = 3;
+        public const int MaxMessageLength = 4000;
+        public const int MinTitleLength = 3;
+        public const int MaxTitleLength = 100;
+
         public const string DefaultMimeType = "application/octet-stream";
         public static string DefaultLastModified = new DateTime(2007, 01, 01).ToString("r"); // RFC1123
 
