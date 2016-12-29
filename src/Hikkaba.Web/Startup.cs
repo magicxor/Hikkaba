@@ -145,13 +145,6 @@ namespace Hikkaba.Web
 
             Directory.CreateDirectory(Path.Combine(env.WebRootPath, Defaults.AttachmentsStorageDirectoryName));
             app.UseStaticFiles();
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                ServeUnknownFileTypes = true,
-                FileProvider = new PhysicalFileProvider(storagePathProvider.GetPath()),
-                RequestPath = new PathString("/" + Defaults.AttachmentsStorageDirectoryName)
-            });
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
