@@ -41,7 +41,7 @@ namespace Hikkaba.Service.Base
         protected async Task<bool> HasPermissionToEdit(TPrimaryKey entityId, TPrimaryKey currentUserId)
         {
             var currentUser = await GetUserEntityByIdAsync(currentUserId);
-            var isAdmin = await _userManager.IsInRoleAsync(currentUser, Defaults.DefaultAdminRoleName);
+            var isAdmin = await _userManager.IsInRoleAsync(currentUser, Defaults.AdministratorRoleName);
             if (isAdmin)
             {
                 return true;

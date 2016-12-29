@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryViewModel>
+@{
+    ViewData["Title"] = $"Categories";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+<hr />
+@Html.ActionLink("Create", "Create")
+<hr />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Alias)</th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.DefaultBumpLimit)</th>
+            <th>@Html.DisplayNameFor(model => model.DefaultShowThreadLocalUserHash)</th>
+            <th>@Html.DisplayNameFor(model => model.IsHidden)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            @Html.DisplayFor(model => category)
+        }
+    </tbody>
+</table>

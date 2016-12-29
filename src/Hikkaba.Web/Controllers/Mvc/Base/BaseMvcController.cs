@@ -17,7 +17,7 @@ namespace Hikkaba.Web.Controllers.Mvc.Base
         }
 
         public Guid CurrentUserId => User.Identity.IsAuthenticated ? Guid.Parse(UserManager.GetUserId(User)) : default(Guid);
-        public bool IsCurrentUserAdmin => User.Identity.IsAuthenticated && User.IsInRole(Defaults.DefaultAdminRoleName);
+        public bool IsCurrentUserAdmin => User.Identity.IsAuthenticated && User.IsInRole(Defaults.AdministratorRoleName);
 
         public string UserAgent => Request.Headers.ContainsKey("User-Agent") ? Request.Headers["User-Agent"].ToString() : "";
         public IPAddress UserIpAddress => Request.HttpContext.Connection.RemoteIpAddress;

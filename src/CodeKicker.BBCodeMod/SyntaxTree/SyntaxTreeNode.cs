@@ -45,7 +45,7 @@ namespace CodeKicker.BBCode.SyntaxTree
         }
         public override int GetHashCode()
         {
-            return base.GetHashCode(); //TODO
+            return base.GetHashCode(); 
         }
 
         public static bool operator ==(SyntaxTreeNode a, SyntaxTreeNode b)

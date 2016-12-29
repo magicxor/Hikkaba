@@ -167,7 +167,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
 
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
                 var postEditViewModel = _mapper.Map<PostEditViewModel>(postDto);
@@ -200,7 +200,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
 
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
                 postDto = _mapper.Map(postEditViewModel, postDto);
@@ -232,7 +232,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             var postDto = await _postService.GetAsync(postId);
             var threadDto = await _threadService.GetAsync(postDto.ThreadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
                 postDto.IsDeleted = !postDto.IsDeleted;

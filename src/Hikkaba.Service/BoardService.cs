@@ -26,9 +26,5 @@ namespace Hikkaba.Service
         {
             return context.Boards;
         }
-
-        protected override void LoadReferenceFields(ApplicationDbContext context, Board entityEntry)
-        {
-        }
     }
 }

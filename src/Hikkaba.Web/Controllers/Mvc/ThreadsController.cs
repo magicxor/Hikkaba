@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 namespace Hikkaba.Web.Controllers.Mvc
 {
     // todo: add moderation buttons: delete post, add notice
+    // todo: show (collapsed?) deleted posts if user is moderator
 
     [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize]
@@ -60,8 +61,8 @@ namespace Hikkaba.Web.Controllers.Mvc
             var categoryDto = await _categoryService.GetAsync(categoryAlias);
 
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
-            if (threadDto.IsDeleted && (!isCurrentUserCategoryModerator))
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+            if ((threadDto.IsDeleted || categoryDto.IsDeleted) && (!isCurrentUserCategoryModerator))
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound, $"Thread {threadId} not found.");
             }
@@ -191,7 +192,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsPinned = !threadDto.IsPinned;
@@ -211,7 +212,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsClosed = !threadDto.IsClosed;
@@ -231,7 +232,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModerator(threadDto.CategoryId, User);
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsDeleted = !threadDto.IsDeleted;

@@ -28,13 +28,13 @@ using TwentyTwenty.Storage;
 
 namespace Hikkaba.Service
 {
-    public interface IPostService : IBaseModeratedMutableEntityService<PostDto, Post, Guid>
+    public interface IPostService : IBaseModeratedMutableEntityService<PostDto, Post>
     {
         Task<Guid> CreateAsync(IFormFileCollection attachments, PostDto dto);
         Task EditAsync(PostDto dto, Guid currentUserId);
     }
 
-    public class PostService : BaseModeratedMutableEntityService<PostDto, Post, Guid>, IPostService
+    public class PostService : BaseModeratedMutableEntityService<PostDto, Post>, IPostService
     {
         private readonly IStorageProvider _storageProvider;
         private readonly ILogger<PostService> _logger;
@@ -96,16 +96,6 @@ namespace Hikkaba.Service
                         .ThenInclude(entity => entity.Author)
                     .Include(post => post.Pictures)
                     .Include(post => post.Video);
-        }
-
-        protected override void LoadReferenceFields(ApplicationDbContext context, Post entityEntry)
-        {
-            context.Entry(entityEntry).Reference(post => post.Thread).Load();
-            context.Entry(entityEntry).Collection(post => post.Audio).Load();
-            context.Entry(entityEntry).Collection(post => post.Documents).Load();
-            context.Entry(entityEntry).Collection(post => post.Notices).Load();
-            context.Entry(entityEntry).Collection(post => post.Pictures).Load();
-            context.Entry(entityEntry).Collection(post => post.Video).Load();
         }
 
         protected override Guid GetCategoryId(Post entity)

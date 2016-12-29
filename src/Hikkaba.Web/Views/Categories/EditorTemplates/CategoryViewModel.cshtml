@@ -1,4 +1,4 @@
-﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryEditViewModel
+﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryViewModel
 
 <div asp-validation-summary="All" class="text-danger"></div>
 
@@ -42,5 +42,13 @@
     <div class="col-md-10">
         <input asp-for="DefaultShowThreadLocalUserHash" class="form-control" />
         <span asp-validation-for="DefaultShowThreadLocalUserHash" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label asp-for="IsDeleted" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <input asp-for="IsDeleted" class="form-control" />
+        <span asp-validation-for="IsDeleted" class="text-danger"></span>
     </div>
 </div>

@@ -14,7 +14,7 @@ namespace Hikkaba.Common.Data
     {
         private const int DefaultBumpLimit = 500;
 
-        private static async Task SeedNewCategoryAsync(ApplicationDbContext context, Board board, string alias, string name, bool isHidden = false, bool defaultShowThreadLocalUserHash = false, int defaultBumpLimit = DefaultBumpLimit, string creatorUserName = Defaults.DefaultAdminUserName)
+        private static async Task SeedNewCategoryAsync(ApplicationDbContext context, Board board, string alias, string name, bool isHidden = false, bool defaultShowThreadLocalUserHash = false, int defaultBumpLimit = DefaultBumpLimit, string creatorUserName = Defaults.AdministratorUserName)
         {
             await context.Categories.AddAsync(new Category()
             {
@@ -35,10 +35,10 @@ namespace Hikkaba.Common.Data
             if (!context.Roles.Any())
             {
                 // create admin role
-                var adminRole = await roleMgr.FindByNameAsync(Defaults.DefaultAdminRoleName);
+                var adminRole = await roleMgr.FindByNameAsync(Defaults.AdministratorRoleName);
                 if (adminRole == null)
                 {
-                    adminRole = new ApplicationRole() { Name = Defaults.DefaultAdminRoleName };
+                    adminRole = new ApplicationRole() { Name = Defaults.AdministratorRoleName };
                     await roleMgr.CreateAsync(adminRole);
                 }
             }
@@ -48,21 +48,21 @@ namespace Hikkaba.Common.Data
                 // create anonymous user
                 var anonymousUser = new ApplicationUser()
                 {
-                    UserName = Defaults.DefaultAnonymousUserName,
-                    Email = Defaults.DefaultAnonymousEmail
+                    UserName = Defaults.AnonymousUserName,
+                    Email = Defaults.AnonymousEmail
                 };
-                await userMgr.CreateAsync(anonymousUser, Defaults.DefaultAnonymousPassword);
+                await userMgr.CreateAsync(anonymousUser, Defaults.AnonymousPassword);
                 await userMgr.SetLockoutEnabledAsync(anonymousUser, true);
 
                 // create admin user
                 var adminUser = new ApplicationUser
                 {
-                    UserName = Defaults.DefaultAdminUserName,
+                    UserName = Defaults.AdministratorUserName,
                     Email = seedConfiguration.AdministratorEmail
                 };
                 await userMgr.CreateAsync(adminUser, seedConfiguration.AdministratorPassword);
                 await userMgr.SetLockoutEnabledAsync(adminUser, true);
-                await userMgr.AddToRoleAsync(adminUser, Defaults.DefaultAdminRoleName);
+                await userMgr.AddToRoleAsync(adminUser, Defaults.AdministratorRoleName);
             }
 
             Board board;

@@ -25,10 +25,5 @@ namespace Hikkaba.Service.Attachments
         {
             return context.Video.Include(video => video.Post);
         }
-
-        protected override void LoadReferenceFields(ApplicationDbContext context, Video entityEntry)
-        {
-            context.Entry(entityEntry).Reference(x => x.Post).Load();
-        }
     }
 }

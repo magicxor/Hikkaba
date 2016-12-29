@@ -1,0 +1,11 @@
+﻿@using Hikkaba.Web.ViewModels.CategoriesViewModels
+@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryViewModel
+
+<tr class="@(Model.IsDeleted ? "deleted" : "")">
+    <td>/@Html.DisplayFor(model => model.Alias)</td>
+    <td>@Html.DisplayFor(model => model.Name)</td>
+    <td>@Html.DisplayFor(model => model.DefaultBumpLimit)</td>
+    <td>@Html.DisplayFor(model => model.DefaultShowThreadLocalUserHash)</td>
+    <td>@Html.DisplayFor(model => model.IsHidden)</td>
+    <td>@Html.ActionLink("Edit", "Edit", new {categoryId = Model.Id})</td>
+</tr>

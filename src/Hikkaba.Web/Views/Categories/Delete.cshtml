@@ -1,17 +1,19 @@
-﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryEditViewModel
+﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryViewModel
 @{
     ViewData["Title"] = "Delete category";
 }
 
-<form asp-controller="Categories" asp-action="DeleteConfirmed" method="post" class="form-horizontal" enctype="multipart/form-data">
+<form asp-controller="Categories" asp-action="DeleteConfirmed" method="post" class="form-horizontal">
     <h4>@ViewData["Title"]</h4>
     <hr />
+    <input name="categoryId" type="hidden" value="@Model.Id" />
 
     <p>@($"/{Model.Alias} - {Model.Name}")</p>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default">Delete</button>
+            <a class="btn btn-default" href="@Url.Action("Index")">Cancel</a>
+            <button type="submit" class="btn btn-danger">Delete</button>
         </div>
     </div>
 </form>

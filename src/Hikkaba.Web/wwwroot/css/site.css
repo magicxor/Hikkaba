@@ -126,6 +126,8 @@ a.post-title {
     max-width: 100%;
 }
 
-/*.fa-sm {
-    font-size:0.63em;
-}*/
+.deleted {
+    background-color: rgb(200, 200, 200);
+    color: rgb(109, 109, 109);
+    font-style: italic;
+}

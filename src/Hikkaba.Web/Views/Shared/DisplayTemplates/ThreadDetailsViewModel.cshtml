@@ -27,7 +27,7 @@
                         <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                     }
                 </h4>
-                @if (await CategoryToModeratorService.IsUserCategoryModerator(Model.CategoryId, User))
+                @if (await CategoryToModeratorService.IsUserCategoryModeratorAsync(Model.CategoryId, User))
                 {
                     <div class="row">
                         <div class="col-md-12">

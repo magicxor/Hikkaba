@@ -34,7 +34,7 @@ Features
 - [x] Ban system - by IP or IP range
 - [ ] Max file size limitation
 - [ ] Max total files size per post limitation
-- [ ] Max attachments count limitation
+- [x] Max attachments count limitation
 - [ ] Identity lockout
 - [ ] Max threads limit per category
 - [ ] Archivation & deletion of old threads

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Hikkaba.Web.ViewModels.BansViewModels.BanViewModel>
+@{
+    ViewData["Title"] = $"Bans";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+<hr />
+@Html.ActionLink("Create", "Create")
+<hr />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Category.Alias)</th>
+            <th>@Html.DisplayNameFor(model => model.LowerIpAddress)</th>
+            <th>@Html.DisplayNameFor(model => model.UpperIpAddress)</th>
+            <th>@Html.DisplayNameFor(model => model.Reason)</th>
+            <th>@Html.DisplayNameFor(model => model.Start)</th>
+            <th>@Html.DisplayNameFor(model => model.End)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            @Html.DisplayFor(model => item)
+        }
+    </tbody>
+</table>

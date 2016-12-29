@@ -3,3 +3,25 @@
 @{
     ViewData["Title"] = "Administration";
 }
+
+<h2 class="text-center">Board</h2>
+<hr />
+@Html.DisplayFor(model => model.Board)
+
+<h2 class="text-center">Categories</h2>
+<hr />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Alias</th>
+            <th>Name</th>
+            <th>Default bump limit</th>
+            <th>Show thread-local user hash by default</th>
+            <th>Is hidden</th>
+            <th>Moderators</th>
+        </tr>
+    </thead>
+    <tbody>
+        @Html.DisplayFor(model => model.CategoriesModerators)
+    </tbody>
+</table>

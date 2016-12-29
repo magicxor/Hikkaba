@@ -25,10 +25,5 @@ namespace Hikkaba.Service.Attachments
         {
             return context.Audio.Include(audio => audio.Post);
         }
-
-        protected override void LoadReferenceFields(ApplicationDbContext context, Audio entityEntry)
-        {
-            context.Entry(entityEntry).Reference(x => x.Post).Load();
-        }
     }
 }

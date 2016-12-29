@@ -9,12 +9,16 @@ namespace Hikkaba.Common.Constants
 
         public const string BoardName = "Hikkaba";
 
-        public const string DefaultAnonymousUserName = "Anonymous";
-        public const string DefaultAnonymousEmail = "localhost@local.local";
-        public const string DefaultAnonymousPassword = "KaRaSiQuE&%123";
+        public const string AnonymousUserName = "Anonymous";
+        public const string AnonymousEmail = "localhost@local.local";
+        public const string AnonymousPassword = "KaRaSiQuE&%123";
 
-        public const string DefaultAdminUserName = "Administrator";
-        public const string DefaultAdminRoleName = "administrator";
+        public const string AdministratorUserName = "Administrator";
+        public const string AdministratorRoleName = "administrator";
+
+        public const int MaxAttachmentSize = 20000000;
+        public const int MaxAttachmentsTotalSize = 20000000;
+        public const int MaxAttachmentsCount = 6;
 
         public const string DefaultMimeType = "application/octet-stream";
         public static string DefaultLastModified = new DateTime(2007, 01, 01).ToString("r"); // RFC1123

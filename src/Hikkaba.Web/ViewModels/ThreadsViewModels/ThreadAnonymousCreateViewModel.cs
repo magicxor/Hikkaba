@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Hikkaba.Common.Constants;
 using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels
@@ -20,7 +21,6 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
         public string Message { get; set; }
 
         [DataType(DataType.Upload)]
-        //[FileExtensions(Extensions = "jpg,jpeg,png,gif")]
         [Required]
         [Display(Name = @"Attachments")]
         public IFormFileCollection Attachments { get; set; }
@@ -28,5 +28,8 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
         [Required]
         public string CategoryAlias { get; set; }
         public string CategoryName { get; set; }
+
+        [Range(minimum: 0, maximum: Defaults.MaxAttachmentsCount, ErrorMessage = "Maximum {2} attachments allowed")]
+        public int AttachmentsCount => Attachments?.Count ?? 0;
     }
 }

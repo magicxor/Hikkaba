@@ -12,12 +12,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service
 {
-    public interface ICategoryService : IBaseMutableEntityService<CategoryDto, Category, Guid>
+    public interface ICategoryService : IBaseMutableEntityService<CategoryDto, Category>
     {
         Task<CategoryDto> GetAsync(string alias);
+        Task<Guid> CreateAsync(CategoryDto dto, Guid currentUserId);
+        Task EditAsync(CategoryDto dto, Guid currentUserId);
     }
 
-    public class CategoryService : BaseMutableEntityService<CategoryDto, Category, Guid>, ICategoryService
+    public class CategoryService : BaseMutableEntityService<CategoryDto, Category>, ICategoryService
     {
         public CategoryService(IMapper mapper, ApplicationDbContext context) : base(mapper, context)
         {
@@ -32,29 +34,28 @@ namespace Hikkaba.Service
         {
             return context.Categories.Include(category => category.Board);
         }
-
-        protected override void LoadReferenceFields(ApplicationDbContext context, Category entityEntry)
-        {
-            context.Entry(entityEntry).Reference(category => category.Board).Load();
-        }
-
-        protected async Task<Category> GetCategoryByAliasAsync(string alias)
-        {
-            var resultEntity = await GetDbSetWithReferences(Context).AsNoTracking().FirstOrDefaultAsync(entity => entity.Alias == alias);
-            if (resultEntity == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound, $"{typeof(Category)} {alias} not found.");
-            }
-            else
-            {
-                return resultEntity;
-            }
-        }
-
+        
         public async Task<CategoryDto> GetAsync(string alias)
         {
-            var entity = await GetCategoryByAliasAsync(alias);
-            return MapEntityToDto(entity);
+            var result = await GetAsync(entity => entity.Alias == alias);
+            return result;
+        }
+
+        public async Task<Guid> CreateAsync(CategoryDto dto, Guid currentUserId)
+        {
+            var id = await base.CreateAsync(dto, currentUserId, category =>
+            {
+                category.Board = Context.Boards.FirstOrDefault();
+            });
+            return id;
+        }
+
+        public async Task EditAsync(CategoryDto dto, Guid currentUserId)
+        {
+            await base.EditAsync(dto, currentUserId, category => 
+            {
+                category.Board = Context.Boards.FirstOrDefault();
+            });
         }
     }
 }

@@ -14,19 +14,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service
 {
-    public interface IBanService : IBaseModeratedMutableEntityService<BanDto, Ban, Guid>
+    public interface IBanService : IBaseModeratedMutableEntityService<BanDto, Ban>
     {
         bool IsInRange(string ipAddress, string rangeLowerIpAddress, string rangeUpperIpAddress);
         Task<Tuple<bool, string>> IsPostingAllowedAsync(Guid threadId, string userIpAddress);
+        Task<Guid> CreateOrGetIdAsync(BanDto dto, Guid currentUserId);
+        Task EditAsync(BanDto dto, Guid currentUserId);
     }
 
-    public class BanService : BaseModeratedMutableEntityService<BanDto, Ban, Guid>, IBanService
+    public class BanService : BaseModeratedMutableEntityService<BanDto, Ban>, IBanService
     {
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _context;
         private readonly ICategoryToModeratorService _categoryToModeratorService;
 
-        public BanService(IMapper mapper, 
+        public BanService(IMapper mapper,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
@@ -58,12 +60,6 @@ namespace Hikkaba.Service
                 .Include(ban => ban.Category);
         }
 
-        protected override void LoadReferenceFields(ApplicationDbContext context, Ban entityEntry)
-        {
-            context.Entry(entityEntry).Reference(x => x.RelatedPost).Load();
-            context.Entry(entityEntry).Reference(x => x.Category).Load();
-        }
-
         public bool IsInRange(string ipAddress, string rangeLowerIpAddress, string rangeUpperIpAddress)
         {
             var rangeStart = IPAddress.Parse(rangeLowerIpAddress);
@@ -71,8 +67,8 @@ namespace Hikkaba.Service
             var range = new IPAddressRange(rangeStart, rangeEnd);
             return range.Contains(IPAddress.Parse(ipAddress));
         }
-        
-        public async Task<Guid?> CreateOrGetIdAsync(BanDto dto, Guid currentUserId)
+
+        public async Task<Guid> CreateOrGetIdAsync(BanDto dto, Guid currentUserId)
         {
             if (dto == null)
             {
@@ -80,10 +76,14 @@ namespace Hikkaba.Service
             }
 
             // user can't be banned twice for one post, so we will return existing ban id in this case
-            var existingBan = await _context.Bans
+            Ban existingBan = null;
+            if (dto.RelatedPost != null)
+            {
+                existingBan = await _context.Bans
                 .Include(ban => ban.Category)
                 .Include(ban => ban.RelatedPost)
                 .FirstOrDefaultAsync(ban => (!ban.IsDeleted) && (ban.RelatedPost.Id == dto.RelatedPost.Id));
+            }
 
             if (existingBan != null)
             {
@@ -91,14 +91,18 @@ namespace Hikkaba.Service
             }
             else
             {
-                var relatedPost = await _context.Posts.FirstOrDefaultAsync(post => post.Id == dto.RelatedPost.Id);
-                if (relatedPost == null)
+                Post relatedPost = null;
+                if (dto.RelatedPost != null)
                 {
-                    throw new HttpResponseException(HttpStatusCode.NotFound, $"Post {dto.RelatedPost.Id} not found");
+                    relatedPost = await _context.Posts.FirstOrDefaultAsync(post => post.Id == dto.RelatedPost.Id);
+                    if (relatedPost == null)
+                    {
+                        throw new HttpResponseException(HttpStatusCode.NotFound, $"Post {dto.RelatedPost.Id} not found");
+                    }
                 }
 
                 Category relatedCategory = null;
-                if (dto.Category.Id != default(Guid))
+                if ((dto.Category != null) && (dto.Category?.Id != default(Guid)))
                 {
                     relatedCategory = await _context.Categories.FirstOrDefaultAsync(category => category.Id == dto.Category.Id);
                     if (relatedCategory == null)
@@ -106,14 +110,23 @@ namespace Hikkaba.Service
                         throw new HttpResponseException(HttpStatusCode.NotFound, $"Category {dto.Category.Id} not found");
                     }
                 }
-                
-                await base.CreateAsync(dto, currentUserId, (ban) =>
+
+                var banId = await base.CreateAsync(dto, currentUserId, (ban) =>
                 {
                     ban.Category = relatedCategory;
                     ban.RelatedPost = relatedPost;
                 });
-                return null;
+                return banId;
             }
+        }
+
+        public async Task EditAsync(BanDto dto, Guid currentUserId)
+        {
+            await base.EditAsync(dto, currentUserId, ban =>
+            {
+                ban.RelatedPost = dto.RelatedPost == null ? null : Context.Posts.FirstOrDefault(post => post.Id == dto.RelatedPost.Id);
+                ban.Category = dto.Category == null ? null : Context.Categories.FirstOrDefault(category => category.Id == dto.Category.Id);
+            });
         }
 
         public async Task<Tuple<bool, string>> IsPostingAllowedAsync(Guid threadId, string userIpAddress)

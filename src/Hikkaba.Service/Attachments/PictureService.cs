@@ -25,10 +25,5 @@ namespace Hikkaba.Service.Attachments
         {
             return context.Pictures.Include(picture => picture.Post);
         }
-
-        protected override void LoadReferenceFields(ApplicationDbContext context, Picture entityEntry)
-        {
-            context.Entry(entityEntry).Reference(x => x.Post).Load();
-        }
     }
 }

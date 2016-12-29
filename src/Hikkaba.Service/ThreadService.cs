@@ -16,14 +16,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service
 {
-    public interface IThreadService : IBaseModeratedMutableEntityService<ThreadDto, Thread, Guid>
+    public interface IThreadService : IBaseModeratedMutableEntityService<ThreadDto, Thread>
     {
         Task<Guid> CreateAsync(ThreadDto dto);
         Task EditAsync(ThreadDto dto, Guid currentUserId);
         Task<BasePagedList<ThreadDto>> PagedListCategoryThreadsOrdered(Guid categoryId, PageDto page = null);
     }
 
-    public class ThreadService : BaseModeratedMutableEntityService<ThreadDto, Thread, Guid>, IThreadService
+    public class ThreadService : BaseModeratedMutableEntityService<ThreadDto, Thread>, IThreadService
     {
         private readonly ICategoryToModeratorService _categoryToModeratorService;
 
@@ -54,11 +54,6 @@ namespace Hikkaba.Service
         {
             return context.Threads
                 .Include(thread => thread.Category);
-        }
-
-        protected override void LoadReferenceFields(ApplicationDbContext context, Thread entityEntry)
-        {
-            context.Entry(entityEntry).Reference(thread => thread.Category).Load();
         }
 
         public async Task<Guid> CreateAsync(ThreadDto dto)

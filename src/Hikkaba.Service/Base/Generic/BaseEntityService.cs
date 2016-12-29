@@ -30,8 +30,7 @@ namespace Hikkaba.Service.Base
         protected ApplicationDbContext Context { get; set; }
         protected abstract DbSet<TEntity> GetDbSet(ApplicationDbContext context);
         protected abstract IQueryable<TEntity> GetDbSetWithReferences(ApplicationDbContext context);
-        protected abstract void LoadReferenceFields(ApplicationDbContext context, TEntity entityEntry);
-
+        
         protected BaseEntityService(IMapper mapper, ApplicationDbContext context)
         {
             Mapper = mapper;
@@ -65,7 +64,7 @@ namespace Hikkaba.Service.Base
         }
         #endregion
 
-        protected async Task<TEntity> GetEntityByIdAsNoTrackingAsync(TPrimaryKey id)
+        private async Task<TEntity> GetEntityByIdAsNoTrackingAsync(TPrimaryKey id)
         {
             var resultEntity = await GetDbSetWithReferences(Context).AsNoTracking().FirstOrDefaultAsync(entity => entity.Id.Equals(id));
             if (resultEntity == null)
@@ -78,7 +77,7 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        protected async Task<TEntity> GetEntityByIdAsync(TPrimaryKey id)
+        private async Task<TEntity> GetEntityByIdAsync(TPrimaryKey id)
         {
             var resultEntity = await GetDbSetWithReferences(Context).FirstOrDefaultAsync(entity => entity.Id.Equals(id));
             if (resultEntity == null)
@@ -91,13 +90,20 @@ namespace Hikkaba.Service.Base
             }
         }
 
-        public async Task<TDto> GetAsync(TPrimaryKey id)
+        private async Task<TEntity> GetEntityByExpressionAsNoTrackingAsync(Expression<Func<TEntity, bool>> where)
         {
-            var entity = await GetEntityByIdAsNoTrackingAsync(id);
-            return MapEntityToDto(entity);
+            var resultEntity = await GetDbSetWithReferences(Context).AsNoTracking().FirstOrDefaultAsync(where);
+            if (resultEntity == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, $"{typeof(TEntity)} not found.");
+            }
+            else
+            {
+                return resultEntity;
+            }
         }
 
-        private IQueryable<TEntity> QueryAsync<TOrderKey>(Expression<Func<TEntity, bool>> where = null, Expression<Func<TEntity, TOrderKey>> orderBy = null, bool isDescending = false)
+        private IQueryable<TEntity> QueryAsNoTracking<TOrderKey>(Expression<Func<TEntity, bool>> where = null, Expression<Func<TEntity, TOrderKey>> orderBy = null, bool isDescending = false)
         {
             var query = GetDbSetWithReferences(Context).AsNoTracking();
 
@@ -121,6 +127,18 @@ namespace Hikkaba.Service.Base
             return query;
         }
 
+        public async Task<TDto> GetAsync(TPrimaryKey id)
+        {
+            var entity = await GetEntityByIdAsNoTrackingAsync(id);
+            return MapEntityToDto(entity);
+        }
+
+        public async Task<TDto> GetAsync(Expression<Func<TEntity, bool>> where)
+        {
+            var entity = await GetEntityByExpressionAsNoTrackingAsync(where);
+            return MapEntityToDto(entity);
+        }
+
         public async Task<IList<TDto>> ListAsync(Expression<Func<TEntity, bool>> where = null)
         {
             return await ListAsync<bool>(where);
@@ -128,7 +146,7 @@ namespace Hikkaba.Service.Base
 
         public async Task<IList<TDto>> ListAsync<TOrderKey>(Expression<Func<TEntity, bool>> where = null, Expression<Func<TEntity, TOrderKey>> orderBy = null, bool isDescending = false)
         {
-            var query = QueryAsync(where, orderBy, isDescending);
+            var query = QueryAsNoTracking(where, orderBy, isDescending);
             var entityList = await query.ToListAsync();
             var dtoList = MapEntityListToDtoList(entityList);
             return dtoList;
@@ -138,7 +156,7 @@ namespace Hikkaba.Service.Base
         {
             page = page ?? new PageDto();
 
-            var query = QueryAsync(where, orderBy, isDescending);
+            var query = QueryAsNoTracking(where, orderBy, isDescending);
 
             var pageQuery = query.Skip(page.Skip).Take(page.PageSize);
 
@@ -153,7 +171,7 @@ namespace Hikkaba.Service.Base
             return pagedList;
         }
 
-        public virtual async Task<TPrimaryKey> CreateAsync(TDto dto, Action<TEntity> setProperties, Action<TEntity> setForeignKeys)
+        protected async Task<TPrimaryKey> CreateAsync(TDto dto, Action<TEntity> setProperties, Action<TEntity> setForeignKeys)
         {
             if (dto == null)
             {
@@ -169,8 +187,8 @@ namespace Hikkaba.Service.Base
 
             return entity.Id; // todo: add abstract method to retreive key
         }
-        
-        public virtual async Task EditAsync(TDto dto, Action<TEntity> setProperties, Action<TEntity> setForeignKeys)
+
+        protected async Task EditAsync(TDto dto, Action<TEntity> setProperties, Action<TEntity> setForeignKeys)
         {
             if (dto == null)
             {
@@ -189,7 +207,7 @@ namespace Hikkaba.Service.Base
             await Context.SaveChangesAsync();
         }
 
-        public virtual async Task DeleteAsync(TPrimaryKey id, Action<TEntity> setProperties, Action<TEntity> setForeignKeys)
+        protected async Task DeleteAsync(TPrimaryKey id, Action<TEntity> setProperties, Action<TEntity> setForeignKeys)
         {
             if (id.Equals(default(TPrimaryKey)))
             {

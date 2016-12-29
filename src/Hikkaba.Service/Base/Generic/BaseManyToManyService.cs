@@ -28,7 +28,7 @@ namespace Hikkaba.Service.Base
         protected abstract TLeftKey GetLeftEntityKey(TManyToManyEntity manyToManyEntity);
         protected abstract TRightKey GetRightEntityKey(TManyToManyEntity manyToManyEntity);
 
-        protected bool HasKeys(TManyToManyEntity manyToManyEntity, TLeftKey leftId, TRightKey rightId)
+        private bool HasKeys(TManyToManyEntity manyToManyEntity, TLeftKey leftId, TRightKey rightId)
         {
             return ((GetLeftEntityKey(manyToManyEntity).Equals(leftId)) && (GetRightEntityKey(manyToManyEntity).Equals(rightId)));
         }

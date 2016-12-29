@@ -35,8 +35,8 @@ namespace Hikkaba.Web.Controllers.Mvc
             _logger = loggerFactory.CreateLogger<ManageController>();
         }
 
-        //
         // GET: /Manage/Index
+        [Route("Manage")]
         [HttpGet]
         public async Task<IActionResult> Index(ManageMessageId? message = null)
         {

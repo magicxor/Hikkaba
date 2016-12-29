@@ -16,14 +16,14 @@ using Microsoft.AspNetCore.Identity;
 namespace Hikkaba.Service
 {
     // todo: check ALL async method names in ALL services
-    public interface ICategoryToModeratorService : IBaseManyToManyService<Guid, Guid>
+    public interface ICategoryToModeratorService : IBaseManyToManyService
     {
-        Task<bool> IsUserCategoryModerator(Guid categoryId, ClaimsPrincipal user);
-        Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModerators();
-        Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategories();
+        Task<bool> IsUserCategoryModeratorAsync(Guid categoryId, ClaimsPrincipal user);
+        Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModeratorsAsync();
+        Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategoriesAsync();
     }
 
-    public class CategoryToModeratorService : BaseManyToManyService<CategoryToModerator, Guid, Guid>, ICategoryToModeratorService
+    public class CategoryToModeratorService : BaseManyToManyService<CategoryToModerator>, ICategoryToModeratorService
     {
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -56,47 +56,51 @@ namespace Hikkaba.Service
             return manyToManyEntity.ApplicationUserId;
         }
 
-        public async Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModerators()
+        public async Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModeratorsAsync()
         {
-            var categoriesModeratorsEntity = await Context.Categories
+            var categoriesModeratorsEntityList = await Context.Categories
                 .OrderBy(category => category.Alias)
-                .Select(category => new KeyValuePair<Category, IEnumerable<ApplicationUser>>(
-                        category, category.Moderators.Select(cm => cm.ApplicationUser).OrderBy(u => u.UserName)
-                    ))
+                .Select(category => new
+                {
+                    Category = category,
+                    Moderators = category.Moderators.Select(cm => cm.ApplicationUser).OrderBy(u => u.UserName).ToList()
+                })
                 .ToListAsync();
-            var categoriesModeratorsDto = new Dictionary<CategoryDto, IList<ApplicationUserDto>>();
-            foreach (var categoryModerators in categoriesModeratorsEntity)
+            var categoriesModeratorsDtoList = new Dictionary<CategoryDto, IList<ApplicationUserDto>>();
+            foreach (var categoryModerators in categoriesModeratorsEntityList)
             {
-                var categoryDto = _mapper.Map<CategoryDto>(categoryModerators.Key);
-                var moderatorsDto = _mapper.Map<IList<ApplicationUserDto>>(categoryModerators.Value);
-                categoriesModeratorsDto.Add(categoryDto, moderatorsDto);
+                var categoryDto = _mapper.Map<CategoryDto>(categoryModerators.Category);
+                var moderatorsDto = _mapper.Map<IList<ApplicationUserDto>>(categoryModerators.Moderators);
+                categoriesModeratorsDtoList.Add(categoryDto, moderatorsDto);
             }
-            return categoriesModeratorsDto;
+            return categoriesModeratorsDtoList;
         }
 
-        public async Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategories()
+        public async Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategoriesAsync()
         {
-            var moderatorsCategoriesEntity = await Context.Users
+            var moderatorsCategoriesEntityList = await Context.Users
                 .OrderBy(user => user.UserName)
-                .Select(user => new KeyValuePair<ApplicationUser, IEnumerable<Category>>(
-                        user, user.ModerationCategories.Select(mc => mc.Category).OrderBy(u => u.Alias)
-                    ))
+                .Select(user => new
+                {
+                    Moderator = user,
+                    Categories = user.ModerationCategories.Select(mc => mc.Category).OrderBy(u => u.Alias).ToList()
+                })
                 .ToListAsync();
-            var moderatorsCategoriesDto = new Dictionary<ApplicationUserDto, IList<CategoryDto>>();
-            foreach (var moderatorCategories in moderatorsCategoriesDto)
+            var moderatorsCategoriesDtoList = new Dictionary<ApplicationUserDto, IList<CategoryDto>>();
+            foreach (var moderatorCategories in moderatorsCategoriesEntityList)
             {
-                var moderatorDto = _mapper.Map<ApplicationUserDto>(moderatorCategories.Key);
-                var categoriesDto = _mapper.Map<IList<CategoryDto>>(moderatorCategories.Value);
-                moderatorsCategoriesDto.Add(moderatorDto, categoriesDto);
+                var moderatorDto = _mapper.Map<ApplicationUserDto>(moderatorCategories.Moderator);
+                var categoriesDto = _mapper.Map<IList<CategoryDto>>(moderatorCategories.Categories);
+                moderatorsCategoriesDtoList.Add(moderatorDto, categoriesDto);
             }
-            return moderatorsCategoriesDto;
+            return moderatorsCategoriesDtoList;
         }
 
-        public async Task<bool> IsUserCategoryModerator(Guid categoryId, ClaimsPrincipal user)
+        public async Task<bool> IsUserCategoryModeratorAsync(Guid categoryId, ClaimsPrincipal user)
         {
             if ((user != null) && user.Identity.IsAuthenticated)
             {
-                if (user.IsInRole(Defaults.DefaultAdminRoleName))
+                if (user.IsInRole(Defaults.AdministratorRoleName))
                 {
                     return true;
                 }

@@ -1,0 +1,15 @@
+﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.CategoryModeratorsViewModel
+
+<tr>
+    <td>/@Model.Category.Alias</td>
+    <td>@Model.Category.Name</td>
+    <td>@Model.Category.DefaultBumpLimit</td>
+    <td>@Model.Category.DefaultShowThreadLocalUserHash</td>
+    <td>@Model.Category.IsHidden</td>
+    <td>
+        <ul>
+            @Html.DisplayFor(model => model.Moderators)
+        </ul>
+    </td>
+    <td></td>
+</tr>
