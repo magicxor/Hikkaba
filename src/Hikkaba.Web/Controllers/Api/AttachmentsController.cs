@@ -15,6 +15,8 @@ using TwentyTwenty.Storage;
 
 namespace Hikkaba.Web.Controllers.Api
 {
+    // todo: add filesize header
+
     public class AttachmentsController : Controller
     {
         private readonly IContentTypeProvider _contentTypeProvider = new FileExtensionContentTypeProvider();

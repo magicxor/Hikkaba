@@ -139,8 +139,8 @@ namespace Hikkaba.Service
                     ban =>
                         ((ban.Category == null) || (ban.Category.Threads.Any(thread => thread.Id == threadId)))
                         && (!ban.IsDeleted)
-                        && (ban.Start <= DateTime.Now)
-                        && (ban.End >= DateTime.Now))
+                        && (ban.Start <= DateTime.UtcNow)
+                        && (ban.End >= DateTime.UtcNow))
                 .ToListAsync();
 
             var relatedBan = bans

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Hikkaba.Common.Constants;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels
@@ -12,11 +13,11 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:u}")]
+        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         [Display(Name = @"Creation date and time")]
         public DateTime Created { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:u}")]
+        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         [Display(Name = @"Modification date and time")]
         public DateTime? Modified { get; set; }
 

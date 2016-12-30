@@ -7,6 +7,7 @@ using Hikkaba.Common.Dto;
 using Hikkaba.Common.Dto.Attachments;
 using Hikkaba.Common.Entities;
 using Hikkaba.Common.Entities.Attachments;
+using Hikkaba.Common.Extensions;
 
 namespace Hikkaba.Common.Mapping
 {
@@ -14,6 +15,9 @@ namespace Hikkaba.Common.Mapping
     {
         public MapProfile()
         {
+            CreateMap<DateTime, DateTime>().ConvertUsing<DateTimeToUtcConverter>();
+            CreateMap<DateTime?, DateTime?>().ConvertUsing<NullableDateTimeToUtcConverter>();
+
             CreateMap<ApplicationRole, ApplicationRoleDto>().ReverseMap();
             CreateMap<ApplicationUser, ApplicationUserDto>().ReverseMap();
 

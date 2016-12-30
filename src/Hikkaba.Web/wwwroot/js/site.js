@@ -26,6 +26,11 @@ $(function () {
             navigationFn.goToSection("new-post-message-input");
         });
     }
+
+    $("input.datetimepicker-enabled").each(function () {
+        var el = $(this);
+        el.datetimepicker();
+    });
 });
 
 function getSelectionText() {

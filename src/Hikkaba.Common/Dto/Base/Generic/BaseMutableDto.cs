@@ -1,4 +1,5 @@
 ﻿using System;
+using Hikkaba.Common.Attributes;
 
 namespace Hikkaba.Common.Dto.Base
 {
@@ -14,9 +15,15 @@ namespace Hikkaba.Common.Dto.Base
     public abstract class BaseMutableDto<TPrimaryKey>: BaseDto<TPrimaryKey>, IBaseMutableDto<TPrimaryKey>
     {
         public bool IsDeleted { get; set; }
+
+        [DateTimeKind(DateTimeKind.Utc)]
         public DateTime Created { get; set; }
+
+        [DateTimeKind(DateTimeKind.Utc)]
         public DateTime? Modified { get; set; }
+
         public ApplicationUserDto CreatedBy { get; set; }
+
         public ApplicationUserDto ModifiedBy { get; set; }
     }
 }

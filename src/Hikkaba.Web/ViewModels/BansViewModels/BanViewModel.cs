@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Hikkaba.Common.Constants;
 using Hikkaba.Common.Dto;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
@@ -24,9 +25,11 @@ namespace Hikkaba.Web.ViewModels.BansViewModels
         public DateTime? Modified { get; set; }
 
         [Display(Name = @"Start")]
+        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         public DateTime Start { get; set; }
 
         [Display(Name = @"End")]
+        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         public DateTime End { get; set; }
 
         [Display(Name = @"Lower IP address")]
