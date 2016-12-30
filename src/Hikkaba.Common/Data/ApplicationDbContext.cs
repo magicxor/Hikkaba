@@ -14,6 +14,13 @@ namespace Hikkaba.Common.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            /*
+             * todo: 
+             * we want to automatically set DateTimeKind while fetching DateTime properties from database
+             * (http://www.gitshah.com/2015/02/how-to-automatically-set-datetimekind.html)
+             * but there is no ObjectMaterialized event yet in EF7 (.net core 1.1.0): https://github.com/aspnet/EntityFramework/issues/626
+             * so we set DateTimeKind every time while mapping dto <-> entity
+            */
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

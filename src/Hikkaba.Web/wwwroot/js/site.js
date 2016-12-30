@@ -10,26 +10,49 @@ var navigationFn = {
 
 $(function () {
     $("time.time-localizable").each(function () {
-        var el = $(this);
-        var dt = moment(el.attr("datetime"));
-        el.text(dt.format("DD.MM.YYYY ddd HH:mm:ss"));
+        var timeElement = $(this);
+        var isoUtcDateTime = moment(timeElement.attr("datetime"));
+        timeElement.text(isoUtcDateTime.format("DD.MM.YYYY ddd HH:mm:ss"));
     });
 
     // if js is enabled and post form exists, prevent href=... and insert >>post id to form
-    var inputId = "new-post-message-input";
-    if ($("#" + inputId).length) {
+    var messageInputId = "new-post-message-input";
+    if ($("#" + messageInputId).length) {
         $(".post-id-link").attr("onclick", "return false;");
         $(".post-id-link").click(function () {
-            var el = $(this);
-            writeLineToInput("new-post-message-input", ">>" + el.text(), "");
+            var postIdLink = $(this);
+            writeLineToInput("new-post-message-input", ">>" + postIdLink.text(), "");
             writeSelectionLineToInput("new-post-message-input");
             navigationFn.goToSection("new-post-message-input");
         });
     }
 
     $("input.datetimepicker-enabled").each(function () {
-        var el = $(this);
-        el.datetimepicker();
+        var input = $(this);
+        input.datetimepicker({
+            format: "DD.MM.YYYY HH:mm:ss"
+        });
+    });
+
+    $("input.datepicker-enabled").each(function () {
+        var input = $(this);
+        input.datetimepicker({
+            format: "DD.MM.YYYY"
+        });
+    });
+
+    $("form").each(function () {
+        var form = $(this);
+        form.submit(function(event) {
+            form.find("input.datetimepicker-enabled").each(function () {
+                var input = $(this);
+                input.val(moment(input.val(), "DD.MM.YYYY HH:mm:ss").toISOString());
+            });
+            form.find("input.datepicker-enabled").each(function () {
+                var input = $(this);
+                input.val(moment(input.val(), "DD.MM.YYYY").toISOString());
+            });
+        });
     });
 });
 

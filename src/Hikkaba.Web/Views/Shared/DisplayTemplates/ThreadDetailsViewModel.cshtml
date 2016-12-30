@@ -13,7 +13,7 @@
                     &nbsp;
                     @Model.PostCount posts 
                     &nbsp;
-                    <time datetime="@Html.DisplayFor(model => model.Created)" class="timestamp time-localizable">@Html.DisplayFor(model => model.Created)</time> 
+                    @Html.DisplayFor(model => model.Created)
                     &nbsp;
                     <a href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.Id})">@Model.Id</a>
                     @if (Model.IsPinned)

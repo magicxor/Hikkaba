@@ -25,8 +25,9 @@
                         <b>&nbsp;SAGE</b>
                     }
                     <!-- todo: show post number here -->
+                    <!-- todo: show modified date below if post was modified -->
                     &nbsp;
-                    <time datetime="@Html.DisplayFor(model => model.Created)" class="timestamp time-localizable">@Html.DisplayFor(model => model.Created)</time>
+                    @Html.DisplayFor(model => model.Created)
                     &nbsp;
                     <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId})#@Model.Id">@Html.DisplayFor(model => model.Id)</a>
                 </h3>

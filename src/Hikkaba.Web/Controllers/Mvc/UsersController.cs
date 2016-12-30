@@ -7,6 +7,7 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Common.Dto;
 using Hikkaba.Service;
 using Hikkaba.Web.Filters;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +29,10 @@ namespace Hikkaba.Web.Controllers.Mvc
             _applicationUserService = applicationUserService;
         }
 
-        [Route("Users/{userId}")]
-        public async Task<IActionResult> Details(Guid userId)
+        [Route("Users/{id}")]
+        public async Task<IActionResult> Details(Guid id)
         {
-            var dto = _applicationUserService.GetAsync(userId);
+            var dto = await _applicationUserService.GetAsync(id);
             var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
             return View(viewModel);
         }
@@ -39,7 +40,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Users")]
         public async Task<IActionResult> Index()
         {
-            var dtoList = await _applicationUserService.ListAsync();
+            var dtoList = await _applicationUserService.ListAsync(user => true, user => user.UserName);
             var viewModelList = _mapper.Map<List<ApplicationUserViewModel>>(dtoList);
             return View(viewModelList);
         }
@@ -55,43 +56,59 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ApplicationUserViewModel viewModel)
         {
-            var dto = _mapper.Map<ApplicationUserDto>(viewModel);
-            var id = await _applicationUserService.CreateAsync(dto);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                var dto = _mapper.Map<ApplicationUserDto>(viewModel);
+                var id = await _applicationUserService.CreateAsync(dto);
+                return RedirectToAction("Details", new { id = id });
+            }
+            else
+            {
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return View(viewModel);
+            }
         }
 
-        [Route("Users/{userId}/Edit")]
-        public async Task<IActionResult> Edit(Guid userId)
+        [Route("Users/{id}/Edit")]
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var dto = await _applicationUserService.GetAsync(userId);
+            var dto = await _applicationUserService.GetAsync(id);
             var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
             return View(viewModel);
         }
 
-        [Route("Users/{userId}/Edit")]
+        [Route("Users/{id}/Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ApplicationUserViewModel viewModel)
         {
-            var dto = _mapper.Map<ApplicationUserDto>(viewModel);
-            await _applicationUserService.EditAsync(dto);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                var dto = _mapper.Map<ApplicationUserDto>(viewModel);
+                await _applicationUserService.EditAsync(dto);
+                return RedirectToAction("Details", new { id = dto.Id });
+            }
+            else
+            {
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return View(viewModel);
+            }
         }
 
-        [Route("Users/{userId}/Delete")]
-        public async Task<IActionResult> Delete(Guid userId)
+        [Route("Users/{id}/Delete")]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var dto = await _applicationUserService.GetAsync(userId);
+            var dto = await _applicationUserService.GetAsync(id);
             var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
             return View(viewModel);
         }
 
-        [Route("Users/{userId}/Delete")]
+        [Route("Users/{id}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid userId)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _applicationUserService.DeleteAsync(userId);
+            await _applicationUserService.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }

@@ -7,7 +7,7 @@ namespace Hikkaba.Web.ViewModels.CategoriesViewModels
     public class CategoryViewModel
     {
         [Display(Name = @"Id")]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }

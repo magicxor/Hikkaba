@@ -13,11 +13,9 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }
 
-        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         [Display(Name = @"Creation date and time")]
         public DateTime Created { get; set; }
 
-        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         [Display(Name = @"Modification date and time")]
         public DateTime? Modified { get; set; }
 

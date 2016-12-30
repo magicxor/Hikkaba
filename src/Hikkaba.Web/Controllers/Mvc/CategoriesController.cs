@@ -12,6 +12,7 @@ using Hikkaba.Service;
 using Hikkaba.Service.Base;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
@@ -111,7 +112,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Categories")]
         public async Task<IActionResult> Index()
         {
-            var dtoList = await _categoryService.ListAsync();
+            var dtoList = await _categoryService.ListAsync(category => true, category => category.Alias);
             var viewModelList = _mapper.Map<List<CategoryViewModel>>(dtoList);
             return View(viewModelList);
         }
@@ -125,45 +126,61 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Categories/Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CategoryViewModel categoryEditViewModel)
+        public async Task<IActionResult> Create(CategoryViewModel viewModel)
         {
-            var dto = _mapper.Map<CategoryDto>(categoryEditViewModel);
-            var id = await _categoryService.CreateAsync(dto, CurrentUserId);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                var dto = _mapper.Map<CategoryDto>(viewModel);
+                var id = await _categoryService.CreateAsync(dto, CurrentUserId);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return View(viewModel);
+            }
         }
 
-        [Route("Categories/{categoryId}/Edit")]
-        public async Task<IActionResult> Edit(Guid categoryId)
+        [Route("Categories/{id}/Edit")]
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var dto = await _categoryService.GetAsync(categoryId);
+            var dto = await _categoryService.GetAsync(id);
             var viewModel = _mapper.Map<CategoryViewModel>(dto);
             return View(viewModel);
         }
 
-        [Route("Categories/{categoryId}/Edit")]
+        [Route("Categories/{id}/Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> Edit(CategoryViewModel viewModel)
         {
-            var dto = _mapper.Map<CategoryDto>(categoryViewModel);
-            await _categoryService.EditAsync(dto, CurrentUserId);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                var dto = _mapper.Map<CategoryDto>(viewModel);
+                await _categoryService.EditAsync(dto, CurrentUserId);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return View(viewModel);
+            }
         }
 
-        [Route("Categories/{categoryId}/Delete")]
-        public async Task<IActionResult> Delete(Guid categoryId)
+        [Route("Categories/{id}/Delete")]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var dto = await _categoryService.GetAsync(categoryId);
+            var dto = await _categoryService.GetAsync(id);
             var viewModel = _mapper.Map<CategoryViewModel>(dto);
             return View(viewModel);
         }
 
-        [Route("Categories/{categoryId}/Delete")]
+        [Route("Categories/{id}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid categoryId)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _categoryService.DeleteAsync(categoryId, CurrentUserId);
+            await _categoryService.DeleteAsync(id, CurrentUserId);
             return RedirectToAction("Index");
         }
     }

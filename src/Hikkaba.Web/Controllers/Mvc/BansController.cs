@@ -9,6 +9,7 @@ using Hikkaba.Common.Entities;
 using Hikkaba.Service;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Hikkaba.Web.ViewModels.BoardViewModels;
@@ -21,7 +22,6 @@ namespace Hikkaba.Web.Controllers.Mvc
 {
     // todo: add ban for specific category (select category from list)
     // todo: add ability to attach related post to ban
-    // todo: add datetimepicker which will convert time to UTC
     // todo: add ban functions: 1) ban by ip 2) ban by ip range 3) ban and delete all posts in category 4) ban and delete all posts
 
     [TypeFilter(typeof(ExceptionLoggingFilter))]
@@ -39,18 +39,19 @@ namespace Hikkaba.Web.Controllers.Mvc
             _banService = banService;
         }
 
-        [Route("Bans/{banId}")]
-        public async Task<IActionResult> Details(Guid banId)
+        [Route("Bans/{id}")]
+        public async Task<IActionResult> Details(Guid id)
         {
-            var banDto = await _banService.GetAsync(banId);
-            var banViewModel = _mapper.Map<BanViewModel>(banDto);
-            return View(banViewModel);
+            var dto = await _banService.GetAsync(id);
+            var viewModel = _mapper.Map<BanViewModel>(dto);
+            return View(viewModel);
         }
 
         [Route("Bans")]
         public async Task<IActionResult> Index()
         {
-            var dtoList = await _banService.ListAsync();
+            // todo: pagination
+            var dtoList = await _banService.ListAsync(ban => (ban.End >= DateTime.UtcNow), ban => ban.Created, true);
             var viewModelList = _mapper.Map<List<BanViewModel>>(dtoList);
             return View(viewModelList);
         }
@@ -64,46 +65,62 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Bans/Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BanViewModel ban)
+        public async Task<IActionResult> Create(BanViewModel viewModel)
         {
-            var dto = _mapper.Map<BanDto>(ban);
-            var id = await _banService.CreateOrGetIdAsync(dto, CurrentUserId);
-            // todo: notification about existing ban
-            return RedirectToAction("Details", new { banId = id });
+            if (ModelState.IsValid)
+            {
+                var dto = _mapper.Map<BanDto>(viewModel);
+                var id = await _banService.CreateOrGetIdAsync(dto, CurrentUserId);
+                // todo: notification about existing ban
+                return RedirectToAction("Details", new {id = id});
+            }
+            else
+            {
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return View(viewModel);
+            }
         }
 
-        [Route("Bans/{banId}/Edit")]
-        public async Task<IActionResult> Edit(Guid banId)
+        [Route("Bans/{id}/Edit")]
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var dto = await _banService.GetAsync(banId);
+            var dto = await _banService.GetAsync(id);
             var viewModel = _mapper.Map<BanViewModel>(dto);
             return View(viewModel);
         }
 
-        [Route("Bans/{banId}/Edit")]
+        [Route("Bans/{id}/Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(BanViewModel ban)
+        public async Task<IActionResult> Edit(BanViewModel viewModel)
         {
-            var dto = _mapper.Map<BanDto>(ban);
-            await _banService.EditAsync(dto, CurrentUserId);
-            return RedirectToAction("Details", new { banId = dto.Id });
+            if (ModelState.IsValid)
+            {
+                var dto = _mapper.Map<BanDto>(viewModel);
+                await _banService.EditAsync(dto, CurrentUserId);
+                return RedirectToAction("Details", new {id = dto.Id});
+            }
+            else
+            {
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return View(viewModel);
+            }
         }
 
-        [Route("Bans/{banId}/Delete")]
-        public async Task<IActionResult> Delete(Guid banId)
+        [Route("Bans/{id}/Delete")]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var dto = await _banService.GetAsync(banId);
+            var dto = await _banService.GetAsync(id);
             var viewModel = _mapper.Map<BanViewModel>(dto);
             return View(viewModel);
         }
 
-        [Route("Bans/{banId}/Delete")]
+        [Route("Bans/{id}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid banId)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _banService.DeleteAsync(banId, CurrentUserId);
+            await _banService.DeleteAsync(id, CurrentUserId);
             return RedirectToAction("Index");
         }
     }

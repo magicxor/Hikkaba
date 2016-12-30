@@ -71,24 +71,24 @@ namespace Hikkaba.Web.Controllers.Mvc
                     CaptchaGeneratorLanguage = Language.English)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> Create(string categoryAlias, Guid threadId, PostAnonymousCreateViewModel postAnonymousCreateViewModel)
+        public async Task<IActionResult> Create(PostAnonymousCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var thread = await _threadService.GetAsync(postAnonymousCreateViewModel.ThreadId);
+                var thread = await _threadService.GetAsync(viewModel.ThreadId);
                 if (!thread.IsClosed)
                 {
-                    var postDto = _mapper.Map<PostDto>(postAnonymousCreateViewModel);
+                    var postDto = _mapper.Map<PostDto>(viewModel);
                     postDto.UserIpAddress = UserIpAddress.ToString();
                     postDto.UserAgent = UserAgent;
 
-                    var postId = await _postService.CreateAsync(postAnonymousCreateViewModel.Attachments, postDto);
+                    var postId = await _postService.CreateAsync(viewModel.Attachments, postDto);
                     return
-                        Redirect(Url.Action("Details", "Threads", 
+                        Redirect(Url.Action("Details", "Threads",
                         new
                         {
-                            categoryAlias = categoryAlias,
-                            threadId = threadId
+                            categoryAlias = viewModel.CategoryAlias,
+                            threadId = viewModel.ThreadId
                         }) + "#" + postId);
                 }
                 else
@@ -99,7 +99,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             else
             {
                 ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
-                return await Create(categoryAlias, threadId);
+                return View(viewModel);
             }
         }
 
@@ -183,33 +183,41 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string categoryAlias, Guid threadId, Guid postId, PostEditViewModel postEditViewModel)
+        public async Task<IActionResult> Edit(PostEditViewModel viewModel)
         {
-            var postDto = await _postService.GetAsync(postId);
-            var threadDto = await _threadService.GetAsync(postDto.ThreadId);
-            var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
-
-            if ((threadDto.Id != threadId) || (categoryDto.Alias != categoryAlias))
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Edit", new
+                var postDto = await _postService.GetAsync(viewModel.Id);
+                var threadDto = await _threadService.GetAsync(postDto.ThreadId);
+                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+
+                if ((threadDto.Id != viewModel.ThreadId) || (categoryDto.Alias != viewModel.CategoryAlias))
                 {
-                    categoryAlias = categoryDto.Alias,
-                    threadId = threadDto.Id,
-                    postId = postDto.Id
-                });
-            }
+                    return RedirectToAction("Edit", new
+                    {
+                        categoryAlias = categoryDto.Alias,
+                        threadId = threadDto.Id,
+                        postId = postDto.Id
+                    });
+                }
 
-            var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
-            if (isCurrentUserCategoryModerator)
-            {
-                postDto = _mapper.Map(postEditViewModel, postDto);
-                await _postService.EditAsync(postDto, CurrentUserId);
-                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
+                var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                    .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+                if (isCurrentUserCategoryModerator)
+                {
+                    postDto = _mapper.Map(viewModel, postDto);
+                    await _postService.EditAsync(postDto, CurrentUserId);
+                    return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
+                }
+                else
+                {
+                    throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+                }
             }
             else
             {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+                ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+                return View(viewModel);
             }
         }
 
@@ -222,7 +230,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string categoryAlias, Guid threadId, Guid postId, PostEditViewModel postEditViewModel)
+        public async Task<IActionResult> Delete(PostEditViewModel postEditViewModel)
         {
             throw new NotImplementedException();
         }

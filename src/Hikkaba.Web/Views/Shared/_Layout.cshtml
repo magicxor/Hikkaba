@@ -29,8 +29,9 @@
 <body>
     @Html.Partial("_NavbarPartial")
     <div class="container body-content">
+        @Html.Partial("_ErrorMessagePartial")
         @RenderBody()
-        <hr />
+        <hr/>
         <footer>
             <p>&copy; @DateTime.UtcNow.Year - @Defaults.BoardName</p>
         </footer>

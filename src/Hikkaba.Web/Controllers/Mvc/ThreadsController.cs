@@ -119,28 +119,27 @@ namespace Hikkaba.Web.Controllers.Mvc
              CaptchaGeneratorLanguage = Language.English)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> Create(string categoryAlias,
-            ThreadAnonymousCreateViewModel threadAnonymousCreateViewModel)
+        public async Task<IActionResult> Create(ThreadAnonymousCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var category = await _categoryService.GetAsync(categoryAlias);
+                var category = await _categoryService.GetAsync(viewModel.CategoryAlias);
 
-                var threadDto = _mapper.Map<ThreadDto>(threadAnonymousCreateViewModel);
+                var threadDto = _mapper.Map<ThreadDto>(viewModel);
                 threadDto.BumpLimit = category.DefaultBumpLimit;
                 threadDto.ShowThreadLocalUserHash = category.DefaultShowThreadLocalUserHash;
                 threadDto.CategoryId = category.Id;
 
                 var threadId = await _threadService.CreateAsync(threadDto);
 
-                var postDto = _mapper.Map<PostDto>(threadAnonymousCreateViewModel);
+                var postDto = _mapper.Map<PostDto>(viewModel);
                 postDto.ThreadId = threadId;
                 postDto.UserIpAddress = UserIpAddress.ToString();
                 postDto.UserAgent = UserAgent;
 
                 try
                 {
-                    var postId = await _postService.CreateAsync(threadAnonymousCreateViewModel.Attachments, postDto);
+                    var postId = await _postService.CreateAsync(viewModel.Attachments, postDto);
                 }
                 catch (Exception ex)
                 {
@@ -149,12 +148,12 @@ namespace Hikkaba.Web.Controllers.Mvc
                     throw;
                 }
 
-                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryAlias, threadId = threadId });
+                return RedirectToAction("Details", "Threads", new { categoryAlias = viewModel.CategoryAlias, threadId = threadId });
             }
             else
             {
                 ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
-                return await Create(categoryAlias);
+                return View(viewModel);
             }
         }
 

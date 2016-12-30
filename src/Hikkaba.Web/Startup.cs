@@ -21,6 +21,7 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Common.Storage.Implementations;
 using Hikkaba.Common.Storage.Interfaces;
 using Hikkaba.Service;
+using Hikkaba.Web.Binding.Providers;
 using Hikkaba.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -76,7 +77,10 @@ namespace Hikkaba.Web
             services.Configure<HikkabaConfiguration>(Configuration.GetSection(typeof(HikkabaConfiguration).Name));
             services.Configure<SeedConfiguration>(Configuration.GetSection(typeof(SeedConfiguration).Name));
 
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.ModelBinderProviders.Insert(0, new DateTimeKindSensitiveBinderProvider());
+            });
 
             services.AddBootstrapPagerGenerator(options =>
             {

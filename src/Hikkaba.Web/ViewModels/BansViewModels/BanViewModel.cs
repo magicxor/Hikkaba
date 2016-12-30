@@ -13,7 +13,7 @@ namespace Hikkaba.Web.ViewModels.BansViewModels
     public class BanViewModel
     {
         [Display(Name = @"Id")]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }
@@ -25,11 +25,9 @@ namespace Hikkaba.Web.ViewModels.BansViewModels
         public DateTime? Modified { get; set; }
 
         [Display(Name = @"Start")]
-        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         public DateTime Start { get; set; }
 
         [Display(Name = @"End")]
-        [DisplayFormat(DataFormatString = Defaults.CsharpGlobalDateTimeFormatString)]
         public DateTime End { get; set; }
 
         [Display(Name = @"Lower IP address")]
