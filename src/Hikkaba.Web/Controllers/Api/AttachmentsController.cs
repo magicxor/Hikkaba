@@ -1,22 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
 using Hikkaba.Common.Storage.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
-using System.Net;
-using Hikkaba.Common.Extensions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 using TwentyTwenty.Storage;
 
 namespace Hikkaba.Web.Controllers.Api
 {
-    // todo: add filesize header
-
     public class AttachmentsController : Controller
     {
         private readonly IContentTypeProvider _contentTypeProvider = new FileExtensionContentTypeProvider();
@@ -40,26 +32,30 @@ namespace Hikkaba.Web.Controllers.Api
             }
         }
         
-        [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Any, Duration = 31556926)]
+        [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Any, Duration = Defaults.DefaultAttachmentsCacheDuration)]
         public async Task<IActionResult> Get(string containerName, string blobName, string fileExtension, bool getThumbnail)
         {
-            HttpContext.Response.Headers.AddOrReplaceHeaderKey(HeaderNames.LastModified, Defaults.DefaultLastModified);
-
-            var cached = HttpContext.Request.Headers.ContainsKey(HeaderNames.IfModifiedSince);
-            if (cached)
+            HttpContext.Response.Headers[HeaderNames.LastModified] = Defaults.DefaultLastModified;
+            
+            if (HttpContext.Request.Headers.ContainsKey(HeaderNames.IfModifiedSince))
             {
                 return StatusCode(StatusCodes.Status304NotModified);
             }
             else
             {
                 var fileName = blobName + "." + fileExtension;
-                HttpContext.Response.Headers.AddOrReplaceHeaderKey(HeaderNames.ContentDisposition, "inline; filename=" + fileName);
                 if (getThumbnail)
                 {
                     containerName = containerName + Defaults.ThumbnailPostfix;
                 }
                 var contentType = GetContentTypeByFileName(fileName);
+                var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(containerName, blobName);
                 var blobStream = await _storageProvider.GetBlobStreamAsync(containerName, blobName);
+                
+                HttpContext.Response.Headers[HeaderNames.ContentDisposition] = "inline; filename=" + fileName;
+                HttpContext.Response.ContentType = contentType;
+                HttpContext.Response.ContentLength = blobDescriptor.Length;
+
                 return new FileStreamResult(blobStream, contentType);
             }
         }

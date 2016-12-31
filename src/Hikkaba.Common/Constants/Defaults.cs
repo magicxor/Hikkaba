@@ -27,6 +27,7 @@ namespace Hikkaba.Common.Constants
 
         public const string DefaultMimeType = "application/octet-stream";
         public static string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
+        public const int DefaultAttachmentsCacheDuration = 31556926; // ~ 1 year
 
         /// <summary>
         /// <para><a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/datatypes.html#common.data.datetime-def">Date and time</a> (RFC 3339, ISO 8601).</para>
