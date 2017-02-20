@@ -1,22 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3EB6C286-DD43-4E45-838E-6F7500FC8AF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5AE49F7B-0146-4132-934D-BEDA029FBE4A}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Hikkaba.Common", "src\Hikkaba.Common\Hikkaba.Common.xproj", "{322ECAAE-B627-4FB9-B033-405D8385D917}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Common", "src\Hikkaba.Common\Hikkaba.Common.csproj", "{322ECAAE-B627-4FB9-B033-405D8385D917}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Hikkaba.Web", "src\Hikkaba.Web\Hikkaba.Web.xproj", "{06C884F9-F957-4397-AD76-9A52C0C0D2F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Web", "src\Hikkaba.Web\Hikkaba.Web.csproj", "{06C884F9-F957-4397-AD76-9A52C0C0D2F6}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Hikkaba.Service", "src\Hikkaba.Service\Hikkaba.Service.xproj", "{E2CA8FD2-9971-4BD6-8881-436891ACE7A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Service", "src\Hikkaba.Service\Hikkaba.Service.csproj", "{E2CA8FD2-9971-4BD6-8881-436891ACE7A3}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CodeKicker.BBCodeMod", "src\CodeKicker.BBCodeMod\CodeKicker.BBCodeMod.xproj", "{C2950674-3660-4434-8240-A85273C02A67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeKicker.BBCodeMod", "src\CodeKicker.BBCodeMod\CodeKicker.BBCodeMod.csproj", "{C2950674-3660-4434-8240-A85273C02A67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
