@@ -46,7 +46,7 @@ namespace Hikkaba.Web
             if (env.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
+                builder.AddUserSecrets("Hikkaba");
 
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
@@ -129,9 +129,7 @@ namespace Hikkaba.Web
             env.ConfigureNLog("nlog.config");
 
             var logger = loggerFactory.CreateLogger<Startup>();
-
-            app.UseApplicationInsightsRequestTelemetry();
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -144,7 +142,6 @@ namespace Hikkaba.Web
             }
 
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
-            app.UseApplicationInsightsExceptionTelemetry();
             app.UseIdentity();
 
             Directory.CreateDirectory(Path.Combine(env.WebRootPath, Defaults.AttachmentsStorageDirectoryName));
