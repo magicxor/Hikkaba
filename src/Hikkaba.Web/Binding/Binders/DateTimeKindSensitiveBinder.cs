@@ -32,7 +32,7 @@ namespace Hikkaba.Web.Binding.Binders
                 if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out model))
                 {
                     bindingContext.Result = ModelBindingResult.Success(model);
-                    return Task.CompletedTask;
+                    return TaskCache.CompletedTask;
                 }
             }
 
