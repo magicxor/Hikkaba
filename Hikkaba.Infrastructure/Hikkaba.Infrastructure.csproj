@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hikkaba.Data\Hikkaba.Data.csproj" />
+    <ProjectReference Include="..\Hikkaba.Models\Hikkaba.Models.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,19 @@
+﻿@using Hikkaba.Models.Configuration
+@using Hikkaba.Web.Utils
+@using Microsoft.Extensions.Options
+@model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.VideoViewModel
+@inject IOptions<HikkabaConfiguration> Settings
+
+@{
+    var fileSizeString = FileSizeStringifier.Stringify(@Model.Size);
+    var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
+}
+
+<li>
+    <div>
+        <p><a href="@Url.Action("Get", "Attachments", new { containerName = Model.ThreadId.ToString(), blobName = Model.Id.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.Id.ToString().@Model.FileExtension">@filePropertiesString</a></p>
+        <video style="max-width: @(Settings.Value.ThumbnailsMaxWidth)px; max-height: @(Settings.Value.ThumbnailsMaxHeight)px" src="@Url.Action("Get", "Attachments", new { containerName = Model.ThreadId.ToString(), blobName = Model.Id.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" controls="controls">
+            Video (@filePropertiesString)
+        </video>
+    </div>
+</li>
