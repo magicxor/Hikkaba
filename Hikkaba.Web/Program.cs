@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NLog.Web;
 
 namespace Hikkaba.Web
 {
@@ -17,6 +19,12 @@ namespace Hikkaba.Web
                 {
                     config.AddJsonFile("seedconfig.json", optional: false, reloadOnChange: true);
                 })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(LogLevel.Trace);
+                })
+                .UseNLog()
                 .UseStartup<Startup>();
     }
 }

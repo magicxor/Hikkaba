@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using AutoMapper;
 using DNTCaptcha.Core;
+using Hikkaba.Common.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Mapping;
@@ -8,6 +10,7 @@ using Hikkaba.Models.Configuration;
 using Hikkaba.Service;
 using Hikkaba.Service.Ref;
 using Hikkaba.Service.Storage;
+using Hikkaba.Web.Binding.Providers;
 using Hikkaba.Web.Mapping;
 using Hikkaba.Web.Services;
 using Microsoft.AspNetCore.Builder;
@@ -56,7 +59,12 @@ namespace Hikkaba.Web
             services.Configure<HikkabaConfiguration>(Configuration.GetSection(typeof(HikkabaConfiguration).Name));
             services.Configure<SeedConfiguration>(Configuration.GetSection(typeof(SeedConfiguration).Name));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services
+                .AddMvc(options =>
+                {
+                    options.ModelBinderProviders.Insert(0, new DateTimeKindSensitiveBinderProvider());
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddBootstrapPagerGenerator(options =>
             {
@@ -104,9 +112,14 @@ namespace Hikkaba.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Details");
                 app.UseHsts();
             }
+
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+            Directory.CreateDirectory(Path.Combine(env.WebRootPath, Defaults.AttachmentsStorageDirectoryName));
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
