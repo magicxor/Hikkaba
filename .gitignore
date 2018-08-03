@@ -256,3 +256,4 @@ src/Hikkaba.Web/Properties/PublishProfiles/
 src/Hikkaba.Web/wwwroot/css/site.min.css
 src/Hikkaba.Web/wwwroot/js/site.min.js
 .vscode/
+Hikkaba.Web/seedconfig.json
