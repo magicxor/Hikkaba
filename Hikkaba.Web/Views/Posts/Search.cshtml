@@ -13,12 +13,11 @@
         @if ((Model?.Posts != null) && (Model.Posts.TotalItemsCount > 0) && (Model.Posts.CurrentPage.PageNumber > 0))
         {
             @Html.DisplayFor(model => model.Posts.CurrentPageItems)
-            @Html.Partial("_PagerPartial", new PageInfoViewModel
+            <partial name="_PagerPartial" model="new PageInfoViewModel
                                             {
                                                 CurrentPageNumber = Model.Posts.CurrentPage.PageNumber,
                                                 TotalPageCount = Model.Posts.TotalPageCount
-                                            }
-            )
+                                            }"/>
         }
         else
         {
