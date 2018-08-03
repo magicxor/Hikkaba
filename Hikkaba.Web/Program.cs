@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace Hikkaba.Web
 {
@@ -12,6 +13,10 @@ namespace Hikkaba.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((builderContext, config) =>
+                {
+                    config.AddJsonFile("seedconfig.json", optional: false, reloadOnChange: true);
+                })
                 .UseStartup<Startup>();
     }
 }

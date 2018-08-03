@@ -18,6 +18,7 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.2.0" />
     <PackageReference Include="Sakura.AspNetCore.Mvc.PagedList" Version="2.0.12" />
     <PackageReference Include="Sakura.AspNetCore.PagedList.Async" Version="1.0.0" />
+    <PackageReference Include="Scrutor" Version="2.2.2" />
     <PackageReference Include="TwentyTwenty.Storage" Version="2.7.0" />
     <PackageReference Include="TwentyTwenty.Storage.Local" Version="2.7.0" />
   </ItemGroup>
