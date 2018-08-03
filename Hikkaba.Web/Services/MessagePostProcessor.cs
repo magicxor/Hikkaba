@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using CodeKicker.BBCode;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Narochno.BBCode;
 
 namespace Hikkaba.Web.Services
 {
@@ -22,7 +22,7 @@ namespace Hikkaba.Web.Services
                     new BBTag("i", "<i>", "</i>"),
                     new BBTag("u", "<u>", "</u>"),
                     new BBTag("s", "<s>", "</s>"),
-                    new BBTag("pre", "<pre>", "</pre>"),
+                    new BBTag("pre", "<pre>", "</pre>"){StopProcessing = true},
                     new BBTag("sub", "<sub>", "</sub>"),
                     new BBTag("sup", "<sup>", "</sup>"),
                     new BBTag("spoiler", "<span class=\"censored\">", "</span>"),
@@ -55,9 +55,16 @@ namespace Hikkaba.Web.Services
                  @"<a href=""" + threadUri + "#$1" + @""">&gt;&gt;$1</a>");
         }
 
-        private string LineBreaksToHtmlTags(string text)
+        private string ReplaceLineTerminators(string text)
         {
-            return text.Replace("&#xA;", "<br/>").Replace("&#xD;", "");
+            return Regex.Replace(text,
+                @"\u000D\u000A|\u000A|\u000B|\u000C|\u000D|\u0085|\u2028|\u2029",
+                "\r\n");
+        }
+
+        private string LimitLineTerminatorCount(string text)
+        {
+            return Regex.Replace(text, @"(\u000D\u000A){3,}", "\r\n\r\n");
         }
 
         public string Process(string categoryAlias, Guid threadId, string text)
@@ -65,9 +72,7 @@ namespace Hikkaba.Web.Services
             var bbParsed = _bbCodeParser.ToHtml(text);
             var uriParsed = UriToHtmlLinks(bbParsed);
             var crossLinksParsed = CrossLinksToHtmlLinks(categoryAlias, threadId, uriParsed);
-            var lineBreaksParsed = LineBreaksToHtmlTags(crossLinksParsed);
-
-            var result = lineBreaksParsed;
+            var result = crossLinksParsed;
             return result;
         }
     }

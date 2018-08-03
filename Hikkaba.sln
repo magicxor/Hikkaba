@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Infrastructure", "H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Models", "Hikkaba.Models\Hikkaba.Models.csproj", "{260D71AC-FAC0-44B9-8ABE-8AF276CA0917}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeKicker.BBCode", "CodeKicker.BBCode\CodeKicker.BBCode.csproj", "{F01F2F42-A235-40D0-8CA9-382AED16A321}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeKicker.BBCode.Tests", "CodeKicker.BBCode.Tests\CodeKicker.BBCode.Tests.csproj", "{0621EE9C-87DB-4309-91B5-9A949B665EA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{260D71AC-FAC0-44B9-8ABE-8AF276CA0917}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{260D71AC-FAC0-44B9-8ABE-8AF276CA0917}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{260D71AC-FAC0-44B9-8ABE-8AF276CA0917}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F01F2F42-A235-40D0-8CA9-382AED16A321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F01F2F42-A235-40D0-8CA9-382AED16A321}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F01F2F42-A235-40D0-8CA9-382AED16A321}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F01F2F42-A235-40D0-8CA9-382AED16A321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0621EE9C-87DB-4309-91B5-9A949B665EA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0621EE9C-87DB-4309-91B5-9A949B665EA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0621EE9C-87DB-4309-91B5-9A949B665EA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0621EE9C-87DB-4309-91B5-9A949B665EA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

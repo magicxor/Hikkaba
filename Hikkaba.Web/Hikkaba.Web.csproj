@@ -14,7 +14,6 @@
     <PackageReference Include="MailKit" Version="2.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" PrivateAssets="All" />
-    <PackageReference Include="Narochno.BBCode" Version="2.0.1" />
     <PackageReference Include="NLog" Version="4.5.7" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
     <PackageReference Include="Sakura.AspNetCore.Mvc.PagedList" Version="2.0.12" />
@@ -31,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CodeKicker.BBCode\CodeKicker.BBCode.csproj" />
     <ProjectReference Include="..\Hikkaba.Data\Hikkaba.Data.csproj" />
     <ProjectReference Include="..\Hikkaba.Models\Hikkaba.Models.csproj" />
     <ProjectReference Include="..\Hikkaba.Service\Hikkaba.Service.csproj" />
