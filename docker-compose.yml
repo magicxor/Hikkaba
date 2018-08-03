@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  hikkaba.web:
+    image: ${DOCKER_REGISTRY}hikkabaweb
+    build:
+      context: .
+      dockerfile: Hikkaba.Web\Dockerfile

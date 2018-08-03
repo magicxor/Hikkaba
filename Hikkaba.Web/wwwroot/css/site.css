@@ -1,0 +1,145 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+
+body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set widths on the form inputs since otherwise they're 100% wide */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* buttons and links extension to use brackets: [ click me ] */
+.btn-bracketed::before {
+    display: inline-block;
+    content: "[";
+    padding-right: 0.5em;
+}
+
+.btn-bracketed::after {
+    display: inline-block;
+    content: "]";
+    padding-left: 0.5em;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+
+/* Remove borders from list-group */
+li.borderless {
+    border: none;
+}
+
+span.visible-line-breaks {
+    white-space: pre-line;
+}
+
+/* Fix PRE tag in post body */
+span.visible-line-breaks pre {
+    margin-top: 10px;
+    display: inline-block;
+}
+
+/* Spoiler */
+.censored {
+    color: black;
+    background-color: black;
+    padding: 1px;
+}
+
+    .censored a {
+        color: black;
+        text-decoration: underline;
+        padding: 1px;
+    }
+
+    .censored:hover {
+        color: inherit;
+        background-color: inherit !important;
+    }
+
+/* Post/thread datetime */
+.timestamp {
+    padding: 2px 4px;
+    font-size: 90%;
+    color: #c7254e;
+    background-color: #f9f2f4;
+    border-radius: 4px;
+    font-weight: 500;
+    line-height: 1.1;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* Long identifiers */
+.post-title {
+    word-wrap: break-word;
+}
+
+/* Set standard style for links in post title */
+a.post-title {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+    a.post-title:hover, a.post-title:focus {
+        color: #23527c;
+        text-decoration: underline;
+    }
+
+.post-content {
+    overflow: auto;
+}
+
+.display-inline {
+    display: inline;
+}
+
+.thread-moderation-panel {
+    margin: 0.5em;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 100%;
+}
+
+.deleted {
+    background-color: rgb(200, 200, 200);
+    color: rgb(109, 109, 109);
+    font-style: italic;
+}

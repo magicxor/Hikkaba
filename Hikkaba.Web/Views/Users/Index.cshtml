@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Hikkaba.Web.ViewModels.AdministrationViewModels.ApplicationUserViewModel>
+@{
+    ViewData["Title"] = $"Categories";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+<hr />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.UserName)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.LastLogin)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            @Html.DisplayFor(model => item)
+        }
+    </tbody>
+</table>

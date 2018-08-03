@@ -1,0 +1,10 @@
+﻿@model DateTime?
+
+@if (Model.HasValue)
+{
+    <time class="time-localizable" datetime="@Model.Value.ToString("o")">@Model.Value.ToString("o")</time>
+}
+else
+{
+    @("—")
+}

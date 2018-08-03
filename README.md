@@ -19,16 +19,22 @@ Features
 - [x] URI detection
    * http://, https://, ftp:// links autodetection
 - [x] Captcha ([DNTCaptcha.Core](https://github.com/VahidN/DNTCaptcha.Core))
+- [x] Server-side paging (using [Sakura.AspNetCore.PagedList](https://github.com/sgjsakura/AspNetCore/))
 - [x] Thread-local user hashes (can be enabled for each thread separately)
 - [x] Search
 - [x] Display a datetime in current user timezone (using [Moment.js](http://momentjs.com/))
+- [x] Support for multiple file storage engines (using [20|20 Storage](https://github.com/2020IP/TwentyTwenty.Storage))
+   * Local File System Storage (enabled by default)
+   * Azure Blob Storage
+   * Amazon S3
+   * Google Cloud Storage
 - [ ] Administration panel
 - [ ] Moderator powers customization
-- [ ] Moderation functions
-- [ ] Ban system - by IP or IP range
+- [x] Moderation functions
+- [x] Ban system - by IP or IP range
 - [ ] Max file size limitation
 - [ ] Max total files size per post limitation
-- [ ] Max attachments count limitation
+- [x] Max attachments count limitation
 - [ ] Identity lockout
 - [ ] Max threads limit per category
 - [ ] Archivation & deletion of old threads
@@ -38,13 +44,19 @@ Features
 - [ ] Detection of attachment duplicates per thread
 - [ ] Image files optimization
 - [ ] Display thread-local user hashes as google docs-like colored animals
-- [ ] Support for multiple file storage engines and multiple database engines
 - [ ] Primary key types - GUID or BIGINT
 
 Screenshots
 ========
 
+## Home page
 ![Home page](http://i.imgur.com/VSqxCqE.png)
+
+## Reply form
 ![Reply form](http://i.imgur.com/aVO3paD.png)
+
+## Thread
 ![Thread](http://i.imgur.com/OLJ8YS6.png)
+
+## Search
 ![Search](http://i.imgur.com/wkp4WoR.png)
