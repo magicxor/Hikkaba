@@ -1,8 +1,7 @@
-﻿using CodeKicker.BBCode;
-using CodeKicker.BBCode.SyntaxTree;
+﻿using CodeKicker.BBCode.SyntaxTree;
 using Xunit;
 
-namespace Narochno.BBCode.Tests
+namespace CodeKicker.BBCode.Tests
 {
     public partial class BBCodeParserTest
     {

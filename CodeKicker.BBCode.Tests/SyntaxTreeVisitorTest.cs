@@ -2,7 +2,7 @@
 using CodeKicker.BBCode.SyntaxTree;
 using Xunit;
 
-namespace Narochno.BBCode.Tests
+namespace CodeKicker.BBCode.Tests
 {
     public partial class SyntaxTreeVisitorTest
     {
