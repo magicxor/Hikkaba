@@ -1,9 +1,8 @@
 ﻿using System.IO;
 using System.Reflection;
-using CodeKicker.BBCode;
 using Xunit;
 
-namespace Narochno.BBCode.Tests
+namespace CodeKicker.BBCode.Tests
 {
     public class SimilarityTests
     {

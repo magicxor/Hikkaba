@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CodeKicker.BBCode;
 using CodeKicker.BBCode.SyntaxTree;
 
-namespace Narochno.BBCode.Tests
+namespace CodeKicker.BBCode.Tests
 {
     public static class BBCodeTestUtil
     {

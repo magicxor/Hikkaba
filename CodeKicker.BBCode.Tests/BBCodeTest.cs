@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using CodeKicker.BBCode;
 using CodeKicker.BBCode.SyntaxTree;
 using Xunit;
 
-namespace Narochno.BBCode.Tests
+namespace CodeKicker.BBCode.Tests
 {
     public partial class BBCodeTest
     {

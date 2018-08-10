@@ -6,7 +6,6 @@ using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Infrastructure.Utils;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services.Base.Concrete;
 using Hikkaba.Services.Base.Generic;
@@ -18,7 +17,6 @@ namespace Hikkaba.Services
 {
     public interface IBanService : IBaseModeratedMutableEntityService<BanDto, Ban>
     {
-        bool IsInRange(string ipAddress, string rangeLowerIpAddress, string rangeUpperIpAddress);
         Task<Tuple<bool, string>> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress);
         Task<TPrimaryKey> CreateOrGetIdAsync(BanDto dto, TPrimaryKey currentUserId);
         Task EditAsync(BanDto dto, TPrimaryKey currentUserId);
@@ -27,13 +25,16 @@ namespace Hikkaba.Services
     public class BanService : BaseModeratedMutableEntityService<BanDto, Ban>, IBanService
     {
         private readonly ICategoryToModeratorService _categoryToModeratorService;
+        private readonly IIpAddressCalculator _ipAddressCalculator;
 
         public BanService(IMapper mapper,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
+            ICategoryToModeratorService categoryToModeratorService,
+            IIpAddressCalculator ipAddressCalculator) : base(mapper, context, userManager)
         {
             _categoryToModeratorService = categoryToModeratorService;
+            _ipAddressCalculator = ipAddressCalculator;
         }
 
         protected override TPrimaryKey GetCategoryId(Ban entity)
@@ -49,14 +50,6 @@ namespace Hikkaba.Services
         protected override DbSet<Ban> GetDbSet(ApplicationDbContext context)
         {
             return context.Bans;
-        }
-
-        public bool IsInRange(string ipAddress, string rangeLowerIpAddress, string rangeUpperIpAddress)
-        {
-            var rangeStart = IPAddress.Parse(rangeLowerIpAddress);
-            var rangeEnd = IPAddress.Parse(rangeUpperIpAddress);
-            var range = new IPAddressRange(rangeStart, rangeEnd);
-            return range.Contains(IPAddress.Parse(ipAddress));
         }
 
         public async Task<TPrimaryKey> CreateOrGetIdAsync(BanDto dto, TPrimaryKey currentUserId)
@@ -91,7 +84,7 @@ namespace Hikkaba.Services
                 }
 
                 Category relatedCategory = null;
-                if ((dto.Category != null) && (dto.Category?.Id != default(TPrimaryKey)))
+                if (dto.Category != null)
                 {
                     relatedCategory = await Context.Categories.FirstOrDefaultAsync(category => category.Id == dto.Category.Id);
                     if (relatedCategory == null)
@@ -132,7 +125,7 @@ namespace Hikkaba.Services
 
             var relatedBan = bans
                 .FirstOrDefault(ban =>
-                    IsInRange(userIpAddress, ban.LowerIpAddress, ban.UpperIpAddress));
+                    _ipAddressCalculator.IsInRange(userIpAddress, ban.LowerIpAddress, ban.UpperIpAddress));
 
             var isPostingAllowed = relatedBan == null;
 
