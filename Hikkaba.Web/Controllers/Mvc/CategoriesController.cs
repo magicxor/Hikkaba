@@ -60,7 +60,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var pageDto = new PageDto(page, size);
             var categoryDto = await _categoryService.GetAsync(categoryAlias);
-            var threadDtoList = await _threadService.PagedListCategoryThreadsOrdered(categoryDto.Id, pageDto);
+            var threadDtoList = await _threadService.PagedListAsync(categoryDto.Id, pageDto);
 
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
                                                 .IsUserCategoryModeratorAsync(categoryDto.Id, User);

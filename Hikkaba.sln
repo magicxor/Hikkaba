@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeKicker.BBCode", "CodeKi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeKicker.BBCode.Tests", "CodeKicker.BBCode.Tests\CodeKicker.BBCode.Tests.csproj", "{0621EE9C-87DB-4309-91B5-9A949B665EA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Services", "..\Hikkaba.Services\Hikkaba.Services.csproj", "{38E22F04-26E1-40FC-8A85-0F07E96E51E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Services", "Hikkaba.Services\Hikkaba.Services.csproj", "{004D93E9-6E89-49ED-B975-D1A1981E3CBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,10 +59,10 @@ Global
 		{0621EE9C-87DB-4309-91B5-9A949B665EA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0621EE9C-87DB-4309-91B5-9A949B665EA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0621EE9C-87DB-4309-91B5-9A949B665EA2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38E22F04-26E1-40FC-8A85-0F07E96E51E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38E22F04-26E1-40FC-8A85-0F07E96E51E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38E22F04-26E1-40FC-8A85-0F07E96E51E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38E22F04-26E1-40FC-8A85-0F07E96E51E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{004D93E9-6E89-49ED-B975-D1A1981E3CBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{004D93E9-6E89-49ED-B975-D1A1981E3CBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{004D93E9-6E89-49ED-B975-D1A1981E3CBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{004D93E9-6E89-49ED-B975-D1A1981E3CBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
