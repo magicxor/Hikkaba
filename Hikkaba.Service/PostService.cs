@@ -12,7 +12,7 @@ using Hikkaba.Models.Configuration;
 using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Attachments;
 using Hikkaba.Service.Attachments;
-using Hikkaba.Service.Base.Current;
+using Hikkaba.Service.Base;
 using Hikkaba.Service.Base.Generic;
 using Hikkaba.Service.Storage;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using TwentyTwenty.Storage;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Service
 {
@@ -100,7 +101,7 @@ namespace Hikkaba.Service
             return entity.Thread.Category.Id;
         }
 
-        protected override IBaseManyToManyService<Guid, Guid> GetManyToManyService()
+        protected override IBaseManyToManyService<TPrimaryKey, TPrimaryKey> GetManyToManyService()
         {
             return _categoryToModeratorService;
         }
@@ -182,11 +183,11 @@ namespace Hikkaba.Service
 
                                 var thumbnail = _thumbnailGenerator.GenerateThumbnail(
                                     image,
-                                    _hikkabaConfiguration.ThumbnailsMaxWidth, 
+                                    _hikkabaConfiguration.ThumbnailsMaxWidth,
                                     _hikkabaConfiguration.ThumbnailsMaxHeight);
                                 await _storageProvider.SaveBlobStreamAsync(
                                         containerName + Defaults.ThumbnailPostfix,
-                                        blobName, 
+                                        blobName,
                                         thumbnail.Image);
                             }
                             else

@@ -8,10 +8,11 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Infrastructure.Utils;
 using Hikkaba.Models.Dto;
-using Hikkaba.Service.Base.Current;
+using Hikkaba.Service.Base;
 using Hikkaba.Service.Base.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Service
 {
@@ -44,7 +45,7 @@ namespace Hikkaba.Service
             return entity.Category.Id;
         }
 
-        protected override IBaseManyToManyService<Guid, Guid> GetManyToManyService()
+        protected override IBaseManyToManyService<TPrimaryKey, TPrimaryKey> GetManyToManyService()
         {
             return _categoryToModeratorService;
         }

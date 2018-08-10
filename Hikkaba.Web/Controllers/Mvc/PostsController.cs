@@ -9,8 +9,8 @@ using DNTCaptcha.Core.Providers;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Service;
-using Hikkaba.Service.Base.Generic;
+using Hikkaba.Services;
+using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.Utils;
@@ -53,7 +53,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var category = await _categoryService.GetAsync(categoryAlias);
             var thread = await _threadService.GetAsync(threadId);
-            var postAnonymousCreateViewModel = new PostAnonymousCreateViewModel()
+            var postAnonymousCreateViewModel = new PostAnonymousCreateViewModel
             {
                 CategoryAlias = category.Alias,
                 ThreadId = thread.Id,
@@ -132,10 +132,10 @@ namespace Hikkaba.Web.Controllers.Mvc
                     latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
                 }
 
-                var searchResultViewModel = new SearchResultViewModel()
+                var searchResultViewModel = new SearchResultViewModel
                 {
                     Query = query,
-                    Posts = new BasePagedList<PostDetailsViewModel>()
+                    Posts = new BasePagedList<PostDetailsViewModel>
                     {
                         CurrentPage = pageDto,
                         CurrentPageItems = latestPostDetailsViewModels,

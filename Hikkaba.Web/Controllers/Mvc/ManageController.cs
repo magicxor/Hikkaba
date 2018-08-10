@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Hikkaba.Data.Entities;
-using Hikkaba.Service;
+using Hikkaba.Services;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.ViewModels.ManageViewModels;
 using Microsoft.AspNetCore.Authorization;

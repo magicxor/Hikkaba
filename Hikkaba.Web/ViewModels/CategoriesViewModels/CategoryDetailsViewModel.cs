@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hikkaba.Service.Base.Generic;
+using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 
 namespace Hikkaba.Web.ViewModels.CategoriesViewModels

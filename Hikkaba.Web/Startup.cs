@@ -7,9 +7,9 @@ using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Mapping;
 using Hikkaba.Models.Configuration;
-using Hikkaba.Service;
-using Hikkaba.Service.Ref;
-using Hikkaba.Service.Storage;
+using Hikkaba.Services;
+using Hikkaba.Services.Ref;
+using Hikkaba.Services.Storage;
 using Hikkaba.Web.Binding.Providers;
 using Hikkaba.Web.Mapping;
 using Hikkaba.Web.Services;
@@ -47,7 +47,8 @@ namespace Hikkaba.Web
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseLazyLoadingProxies()
+                    .UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

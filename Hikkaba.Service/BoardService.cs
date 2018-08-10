@@ -3,7 +3,7 @@ using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
-using Hikkaba.Service.Base.Current;
+using Hikkaba.Service.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Service

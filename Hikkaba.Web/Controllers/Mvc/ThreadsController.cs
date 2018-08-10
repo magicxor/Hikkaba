@@ -9,7 +9,7 @@ using DNTCaptcha.Core.Providers;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Service;
+using Hikkaba.Services;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.Utils;
@@ -104,7 +104,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Create(string categoryAlias)
         {
             var category = await _categoryService.GetAsync(categoryAlias);
-            var threadAnonymousCreateViewModel = new ThreadAnonymousCreateViewModel()
+            var threadAnonymousCreateViewModel = new ThreadAnonymousCreateViewModel
             {
                 CategoryAlias = category.Alias,
                 CategoryName = category.Name,

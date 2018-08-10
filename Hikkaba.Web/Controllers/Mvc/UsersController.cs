@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
-using Hikkaba.Service;
+using Hikkaba.Services;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;

@@ -8,8 +8,8 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Service;
-using Hikkaba.Service.Base.Generic;
+using Hikkaba.Services;
+using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.Utils;
@@ -95,10 +95,10 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
             
             var categoryViewModel = _mapper.Map<CategoryViewModel>(categoryDto);
-            var categoryDetailsViewModel = new CategoryDetailsViewModel()
+            var categoryDetailsViewModel = new CategoryDetailsViewModel
             {
                 Category = categoryViewModel,
-                Threads = new BasePagedList<ThreadDetailsViewModel>()
+                Threads = new BasePagedList<ThreadDetailsViewModel>
                 {
                     TotalItemsCount = threadDtoList.TotalItemsCount,
                     CurrentPage = pageDto,
