@@ -5,7 +5,7 @@ using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
-using Hikkaba.Service;
+using Hikkaba.Services;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.Utils;

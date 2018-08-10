@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
-using Hikkaba.Service;
+using Hikkaba.Services;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Hikkaba.Web.ViewModels.BoardViewModels;
@@ -42,13 +42,13 @@ namespace Hikkaba.Web.Controllers.Mvc
             var categoriesModeratorsViewModelList = new List<CategoryModeratorsViewModel>();
             foreach (var dtoPair in categoriesModeratorsDtoList)
             {
-                categoriesModeratorsViewModelList.Add(new CategoryModeratorsViewModel()
+                categoriesModeratorsViewModelList.Add(new CategoryModeratorsViewModel
                 {
                     Category = _mapper.Map<CategoryViewModel>(dtoPair.Key),
                     Moderators = _mapper.Map<List<ApplicationUserViewModel>>(dtoPair.Value),
                 });
             }
-            var dashboardViewModel = new DashboardViewModel()
+            var dashboardViewModel = new DashboardViewModel
             {
                Board = boardViewModel,
                CategoriesModerators = categoriesModeratorsViewModelList,

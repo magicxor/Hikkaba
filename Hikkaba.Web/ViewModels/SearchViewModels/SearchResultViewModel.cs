@@ -1,4 +1,4 @@
-﻿using Hikkaba.Service.Base.Generic;
+﻿using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 
 namespace Hikkaba.Web.ViewModels.SearchViewModels

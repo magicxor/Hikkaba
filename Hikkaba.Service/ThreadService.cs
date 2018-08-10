@@ -5,10 +5,11 @@ using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
-using Hikkaba.Service.Base.Current;
+using Hikkaba.Service.Base;
 using Hikkaba.Service.Base.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Service
 {
@@ -23,8 +24,8 @@ namespace Hikkaba.Service
     {
         private readonly ICategoryToModeratorService _categoryToModeratorService;
 
-        public ThreadService(IMapper mapper, 
-            ApplicationDbContext context, 
+        public ThreadService(IMapper mapper,
+            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
         {
@@ -36,7 +37,7 @@ namespace Hikkaba.Service
             return entity.Category.Id;
         }
 
-        protected override IBaseManyToManyService<Guid, Guid> GetManyToManyService()
+        protected override IBaseManyToManyService<TPrimaryKey, TPrimaryKey> GetManyToManyService()
         {
             return _categoryToModeratorService;
         }
@@ -69,7 +70,7 @@ namespace Hikkaba.Service
                     thread.Category = Context.Categories.FirstOrDefault(category => category.Id == dto.CategoryId);
                 });
         }
-        
+
         public async Task<BasePagedList<ThreadDto>> PagedListCategoryThreadsOrdered(Guid categoryId, PageDto page = null)
         {
             page = page ?? new PageDto();

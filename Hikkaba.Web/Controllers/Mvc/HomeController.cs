@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Models.Dto;
-using Hikkaba.Service;
-using Hikkaba.Service.Base.Generic;
+using Hikkaba.Services;
+using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.Filters;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.HomeViewModels;
@@ -63,10 +63,10 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
             var categoriesDtoList = await _categoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
             var categoryViewModels = _mapper.Map<List<CategoryViewModel>>(categoriesDtoList);
-            var homeIndexViewModel = new HomeIndexViewModel()
+            var homeIndexViewModel = new HomeIndexViewModel
             {
                 Categories = categoryViewModels,
-                Posts = new BasePagedList<PostDetailsViewModel>()
+                Posts = new BasePagedList<PostDetailsViewModel>
                 {
                     CurrentPage = page,
                     CurrentPageItems = latestPostDetailsViewModels,

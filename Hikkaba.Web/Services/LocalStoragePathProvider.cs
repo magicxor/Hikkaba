@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Hikkaba.Common.Constants;
-using Hikkaba.Service.Storage;
+using Hikkaba.Services.Storage;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Hikkaba.Web.Services

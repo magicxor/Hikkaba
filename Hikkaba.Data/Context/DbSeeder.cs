@@ -15,7 +15,7 @@ namespace Hikkaba.Data.Context
 
         private static async Task SeedNewCategoryAsync(ApplicationDbContext context, Board board, string alias, string name, bool isHidden = false, bool defaultShowThreadLocalUserHash = false, int defaultBumpLimit = DefaultBumpLimit, string creatorUserName = Defaults.AdministratorUserName)
         {
-            await context.Categories.AddAsync(new Category()
+            await context.Categories.AddAsync(new Category
             {
                 Alias = alias,
                 Name = name,
@@ -37,7 +37,7 @@ namespace Hikkaba.Data.Context
                 var adminRole = await roleMgr.FindByNameAsync(Defaults.AdministratorRoleName);
                 if (adminRole == null)
                 {
-                    adminRole = new ApplicationRole() { Name = Defaults.AdministratorRoleName };
+                    adminRole = new ApplicationRole { Name = Defaults.AdministratorRoleName };
                     await roleMgr.CreateAsync(adminRole);
                 }
             }
@@ -45,7 +45,7 @@ namespace Hikkaba.Data.Context
             if (!context.Users.Any())
             {
                 // create anonymous user
-                var anonymousUser = new ApplicationUser()
+                var anonymousUser = new ApplicationUser
                 {
                     UserName = Defaults.AnonymousUserName,
                     Email = Defaults.AnonymousEmail
@@ -68,7 +68,7 @@ namespace Hikkaba.Data.Context
 
             if (!context.Boards.Any())
             {
-                board = new Board() {Name = Defaults.BoardName};
+                board = new Board {Name = Defaults.BoardName};
                 await context.Boards.AddAsync(board);
             }
             else
