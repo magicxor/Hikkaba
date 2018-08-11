@@ -10,8 +10,6 @@ namespace Hikkaba.Common.Constants
         public const string BoardName = "Hikkaba";
 
         public const string AnonymousUserName = "Anonymous";
-        public const string AnonymousEmail = "localhost@local.local";
-        public const string AnonymousPassword = "KaRaSiQuE&%123";
 
         public const string AdministratorUserName = "Administrator";
         public const string AdministratorRoleName = "administrator";

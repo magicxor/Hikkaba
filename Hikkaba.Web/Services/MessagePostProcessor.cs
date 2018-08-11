@@ -1,15 +1,15 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using CodeKicker.BBCode;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Services
 {
     public interface IMessagePostProcessor
     {
-        string Process(string categoryAlias, Guid threadId, string text);
+        string Process(string categoryAlias, TPrimaryKey threadId, string text);
     }
 
     public class MessagePostProcessor : IMessagePostProcessor
@@ -42,7 +42,7 @@ namespace Hikkaba.Web.Services
                 @"<a href=""$1$2"">$1$2</a>$3");
         }
 
-        private string CrossLinksToHtmlLinks(string categoryAlias, Guid threadId, string text)
+        private string CrossLinksToHtmlLinks(string categoryAlias, TPrimaryKey threadId, string text)
         {
             var threadUri = Regex.Escape(_urlHelper.Action("Details", "Threads",
                         new
@@ -67,7 +67,7 @@ namespace Hikkaba.Web.Services
             return Regex.Replace(text, @"(\u000D\u000A){3,}", "\r\n\r\n");
         }
 
-        public string Process(string categoryAlias, Guid threadId, string text)
+        public string Process(string categoryAlias, TPrimaryKey threadId, string text)
         {
             var bbParsed = _bbCodeParser.ToHtml(text);
             var uriParsed = UriToHtmlLinks(bbParsed);

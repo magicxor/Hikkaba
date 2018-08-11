@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.CategoriesViewModels
 {
     public class CategoryViewModel
     {
         [Display(Name = @"Id")]
-        public Guid? Id { get; set; }
+        public TPrimaryKey? Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }
@@ -39,6 +40,6 @@ namespace Hikkaba.Web.ViewModels.CategoriesViewModels
         public bool DefaultShowThreadLocalUserHash { get; set; }
 
         [Display(Name = @"Board id")]
-        public Guid BoardId { get; set; }
+        public TPrimaryKey BoardId { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Models.Dto;
-using Hikkaba.Services.Base.Concrete;
+using Hikkaba.Services.Base.Current;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -69,7 +69,7 @@ namespace Hikkaba.Services
 
             if (existingBan != null)
             {
-                return existingBan.Id;
+                throw new HttpResponseException(HttpStatusCode.Conflict, $"Ban already exists");
             }
             else
             {

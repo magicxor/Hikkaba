@@ -7,7 +7,7 @@ using Hikkaba.Services.Base.Generic;
 using Microsoft.AspNetCore.Identity;
 using TPrimaryKey = System.Guid;
 
-namespace Hikkaba.Services.Base.Concrete
+namespace Hikkaba.Services.Base.Current
 {
     public interface IBaseEntityService<TDto, TEntity> : IBaseEntityService<TDto, TEntity, TPrimaryKey> { }
     public abstract class BaseEntityService<TDto, TEntity> : BaseEntityService<TDto, TEntity, TPrimaryKey>, IBaseEntityService<TDto, TEntity>

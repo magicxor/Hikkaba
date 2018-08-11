@@ -44,15 +44,6 @@ namespace Hikkaba.Data.Context
 
             if (!context.Users.Any())
             {
-                // create anonymous user
-                var anonymousUser = new ApplicationUser
-                {
-                    UserName = Defaults.AnonymousUserName,
-                    Email = Defaults.AnonymousEmail
-                };
-                await userMgr.CreateAsync(anonymousUser, Defaults.AnonymousPassword);
-                await userMgr.SetLockoutEnabledAsync(anonymousUser, true);
-
                 // create admin user
                 var adminUser = new ApplicationUser
                 {

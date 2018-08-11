@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Entities.Base.Current;
 using Microsoft.AspNetCore.Identity;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Entities
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
-    public class ApplicationUser : IdentityUser<Guid>, IBaseEntity
+    public class ApplicationUser : IdentityUser<TPrimaryKey>, IBaseEntity
     {
         public bool IsDeleted { get; set; }
         public DateTime? LastLogin { get; set; }
@@ -30,9 +31,9 @@ namespace Hikkaba.Data.Entities
 
         public virtual ICollection<CategoryToModerator> ModerationCategories { get; set; }
 
-        public Guid GenerateNewId()
+        public TPrimaryKey GenerateNewId()
         {
-            return Guid.NewGuid();
+            return TPrimaryKey.NewGuid();
         }
     }
 }

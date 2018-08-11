@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -20,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -130,7 +130,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<CategoryDto>(viewModel);
-                var id = await _categoryService.CreateAsync(dto, CurrentUserId);
+                var id = await _categoryService.CreateAsync(dto, GetCurrentUserId());
                 return RedirectToAction("Index");
             }
             else
@@ -141,7 +141,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Categories/{id}/Edit")]
-        public async Task<IActionResult> Edit(Guid id)
+        public async Task<IActionResult> Edit(TPrimaryKey id)
         {
             var dto = await _categoryService.GetAsync(id);
             var viewModel = _mapper.Map<CategoryViewModel>(dto);
@@ -156,7 +156,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<CategoryDto>(viewModel);
-                await _categoryService.EditAsync(dto, CurrentUserId);
+                await _categoryService.EditAsync(dto, GetCurrentUserId());
                 return RedirectToAction("Index");
             }
             else
@@ -167,7 +167,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Categories/{id}/Delete")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(TPrimaryKey id)
         {
             var dto = await _categoryService.GetAsync(id);
             var viewModel = _mapper.Map<CategoryViewModel>(dto);
@@ -177,9 +177,9 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Categories/{id}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
-            await _categoryService.DeleteAsync(id, CurrentUserId);
+            await _categoryService.DeleteAsync(id, GetCurrentUserId());
             return RedirectToAction("Index");
         }
     }

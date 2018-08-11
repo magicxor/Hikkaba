@@ -19,6 +19,7 @@ using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -49,7 +50,7 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [Route("{categoryAlias}/Threads/{threadId}/Posts/Create")]
         [AllowAnonymous]
-        public async Task<IActionResult> Create(string categoryAlias, Guid threadId)
+        public async Task<IActionResult> Create(string categoryAlias, TPrimaryKey threadId)
         {
             var category = await _categoryService.GetAsync(categoryAlias);
             var thread = await _threadService.GetAsync(threadId);
@@ -147,7 +148,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Edit")]
-        public async Task<IActionResult> Edit(string categoryAlias, Guid threadId, Guid postId)
+        public async Task<IActionResult> Edit(string categoryAlias, TPrimaryKey threadId, TPrimaryKey postId)
         {
             var postDto = await _postService.GetAsync(postId);
             var threadDto = await _threadService.GetAsync(postDto.ThreadId);
@@ -203,7 +204,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 if (isCurrentUserCategoryModerator)
                 {
                     postDto = _mapper.Map(viewModel, postDto);
-                    await _postService.EditAsync(postDto, CurrentUserId);
+                    await _postService.EditAsync(postDto, GetCurrentUserId());
                     return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
                 }
                 else
@@ -219,7 +220,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Delete")]
-        public async Task<IActionResult> Delete(string categoryAlias, Guid threadId, Guid postId)
+        public async Task<IActionResult> Delete(string categoryAlias, TPrimaryKey threadId, TPrimaryKey postId)
         {
             throw new NotImplementedException();
         }
@@ -232,7 +233,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             throw new NotImplementedException();
         }
 
-        public async Task<IActionResult> ToggleIsDeletedOption(Guid postId)
+        public async Task<IActionResult> ToggleIsDeletedOption(TPrimaryKey postId)
         {
             var postDto = await _postService.GetAsync(postId);
             var threadDto = await _threadService.GetAsync(postDto.ThreadId);
@@ -241,7 +242,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 postDto.IsDeleted = !postDto.IsDeleted;
-                await _postService.EditAsync(postDto, CurrentUserId);
+                await _postService.EditAsync(postDto, GetCurrentUserId());
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }

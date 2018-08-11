@@ -1,16 +1,15 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
-using Hikkaba.Services.Base.Concrete;
+using Hikkaba.Services.Base.Current;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TPrimaryKey = System.Guid;
-// test
+
 namespace Hikkaba.Services
 {
     public interface IThreadService : IBaseModeratedMutableEntityService<ThreadDto, Thread>

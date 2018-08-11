@@ -1,9 +1,8 @@
-﻿using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Models.Dto.Attachments;
-using Hikkaba.Services.Base.Concrete;
+using Hikkaba.Services.Base.Current;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Services.Attachments

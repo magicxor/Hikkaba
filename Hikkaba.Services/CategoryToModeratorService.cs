@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -8,15 +7,16 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
-using Hikkaba.Services.Base.Concrete;
+using Hikkaba.Services.Base.Current;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services
 {
     public interface ICategoryToModeratorService : IBaseManyToManyService
     {
-        Task<bool> IsUserCategoryModeratorAsync(Guid categoryId, ClaimsPrincipal user);
+        Task<bool> IsUserCategoryModeratorAsync(TPrimaryKey categoryId, ClaimsPrincipal user);
         Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModeratorsAsync();
         Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategoriesAsync();
     }
@@ -39,17 +39,17 @@ namespace Hikkaba.Services
             return Context.CategoriesToModerators;
         }
 
-        protected override CategoryToModerator CreateManyToManyEntity(Guid leftId, Guid rightId)
+        protected override CategoryToModerator CreateManyToManyEntity(TPrimaryKey leftId, TPrimaryKey rightId)
         {
             return new CategoryToModerator { CategoryId = leftId, ApplicationUserId = rightId };
         }
 
-        protected override Guid GetLeftEntityKey(CategoryToModerator manyToManyEntity)
+        protected override TPrimaryKey GetLeftEntityKey(CategoryToModerator manyToManyEntity)
         {
             return manyToManyEntity.CategoryId;
         }
 
-        protected override Guid GetRightEntityKey(CategoryToModerator manyToManyEntity)
+        protected override TPrimaryKey GetRightEntityKey(CategoryToModerator manyToManyEntity)
         {
             return manyToManyEntity.ApplicationUserId;
         }
@@ -94,7 +94,7 @@ namespace Hikkaba.Services
             return moderatorsCategoriesDtoList;
         }
 
-        public async Task<bool> IsUserCategoryModeratorAsync(Guid categoryId, ClaimsPrincipal user)
+        public async Task<bool> IsUserCategoryModeratorAsync(TPrimaryKey categoryId, ClaimsPrincipal user)
         {
             if ((user != null) && user.Identity.IsAuthenticated)
             {
@@ -104,10 +104,15 @@ namespace Hikkaba.Services
                 }
                 else
                 {
-                    var userId = user.Identity.IsAuthenticated
-                                    ? Guid.Parse(_userManager.GetUserId(user))
-                                    : default(Guid);
-                    return await AreRelatedAsync(categoryId, userId);
+                    if (user.Identity.IsAuthenticated)
+                    {
+                        var userId = TPrimaryKey.Parse(_userManager.GetUserId(user));
+                        return await AreRelatedAsync(categoryId, userId);
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             else

@@ -1,5 +1,5 @@
-﻿using System;
-using Hikkaba.Models.Dto.Base.Current;
+﻿using Hikkaba.Models.Dto.Base.Current;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Models.Dto
 {
@@ -11,6 +11,6 @@ namespace Hikkaba.Models.Dto
         public int BumpLimit { get; set; }
         public bool ShowThreadLocalUserHash { get; set; }
 
-        public Guid CategoryId { get; set; }
+        public TPrimaryKey CategoryId { get; set; }
     }
 }

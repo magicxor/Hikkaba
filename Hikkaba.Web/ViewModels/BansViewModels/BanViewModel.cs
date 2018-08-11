@@ -2,13 +2,14 @@
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels
 {
     public class BanViewModel
     {
         [Display(Name = @"Id")]
-        public Guid? Id { get; set; }
+        public TPrimaryKey? Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }

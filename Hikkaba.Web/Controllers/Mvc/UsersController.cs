@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -10,6 +9,7 @@ using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -29,7 +29,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Users/{id}")]
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(TPrimaryKey id)
         {
             var dto = await _applicationUserService.GetAsync(id);
             var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
@@ -69,7 +69,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Users/{id}/Edit")]
-        public async Task<IActionResult> Edit(Guid id)
+        public async Task<IActionResult> Edit(TPrimaryKey id)
         {
             var dto = await _applicationUserService.GetAsync(id);
             var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
@@ -95,7 +95,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Users/{id}/Delete")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(TPrimaryKey id)
         {
             var dto = await _applicationUserService.GetAsync(id);
             var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
@@ -105,7 +105,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Users/{id}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
             await _applicationUserService.DeleteAsync(id);
             return RedirectToAction("Index");

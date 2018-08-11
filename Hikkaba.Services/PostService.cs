@@ -12,7 +12,7 @@ using Hikkaba.Models.Configuration;
 using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Attachments;
 using Hikkaba.Services.Attachments;
-using Hikkaba.Services.Base.Concrete;
+using Hikkaba.Services.Base.Current;
 using Hikkaba.Services.Base.Generic;
 using Hikkaba.Services.Storage;
 using Microsoft.AspNetCore.Http;
