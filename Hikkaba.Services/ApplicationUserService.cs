@@ -1,18 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
-using Hikkaba.Services.Base.Concrete;
+using Hikkaba.Services.Base.Current;
 using Microsoft.EntityFrameworkCore;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services
 {
     public interface IApplicationUserService : IBaseImmutableEntityService<ApplicationUserDto, ApplicationUser>
     {
-        Task<Guid> CreateAsync(ApplicationUserDto dto);
+        Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto);
         Task EditAsync(ApplicationUserDto dto);
     }
 
@@ -27,7 +26,7 @@ namespace Hikkaba.Services
             return context.Users;
         }
 
-        public async Task<Guid> CreateAsync(ApplicationUserDto dto)
+        public async Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto)
         {
             return await base.CreateAsync(dto, user => {});
         }

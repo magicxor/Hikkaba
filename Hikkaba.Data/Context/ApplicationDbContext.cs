@@ -1,12 +1,12 @@
-﻿using System;
-using Hikkaba.Data.Entities;
+﻿using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Context
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, TPrimaryKey>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -23,23 +23,13 @@ namespace Hikkaba.Data.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
-
+            
             builder.Entity<CategoryToModerator>().HasKey(e => new { e.CategoryId, e.ApplicationUserId });
             
             builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
             builder.Entity<Category>().HasIndex(e => e.Name).IsUnique();
             builder.Entity<ApplicationUser>().HasIndex(e => e.Email).IsUnique();
             builder.Entity<ApplicationRole>().HasIndex(e => e.Name).IsUnique();
-
-            //builder.Entity<Audio>().HasIndex(e => new { e.Size, e.Hash, e.Post }).IsUnique();
-            //builder.Entity<Document>().HasIndex(e => new { e.Size, e.Hash, e.Post }).IsUnique();
-            //builder.Entity<Picture>().HasIndex(e => new { e.Size, e.Hash, e.Post }).IsUnique();
-            //builder.Entity<Video>().HasIndex(e => new { e.Size, e.Hash, e.Post }).IsUnique();
-
-            // todo: seed
         }
         
         public DbSet<Ban> Bans { get; set; }

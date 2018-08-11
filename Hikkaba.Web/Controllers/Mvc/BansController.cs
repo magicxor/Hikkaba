@@ -13,6 +13,7 @@ using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -36,7 +37,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Bans/{id}")]
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(TPrimaryKey id)
         {
             var dto = await _banService.GetAsync(id);
             var viewModel = _mapper.Map<BanViewModel>(dto);
@@ -66,8 +67,8 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<BanDto>(viewModel);
-                var id = await _banService.CreateOrGetIdAsync(dto, CurrentUserId);
-                // todo: notification about existing ban
+                var id = await _banService.CreateOrGetIdAsync(dto, GetCurrentUserId());
+                
                 return RedirectToAction("Details", new {id = id});
             }
             else
@@ -78,7 +79,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Bans/{id}/Edit")]
-        public async Task<IActionResult> Edit(Guid id)
+        public async Task<IActionResult> Edit(TPrimaryKey id)
         {
             var dto = await _banService.GetAsync(id);
             var viewModel = _mapper.Map<BanViewModel>(dto);
@@ -93,7 +94,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<BanDto>(viewModel);
-                await _banService.EditAsync(dto, CurrentUserId);
+                await _banService.EditAsync(dto, GetCurrentUserId());
                 return RedirectToAction("Details", new {id = dto.Id});
             }
             else
@@ -104,7 +105,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Bans/{id}/Delete")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(TPrimaryKey id)
         {
             var dto = await _banService.GetAsync(id);
             var viewModel = _mapper.Map<BanViewModel>(dto);
@@ -114,9 +115,9 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Bans/{id}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
-            await _banService.DeleteAsync(id, CurrentUserId);
+            await _banService.DeleteAsync(id, GetCurrentUserId());
             return RedirectToAction("Index");
         }
     }

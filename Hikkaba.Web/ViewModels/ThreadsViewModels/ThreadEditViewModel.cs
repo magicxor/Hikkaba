@@ -1,12 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels
 {
     public class ThreadEditViewModel
     {
         [Required]
-        public Guid Id { get; set; }
+        public TPrimaryKey Id { get; set; }
 
         [MinLength(3)]
         [MaxLength(100)]

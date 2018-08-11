@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels
 {
     public class PostDetailsViewModel
     {
-        public Guid Id { get; set; }
+        public TPrimaryKey Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }
@@ -47,7 +48,7 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         public ICollection<VideoViewModel> Video { get; set; }
 
 
-        public Guid ThreadId { get; set; }
+        public TPrimaryKey ThreadId { get; set; }
 
 
         [Display(Name = @"Show thread-local user hashes")]
@@ -56,9 +57,9 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         [Display(Name = @"Category alias")]
         public string CategoryAlias { get; set; }
 
-        public Guid CategoryId { get; set; }
+        public TPrimaryKey CategoryId { get; set; }
 
         [Display(Name = @"Answers")]
-        public ICollection<Guid> Answers { get; set; }
+        public ICollection<TPrimaryKey> Answers { get; set; }
     }
 }

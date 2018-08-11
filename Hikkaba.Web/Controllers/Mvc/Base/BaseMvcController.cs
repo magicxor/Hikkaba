@@ -1,9 +1,10 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc.Base
 {
@@ -16,7 +17,17 @@ namespace Hikkaba.Web.Controllers.Mvc.Base
             UserManager = userManager;
         }
 
-        public Guid CurrentUserId => User.Identity.IsAuthenticated ? Guid.Parse(UserManager.GetUserId(User)) : default(Guid);
+        public TPrimaryKey GetCurrentUserId()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return TPrimaryKey.Parse(UserManager.GetUserId(User));
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Unauthorized, "User is not authenticated");
+            }
+        }
         public bool IsCurrentUserAdmin => User.Identity.IsAuthenticated && User.IsInRole(Defaults.AdministratorRoleName);
 
         public string UserAgent => Request.Headers.ContainsKey("User-Agent") ? Request.Headers["User-Agent"].ToString() : "";

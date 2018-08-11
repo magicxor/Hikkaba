@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using AutoMapper;
 using DNTCaptcha.Core;
 using Hikkaba.Common.Constants;
@@ -24,6 +23,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sakura.AspNetCore.Mvc;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web
 {
@@ -53,8 +53,8 @@ namespace Hikkaba.Web
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
-                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
-                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, TPrimaryKey>>()
+                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, TPrimaryKey>>();
 
             services.AddOptions();
             services.Configure<HikkabaConfiguration>(Configuration.GetSection(typeof(HikkabaConfiguration).Name));

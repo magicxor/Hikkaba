@@ -1,10 +1,10 @@
-﻿using System;
-using Hikkaba.Models.Dto.Attachments;
+﻿using Hikkaba.Models.Dto.Attachments;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments
 {
     public class PictureViewModel : PictureDto
     {
-        public Guid ThreadId { get; set; }
+        public TPrimaryKey ThreadId { get; set; }
     }
 }

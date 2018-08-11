@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Hikkaba.Models.Dto.Attachments;
 using Hikkaba.Models.Dto.Base.Current;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Models.Dto
 {
@@ -17,6 +17,6 @@ namespace Hikkaba.Models.Dto
         public ICollection<PictureDto> Pictures { get; set; }
         public ICollection<VideoDto> Video { get; set; }
 
-        public Guid ThreadId { get; set; }
+        public TPrimaryKey ThreadId { get; set; }
     }
 }

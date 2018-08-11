@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -55,7 +56,7 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [Route("{categoryAlias}/Threads/{threadId}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Details(string categoryAlias, Guid threadId)
+        public async Task<IActionResult> Details(string categoryAlias, TPrimaryKey threadId)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var categoryDto = await _categoryService.GetAsync(categoryAlias);
@@ -84,7 +85,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 postDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
                 postDetailsViewModel.CategoryAlias = categoryDto.Alias;
                 postDetailsViewModel.CategoryId = categoryDto.Id;
-                postDetailsViewModel.Answers = new List<Guid>(
+                postDetailsViewModel.Answers = new List<TPrimaryKey>(
                     postDetailsViewModels
                         .Where(answer => answer.Message.Contains(">>"+ postDetailsViewModel.Id.ToString()))
                         .Select(answer => answer.Id));
@@ -158,7 +159,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Edit")]
-        public IActionResult Edit(string categoryAlias, Guid threadId)
+        public IActionResult Edit(string categoryAlias, TPrimaryKey threadId)
         {
             throw new NotImplementedException();
         }
@@ -166,13 +167,13 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("{categoryAlias}/Threads/{threadId}/Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string categoryAlias, Guid threadId, ThreadEditViewModel threadEditViewModel)
+        public IActionResult Edit(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
         {
             throw new NotImplementedException();
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Delete")]
-        public IActionResult Delete(string categoryAlias, Guid threadId)
+        public IActionResult Delete(string categoryAlias, TPrimaryKey threadId)
         {
             throw new NotImplementedException();
         }
@@ -180,14 +181,14 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("{categoryAlias}/Threads/{threadId}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(string categoryAlias, Guid threadId, ThreadEditViewModel threadEditViewModel)
+        public IActionResult Delete(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleIsPinnedOption(Guid threadId)
+        public async Task<IActionResult> ToggleIsPinnedOption(TPrimaryKey threadId)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -195,7 +196,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsPinned = !threadDto.IsPinned;
-                await _threadService.EditAsync(threadDto, CurrentUserId);
+                await _threadService.EditAsync(threadDto, GetCurrentUserId());
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
@@ -207,7 +208,7 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleIsClosedOption(Guid threadId)
+        public async Task<IActionResult> ToggleIsClosedOption(TPrimaryKey threadId)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -215,7 +216,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsClosed = !threadDto.IsClosed;
-                await _threadService.EditAsync(threadDto, CurrentUserId);
+                await _threadService.EditAsync(threadDto, GetCurrentUserId());
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
@@ -227,7 +228,7 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleIsDeletedOption(Guid threadId)
+        public async Task<IActionResult> ToggleIsDeletedOption(TPrimaryKey threadId)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -235,7 +236,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsDeleted = !threadDto.IsDeleted;
-                await _threadService.EditAsync(threadDto, CurrentUserId);
+                await _threadService.EditAsync(threadDto, GetCurrentUserId());
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Categories", new {categoryAlias = categoryDto.Alias});
             }

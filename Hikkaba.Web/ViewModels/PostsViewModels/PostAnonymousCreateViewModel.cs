@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Hikkaba.Common.Constants;
 using Microsoft.AspNetCore.Http;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels
 {
@@ -23,7 +23,7 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         public IFormFileCollection Attachments { get; set; }
 
         [Required]
-        public Guid ThreadId { get; set; }
+        public TPrimaryKey ThreadId { get; set; }
         public string CategoryAlias { get; set; }
         public string CategoryName { get; set; }
 

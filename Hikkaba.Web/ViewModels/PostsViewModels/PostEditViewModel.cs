@@ -1,12 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels
 {
     public class PostEditViewModel
     {
         [Required]
-        public Guid Id { get; set; }
+        public TPrimaryKey Id { get; set; }
 
         [DataType(DataType.MultilineText)]
         [MaxLength(4000)]
@@ -15,6 +15,6 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
 
         [Required]
         public string CategoryAlias { get; set; }
-        public Guid ThreadId { get; set; }
+        public TPrimaryKey ThreadId { get; set; }
     }
 }

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.PostsViewModels;
+using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels
 {
     public class ThreadDetailsViewModel
     {
-        public Guid Id { get; set; }
+        public TPrimaryKey Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }
@@ -35,7 +36,7 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
         public bool ShowThreadLocalUserHash { get; set; }
 
 
-        public Guid CategoryId { get; set; }
+        public TPrimaryKey CategoryId { get; set; }
 
 
         [Display(Name = @"Category alias")]
