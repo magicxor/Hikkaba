@@ -1,12 +1,10 @@
-﻿// Write your Javascript code.
-
-var navigationFn = {
+﻿var navigationFn = {
     goToSection: function (id) {
         $("html, body").animate({
             scrollTop: $("#" + id).offset().top
         }, 0);
     }
-}
+};
 
 $(function () {
     $("time.time-localizable").each(function () {
@@ -41,7 +39,7 @@ function getSelectionText() {
 function writeSelectionLineToInput(inputId) {
     var textArea = document.getElementById(inputId);
 
-    if (typeof (textArea) != "undefined") {
+    if (typeof (textArea) !== "undefined") {
         var selectionText = getSelectionText();
         if (selectionText) {
             textArea.value += "[quote]" + getSelectionText() + "[/quote]\n";
@@ -52,7 +50,7 @@ function writeSelectionLineToInput(inputId) {
 function writeLineToInput(inputId, text) {
     var textArea = document.getElementById(inputId);
 
-    if (typeof (textArea) != "undefined") {
+    if (typeof (textArea) !== "undefined") {
         textArea.value += text + "\n";
     }
 }
@@ -60,7 +58,7 @@ function writeLineToInput(inputId, text) {
 function wrapText(inputId, openTag, closeTag) {
     var textArea = document.getElementById(inputId);
 
-    if (typeof (textArea.selectionStart) != "undefined") {
+    if (typeof (textArea.selectionStart) !== "undefined") {
         var begin = textArea.value.substr(0, textArea.selectionStart);
         var selection = textArea.value.substr(textArea.selectionStart, textArea.selectionEnd - textArea.selectionStart);
         var end = textArea.value.substr(textArea.selectionEnd);
