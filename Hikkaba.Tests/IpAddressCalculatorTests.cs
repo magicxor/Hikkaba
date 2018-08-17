@@ -19,14 +19,8 @@ namespace Hikkaba.Tests
         private const string SomePublicIpv4 = "84.14.88.69";
         private const string UpperPublicIpv4 = "84.255.255.255";
 
-        private const string LowerShortLocalIpv6 = "::1";
-        private const string SomeShortLocalIpv6 = "::54";
-        private const string UpperShortLocalIpv6 = "::128";
-
-        private const string LowerLongLocalIpv6 = "0:0:0:0:0:0:0:1";
-        private const string SomeLongLocalIpv6 = "0:0:0:0:0:0:0:41";
-        private const string UpperLongLocalIpv6 = "0:0:0:0:0:0:0:128";
-
+        private const string ShortLoopbackIpv6 = "::1";
+        private const string LongLoopbackIpv6 = "0:0:0:0:0:0:0:1";
         private const string LinkLocalIpv6 = "fe80::ad88:a298:5114:18bb";
 
         private static readonly ILogger<IpAddressCalculator> Logger = Mock.Of<ILogger<IpAddressCalculator>>();
@@ -96,59 +90,22 @@ namespace Hikkaba.Tests
             Assert.IsTrue(ipAddressCalculator.IsInRange(LowerPublicIpv4, UpperPublicIpv4, SomePublicIpv4));
         }
 
-        /* Local short IPv6 */
+        /* IPv6 */
 
         [Test]
-        public void TestShortLocalIpV6Lower()
+        public void Test1LoopbackIpv6()
         {
             var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsTrue(ipAddressCalculator.IsInRange(LowerShortLocalIpv6, UpperShortLocalIpv6, LowerShortLocalIpv6));
+            Assert.IsTrue(ipAddressCalculator.IsInRange(ShortLoopbackIpv6, LongLoopbackIpv6, LongLoopbackIpv6));
         }
 
         [Test]
-        public void TestShortLocalIpV6Upper()
+        public void Test2LoopbackIpv6()
         {
             var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsTrue(ipAddressCalculator.IsInRange(LowerShortLocalIpv6, UpperShortLocalIpv6, UpperShortLocalIpv6));
+            Assert.IsTrue(ipAddressCalculator.IsInRange(LongLoopbackIpv6, ShortLoopbackIpv6, ShortLoopbackIpv6));
         }
-
-        [Test]
-        public void TestShortLocalIpV6()
-        {
-            var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsTrue(ipAddressCalculator.IsInRange(LowerShortLocalIpv6, UpperShortLocalIpv6, SomeShortLocalIpv6));
-        }
-
-        /* Local long IPv6 */
-
-        [Test]
-        public void TestLongLocalIpV6Lower()
-        {
-            var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsTrue(ipAddressCalculator.IsInRange(LowerLongLocalIpv6, UpperLongLocalIpv6, LowerLongLocalIpv6));
-        }
-
-        [Test]
-        public void TestLongLocalIpV6Upper()
-        {
-            var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsTrue(ipAddressCalculator.IsInRange(LowerLongLocalIpv6, UpperLongLocalIpv6, UpperLongLocalIpv6));
-        }
-
-        [Test]
-        public void TestLongLocalIpV6()
-        {
-            var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsTrue(ipAddressCalculator.IsInRange(LowerLongLocalIpv6, UpperLongLocalIpv6, SomeLongLocalIpv6));
-        }
-
-        [Test]
-        public void TestLongLocalIpV6NotInRange()
-        {
-            var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsTrue(ipAddressCalculator.IsInRange(LowerLongLocalIpv6, UpperLongLocalIpv6, SomeLongLocalIpv6));
-        }
-
+        
         /* Invalid combinations */
 
         [Test]
@@ -161,21 +118,14 @@ namespace Hikkaba.Tests
         public void TestDifferentAddressFamilies()
         {
             var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsFalse(ipAddressCalculator.IsInRange(LowerLocalIpv4, UpperLongLocalIpv6, LowerLocalIpv4));
-        }
-
-        [Test]
-        public void TestIpV6()
-        {
-            var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsFalse(ipAddressCalculator.IsInRange(LowerShortLocalIpv6, SomeShortLocalIpv6, UpperShortLocalIpv6));
+            Assert.IsFalse(ipAddressCalculator.IsInRange(LowerLocalIpv4, LinkLocalIpv6, LowerLocalIpv4));
         }
 
         [Test]
         public void TestLinkLocalAndLocalIpV6()
         {
             var ipAddressCalculator = new IpAddressCalculator(Logger);
-            Assert.IsFalse(ipAddressCalculator.IsInRange(LowerShortLocalIpv6, UpperShortLocalIpv6, LinkLocalIpv6));
+            Assert.IsFalse(ipAddressCalculator.IsInRange(ShortLoopbackIpv6, ShortLoopbackIpv6, LinkLocalIpv6));
         }
     }
 }
