@@ -5,4 +5,4 @@ services:
     image: ${DOCKER_REGISTRY}hikkabaweb
     build:
       context: .
-      dockerfile: Hikkaba.Web\Dockerfile
+      dockerfile: Hikkaba.Web/Dockerfile
