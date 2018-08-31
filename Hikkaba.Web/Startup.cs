@@ -134,9 +134,7 @@ namespace Hikkaba.Web
             app.UseStaticFiles();
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             app.UseCookiePolicy();
-
             app.UseAuthentication();
 
             app.UseMvc(routes =>
