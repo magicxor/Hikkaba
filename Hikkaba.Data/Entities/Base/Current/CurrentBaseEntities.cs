@@ -1,21 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Data.Entities.Base.Generic;
 using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Entities.Base.Current
 {
+    public static class KeyUtils
+    {
+        public static TPrimaryKey GenerateNew()
+        {
+            return Guid.NewGuid();
+        }
+    }
+
     public interface IBaseEntity : IBaseEntity<TPrimaryKey> { }
     public abstract class BaseEntity : BaseEntity<TPrimaryKey>, IBaseEntity
     {
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public override TPrimaryKey Id { get; set; } = System.Guid.NewGuid();
+        public override TPrimaryKey Id { get; set; }
 
         public override TPrimaryKey GenerateNewId()
         {
-            return System.Guid.NewGuid();
+            return KeyUtils.GenerateNew();
+        }
+
+        public BaseEntity()
+        {
+            Id = GenerateNewId();
         }
     }
 
@@ -25,11 +39,16 @@ namespace Hikkaba.Data.Entities.Base.Current
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public override TPrimaryKey Id { get; set; } = System.Guid.NewGuid();
+        public override TPrimaryKey Id { get; set; }
 
         public override TPrimaryKey GenerateNewId()
         {
-            return System.Guid.NewGuid();
+            return KeyUtils.GenerateNew();
+        }
+
+        public BaseMutableEntity()
+        {
+            Id = GenerateNewId();
         }
     }
 

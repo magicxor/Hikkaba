@@ -33,7 +33,7 @@ namespace Hikkaba.Data.Entities
 
         public TPrimaryKey GenerateNewId()
         {
-            return TPrimaryKey.NewGuid();
+            return KeyUtils.GenerateNew();
         }
     }
 }
