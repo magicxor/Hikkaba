@@ -4,7 +4,6 @@ using AutoMapper;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services;
 using Hikkaba.Services.Base.Generic;
-using Hikkaba.Web.Filters;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.HomeViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
@@ -20,7 +19,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     public class HomeController : Controller
     {
         private readonly ILogger _logger;

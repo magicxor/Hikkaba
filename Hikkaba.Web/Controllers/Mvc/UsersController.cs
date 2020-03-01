@@ -4,7 +4,6 @@ using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services;
-using Hikkaba.Web.Filters;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +14,6 @@ namespace Hikkaba.Web.Controllers.Mvc
 {
     // todo: implement views
 
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize(Roles = Defaults.AdministratorRoleName)]
     public class UsersController : Controller
     {

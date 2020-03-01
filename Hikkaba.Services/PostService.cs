@@ -14,7 +14,6 @@ using Hikkaba.Models.Dto.Attachments;
 using Hikkaba.Services.Attachments;
 using Hikkaba.Services.Base.Current;
 using Hikkaba.Services.Base.Generic;
-using Hikkaba.Services.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +47,7 @@ namespace Hikkaba.Services
         private readonly ICategoryToModeratorService _categoryToModeratorService;
 
         public PostService(
-            IStorageProviderFactory storageProviderFactory,
+            IStorageProvider storageProvider,
             ILogger<PostService> logger,
             IOptions<HikkabaConfiguration> settings,
             IBanService banService,
@@ -64,7 +63,7 @@ namespace Hikkaba.Services
             UserManager<ApplicationUser> userManager,
             ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
         {
-            _storageProvider = storageProviderFactory.CreateStorageProvider();
+            _storageProvider = storageProvider;
             _logger = logger;
             _banService = banService;
             _hikkabaConfiguration = settings.Value;

@@ -11,8 +11,6 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Services;
 using Hikkaba.Web.Controllers.Mvc.Base;
-using Hikkaba.Web.Filters;
-using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -20,13 +18,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TPrimaryKey = System.Guid;
+using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
     // todo: add moderation buttons: delete post, add notice
     // todo: show (collapsed?) deleted posts if user is moderator
 
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize]
     public class ThreadsController : BaseMvcController
     {

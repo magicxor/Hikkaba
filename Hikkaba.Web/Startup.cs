@@ -8,7 +8,6 @@ using Hikkaba.Infrastructure.Mapping;
 using Hikkaba.Models.Configuration;
 using Hikkaba.Services;
 using Hikkaba.Services.Ref;
-using Hikkaba.Services.Storage;
 using Hikkaba.Web.Binding.Providers;
 using Hikkaba.Web.Mapping;
 using Hikkaba.Web.Services;
@@ -26,6 +25,8 @@ using Sakura.AspNetCore.Mvc;
 using TPrimaryKey = System.Guid;
 using Microsoft.Extensions.Options;
 using Hikkaba.Web.Models;
+using TwentyTwenty.Storage.Local;
+using TwentyTwenty.Storage;
 
 namespace Hikkaba.Web
 {
@@ -92,8 +93,12 @@ namespace Hikkaba.Web
             services.AddDNTCaptcha();
 
             // File storage
-            services.AddScoped<IStoragePathProvider, LocalStoragePathProvider>();
-            services.AddScoped<IStorageProviderFactory, LocalStorageProviderFactory>();
+            services.AddScoped<IStorageProvider>(s => 
+            {
+                var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
+                var path = Path.Combine(webHostEnvironment.WebRootPath, Defaults.AttachmentsStorageDirectoryName);
+                return new LocalStorageProvider(path);
+            });
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IMessagePostProcessor, MessagePostProcessor>();
 

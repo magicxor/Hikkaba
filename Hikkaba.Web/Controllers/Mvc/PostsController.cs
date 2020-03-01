@@ -12,18 +12,16 @@ using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Services;
 using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.Controllers.Mvc.Base;
-using Hikkaba.Web.Filters;
-using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TPrimaryKey = System.Guid;
+using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize]
     public class PostsController : BaseMvcController
     {
