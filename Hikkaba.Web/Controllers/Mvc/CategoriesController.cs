@@ -117,7 +117,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Categories/Create")]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }

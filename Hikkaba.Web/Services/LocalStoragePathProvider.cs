@@ -7,9 +7,9 @@ namespace Hikkaba.Web.Services
 {
     public class LocalStoragePathProvider: IStoragePathProvider
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public LocalStoragePathProvider(IHostingEnvironment hostingEnvironment)
+        public LocalStoragePathProvider(IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }

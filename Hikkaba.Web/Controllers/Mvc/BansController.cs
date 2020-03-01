@@ -54,7 +54,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Bans/Create")]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
