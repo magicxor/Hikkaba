@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using AutoMapper;
 using DNTCaptcha.Core;
 using Hikkaba.Common.Constants;
@@ -22,8 +22,11 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Sakura.AspNetCore.Mvc;
 using TPrimaryKey = System.Guid;
+using Microsoft.Extensions.Options;
+using Hikkaba.Web.Models;
 
 namespace Hikkaba.Web
 {
@@ -50,7 +53,7 @@ namespace Hikkaba.Web
                 options.UseLazyLoadingProxies()
                     .UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, TPrimaryKey>>()
@@ -70,13 +73,12 @@ namespace Hikkaba.Web
             //            .AllowCredentials());
             //}); // todo: AddCors and UseCors
 
-            services
-                .AddMvc(options =>
-                {
-                    options.ModelBinderProviders.Insert(0, new DateTimeKindSensitiveBinderProvider());
-                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddScoped<DateTimeKindSensitiveBinderProvider>();
+            services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
+
+            services.AddMvc();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
 
             services.AddBootstrapPagerGenerator(options =>
             {
@@ -115,7 +117,7 @@ namespace Hikkaba.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -124,24 +126,29 @@ namespace Hikkaba.Web
             }
             else
             {
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
                 app.UseExceptionHandler("/Error/Details");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            app.UseHttpsRedirection();
 
             Directory.CreateDirectory(Path.Combine(env.WebRootPath, Defaults.AttachmentsStorageDirectoryName));
             app.UseStaticFiles();
 
+            app.UseRouting();
+
             app.UseHttpsRedirection();
             app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

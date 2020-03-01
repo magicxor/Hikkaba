@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Configuration;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Web;
@@ -18,7 +19,7 @@ namespace Hikkaba.Web
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
 
             // seed: https://dotnetthoughts.net/seed-database-in-aspnet-core/s
             using (var scope = host.Services.CreateScope())
@@ -44,8 +45,8 @@ namespace Hikkaba.Web
             host.Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((builderContext, config) =>
                 {
                     config.AddJsonFile("seedconfig.json", optional: false, reloadOnChange: true);
@@ -56,6 +57,9 @@ namespace Hikkaba.Web
                     logging.SetMinimumLevel(LogLevel.Trace);
                 })
                 .UseNLog()
-                .UseStartup<Startup>();
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }
