@@ -6,3 +6,35 @@ services:
     build:
       context: .
       dockerfile: Hikkaba.Web/Dockerfile
+    container_name: hikkaba.web.dev.local
+    domainname: hikkaba.web.dev.local
+    hostname: hikkaba.web.dev.local
+    ports:
+      - "55443:443"
+    depends_on:
+      - db
+
+  db:
+    container_name: hikkaba.db.dev.local
+    domainname: hikkaba.db.dev.local
+    hostname: hikkaba.db.dev.local
+    image: "mcr.microsoft.com/mssql/server:2017-CU11-ubuntu"
+    environment:
+      MSSQL_SA_PASSWORD: "dev_passworD@4568919"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+      MSSQL_AGENT_ENABLED: "true"
+      MSSQL_ENABLE_HADR: "1"
+      MSSQL_IP_ADDRESS: "0.0.0.0"
+      MSSQL_MEMORY_LIMIT_MB: "2176"
+    ports:
+      - "51433:1433"
+    volumes:
+      - "C:/docker-linux/hikkaba/db/data:/var/opt/mssql/data"
+      - "C:/docker-linux/hikkaba/db/log:/var/opt/mssql/log"
+      - "C:/docker-linux/hikkaba/db/backup:/var/opt/mssql/backup"
+    deploy:
+      resources:
+        limits:
+          memory: 2816M
+
