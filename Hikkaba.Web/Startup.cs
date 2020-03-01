@@ -73,7 +73,7 @@ namespace Hikkaba.Web
             //            .AllowCredentials());
             //}); // todo: AddCors and UseCors
 
-            services.AddScoped<DateTimeKindSensitiveBinderProvider>();
+            services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
 
             services.AddMvc();

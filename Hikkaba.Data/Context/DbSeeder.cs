@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities;
@@ -38,7 +39,11 @@ namespace Hikkaba.Data.Context
                 if (adminRole == null)
                 {
                     adminRole = new ApplicationRole { Name = Defaults.AdministratorRoleName };
-                    await roleMgr.CreateAsync(adminRole);
+                    var roleCreateResult = await roleMgr.CreateAsync(adminRole);
+                    if (!roleCreateResult.Succeeded)
+                    {
+                        throw new Exception($"Can't create role {Defaults.AdministratorRoleName}: {string.Join(", ", roleCreateResult.Errors.Select(e => $"{e.Code}:{e.Description}"))}");
+                    }
                 }
             }
 
@@ -48,10 +53,14 @@ namespace Hikkaba.Data.Context
                 var adminUser = new ApplicationUser
                 {
                     UserName = Defaults.AdministratorUserName,
-                    Email = seedConfiguration.AdministratorEmail
+                    Email = seedConfiguration.AdministratorEmail,
+                    SecurityStamp = Guid.NewGuid().ToString(),
                 };
-                await userMgr.CreateAsync(adminUser, seedConfiguration.AdministratorPassword);
-                await userMgr.SetLockoutEnabledAsync(adminUser, true);
+                var userCreateResult = await userMgr.CreateAsync(adminUser, seedConfiguration.AdministratorPassword);
+                if (!userCreateResult.Succeeded)
+                {
+                    throw new Exception($"Can't create user {Defaults.AdministratorUserName}: {string.Join(", ", userCreateResult.Errors.Select(e => $"{e.Code}:{e.Description}"))}");
+                }
                 await userMgr.AddToRoleAsync(adminUser, Defaults.AdministratorRoleName);
             }
 
