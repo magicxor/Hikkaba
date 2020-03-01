@@ -113,9 +113,9 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [Route("{categoryAlias}/Threads/Create")]
         [HttpPost]
-        [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number.",
-             IsNumericErrorMessage = "The input value should be a number.",
-             CaptchaGeneratorLanguage = Language.English)]
+        [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number",
+            CaptchaGeneratorDisplayMode = DisplayMode.ShowDigits,
+            CaptchaGeneratorLanguage = Language.English)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> Create(ThreadAnonymousCreateViewModel viewModel)

@@ -27,6 +27,9 @@ using Microsoft.Extensions.Options;
 using Hikkaba.Web.Models;
 using TwentyTwenty.Storage.Local;
 using TwentyTwenty.Storage;
+using Microsoft.AspNetCore.DataProtection;
+using System;
+using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web
 {
@@ -77,6 +80,21 @@ namespace Hikkaba.Web
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
 
             services.AddHealthChecks();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            services.AddDataProtection(options =>
+                {
+                    options.ApplicationDiscriminator = "4036e12c07fa7f8fb6f58a70c90ee85b52c15be531acf7bd0d480d1ca7f9ea5d";
+                })
+               .SetApplicationName("Hikkaba")
+               .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(Configuration.GetSection(typeof(HikkabaConfiguration).Name).Get<HikkabaConfiguration>()))
+               .PersistKeysToFileSystem(new DirectoryInfo("/home/hikkaba/keys"));
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -90,7 +108,7 @@ namespace Hikkaba.Web
             services.AddTransient<ISmsSender, AuthMessageSender>();
 
             // Captcha
-            services.AddDNTCaptcha();
+            services.AddDNTCaptcha(options => options.UseSessionStorageProvider());
 
             // File storage
             services.AddScoped<IStorageProvider>(s => 
@@ -140,6 +158,7 @@ namespace Hikkaba.Web
             Directory.CreateDirectory(Path.Combine(env.WebRootPath, Defaults.AttachmentsStorageDirectoryName));
             app.UseStaticFiles();
 
+            app.UseSession();
             app.UseRouting();
 
             app.UseHttpsRedirection();
