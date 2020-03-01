@@ -8,6 +8,9 @@ namespace Hikkaba.Web.Controllers.Mvc
 {
     public class ErrorController : Controller
     {
+        private const string DefaultErrorMessage = "Something went wrong";
+        private const string PageNotFoundMessage = "Page not found";
+
         private readonly ILogger<ErrorController> _logger;
 
         public ErrorController(ILogger<ErrorController> logger)
@@ -15,27 +18,35 @@ namespace Hikkaba.Web.Controllers.Mvc
             _logger = logger;
         }
 
-        [Route("Error/{statusCode}")]
-        public IActionResult Index(int statusCode)
+        public IActionResult PageNotFound()
         {
-            var reExecute = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
-            _logger.LogInformation($"Unexpected Status Code: {statusCode}, OriginalPath: {reExecute.OriginalPath}");
-            return View(statusCode);
+            return Details(PageNotFoundMessage, HttpStatusCode.NotFound);
         }
 
-        [Route("Error/Details")]
-        public IActionResult Details()
+        public IActionResult Exception()
         {
             var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
-            var exception = feature?.Error;
-            return View(exception);
+            var statusCode = HttpContext.Response.StatusCode;
+            var message = feature?.Error?.Message;
+            return Details(message, (HttpStatusCode)statusCode);
         }
 
-        [Route("Error/Details/{message}")]
-        public IActionResult Details(string message)
+        public IActionResult Details(HttpStatusCode statusCode)
         {
-            var exception = new HttpResponseException(HttpStatusCode.BadRequest, message);
-            return View(exception);
+            var message = DefaultErrorMessage;
+            return Details(message, statusCode);
+        }
+
+        private IActionResult Details(string message = null, HttpStatusCode statusCode = HttpStatusCode.OK)
+        {
+            if (string.IsNullOrEmpty(message))
+            {
+                message = DefaultErrorMessage;
+            }
+            var exception = statusCode == HttpStatusCode.OK
+                ? new HttpResponseException(HttpStatusCode.InternalServerError, message)
+                : new HttpResponseException(statusCode, message);
+            return View("Details", exception);
         }
     }
 }

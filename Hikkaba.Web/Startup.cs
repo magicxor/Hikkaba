@@ -27,6 +27,7 @@ using Sakura.AspNetCore.Mvc;
 using TPrimaryKey = System.Guid;
 using Microsoft.Extensions.Options;
 using Hikkaba.Web.Models;
+using Hikkaba.Web.Controllers.Mvc;
 
 namespace Hikkaba.Web
 {
@@ -53,7 +54,8 @@ namespace Hikkaba.Web
                 options.UseLazyLoadingProxies()
                     .UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, TPrimaryKey>>()
@@ -76,7 +78,7 @@ namespace Hikkaba.Web
             services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
 
-            services.AddMvc();
+            services.AddHealthChecks();
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -126,8 +128,8 @@ namespace Hikkaba.Web
             }
             else
             {
-                app.UseStatusCodePagesWithReExecute("/Error/{0}");
-                app.UseExceptionHandler("/Error/Details");
+                app.UseStatusCodePagesWithReExecute("/Error/Details", "?statusCode={0}");
+                app.UseExceptionHandler("/Error/Exception");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -141,14 +143,17 @@ namespace Hikkaba.Web
             app.UseHttpsRedirection();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseAuthorization();            
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/Health");
+                endpoints.MapRazorPages();
+                endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                endpoints.MapFallbackToController("PageNotFound", "Error");
             });
         }
     }
