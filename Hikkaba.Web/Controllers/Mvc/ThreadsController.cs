@@ -144,7 +144,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Can't create new post due to exception: {ex}. Thread creation failed.");
+                    _logger.LogError(ex, $"Can't create new post due to exception. Thread creation failed.");
                     await _threadService.DeleteAsync(threadId);
                     throw;
                 }

@@ -56,8 +56,6 @@ namespace Hikkaba.Web.Controllers.Mvc
             return View(dashboardViewModel);
         }
 
-        //public async 
-
         public IActionResult DeleteAllContent()
         {
             return View();

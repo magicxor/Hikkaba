@@ -22,7 +22,7 @@ namespace Hikkaba.Web.Filters
             var modelErrors = context.ModelState.ModelErrorsToString();
             var displayUrl = context.HttpContext.Request.GetDisplayUrl();
 
-            _logger?.LogError($"{ex} | {nameof(actionName)}={actionName} | {nameof(isModelValid)}={isModelValid} | {nameof(modelErrors)}={modelErrors} | {nameof(displayUrl)}={displayUrl} | {nameof(context.HttpContext.Response.StatusCode)}={context.HttpContext.Response.StatusCode}");
+            _logger?.LogError(ex, $"{nameof(isModelValid)}={isModelValid} | {nameof(modelErrors)}={modelErrors} | {nameof(context.HttpContext.Response.StatusCode)}={context.HttpContext.Response.StatusCode}");
 
             context.ExceptionHandled = false;
             base.OnException(context);

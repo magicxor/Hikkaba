@@ -54,6 +54,7 @@ namespace Hikkaba.Data.Context
                 {
                     UserName = Defaults.AdministratorUserName,
                     Email = seedConfiguration.AdministratorEmail,
+                    EmailConfirmed = true,
                     SecurityStamp = Guid.NewGuid().ToString(),
                 };
                 var userCreateResult = await userMgr.CreateAsync(adminUser, seedConfiguration.AdministratorPassword);

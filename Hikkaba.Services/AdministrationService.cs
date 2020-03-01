@@ -92,7 +92,7 @@ namespace Hikkaba.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.ToString());
+                    _logger.LogError(ex, $"{nameof(DeleteAllContentAsync)} error");
                 }
                 _logger.LogDebug("OK");
 
@@ -103,54 +103,18 @@ namespace Hikkaba.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.ToString());
+                    _logger.LogError(ex, $"{nameof(DeleteAllContentAsync)} error");
                 }
                 _logger.LogDebug("OK");
             }
 
             _logger.LogDebug("Deleting all database tables...");
-            await _context.Database.ExecuteSqlCommandAsync(
-@"
-DECLARE @sql NVARCHAR(2000);
-
-WHILE EXISTS ( SELECT 1
-               FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-               WHERE 
-                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
-                 (TABLE_NAME IN (
-                   SELECT TABLE_NAME
-                   FROM INFORMATION_SCHEMA.TABLES
-                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-                 ))
-             )
-    BEGIN
-        SELECT TOP 1 @sql = 'ALTER TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+'] DROP CONSTRAINT ['+CONSTRAINT_NAME+']'
-        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-               WHERE 
-                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
-                 (TABLE_NAME IN (
-                   SELECT TABLE_NAME
-                   FROM INFORMATION_SCHEMA.TABLES
-                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-                 ))
-        EXEC (@sql);
-    END;
-
-WHILE EXISTS ( SELECT 1
-               FROM INFORMATION_SCHEMA.TABLES
-               WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-             )
-    BEGIN
-        SELECT TOP 1 @sql = 'DROP TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+']'
-        FROM INFORMATION_SCHEMA.TABLES
-        WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%');
-        EXEC (@sql);
-    END;
-");
+            await _context.Database.EnsureDeletedAsync();
             _logger.LogDebug("OK");
 
             _logger.LogDebug("Running migrations and seed...");
             await _context.Database.MigrateAsync();
+            await DbSeeder.SeedAsync(_context, _userManager, _roleManager, _seedConfOptions);
             _logger.LogDebug("OK");
         }
     }
