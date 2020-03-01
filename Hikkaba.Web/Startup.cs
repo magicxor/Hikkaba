@@ -13,7 +13,6 @@ using Hikkaba.Web.Binding.Providers;
 using Hikkaba.Web.Mapping;
 using Hikkaba.Web.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -27,7 +26,6 @@ using Sakura.AspNetCore.Mvc;
 using TPrimaryKey = System.Guid;
 using Microsoft.Extensions.Options;
 using Hikkaba.Web.Models;
-using Hikkaba.Web.Controllers.Mvc;
 
 namespace Hikkaba.Web
 {
@@ -57,7 +55,6 @@ namespace Hikkaba.Web
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders()
                 .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, TPrimaryKey>>()
                 .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, TPrimaryKey>>();
 
@@ -149,7 +146,6 @@ namespace Hikkaba.Web
             {
                 endpoints.MapHealthChecks("/Health");
                 endpoints.MapRazorPages();
-                endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

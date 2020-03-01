@@ -26,23 +26,23 @@
                 [
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="display-inline">
-                        <a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">@UserManager.GetUserName(User)</a>
-                        @("|")
-                        <button type="submit" class="btn-link">Log off</button>
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
+                    @("|")
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
                     </form>
                 }
                 else
                 {
-                    @*<a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-                        @("|")*@
-                    <a asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    @("|")
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
                 }
                 ]
             </div>
         </div>
         <div class="col-md-4">
-            <partial name="_SearchPartial", model="new SearchRequestViewModel()"/>
+            <partial name="_SearchPartial" , model="new SearchRequestViewModel()" />
         </div>
     </div>
 </div>
