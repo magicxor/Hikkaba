@@ -25,7 +25,7 @@ namespace Hikkaba.Web.Binding.Binders
             var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
             if (valueProviderResult != ValueProviderResult.None)
             {
-                bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult); // todo: ???
+                bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
 
                 DateTime model;
                 if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out model))

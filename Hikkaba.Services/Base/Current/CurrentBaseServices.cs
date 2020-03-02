@@ -1,11 +1,11 @@
-﻿using AutoMapper;
+﻿using TPrimaryKey = System.Guid;
+using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Base.Current;
 using Hikkaba.Models.Dto.Base.Current;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.AspNetCore.Identity;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services.Base.Current
 {

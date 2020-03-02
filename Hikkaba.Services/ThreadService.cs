@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using TPrimaryKey = System.Guid;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Data.Context;
@@ -8,7 +9,6 @@ using Hikkaba.Services.Base.Current;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services
 {
@@ -69,7 +69,7 @@ namespace Hikkaba.Services
             page = page ?? new PageDto();
 
             var query = Context.Threads
-                .Where(thread => (!thread.IsDeleted) && (thread.Category.Id == categoryId))
+                .Where(thread => (!thread.IsDeleted) && (thread.Posts.Any(p => !p.IsDeleted)) && (thread.Category.Id == categoryId))
                 .OrderByDescending(thread => thread.IsPinned)
                 .ThenByDescending(thread => thread.Posts
                     .OrderBy(post => post.Created)

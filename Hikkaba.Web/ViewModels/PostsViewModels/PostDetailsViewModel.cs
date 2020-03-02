@@ -1,13 +1,14 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels
 {
     public class PostDetailsViewModel
     {
+        public int Index { get; set; }
         public TPrimaryKey Id { get; set; }
 
         [Display(Name = @"Is deleted")]

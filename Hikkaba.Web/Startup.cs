@@ -1,3 +1,4 @@
+using TPrimaryKey = System.Guid;
 using System.IO;
 using AutoMapper;
 using DNTCaptcha.Core;
@@ -22,7 +23,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sakura.AspNetCore.Mvc;
-using TPrimaryKey = System.Guid;
 using Microsoft.Extensions.Options;
 using Hikkaba.Web.Models;
 using TwentyTwenty.Storage.Local;

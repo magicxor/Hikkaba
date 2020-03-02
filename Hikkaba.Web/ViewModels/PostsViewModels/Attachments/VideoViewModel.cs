@@ -1,5 +1,5 @@
-﻿using Hikkaba.Models.Dto.Attachments;
-using TPrimaryKey = System.Guid;
+﻿using TPrimaryKey = System.Guid;
+using Hikkaba.Models.Dto.Attachments;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments
 {

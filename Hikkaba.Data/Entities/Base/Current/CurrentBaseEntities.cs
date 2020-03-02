@@ -1,8 +1,8 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Data.Entities.Base.Generic;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Entities.Base.Current
 {

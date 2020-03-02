@@ -1,3 +1,4 @@
+using TPrimaryKey = System.Guid;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -17,7 +18,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TPrimaryKey = System.Guid;
 using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc

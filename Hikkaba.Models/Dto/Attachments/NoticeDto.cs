@@ -1,5 +1,5 @@
-﻿using Hikkaba.Models.Dto.Attachments.Base;
-using TPrimaryKey = System.Guid;
+﻿using TPrimaryKey = System.Guid;
+using Hikkaba.Models.Dto.Attachments.Base;
 
 namespace Hikkaba.Models.Dto.Attachments
 {

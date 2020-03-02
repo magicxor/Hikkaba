@@ -1,4 +1,5 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,7 +22,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using TwentyTwenty.Storage;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services
 {
@@ -106,10 +106,10 @@ namespace Hikkaba.Services
 
         public async Task<TPrimaryKey> CreateAsync(IFormFileCollection attachments, PostDto dto)
         {
-            var isPostingAllowed = await _banService.IsPostingAllowedAsync(dto.ThreadId, dto.UserIpAddress);
-            if (!isPostingAllowed.Item1)
+            var postingPermissionDto = await _banService.IsPostingAllowedAsync(dto.ThreadId, dto.UserIpAddress);
+            if (!postingPermissionDto.IsPostingAllowed)
             {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, isPostingAllowed.Item2);
+                throw new HttpResponseException(HttpStatusCode.Forbidden, postingPermissionDto.Ban?.Reason);
             }
             else if (attachments == null)
             {
@@ -137,10 +137,13 @@ namespace Hikkaba.Services
                     {
                         string blobName;
 
-                        var attachmentParentDto = _attachmentCategorizer.CreateAttachmentDto(attachment.FileName);
+                        var extension = Path.GetExtension(attachment.FileName)?.ToLowerInvariant()?.TrimStart('.');
+                        var fileName = Path.GetFileNameWithoutExtension(attachment.FileName);
+                        var fileNameWithExtension = fileName + "." + extension;
+                        var attachmentParentDto = _attachmentCategorizer.CreateAttachmentDto(fileNameWithExtension);
                         attachmentParentDto.PostId = postId;
-                        attachmentParentDto.FileExtension = Path.GetExtension(attachment.FileName)?.TrimStart('.');
-                        attachmentParentDto.FileName = Path.GetFileNameWithoutExtension(attachment.FileName);
+                        attachmentParentDto.FileExtension = extension;
+                        attachmentParentDto.FileName = fileName;
                         attachmentParentDto.Size = attachment.Length;
                         attachmentParentDto.Hash = _cryptoService.HashHex(attachment.OpenReadStream());
 

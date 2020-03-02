@@ -1,6 +1,6 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.ComponentModel.DataAnnotations;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.CategoriesViewModels
 {
@@ -17,12 +17,6 @@ namespace Hikkaba.Web.ViewModels.CategoriesViewModels
 
         [Display(Name = @"Modification date and time")]
         public DateTime? Modified { get; set; }
-
-        //[Display(Name = @"Creator")]
-        //public ApplicationUserDto CreatedBy { get; set; }
-
-        //[Display(Name = @"Editor")]
-        //public ApplicationUserDto ModifiedBy { get; set; }
 
         [Display(Name = @"Alias")]
         public string Alias { get; set; }

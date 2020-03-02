@@ -1,0 +1,65 @@
+﻿@model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadEditViewModel
+@{
+    ViewData["Title"] = $"Edit thread {Model.Id}";
+}
+
+    <form asp-controller="Threads" asp-action="Edit" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.Id" method="post" class="form-horizontal">
+        <h4>@ViewData["Title"]</h4>
+        <hr />
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <input asp-for="Id" type="hidden" />
+
+        <div class="form-group">
+            <label asp-for="Title" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="IsPinned" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="IsPinned" class="form-control" />
+                <span asp-validation-for="IsPinned" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="IsClosed" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="IsClosed" class="form-control" />
+                <span asp-validation-for="IsClosed" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="BumpLimit" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="BumpLimit" class="form-control" />
+                <span asp-validation-for="BumpLimit" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ShowThreadLocalUserHash" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ShowThreadLocalUserHash" class="form-control" />
+                <span asp-validation-for="ShowThreadLocalUserHash" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CategoryAlias" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="CategoryAlias" class="form-control" />
+                <span asp-validation-for="CategoryAlias" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-default">Save</button>
+            </div>
+        </div>
+    </form>

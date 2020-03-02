@@ -1,3 +1,4 @@
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,6 @@ using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TPrimaryKey = System.Guid;
 using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc
@@ -216,21 +216,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 return View(viewModel);
             }
         }
-
-        [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Delete")]
-        public async Task<IActionResult> Delete(string categoryAlias, TPrimaryKey threadId, TPrimaryKey postId)
-        {
-            throw new NotImplementedException();
-        }
-
-        [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Delete")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(PostEditViewModel postEditViewModel)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public async Task<IActionResult> ToggleIsDeletedOption(TPrimaryKey postId)
         {
             var postDto = await _postService.GetAsync(postId);

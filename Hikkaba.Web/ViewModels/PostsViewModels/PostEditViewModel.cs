@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using TPrimaryKey = System.Guid;
+﻿using TPrimaryKey = System.Guid;
+using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels
 {

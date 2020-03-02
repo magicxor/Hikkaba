@@ -1,11 +1,11 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Common.Attributes;
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Entities.Base.Current;
 using Microsoft.AspNetCore.Identity;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Entities
 {

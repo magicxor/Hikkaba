@@ -19,7 +19,7 @@ namespace Hikkaba.Services
 {
     public interface IAdministrationService
     {
-        DashboardDto GetDashboard();
+        Task<DashboardDto> GetDashboardAsync();
         Task DeleteAllContentAsync();
     }
 
@@ -51,18 +51,22 @@ namespace Hikkaba.Services
             _storageProvider = storageProvider;
         }
 
-        public DashboardDto GetDashboard()
+        public async Task<DashboardDto> GetDashboardAsync()
         {
-            var dashboardItems = _context.Categories
+            var dashboardItems = await _context.Categories
                 .OrderBy(category => category.Alias)
                 .Select(
-                    category => 
-                    new { Category = category,
-                          Moderators = category.Moderators
+                    category =>
+                    new
+                    {
+                        Category = category,
+                        Moderators = category.Moderators
                             .OrderBy(moderator => moderator.ApplicationUser.UserName)
                             .Select(categoryToModerator => categoryToModerator.ApplicationUser),
                     })
-                 .ToList()
+                 .ToListAsync();
+
+            var dashboardItemsDto = dashboardItems
                  .Select(categoryModerators => new CategoryModeratorsDto
                 {
                     Category = _mapper.Map<CategoryDto>(categoryModerators.Category),
@@ -72,7 +76,7 @@ namespace Hikkaba.Services
 
             return new DashboardDto
             {
-                CategoriesModerators = dashboardItems
+                CategoriesModerators = dashboardItemsDto,
             };
         }
 

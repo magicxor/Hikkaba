@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using TPrimaryKey = System.Guid;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,7 +11,6 @@ using Hikkaba.Models.Dto;
 using Hikkaba.Services.Base.Current;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services
 {

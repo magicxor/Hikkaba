@@ -1,3 +1,4 @@
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,7 +12,6 @@ using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TPrimaryKey = System.Guid;
 using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc

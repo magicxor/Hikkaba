@@ -10,13 +10,6 @@ using Hikkaba.Web.ViewModels.PostsViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-// todo: add posts numeration
-// todo: merge empty lines to one line
-// todo: enlarge video on click
-// todo: enlarge post form
-// todo: remove unnecessary parameters which needed only for routing from ALL actions
-// todo: add /api/ area
-
 namespace Hikkaba.Web.Controllers.Mvc
 {
     public class HomeController : Controller

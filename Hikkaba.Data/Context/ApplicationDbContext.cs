@@ -1,4 +1,5 @@
-﻿using Hikkaba.Common.Attributes;
+﻿using TPrimaryKey = System.Guid;
+using Hikkaba.Common.Attributes;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -6,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Reflection;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Context
 {

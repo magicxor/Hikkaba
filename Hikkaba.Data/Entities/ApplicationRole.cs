@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using TPrimaryKey = System.Guid;
+﻿using TPrimaryKey = System.Guid;
+using Microsoft.AspNetCore.Identity;
 
 namespace Hikkaba.Data.Entities
 {
