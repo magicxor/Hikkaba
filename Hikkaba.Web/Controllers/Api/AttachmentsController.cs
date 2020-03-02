@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
-using Hikkaba.Services.Storage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
@@ -14,9 +13,9 @@ namespace Hikkaba.Web.Controllers.Api
         private readonly IContentTypeProvider _contentTypeProvider = new FileExtensionContentTypeProvider();
         private readonly IStorageProvider _storageProvider;
 
-        public AttachmentsController(IStorageProviderFactory storageProviderFactory)
+        public AttachmentsController(IStorageProvider storageProvider)
         {
-            _storageProvider = storageProviderFactory.CreateStorageProvider();
+            _storageProvider = storageProvider;
         }
 
         private string GetContentTypeByFileName(string fileName)

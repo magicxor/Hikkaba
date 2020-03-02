@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Services;
-using Hikkaba.Web.Filters;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Hikkaba.Web.ViewModels.BoardViewModels;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
@@ -13,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize(Roles = Defaults.AdministratorRoleName)]
     public class AdministrationController : Controller
     {
@@ -55,8 +53,6 @@ namespace Hikkaba.Web.Controllers.Mvc
             };
             return View(dashboardViewModel);
         }
-
-        //public async 
 
         public IActionResult DeleteAllContent()
         {

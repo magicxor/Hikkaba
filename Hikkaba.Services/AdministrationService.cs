@@ -9,7 +9,6 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Models.Configuration;
 using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Administration;
-using Hikkaba.Services.Storage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,7 +19,7 @@ namespace Hikkaba.Services
 {
     public interface IAdministrationService
     {
-        DashboardDto GetDashboard();
+        Task<DashboardDto> GetDashboardAsync();
         Task DeleteAllContentAsync();
     }
 
@@ -40,7 +39,7 @@ namespace Hikkaba.Services
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
             IOptions<SeedConfiguration> seedConfOptions,
-            IStorageProviderFactory storageProviderFactory,
+            IStorageProvider storageProvider,
             IMapper mapper)
         {
             _logger = logger;
@@ -49,21 +48,25 @@ namespace Hikkaba.Services
             _roleManager = roleManager;
             _seedConfOptions = seedConfOptions;
             _mapper = mapper;
-            _storageProvider = storageProviderFactory.CreateStorageProvider();
+            _storageProvider = storageProvider;
         }
 
-        public DashboardDto GetDashboard()
+        public async Task<DashboardDto> GetDashboardAsync()
         {
-            var dashboardItems = _context.Categories
+            var dashboardItems = await _context.Categories
                 .OrderBy(category => category.Alias)
                 .Select(
-                    category => 
-                    new { Category = category,
-                          Moderators = category.Moderators
+                    category =>
+                    new
+                    {
+                        Category = category,
+                        Moderators = category.Moderators
                             .OrderBy(moderator => moderator.ApplicationUser.UserName)
                             .Select(categoryToModerator => categoryToModerator.ApplicationUser),
                     })
-                 .ToList()
+                 .ToListAsync();
+
+            var dashboardItemsDto = dashboardItems
                  .Select(categoryModerators => new CategoryModeratorsDto
                 {
                     Category = _mapper.Map<CategoryDto>(categoryModerators.Category),
@@ -73,7 +76,7 @@ namespace Hikkaba.Services
 
             return new DashboardDto
             {
-                CategoriesModerators = dashboardItems
+                CategoriesModerators = dashboardItemsDto,
             };
         }
 
@@ -92,7 +95,7 @@ namespace Hikkaba.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.ToString());
+                    _logger.LogError(ex, $"{nameof(DeleteAllContentAsync)} error");
                 }
                 _logger.LogDebug("OK");
 
@@ -103,54 +106,18 @@ namespace Hikkaba.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.ToString());
+                    _logger.LogError(ex, $"{nameof(DeleteAllContentAsync)} error");
                 }
                 _logger.LogDebug("OK");
             }
 
             _logger.LogDebug("Deleting all database tables...");
-            await _context.Database.ExecuteSqlCommandAsync(
-@"
-DECLARE @sql NVARCHAR(2000);
-
-WHILE EXISTS ( SELECT 1
-               FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-               WHERE 
-                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
-                 (TABLE_NAME IN (
-                   SELECT TABLE_NAME
-                   FROM INFORMATION_SCHEMA.TABLES
-                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-                 ))
-             )
-    BEGIN
-        SELECT TOP 1 @sql = 'ALTER TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+'] DROP CONSTRAINT ['+CONSTRAINT_NAME+']'
-        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-               WHERE 
-                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
-                 (TABLE_NAME IN (
-                   SELECT TABLE_NAME
-                   FROM INFORMATION_SCHEMA.TABLES
-                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-                 ))
-        EXEC (@sql);
-    END;
-
-WHILE EXISTS ( SELECT 1
-               FROM INFORMATION_SCHEMA.TABLES
-               WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-             )
-    BEGIN
-        SELECT TOP 1 @sql = 'DROP TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+']'
-        FROM INFORMATION_SCHEMA.TABLES
-        WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%');
-        EXEC (@sql);
-    END;
-");
+            await _context.Database.EnsureDeletedAsync();
             _logger.LogDebug("OK");
 
             _logger.LogDebug("Running migrations and seed...");
             await _context.Database.MigrateAsync();
+            await DbSeeder.SeedAsync(_context, _userManager, _roleManager, _seedConfOptions);
             _logger.LogDebug("OK");
         }
     }

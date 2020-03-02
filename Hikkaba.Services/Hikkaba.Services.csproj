@@ -1,18 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
-    <PackageReference Include="TwentyTwenty.Storage" Version="2.7.0" />
-    <PackageReference Include="TwentyTwenty.Storage.Local" Version="2.7.0" />
+    <PackageReference Include="TwentyTwenty.Storage" Version="2.12.3" />
+    <PackageReference Include="TwentyTwenty.Storage.Local" Version="2.12.3" />
   </ItemGroup>
 
   <ItemGroup>

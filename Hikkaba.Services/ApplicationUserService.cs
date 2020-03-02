@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using TPrimaryKey = System.Guid;
+using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services.Base.Current;
 using Microsoft.EntityFrameworkCore;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services
 {

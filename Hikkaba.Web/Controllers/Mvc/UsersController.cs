@@ -1,21 +1,19 @@
+using TPrimaryKey = System.Guid;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services;
-using Hikkaba.Web.Filters;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
     // todo: implement views
 
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize(Roles = Defaults.AdministratorRoleName)]
     public class UsersController : Controller
     {
@@ -45,7 +43,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Users/Create")]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }

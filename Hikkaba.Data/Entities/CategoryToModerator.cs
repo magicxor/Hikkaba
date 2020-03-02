@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using TPrimaryKey = System.Guid;
+﻿using TPrimaryKey = System.Guid;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Hikkaba.Data.Entities
 {

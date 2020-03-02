@@ -1,4 +1,5 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,19 +12,19 @@ using Hikkaba.Services.Base.Current;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Services
 {
     public interface IBanService : IBaseModeratedMutableEntityService<BanDto, Ban>
     {
-        Task<Tuple<bool, string>> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress);
+        Task<PostingPermissionDto> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress);
         Task<TPrimaryKey> CreateOrGetIdAsync(BanDto dto, TPrimaryKey currentUserId);
         Task EditAsync(BanDto dto, TPrimaryKey currentUserId);
     }
 
     public class BanService : BaseModeratedMutableEntityService<BanDto, Ban>, IBanService
     {
+        private readonly IMapper _mapper;
         private readonly ICategoryToModeratorService _categoryToModeratorService;
         private readonly IIpAddressCalculator _ipAddressCalculator;
 
@@ -33,6 +34,7 @@ namespace Hikkaba.Services
             ICategoryToModeratorService categoryToModeratorService,
             IIpAddressCalculator ipAddressCalculator) : base(mapper, context, userManager)
         {
+            _mapper = mapper;
             _categoryToModeratorService = categoryToModeratorService;
             _ipAddressCalculator = ipAddressCalculator;
         }
@@ -111,7 +113,7 @@ namespace Hikkaba.Services
             });
         }
 
-        public async Task<Tuple<bool, string>> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress)
+        public async Task<PostingPermissionDto> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress)
         {
             var bans = await Context
                 .Bans
@@ -129,7 +131,13 @@ namespace Hikkaba.Services
 
             var isPostingAllowed = relatedBan == null;
 
-            return new Tuple<bool, string>(isPostingAllowed, relatedBan?.Reason);
+            BanDto banDto = null;
+            if (!isPostingAllowed)
+            {
+                banDto = _mapper.Map<BanDto>(relatedBan);
+            }
+
+            return new PostingPermissionDto() { IsPostingAllowed = isPostingAllowed, Ban = banDto };
         }
     }
 }

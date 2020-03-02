@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Binding.Binders
 {
@@ -10,9 +11,9 @@ namespace Hikkaba.Web.Binding.Binders
     {
         SimpleTypeModelBinder _baseBinder;
 
-        public DateTimeKindSensitiveBinder(Type type)
+        public DateTimeKindSensitiveBinder(Type type, ILoggerFactory loggerFactory)
         {
-            _baseBinder = new SimpleTypeModelBinder(type);
+            _baseBinder = new SimpleTypeModelBinder(type, loggerFactory);
         }
 
         /// <inheritdoc />
@@ -24,7 +25,7 @@ namespace Hikkaba.Web.Binding.Binders
             var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
             if (valueProviderResult != ValueProviderResult.None)
             {
-                bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult); // todo: ???
+                bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
 
                 DateTime model;
                 if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out model))

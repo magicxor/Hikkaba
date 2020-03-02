@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
+        <div class="panel panel-default post @(Model.IsDeleted ? "post-deleted" : "")">
             <div class="panel-heading">
                 <h3 class="panel-title post-title">
                     @if (Model.ThreadShowThreadLocalUserHash)
@@ -21,14 +21,27 @@
                     }
                     @if (Model.IsSageEnabled)
                     {
-                        <b>&nbsp;SAGE</b>
+                        <b>SAGE</b>
                     }
-                    <!-- todo: show post number here -->
-                    <!-- todo: show modified date below if post was modified -->
-                    &nbsp;
                     @Html.DisplayFor(model => model.Created)
+                    @{
+                        if (Model.Modified.HasValue)
+                        {
+                            <i>&nbsp;(&nbsp;</i><i class="fa fa-pencil" aria-hidden="true"></i><i>&nbsp;@Html.DisplayFor(model => model.Modified)&nbsp;)</i>
+                        }
+                    }
                     &nbsp;
                     <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId})#@Model.Id">@Html.DisplayFor(model => model.Id)</a>
+                    &nbsp;
+                    @{
+                        if (Model.Index > 0)
+                        {
+                            <span class="post-number">
+                                №
+                                @Html.DisplayFor(model => model.Index)
+                            </span>
+                        }
+                    }
                 </h3>
             </div>
             <div class="panel-body post-content">

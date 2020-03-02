@@ -1,3 +1,4 @@
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,27 +7,26 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DNTCaptcha.Core;
 using DNTCaptcha.Core.Providers;
+using Hikkaba.Common.Constants;
+using Hikkaba.Common.Extensions;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Services;
 using Hikkaba.Web.Controllers.Mvc.Base;
-using Hikkaba.Web.Filters;
-using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TPrimaryKey = System.Guid;
+using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
     // todo: add moderation buttons: delete post, add notice
     // todo: show (collapsed?) deleted posts if user is moderator
 
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize]
     public class ThreadsController : BaseMvcController
     {
@@ -74,20 +74,23 @@ namespace Hikkaba.Web.Controllers.Mvc
                 return RedirectToAction("Details", new {categoryAlias = categoryDto.Alias, threadId = threadDto.Id});
             }
 
-            var postDtoList =
-                await
-                    _postService.ListAsync(post => (!post.IsDeleted) && (post.Thread.Id == threadId),
-                        post => post.Created);
+            var postDtoList = await _postService.ListAsync(
+                post => (isCurrentUserCategoryModerator || (!post.IsDeleted)) 
+                        && (post.Thread.Id == threadId), 
+                post => post.Created);
 
             var postDetailsViewModels = _mapper.Map<IList<PostDetailsViewModel>>(postDtoList);
+            var i = 0;
             foreach (var postDetailsViewModel in postDetailsViewModels)
             {
+                i++;
+                postDetailsViewModel.Index = i;
                 postDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
                 postDetailsViewModel.CategoryAlias = categoryDto.Alias;
                 postDetailsViewModel.CategoryId = categoryDto.Id;
                 postDetailsViewModel.Answers = new List<TPrimaryKey>(
                     postDetailsViewModels
-                        .Where(answer => answer.Message.Contains(">>"+ postDetailsViewModel.Id.ToString()))
+                        .Where(answer => answer.Message.Contains(">>" + postDetailsViewModel.Id.ToString()))
                         .Select(answer => answer.Id));
             }
 
@@ -115,41 +118,51 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [Route("{categoryAlias}/Threads/Create")]
         [HttpPost]
-        [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number.",
-             IsNumericErrorMessage = "The input value should be a number.",
-             CaptchaGeneratorLanguage = Language.English)]
+        [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number",
+            CaptchaGeneratorDisplayMode = DisplayMode.ShowDigits,
+            CaptchaGeneratorLanguage = Language.English)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> Create(ThreadAnonymousCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var category = await _categoryService.GetAsync(viewModel.CategoryAlias);
-
-                var threadDto = _mapper.Map<ThreadDto>(viewModel);
-                threadDto.BumpLimit = category.DefaultBumpLimit;
-                threadDto.ShowThreadLocalUserHash = category.DefaultShowThreadLocalUserHash;
-                threadDto.CategoryId = category.Id;
-
-                var threadId = await _threadService.CreateAsync(threadDto);
-
-                var postDto = _mapper.Map<PostDto>(viewModel);
-                postDto.ThreadId = threadId;
-                postDto.UserIpAddress = UserIpAddress.ToString();
-                postDto.UserAgent = UserAgent;
-
                 try
                 {
-                    var postId = await _postService.CreateAsync(viewModel.Attachments, postDto);
+                    var category = await _categoryService.GetAsync(viewModel.CategoryAlias);
+
+                    var threadDto = _mapper.Map<ThreadDto>(viewModel);
+                    threadDto.BumpLimit = category.DefaultBumpLimit;
+                    threadDto.ShowThreadLocalUserHash = category.DefaultShowThreadLocalUserHash;
+                    threadDto.CategoryId = category.Id;
+
+                    var threadId = await _threadService.CreateAsync(threadDto);
+
+                    var postDto = _mapper.Map<PostDto>(viewModel);
+                    postDto.ThreadId = threadId;
+                    postDto.UserIpAddress = UserIpAddress.ToString();
+                    postDto.UserAgent = UserAgent;
+
+                    try
+                    {
+                        var postId = await _postService.CreateAsync(viewModel.Attachments, postDto);
+                        return RedirectToAction("Details", "Threads", new { categoryAlias = viewModel.CategoryAlias, threadId = threadId });
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(EventIdentifiers.PostCreateError.ToEventId(), ex, $"Can't create new post due to exception. Thread creation failed");
+                        
+                        await _threadService.DeleteAsync(threadId);
+                        throw;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Can't create new post due to exception: {ex}. Thread creation failed.");
-                    await _threadService.DeleteAsync(threadId);
-                    throw;
+                    _logger.LogError(EventIdentifiers.ThreadCreateError.ToEventId(), ex, $"Can't create new thread due to exception");
+                    
+                    ViewBag.ErrorMessage = "Can't create new thread";
+                    return View(viewModel);
                 }
-
-                return RedirectToAction("Details", "Threads", new { categoryAlias = viewModel.CategoryAlias, threadId = threadId });
             }
             else
             {
@@ -159,31 +172,76 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Edit")]
-        public IActionResult Edit(string categoryAlias, TPrimaryKey threadId)
+        public async Task<IActionResult> Edit(string categoryAlias, TPrimaryKey threadId)
         {
-            throw new NotImplementedException();
+            var threadDto = await _threadService.GetAsync(threadId);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                var threadEditViewModel = _mapper.Map<ThreadEditViewModel>(threadDto);
+                return View(threadEditViewModel);
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
+        public async Task<IActionResult> Edit(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
         {
-            throw new NotImplementedException();
+            var threadDto = await _threadService.GetAsync(threadId);
+            _mapper.Map(threadEditViewModel, threadDto);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                await _threadService.EditAsync(threadDto, GetCurrentUserId());
+                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryAlias, threadId = threadDto.Id });
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Delete")]
-        public IActionResult Delete(string categoryAlias, TPrimaryKey threadId)
+        public async Task<IActionResult> Delete(string categoryAlias, TPrimaryKey threadId)
         {
-            throw new NotImplementedException();
+            var threadDto = await _threadService.GetAsync(threadId);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                var threadEditViewModel = _mapper.Map<ThreadEditViewModel>(threadDto);
+                return View(threadEditViewModel);
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
 
         [Route("{categoryAlias}/Threads/{threadId}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
+        public async Task<IActionResult> Delete(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
         {
-            throw new NotImplementedException();
+            var threadDto = await _threadService.GetAsync(threadId);
+            var isCurrentUserCategoryModerator = await _categoryToModeratorService
+                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+            if (isCurrentUserCategoryModerator)
+            {
+                await _threadService.DeleteAsync(threadId, GetCurrentUserId());
+                return RedirectToAction("Details", "Categories", new { categoryAlias = categoryAlias });
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            }
         }
 
         [HttpPost]

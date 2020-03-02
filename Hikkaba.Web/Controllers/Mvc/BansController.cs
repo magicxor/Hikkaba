@@ -1,3 +1,4 @@
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,13 +8,11 @@ using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Services;
 using Hikkaba.Web.Controllers.Mvc.Base;
-using Hikkaba.Web.Filters;
-using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TPrimaryKey = System.Guid;
+using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -21,7 +20,6 @@ namespace Hikkaba.Web.Controllers.Mvc
     // todo: add ability to attach related post to ban
     // todo: add ban functions: 1) ban by ip 2) ban by ip range 3) ban and delete all posts in category 4) ban and delete all posts
 
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize(Roles = Defaults.AdministratorRoleName)]
     public class BansController : BaseMvcController
     {
@@ -54,7 +52,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
 
         [Route("Bans/Create")]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }

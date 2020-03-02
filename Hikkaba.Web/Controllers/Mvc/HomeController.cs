@@ -4,23 +4,14 @@ using AutoMapper;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services;
 using Hikkaba.Services.Base.Generic;
-using Hikkaba.Web.Filters;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.HomeViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-// todo: add posts numeration
-// todo: merge empty lines to one line
-// todo: enlarge video on click
-// todo: enlarge post form
-// todo: remove unnecessary parameters which needed only for routing from ALL actions
-// todo: add /api/ area
-
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     public class HomeController : Controller
     {
         private readonly ILogger _logger;

@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using TPrimaryKey = System.Guid;
+using System.ComponentModel.DataAnnotations;
 using Hikkaba.Common.Constants;
 using Microsoft.AspNetCore.Http;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels
 {

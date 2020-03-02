@@ -1,10 +1,11 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Common.Attributes;
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Entities.Base.Current;
 using Microsoft.AspNetCore.Identity;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Entities
 {
@@ -12,6 +13,8 @@ namespace Hikkaba.Data.Entities
     public class ApplicationUser : IdentityUser<TPrimaryKey>, IBaseEntity
     {
         public bool IsDeleted { get; set; }
+
+        [DateTimeKind(DateTimeKind.Utc)]
         public DateTime? LastLogin { get; set; }
 
         [InverseProperty("CreatedBy")]
@@ -33,7 +36,7 @@ namespace Hikkaba.Data.Entities
 
         public TPrimaryKey GenerateNewId()
         {
-            return TPrimaryKey.NewGuid();
+            return KeyUtils.GenerateNew();
         }
     }
 }

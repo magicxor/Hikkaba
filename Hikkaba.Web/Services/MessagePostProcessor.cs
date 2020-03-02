@@ -1,9 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using TPrimaryKey = System.Guid;
+using System.Text.RegularExpressions;
 using CodeKicker.BBCode;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Services
 {
@@ -69,6 +69,8 @@ namespace Hikkaba.Web.Services
 
         public string Process(string categoryAlias, TPrimaryKey threadId, string text)
         {
+            text = ReplaceLineTerminators(text);
+            text = LimitLineTerminatorCount(text);
             var bbParsed = _bbCodeParser.ToHtml(text);
             var uriParsed = UriToHtmlLinks(bbParsed);
             var crossLinksParsed = CrossLinksToHtmlLinks(categoryAlias, threadId, uriParsed);

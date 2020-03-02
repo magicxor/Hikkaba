@@ -1,10 +1,10 @@
-﻿using System.Net;
+﻿using TPrimaryKey = System.Guid;
+using System.Net;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.Controllers.Mvc.Base
 {

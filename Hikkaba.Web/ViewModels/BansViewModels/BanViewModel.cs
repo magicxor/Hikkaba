@@ -1,8 +1,8 @@
-﻿using System;
+﻿using TPrimaryKey = System.Guid;
+using System;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
-using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels
 {

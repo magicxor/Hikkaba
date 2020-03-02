@@ -1,3 +1,4 @@
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +13,15 @@ using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Services;
 using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.Controllers.Mvc.Base;
-using Hikkaba.Web.Filters;
-using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TPrimaryKey = System.Guid;
+using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    [TypeFilter(typeof(ExceptionLoggingFilter))]
     [Authorize]
     public class PostsController : BaseMvcController
     {
@@ -64,9 +62,9 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [Route("{categoryAlias}/Threads/{threadId}/Posts/Create")]
         [HttpPost]
-        [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number.",
-                    IsNumericErrorMessage = "The input value should be a number.",
-                    CaptchaGeneratorLanguage = Language.English)]
+        [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number",
+            CaptchaGeneratorDisplayMode = DisplayMode.ShowDigits,
+            CaptchaGeneratorLanguage = Language.English)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> Create(PostAnonymousCreateViewModel viewModel)
@@ -218,21 +216,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 return View(viewModel);
             }
         }
-
-        [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Delete")]
-        public async Task<IActionResult> Delete(string categoryAlias, TPrimaryKey threadId, TPrimaryKey postId)
-        {
-            throw new NotImplementedException();
-        }
-
-        [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Delete")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(PostEditViewModel postEditViewModel)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public async Task<IActionResult> ToggleIsDeletedOption(TPrimaryKey postId)
         {
             var postDto = await _postService.GetAsync(postId);
