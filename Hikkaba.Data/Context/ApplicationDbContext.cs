@@ -1,7 +1,11 @@
-﻿using Hikkaba.Data.Entities;
+﻿using Hikkaba.Common.Attributes;
+using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Reflection;
 using TPrimaryKey = System.Guid;
 
 namespace Hikkaba.Data.Context
@@ -11,21 +15,38 @@ namespace Hikkaba.Data.Context
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            /*
-             * todo: 
-             * we want to automatically set DateTimeKind while fetching DateTime properties from database
-             * (http://www.gitshah.com/2015/02/how-to-automatically-set-datetimekind.html)
-             * but there is no ObjectMaterialized event yet in EF7 (.net core 1.1.0): https://github.com/aspnet/EntityFramework/issues/626
-             * so we set DateTimeKind every time while mapping dto <-> entity
-            */
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+
+            // DateTimeKind
+            var dateTimeOfKindValueConverterFactory = new DateTimeOfKindValueConverterFactory();
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties().Where(p => p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
+                {
+                    var dateTimeKindAttribute = property.FieldInfo.GetCustomAttribute<DateTimeKindAttribute>();
+                    if (dateTimeKindAttribute != null)
+                    {
+                        var dateTimeKind = dateTimeKindAttribute.Kind;
+                        if (property.ClrType == typeof(DateTime))
+                        {
+                            property.SetValueConverter(dateTimeOfKindValueConverterFactory.GetDateTimeValueConverter(dateTimeKind));
+                        }
+                        else if (property.ClrType == typeof(DateTime?))
+                        {
+                            property.SetValueConverter(dateTimeOfKindValueConverterFactory.GetNullableDateTimeValueConverter(dateTimeKind));
+                        }
+                    }
+                }
+            }
+
+            // many-to-many keys
             builder.Entity<CategoryToModerator>().HasKey(e => new { e.CategoryId, e.ApplicationUserId });
-            
+
+            // indices
             builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
             builder.Entity<Category>().HasIndex(e => e.Name).IsUnique();
             builder.Entity<ApplicationUser>().HasIndex(e => e.Email).IsUnique();

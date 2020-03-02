@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Common.Attributes;
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Entities.Base.Current;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,8 @@ namespace Hikkaba.Data.Entities
     public class ApplicationUser : IdentityUser<TPrimaryKey>, IBaseEntity
     {
         public bool IsDeleted { get; set; }
+
+        [DateTimeKind(DateTimeKind.Utc)]
         public DateTime? LastLogin { get; set; }
 
         [InverseProperty("CreatedBy")]
