@@ -14,7 +14,7 @@ Features
 - [x] Thumbnail generation ([ImageSharp](https://github.com/JimBobSquarePants/ImageSharp) is still in early stages so it contains some bugs)
 - [x] BBCode markup support (modified [CodeKicker.BBCode-Mod](https://github.com/Pablissimo/CodeKicker.BBCode-Mod) by http//codekicker.de and Paul O'Neill)
    * b, i, u, s, pre, sub, sup, spoiler, quote BBCodes are availiable
-   * >>postId - a link to the post in the current thread
+   * `>>postId` - a link to the post in the current thread
 - [x] SAGE support
 - [x] URI detection
    * http://, https://, ftp:// links autodetection
@@ -28,8 +28,8 @@ Features
    * Azure Blob Storage
    * Amazon S3
    * Google Cloud Storage
-- [ ] Administration panel
-- [ ] Сategory specific moderators [in progress]
+- [x] Administration panel [in progress]
+- [x] Сategory specific moderators [in progress]
 - [x] Moderation functions [in progress]
 - [x] Ban system - by IP or IP range [in progress]
 - [ ] Custom file size limit
