@@ -2,8 +2,6 @@
 using System.Text.RegularExpressions;
 using CodeKicker.BBCode;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Hikkaba.Web.Services
 {
@@ -29,9 +27,9 @@ namespace Hikkaba.Web.Services
                     new BBTag("quote", "<span class=\"text-success\">&gt; ", "</span>"),
                 });
 
-        public MessagePostProcessor(IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor)
+        public MessagePostProcessor(IUrlHelperFactoryWrapper urlHelperFactoryWrapper)
         {
-            _urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
+            _urlHelper = urlHelperFactoryWrapper.GetUrlHelper();
         }
 
         // todo: precompiled regex

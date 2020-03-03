@@ -62,7 +62,7 @@ namespace Hikkaba.Services
             }
             catch (FormatException e)
             {
-                _logger.LogError(e, $"Can't parse {lowerInclusive}, {upperInclusive}, {address}");
+                _logger.LogError(e, $"Can't process {nameof(IsInRange)} with arguments {lowerInclusive}, {upperInclusive}, {address}");
                 return false;
             }
         }
