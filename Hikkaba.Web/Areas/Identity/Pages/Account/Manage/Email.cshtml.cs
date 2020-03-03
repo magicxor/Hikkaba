@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Linq;
 using System.Threading.Tasks;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;

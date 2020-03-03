@@ -1,12 +1,4 @@
-﻿using System;
-using Hikkaba.Data.Context;
-using Hikkaba.Data.Entities;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Hosting;
 
 [assembly: HostingStartup(typeof(Hikkaba.Web.Areas.Identity.IdentityHostingStartup))]
 namespace Hikkaba.Web.Areas.Identity

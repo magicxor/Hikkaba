@@ -2,7 +2,6 @@ using System;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Configuration;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

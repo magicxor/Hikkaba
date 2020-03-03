@@ -228,7 +228,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("{categoryAlias}/Threads/{threadId}/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
+        public async Task<IActionResult> DeleteConfirmed(string categoryAlias, TPrimaryKey threadId)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
