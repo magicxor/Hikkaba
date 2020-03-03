@@ -106,6 +106,7 @@ namespace Hikkaba.Web
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddScoped<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
 
             // Captcha
             services.AddDNTCaptcha(options => options.UseSessionStorageProvider());

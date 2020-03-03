@@ -10,11 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.example.json" />
+    <Content Remove="appsettings.json" />
     <Content Remove="seedconfig.example.json" />
     <Content Remove="seedconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="appsettings.example.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="seedconfig.example.json" />
     <None Include="seedconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
