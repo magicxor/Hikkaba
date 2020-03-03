@@ -258,3 +258,4 @@ src/Hikkaba.Web/wwwroot/js/site.min.js
 .vscode/
 Hikkaba.Web/seedconfig.json
 Hikkaba.Web/wwwroot/AttachmentsStorage/
+Hikkaba.Web/appsettings.json
