@@ -13,5 +13,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.102
+    - name: Copy configs
+      run: cp Hikkaba.Web/appsettings.example.json Hikkaba.Web/appsettings.json && cp Hikkaba.Web/seedconfig.example.json Hikkaba.Web/seedconfig.json
     - name: Build with dotnet
       run: dotnet build Hikkaba.sln --configuration Release
