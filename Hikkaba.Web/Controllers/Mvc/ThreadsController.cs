@@ -24,9 +24,6 @@ using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    // todo: add moderation buttons: delete post, add notice
-    // todo: show (collapsed?) deleted posts if user is moderator
-
     [Authorize]
     public class ThreadsController : BaseMvcController
     {
