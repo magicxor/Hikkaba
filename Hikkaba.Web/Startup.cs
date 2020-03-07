@@ -66,16 +66,6 @@ namespace Hikkaba.Web
             services.Configure<HikkabaConfiguration>(Configuration.GetSection(typeof(HikkabaConfiguration).Name));
             services.Configure<SeedConfiguration>(Configuration.GetSection(typeof(SeedConfiguration).Name));
 
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("CorsPolicy",
-            //        builder => builder
-            //            .AllowAnyOrigin()
-            //            .AllowAnyMethod()
-            //            .AllowAnyHeader()
-            //            .AllowCredentials());
-            //}); // todo: AddCors and UseCors
-
             services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
 
