@@ -20,33 +20,33 @@ namespace Hikkaba.Data.Entities.Base.Current
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public override TPrimaryKey Id { get; set; }
+        public sealed override TPrimaryKey Id { get; set; }
 
-        public override TPrimaryKey GenerateNewId()
+        public sealed override TPrimaryKey GenerateNewId()
         {
             return KeyUtils.GenerateNew();
         }
 
-        public BaseEntity()
+        protected BaseEntity()
         {
             Id = GenerateNewId();
         }
     }
 
-    public interface IBaseMutableEntity : IBaseMutableEntity<TPrimaryKey> { }
+    public interface IBaseMutableEntity : IBaseEntity, IBaseMutableEntity<TPrimaryKey> { }
     public abstract class BaseMutableEntity : BaseMutableEntity<TPrimaryKey>, IBaseMutableEntity
     {
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public override TPrimaryKey Id { get; set; }
+        public sealed override TPrimaryKey Id { get; set; }
 
-        public override TPrimaryKey GenerateNewId()
+        public sealed override TPrimaryKey GenerateNewId()
         {
             return KeyUtils.GenerateNew();
         }
 
-        public BaseMutableEntity()
+        protected BaseMutableEntity()
         {
             Id = GenerateNewId();
         }

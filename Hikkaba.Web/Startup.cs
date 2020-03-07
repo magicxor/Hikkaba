@@ -29,6 +29,8 @@ using TwentyTwenty.Storage.Local;
 using TwentyTwenty.Storage;
 using Microsoft.AspNetCore.DataProtection;
 using System;
+using Hikkaba.Data.Services;
+using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web
@@ -52,9 +54,17 @@ namespace Hikkaba.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseLazyLoadingProxies()
-                    .UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>((provider, options) =>
+            {
+                var webHostEnvironment = provider.GetRequiredService<IWebHostEnvironment>();
+                if (webHostEnvironment.IsDevelopment())
+                {
+                    options.EnableSensitiveDataLogging();
+                }
+                options
+                    .UseLazyLoadingProxies()
+                    .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<ApplicationRole>()
@@ -65,16 +75,6 @@ namespace Hikkaba.Web
             services.AddOptions();
             services.Configure<HikkabaConfiguration>(Configuration.GetSection(typeof(HikkabaConfiguration).Name));
             services.Configure<SeedConfiguration>(Configuration.GetSection(typeof(SeedConfiguration).Name));
-
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("CorsPolicy",
-            //        builder => builder
-            //            .AllowAnyOrigin()
-            //            .AllowAnyMethod()
-            //            .AllowAnyHeader()
-            //            .AllowCredentials());
-            //}); // todo: AddCors and UseCors
 
             services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
@@ -120,6 +120,7 @@ namespace Hikkaba.Web
             });
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IMessagePostProcessor, MessagePostProcessor>();
+            services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
 
             // AutoMapper
             services.AddAutoMapper(typeof(MapProfile), typeof(MvcMapProfile));
@@ -165,7 +166,8 @@ namespace Hikkaba.Web
             app.UseHttpsRedirection();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseAuthorization();            
+            app.UseAuthorization();    
+            app.UseMiddleware<SetAuthenticatedUserMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

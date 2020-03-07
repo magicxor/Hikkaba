@@ -8,55 +8,37 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
-using Hikkaba.Services.Base.Current;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Services
 {
-    public interface ICategoryToModeratorService : IBaseManyToManyService
+    public interface ICategoryToModeratorService
     {
         Task<bool> IsUserCategoryModeratorAsync(TPrimaryKey categoryId, ClaimsPrincipal user);
         Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModeratorsAsync();
         Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategoriesAsync();
+        Task DeleteAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId);
     }
 
-    public class CategoryToModeratorService : BaseManyToManyService<CategoryToModerator>, ICategoryToModeratorService
+    public class CategoryToModeratorService : ICategoryToModeratorService
     {
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public CategoryToModeratorService(ApplicationDbContext context,
             IMapper mapper,
-            UserManager<ApplicationUser> userManager) : base(context)
+            UserManager<ApplicationUser> userManager)
         {
+            _context = context;
             _mapper = mapper;
             _userManager = userManager;
         }
-
-        protected override DbSet<CategoryToModerator> GetManyToManyDbSet(ApplicationDbContext context)
-        {
-            return Context.CategoriesToModerators;
-        }
-
-        protected override CategoryToModerator CreateManyToManyEntity(TPrimaryKey leftId, TPrimaryKey rightId)
-        {
-            return new CategoryToModerator { CategoryId = leftId, ApplicationUserId = rightId };
-        }
-
-        protected override TPrimaryKey GetLeftEntityKey(CategoryToModerator manyToManyEntity)
-        {
-            return manyToManyEntity.CategoryId;
-        }
-
-        protected override TPrimaryKey GetRightEntityKey(CategoryToModerator manyToManyEntity)
-        {
-            return manyToManyEntity.ApplicationUserId;
-        }
-
+        
         public async Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModeratorsAsync()
         {
-            var categoriesModeratorsEntityList = await Context.Categories
+            var categoriesModeratorsEntityList = await _context.Categories
                 .OrderBy(category => category.Alias)
                 .Select(category => new
                 {
@@ -76,7 +58,7 @@ namespace Hikkaba.Services
 
         public async Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategoriesAsync()
         {
-            var moderatorsCategoriesEntityList = await Context.Users
+            var moderatorsCategoriesEntityList = await _context.Users
                 .OrderBy(user => user.UserName)
                 .Select(user => new
                 {
@@ -93,10 +75,10 @@ namespace Hikkaba.Services
             }
             return moderatorsCategoriesDtoList;
         }
-
+        
         public async Task<bool> IsUserCategoryModeratorAsync(TPrimaryKey categoryId, ClaimsPrincipal user)
         {
-            if ((user != null) && user.Identity.IsAuthenticated)
+            if (user != null && user.Identity.IsAuthenticated)
             {
                 if (user.IsInRole(Defaults.AdministratorRoleName))
                 {
@@ -104,21 +86,24 @@ namespace Hikkaba.Services
                 }
                 else
                 {
-                    if (user.Identity.IsAuthenticated)
-                    {
-                        var userId = TPrimaryKey.Parse(_userManager.GetUserId(user));
-                        return await AreRelatedAsync(categoryId, userId);
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    var userId = TPrimaryKey.Parse(_userManager.GetUserId(user));
+                    return await _context.CategoriesToModerators
+                        .AnyAsync(x => x.CategoryId == categoryId && x.ApplicationUserId == userId);
                 }
             }
             else
             {
                 return false;
             }
+        }
+        
+        public async Task DeleteAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId)
+        {
+            _context.CategoriesToModerators.RemoveRange(
+                _context.CategoriesToModerators.Where(e => 
+                    e.CategoryId == categoryId 
+                    && e.ApplicationUserId == moderatorId));
+            await _context.SaveChangesAsync();
         }
     }
 }

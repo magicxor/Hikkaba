@@ -1,23 +1,32 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Dto;
-using Hikkaba.Services.Base.Current;
+using Hikkaba.Services.Base.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Services
 {
-    public interface IBoardService: IBaseImmutableEntityService<BoardDto, Board> { }
-
-    public class BoardService: BaseImmutableEntityService<BoardDto, Board>, IBoardService
+    public interface IBoardService
     {
-        public BoardService(IMapper mapper, ApplicationDbContext context) : base(mapper, context)
-        {
-        }
+        Task<BoardDto> GetBoardAsync();
+    }
 
-        protected override DbSet<Board> GetDbSet(ApplicationDbContext context)
+    public class BoardService : BaseEntityService, IBoardService
+    {
+        private readonly ApplicationDbContext _context;
+        
+        public BoardService(IMapper mapper, ApplicationDbContext context): base(mapper)
         {
-            return context.Boards;
+            _context = context;
+        }
+        
+        public async Task<BoardDto> GetBoardAsync()
+        {
+            var entity = await _context.Boards.FirstOrDefaultAsync();
+            var dto = MapEntityToDto<BoardDto, Board>(entity);
+            return dto;
         }
     }
 }

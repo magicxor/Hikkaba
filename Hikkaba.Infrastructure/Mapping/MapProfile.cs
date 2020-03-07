@@ -2,6 +2,7 @@
 using AutoMapper;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
+using Hikkaba.Data.Extensions;
 using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Attachments;
 
@@ -40,14 +41,15 @@ namespace Hikkaba.Infrastructure.Mapping
                 .ForMember(dest => dest.Created, opts => opts.Ignore())
                 .ForMember(dest => dest.CreatedBy, opts => opts.Ignore());
             
-            CreateMap<Post, PostDto>();
+            CreateMap<Post, PostDto>()
+                .ForMember(dest => dest.Audio, opts => opts.MapFrom(post => post.GetAudio()))
+                .ForMember(dest => dest.Documents, opts => opts.MapFrom(post => post.GetDocuments()))
+                .ForMember(dest => dest.Notices, opts => opts.MapFrom(post => post.GetNotices()))
+                .ForMember(dest => dest.Pictures, opts => opts.MapFrom(post => post.GetPictures()))
+                .ForMember(dest => dest.Video, opts => opts.MapFrom(post => post.GetVideo()));
             CreateMap<PostDto, Post>()
                 .ForMember(dest => dest.Thread, opts => opts.Ignore())
-                .ForMember(dest => dest.Audio, opts => opts.Ignore())
-                .ForMember(dest => dest.Documents, opts => opts.Ignore())
-                .ForMember(dest => dest.Notices, opts => opts.Ignore())
-                .ForMember(dest => dest.Pictures, opts => opts.Ignore())
-                .ForMember(dest => dest.Video, opts => opts.Ignore())
+                .ForMember(dest => dest.Attachments, opts => opts.Ignore())
                 .ForMember(dest => dest.Modified, opts => opts.Ignore())
                 .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore())
                 .ForMember(dest => dest.Created, opts => opts.Ignore())

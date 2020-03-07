@@ -1,228 +1,288 @@
 ﻿using TPrimaryKey = System.Guid;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
+using Hikkaba.Data.Entities.Attachments;
+using Hikkaba.Data.Extensions;
 using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Models.Configuration;
 using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Attachments;
-using Hikkaba.Services.Attachments;
-using Hikkaba.Services.Base.Current;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using TwentyTwenty.Storage;
 
 namespace Hikkaba.Services
 {
-    public interface IPostService : IBaseModeratedMutableEntityService<PostDto, Post>
+    public interface IPostService
     {
-        Task<TPrimaryKey> CreateAsync(IFormFileCollection attachments, PostDto dto);
-        Task EditAsync(PostDto dto, TPrimaryKey currentUserId);
+        Task<PostDto> GetAsync(TPrimaryKey id);
+        
+        Task<IList<PostDto>> ListAsync<TOrderKey>(
+            Expression<Func<Post, bool>> where = null, 
+            Expression<Func<Post, TOrderKey>> orderBy = null, 
+            bool isDescending = false);
+
+        Task<BasePagedList<PostDto>> PagedListAsync<TOrderKey>(
+            Expression<Func<Post, bool>> where = null,
+            Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false,
+            PageDto page = null);
+        
+        Task<TPrimaryKey> CreateAsync(IFormFileCollection attachments, PostDto postDto);
+        
+        Task EditAsync(PostDto dto);
+        
+        Task DeleteAsync(TPrimaryKey id);
     }
 
-    public class PostService : BaseModeratedMutableEntityService<PostDto, Post>, IPostService
+    public class PostService : BaseEntityService, IPostService
     {
         private readonly IStorageProvider _storageProvider;
-        private readonly ILogger<PostService> _logger;
         private readonly IBanService _banService;
         private readonly HikkabaConfiguration _hikkabaConfiguration;
         private readonly ICryptoService _cryptoService;
-        private readonly IAudioService _audioService;
-        private readonly IDocumentService _documentService;
-        private readonly IPictureService _pictureService;
-        private readonly IVideoService _videoService;
         private readonly IThumbnailGenerator _thumbnailGenerator;
         private readonly IAttachmentCategorizer _attachmentCategorizer;
-        private readonly ICategoryToModeratorService _categoryToModeratorService;
+        private readonly ApplicationDbContext _context;
 
         public PostService(
             IStorageProvider storageProvider,
-            ILogger<PostService> logger,
             IOptions<HikkabaConfiguration> settings,
             IBanService banService,
             ICryptoService cryptoService,
-            IAudioService audioService,
-            IDocumentService documentService,
-            IPictureService pictureService,
-            IVideoService videoService,
             IThumbnailGenerator thumbnailGenerator,
             IAttachmentCategorizer attachmentCategorizer,
             IMapper mapper,
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            ICategoryToModeratorService categoryToModeratorService) : base(mapper, context, userManager)
+            ApplicationDbContext context) : base(mapper)
         {
             _storageProvider = storageProvider;
-            _logger = logger;
             _banService = banService;
             _hikkabaConfiguration = settings.Value;
             _cryptoService = cryptoService;
-            _audioService = audioService;
-            _documentService = documentService;
-            _pictureService = pictureService;
-            _videoService = videoService;
             _thumbnailGenerator = thumbnailGenerator;
             _attachmentCategorizer = attachmentCategorizer;
-            _categoryToModeratorService = categoryToModeratorService;
+            _context = context;
         }
-
-        protected override DbSet<Post> GetDbSet(ApplicationDbContext context)
+        
+        private IQueryable<Post> Query<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false)
         {
-            return context.Posts;
-        }
+            var query = _context.Posts.Include(p => p.Attachments).AsQueryable();
 
-        protected override TPrimaryKey GetCategoryId(Post entity)
-        {
-            return entity.Thread.Category.Id;
-        }
-
-        protected override IBaseManyToManyService<TPrimaryKey, TPrimaryKey> GetManyToManyService()
-        {
-            return _categoryToModeratorService;
-        }
-
-        public async Task EditAsync(PostDto dto, TPrimaryKey currentUserId)
-        {
-            await base.EditAsync(dto, currentUserId, post =>
+            if (where != null)
             {
-                var audioList = Context.Audio.Where(entity => entity.Post.Id == dto.Id);
-                var pictureList = Context.Pictures.Where(entity => entity.Post.Id == dto.Id);
-                var videoList = Context.Video.Where(entity => entity.Post.Id == dto.Id);
-                var documentsList = Context.Documents.Where(entity => entity.Post.Id == dto.Id);
-                var noticesList = Context.Notices.Where(entity => entity.Post.Id == dto.Id);
-            });
-        }
-
-        public async Task<TPrimaryKey> CreateAsync(IFormFileCollection attachments, PostDto dto)
-        {
-            var postingPermissionDto = await _banService.IsPostingAllowedAsync(dto.ThreadId, dto.UserIpAddress);
-            if (!postingPermissionDto.IsPostingAllowed)
-            {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, postingPermissionDto.Ban?.Reason);
+                query = query.Where(where);
             }
-            else if (attachments == null)
-            {
-                return await CreateAsync(dto, (post) =>
-                {
-                    post.Thread = Context.Threads.FirstOrDefault(thread => thread.Id == dto.ThreadId);
-                });
-            }
-            else
-            {
-                var postId = await CreateAsync(dto, (post) =>
-                {
-                    post.Thread = Context.Threads.FirstOrDefault(thread => thread.Id == dto.ThreadId);
-                });
 
-                try
+            if (orderBy != null)
+            {
+                if (isDescending)
                 {
-                    var containerName = dto.ThreadId.ToString();
-                    if (string.IsNullOrWhiteSpace(containerName))
+                    query = query.OrderByDescending(orderBy);
+                }
+                else
+                {
+                    query = query.OrderBy(orderBy);
+                }
+            }
+
+            return query;
+        }
+        
+        public async Task<PostDto> GetAsync(TPrimaryKey id)
+        {
+            var entity = await _context.Posts.FirstOrDefaultAsync(u => u.Id == id);
+            var dto = MapEntityToDto<PostDto, Post>(entity);
+            return dto;
+        }
+
+        public async Task<IList<PostDto>> ListAsync<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false)
+        {
+            var query = Query(where, orderBy, isDescending);
+            var entityList = await query.ToListAsync();
+            var dtoList = MapEntityListToDtoList<PostDto, Post>(entityList);
+            return dtoList;
+        }
+
+        public async Task<BasePagedList<PostDto>> PagedListAsync<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false, PageDto page = null)
+        {
+            page = page ?? new PageDto();
+
+            var query = Query(where, orderBy, isDescending);
+
+            var pageQuery = query.Skip(page.Skip).Take(page.PageSize);
+
+            var entityList = await pageQuery.ToListAsync();
+            var dtoList = MapEntityListToDtoList<PostDto, Post>(entityList);
+            var pagedList = new BasePagedList<PostDto>
+            {
+                TotalItemsCount = query.Count(),
+                CurrentPage = page,
+                CurrentPageItems = dtoList,
+            };
+            return pagedList;
+        }
+
+        public async Task EditAsync(PostDto dto)
+        {
+            var existingEntity = await _context.Posts.FirstOrDefaultAsync(p => p.Id == dto.Id);
+            MapDtoToExistingEntity(dto, existingEntity);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task CreateAttachmentsAsync(string containerName, Post postEntity, IFormFileCollection attachments)
+        {
+            foreach (var attachment in attachments)
+            {
+                var extension = Path.GetExtension(attachment.FileName)?.ToLowerInvariant()?.TrimStart('.');
+                var fileName = Path.GetFileNameWithoutExtension(attachment.FileName);
+                var fileNameWithExtension = fileName + "." + extension;
+                var attachmentParentDto = _attachmentCategorizer.CreateAttachmentDto(fileNameWithExtension);
+                attachmentParentDto.PostId = postEntity.Id;
+                attachmentParentDto.FileExtension = extension;
+                attachmentParentDto.FileName = fileName;
+                attachmentParentDto.Size = attachment.Length;
+                attachmentParentDto.Hash = _cryptoService.HashHex(attachment.OpenReadStream());
+                string blobName;
+
+                switch (attachmentParentDto)
+                {
+                    case AudioDto audioDto:
                     {
-                        throw new Exception($"{nameof(containerName)} is null or whitespace");
+                        var audioEntity = MapDtoToNewEntity<AudioDto, Audio>(audioDto);
+                        audioEntity.Post = postEntity;
+                        await _context.Audio.AddAsync(audioEntity);
+                        await _context.SaveChangesAsync();
+                        blobName = audioEntity.Id.ToString();
+                        break;
                     }
-
-                    foreach (var attachment in attachments)
+                    case PictureDto pictureDto:
                     {
-                        string blobName;
-
-                        var extension = Path.GetExtension(attachment.FileName)?.ToLowerInvariant()?.TrimStart('.');
-                        var fileName = Path.GetFileNameWithoutExtension(attachment.FileName);
-                        var fileNameWithExtension = fileName + "." + extension;
-                        var attachmentParentDto = _attachmentCategorizer.CreateAttachmentDto(fileNameWithExtension);
-                        attachmentParentDto.PostId = postId;
-                        attachmentParentDto.FileExtension = extension;
-                        attachmentParentDto.FileName = fileName;
-                        attachmentParentDto.Size = attachment.Length;
-                        attachmentParentDto.Hash = _cryptoService.HashHex(attachment.OpenReadStream());
-
-                        if (attachmentParentDto is AudioDto audioDto)
+                        if (_attachmentCategorizer.IsPictureExtensionSupported(pictureDto.FileExtension))
                         {
-                            blobName = (await _audioService.CreateAsync(audioDto, entity =>
+                            using (var image = Image.Load(attachment.OpenReadStream()))
                             {
-                                entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
-                            })).ToString();
-                        }
-                        else if (attachmentParentDto is PictureDto pictureDto)
-                        {
-                            if (_attachmentCategorizer.IsPictureExtensionSupported(pictureDto.FileExtension))
-                            {
-                                // generate thumbnail if such file extension is supported
-                                var image = Image.Load(attachment.OpenReadStream());
                                 pictureDto.Width = image.Width;
                                 pictureDto.Height = image.Height;
-                                blobName = (await _pictureService.CreateAsync(pictureDto, entity =>
-                                {
-                                    entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
-                                })).ToString();
-
+                                        
+                                var pictureEntity = MapDtoToNewEntity<PictureDto, Picture>(pictureDto);
+                                pictureEntity.Post = postEntity;
+                                await _context.Pictures.AddAsync(pictureEntity);
+                                await _context.SaveChangesAsync();
+                                blobName = pictureEntity.Id.ToString();
+                            
+                                // generate thumbnail
                                 var thumbnail = _thumbnailGenerator.GenerateThumbnail(
                                     image,
                                     _hikkabaConfiguration.ThumbnailsMaxWidth,
                                     _hikkabaConfiguration.ThumbnailsMaxHeight);
-                                await _storageProvider.SaveBlobStreamAsync(
-                                        containerName + Defaults.ThumbnailPostfix,
-                                        blobName,
-                                        thumbnail.Image);
+                                await _storageProvider.SaveBlobStreamAsync(containerName + Defaults.ThumbnailPostfix,
+                                    blobName,
+                                    thumbnail.Image);
                             }
-                            else
-                            {
-                                // otherwise save the same image as thumbnail
-                                blobName = (await _pictureService.CreateAsync(pictureDto, entity =>
-                                {
-                                    entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
-                                })).ToString();
-                                await _storageProvider.SaveBlobStreamAsync(
-                                        containerName + Defaults.ThumbnailPostfix,
-                                        blobName,
-                                        attachment.OpenReadStream());
-                            }
-                        }
-                        else if (attachmentParentDto is VideoDto videoDto)
-                        {
-                            blobName = (await _videoService.CreateAsync(videoDto, entity =>
-                            {
-                                entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
-                            })).ToString();
-                        }
-                        else if (attachmentParentDto is DocumentDto documentDto)
-                        {
-                            blobName = (await _documentService.CreateAsync(documentDto, entity =>
-                            {
-                                entity.Post = Context.Posts.FirstOrDefault(post => post.Id == postId);
-                            })).ToString();
                         }
                         else
                         {
-                            throw new Exception($"Unknown attachment type: {attachmentParentDto.GetType().Name}");
+                            var pictureEntity = MapDtoToNewEntity<PictureDto, Picture>(pictureDto);
+                            pictureEntity.Post = postEntity;
+                            await _context.Pictures.AddAsync(pictureEntity);
+                            await _context.SaveChangesAsync();
+                            blobName = pictureEntity.Id.ToString();
+                            
+                            // save original image as thumbnail
+                            await _storageProvider.SaveBlobStreamAsync(containerName + Defaults.ThumbnailPostfix,
+                                blobName,
+                                attachment.OpenReadStream());
                         }
-                        if (string.IsNullOrWhiteSpace(blobName))
+                        break;
+                    }
+                    case VideoDto videoDto:
+                    {
+                        var videoEntity = MapDtoToNewEntity<VideoDto, Video>(videoDto);
+                        videoEntity.Post = postEntity;
+                        await _context.Video.AddAsync(videoEntity);
+                        await _context.SaveChangesAsync();
+                        blobName = videoEntity.Id.ToString();
+                        break;
+                    }
+                    case DocumentDto documentDto:
+                    {
+                        var documentEntity = MapDtoToNewEntity<DocumentDto, Document>(documentDto);
+                        documentEntity.Post = postEntity;
+                        await _context.Documents.AddAsync(documentEntity);
+                        await _context.SaveChangesAsync();
+                        blobName = documentEntity.Id.ToString();
+                        break;
+                    }
+                    default:
+                        throw new Exception($"Unknown attachment type: {attachmentParentDto.GetType().Name}");
+                }
+                
+                if (string.IsNullOrWhiteSpace(blobName))
+                {
+                    throw new Exception($"{nameof(blobName)} is null or whitespace");
+                }
+                await _storageProvider.SaveBlobStreamAsync(containerName, blobName, attachment.OpenReadStream());
+            }
+        }
+        
+        public async Task<TPrimaryKey> CreateAsync(IFormFileCollection attachments, PostDto postDto)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                var postingPermissionDto = await _banService.IsPostingAllowedAsync(postDto.ThreadId, postDto.UserIpAddress);
+                if (!postingPermissionDto.IsPostingAllowed)
+                {
+                    throw new HttpResponseException(HttpStatusCode.Forbidden, postingPermissionDto.Ban?.Reason);
+                }
+                else
+                {
+                    var postEntity = MapDtoToNewEntity<PostDto, Post>(postDto);
+                    postEntity.Thread = _context.GetLocalOrAttach<Thread>(postDto.ThreadId);
+                    await _context.Posts.AddAsync(postEntity);
+                    await _context.SaveChangesAsync();
+                    
+                    try
+                    {
+                        var containerName = postDto.ThreadId.ToString();
+                        if (string.IsNullOrWhiteSpace(containerName))
                         {
-                            throw new Exception($"{nameof(blobName)} is null or whitespace");
+                            throw new Exception($"{nameof(containerName)} is null or whitespace");
                         }
-                        await _storageProvider.SaveBlobStreamAsync(containerName, blobName, attachment.OpenReadStream());
+
+                        if (attachments != null && attachments.Any())
+                        {
+                            await CreateAttachmentsAsync(containerName, postEntity, attachments);
+                        }
+
+                        await transaction.CommitAsync();
+                        return postEntity.Id;
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
+                        throw;
                     }
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex + $" Post {postId} will be deleted.");
-                    await DeleteAsync(postId);
-                    throw;
-                }
-
-                return postId;
             }
+        }
+        
+        public async Task DeleteAsync(TPrimaryKey id)
+        {
+            var entity = _context.GetLocalOrAttach<Post>(id);
+            entity.IsDeleted = true;
+            _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
+            await _context.SaveChangesAsync();
         }
     }
 }

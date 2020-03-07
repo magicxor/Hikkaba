@@ -4,7 +4,6 @@ using Hikkaba.Data.Entities.Attachments.Base;
 
 namespace Hikkaba.Data.Entities.Attachments
 {
-    [Table("Notices")]
     public class Notice: Attachment
     {
         [Required]

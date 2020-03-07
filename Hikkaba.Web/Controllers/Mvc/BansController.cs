@@ -65,7 +65,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<BanDto>(viewModel);
-                var id = await _banService.CreateOrGetIdAsync(dto, GetCurrentUserId());
+                var id = await _banService.GetOrCreateAsync(dto);
                 
                 return RedirectToAction("Details", new {id = id});
             }
@@ -92,7 +92,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<BanDto>(viewModel);
-                await _banService.EditAsync(dto, GetCurrentUserId());
+                await _banService.EditAsync(dto);
                 return RedirectToAction("Details", new {id = dto.Id});
             }
             else
@@ -115,7 +115,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
-            await _banService.DeleteAsync(id, GetCurrentUserId());
+            await _banService.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }
