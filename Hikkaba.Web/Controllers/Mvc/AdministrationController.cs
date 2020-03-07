@@ -3,11 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
+using Hikkaba.Data.Entities;
 using Hikkaba.Services;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Hikkaba.Web.ViewModels.BoardViewModels;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc
@@ -16,16 +18,19 @@ namespace Hikkaba.Web.Controllers.Mvc
     public class AdministrationController : Controller
     {
         private readonly IMapper _mapper;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IAdministrationService _administrationService;
         private readonly IBoardService _boardService;
         private readonly ICategoryToModeratorService _categoryToModeratorService;
 
         public AdministrationController(IMapper mapper,
+            SignInManager<ApplicationUser> signInManager,
             IAdministrationService administrationService,
             IBoardService boardService,
             ICategoryToModeratorService categoryToModeratorService)
         {
             _mapper = mapper;
+            _signInManager = signInManager;
             _administrationService = administrationService;
             _boardService = boardService;
             _categoryToModeratorService = categoryToModeratorService;
@@ -34,7 +39,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Administration")]
         public async Task<IActionResult> Index()
         {
-            var boardDto = (await _boardService.ListAsync()).FirstOrDefault();
+            var boardDto = await _boardService.GetBoardAsync();
             var boardViewModel = _mapper.Map<BoardViewModel>(boardDto);
             var categoriesModeratorsDtoList = await _categoryToModeratorService.ListCategoriesModeratorsAsync();
             var categoriesModeratorsViewModelList = new List<CategoryModeratorsViewModel>();
@@ -63,6 +68,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAllContentConfirmed()
         {
+            await _signInManager.SignOutAsync();
             await _administrationService.DeleteAllContentAsync();
             return RedirectToAction("Index", "Home");
         }

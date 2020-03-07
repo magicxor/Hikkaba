@@ -58,10 +58,14 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             var pageDto = new PageDto(page, size);
             var categoryDto = await _categoryService.GetAsync(categoryAlias);
-            var threadDtoList = await _threadService.PagedListAsync(categoryDto.Id, pageDto);
-
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
                                                 .IsUserCategoryModeratorAsync(categoryDto.Id, User);
+            var threadDtoList = await _threadService.PagedListAsync(thread => 
+                    (!thread.IsDeleted || isCurrentUserCategoryModerator) 
+                    && (thread.Posts.Any(p => !p.IsDeleted)) 
+                    && (thread.Category.Id == categoryDto.Id), 
+                pageDto);
+
             if ((categoryDto.IsDeleted) && (!isCurrentUserCategoryModerator))
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound, $"Category {categoryDto.Alias} not found.");
@@ -128,7 +132,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<CategoryDto>(viewModel);
-                var id = await _categoryService.CreateAsync(dto, GetCurrentUserId());
+                var id = await _categoryService.CreateAsync(dto);
                 return RedirectToAction("Index");
             }
             else
@@ -154,7 +158,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<CategoryDto>(viewModel);
-                await _categoryService.EditAsync(dto, GetCurrentUserId());
+                await _categoryService.EditAsync(dto);
                 return RedirectToAction("Index");
             }
             else
@@ -177,7 +181,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
-            await _categoryService.DeleteAsync(id, GetCurrentUserId());
+            await _categoryService.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }

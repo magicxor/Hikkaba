@@ -196,7 +196,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                                                 .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
-                await _threadService.EditAsync(threadDto, GetCurrentUserId());
+                await _threadService.EditAsync(threadDto);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryAlias, threadId = threadDto.Id });
             }
             else
@@ -232,7 +232,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                                                 .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
-                await _threadService.DeleteAsync(threadId, GetCurrentUserId());
+                await _threadService.DeleteAsync(threadId);
                 return RedirectToAction("Details", "Categories", new { categoryAlias = categoryAlias });
             }
             else
@@ -251,7 +251,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsPinned = !threadDto.IsPinned;
-                await _threadService.EditAsync(threadDto, GetCurrentUserId());
+                await _threadService.EditAsync(threadDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
@@ -271,7 +271,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsClosed = !threadDto.IsClosed;
-                await _threadService.EditAsync(threadDto, GetCurrentUserId());
+                await _threadService.EditAsync(threadDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
@@ -291,7 +291,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 threadDto.IsDeleted = !threadDto.IsDeleted;
-                await _threadService.EditAsync(threadDto, GetCurrentUserId());
+                await _threadService.EditAsync(threadDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Categories", new {categoryAlias = categoryDto.Alias});
             }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Hikkaba.Data.Entities.Attachments;
+using Hikkaba.Data.Entities.Attachments.Base;
 using Hikkaba.Data.Entities.Base.Current;
 
 namespace Hikkaba.Data.Entities
@@ -23,11 +23,7 @@ namespace Hikkaba.Data.Entities
 
         [Required]
         public virtual Thread Thread { get; set; }
-
-        public virtual ICollection<Audio> Audio { get; set; }
-        public virtual ICollection<Document> Documents { get; set; }
-        public virtual ICollection<Notice> Notices { get; set; }
-        public virtual ICollection<Picture> Pictures { get; set; }
-        public virtual ICollection<Video> Video { get; set; }
+        
+        public virtual ICollection<Attachment> Attachments { get; set; }
     }
 }

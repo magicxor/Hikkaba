@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Hikkaba.Data.Migrations
 {
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -66,7 +65,7 @@ namespace Hikkaba.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<Guid>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -87,7 +86,7 @@ namespace Hikkaba.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<Guid>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -107,8 +106,8 @@ namespace Hikkaba.Data.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(nullable: false),
-                    ProviderKey = table.Column<string>(nullable: false),
+                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
                 },
@@ -152,8 +151,8 @@ namespace Hikkaba.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false),
-                    LoginProvider = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
+                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
+                    Name = table.Column<string>(maxLength: 128, nullable: false),
                     Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -171,12 +170,12 @@ namespace Hikkaba.Data.Migrations
                 name: "Categories",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Modified = table.Column<DateTime>(nullable: true),
                     CreatedById = table.Column<Guid>(nullable: true),
                     ModifiedById = table.Column<Guid>(nullable: true),
-                    Id = table.Column<Guid>(nullable: false),
                     Alias = table.Column<string>(maxLength: 10, nullable: false),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
                     IsHidden = table.Column<bool>(nullable: false),
@@ -235,12 +234,12 @@ namespace Hikkaba.Data.Migrations
                 name: "Threads",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Modified = table.Column<DateTime>(nullable: true),
                     CreatedById = table.Column<Guid>(nullable: true),
                     ModifiedById = table.Column<Guid>(nullable: true),
-                    Id = table.Column<Guid>(nullable: false),
                     Title = table.Column<string>(maxLength: 100, nullable: false),
                     IsPinned = table.Column<bool>(nullable: false),
                     IsClosed = table.Column<bool>(nullable: false),
@@ -275,12 +274,12 @@ namespace Hikkaba.Data.Migrations
                 name: "Posts",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Modified = table.Column<DateTime>(nullable: true),
                     CreatedById = table.Column<Guid>(nullable: true),
                     ModifiedById = table.Column<Guid>(nullable: true),
-                    Id = table.Column<Guid>(nullable: false),
                     IsSageEnabled = table.Column<bool>(nullable: false),
                     Message = table.Column<string>(maxLength: 8000, nullable: true),
                     UserIpAddress = table.Column<string>(nullable: false),
@@ -311,23 +310,34 @@ namespace Hikkaba.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Audio",
+                name: "Attachments",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     PostId = table.Column<Guid>(nullable: false),
-                    FileName = table.Column<string>(nullable: false),
-                    FileExtension = table.Column<string>(nullable: false),
-                    Size = table.Column<long>(nullable: false),
-                    Hash = table.Column<string>(nullable: false)
+                    AttachmentType = table.Column<int>(nullable: false),
+                    FileName = table.Column<string>(nullable: true),
+                    FileExtension = table.Column<string>(nullable: true),
+                    Size = table.Column<long>(nullable: true),
+                    Hash = table.Column<string>(nullable: true),
+                    Text = table.Column<string>(nullable: true),
+                    AuthorId = table.Column<Guid>(nullable: true),
+                    Width = table.Column<int>(nullable: true),
+                    Height = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Audio", x => x.Id);
+                    table.PrimaryKey("PK_Attachments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Audio_Posts_PostId",
+                        name: "FK_Attachments_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Attachments_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -336,12 +346,12 @@ namespace Hikkaba.Data.Migrations
                 name: "Bans",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Modified = table.Column<DateTime>(nullable: true),
                     CreatedById = table.Column<Guid>(nullable: true),
                     ModifiedById = table.Column<Guid>(nullable: true),
-                    Id = table.Column<Guid>(nullable: false),
                     Start = table.Column<DateTime>(nullable: false),
                     End = table.Column<DateTime>(nullable: false),
                     LowerIpAddress = table.Column<string>(nullable: false),
@@ -377,100 +387,6 @@ namespace Hikkaba.Data.Migrations
                         principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Documents",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: false),
-                    FileName = table.Column<string>(nullable: false),
-                    FileExtension = table.Column<string>(nullable: false),
-                    Size = table.Column<long>(nullable: false),
-                    Hash = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Documents", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Documents_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notices",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: false),
-                    Text = table.Column<string>(nullable: false),
-                    AuthorId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notices", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notices_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Notices_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Pictures",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: false),
-                    FileName = table.Column<string>(nullable: false),
-                    FileExtension = table.Column<string>(nullable: false),
-                    Size = table.Column<long>(nullable: false),
-                    Hash = table.Column<string>(nullable: false),
-                    Width = table.Column<int>(nullable: false),
-                    Height = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pictures", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Pictures_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Video",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: false),
-                    FileName = table.Column<string>(nullable: false),
-                    FileExtension = table.Column<string>(nullable: false),
-                    Size = table.Column<long>(nullable: false),
-                    Hash = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Video", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Video_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -517,7 +433,9 @@ namespace Hikkaba.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
-                column: "NormalizedEmail");
+                column: "NormalizedEmail",
+                unique: true,
+                filter: "[NormalizedEmail] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -527,9 +445,28 @@ namespace Hikkaba.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Audio_PostId",
-                table: "Audio",
+                name: "IX_AspNetUsers_PhoneNumber",
+                table: "AspNetUsers",
+                column: "PhoneNumber",
+                unique: true,
+                filter: "[PhoneNumber] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserName",
+                table: "AspNetUsers",
+                column: "UserName",
+                unique: true,
+                filter: "[UserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attachments_PostId",
+                table: "Attachments",
                 column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attachments_AuthorId",
+                table: "Attachments",
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bans_CategoryId",
@@ -584,26 +521,6 @@ namespace Hikkaba.Data.Migrations
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Documents_PostId",
-                table: "Documents",
-                column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notices_AuthorId",
-                table: "Notices",
-                column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notices_PostId",
-                table: "Notices",
-                column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Pictures_PostId",
-                table: "Pictures",
-                column: "PostId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Posts_CreatedById",
                 table: "Posts",
                 column: "CreatedById");
@@ -632,11 +549,6 @@ namespace Hikkaba.Data.Migrations
                 name: "IX_Threads_ModifiedById",
                 table: "Threads",
                 column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Video_PostId",
-                table: "Video",
-                column: "PostId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -657,25 +569,13 @@ namespace Hikkaba.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Audio");
+                name: "Attachments");
 
             migrationBuilder.DropTable(
                 name: "Bans");
 
             migrationBuilder.DropTable(
                 name: "CategoriesToModerators");
-
-            migrationBuilder.DropTable(
-                name: "Documents");
-
-            migrationBuilder.DropTable(
-                name: "Notices");
-
-            migrationBuilder.DropTable(
-                name: "Pictures");
-
-            migrationBuilder.DropTable(
-                name: "Video");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

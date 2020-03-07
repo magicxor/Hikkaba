@@ -201,7 +201,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 if (isCurrentUserCategoryModerator)
                 {
                     postDto = _mapper.Map(viewModel, postDto);
-                    await _postService.EditAsync(postDto, GetCurrentUserId());
+                    await _postService.EditAsync(postDto);
                     return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
                 }
                 else
@@ -225,7 +225,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (isCurrentUserCategoryModerator)
             {
                 postDto.IsDeleted = !postDto.IsDeleted;
-                await _postService.EditAsync(postDto, GetCurrentUserId());
+                await _postService.EditAsync(postDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
