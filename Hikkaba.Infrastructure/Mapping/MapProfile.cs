@@ -72,7 +72,8 @@ namespace Hikkaba.Infrastructure.Mapping
             CreateMap<DocumentDto, Document>()
                 .ForMember(dest => dest.Post, opts => opts.Ignore());
             
-            CreateMap<Notice, NoticeDto>();
+            CreateMap<Notice, NoticeDto>()
+                .ForMember(dest => dest.AuthorName, opts => opts.MapFrom(src => src.Author.UserName));
             CreateMap<NoticeDto, Notice>()
                 .ForMember(dest => dest.Post, opts => opts.Ignore())
                 .ForMember(dest => dest.Author, opts => opts.Ignore());
