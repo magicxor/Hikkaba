@@ -70,7 +70,7 @@ namespace Hikkaba.Services
         
         public async Task<ApplicationUserDto> GetAsync(TPrimaryKey id)
         {
-            var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var entity = await _context.Users.FirstOrDefaultAsync(e => e.Id == id);
             var dto = MapEntityToDto<ApplicationUserDto, ApplicationUser>(entity);
             return dto;
         }
@@ -112,7 +112,7 @@ namespace Hikkaba.Services
 
         public async Task EditAsync(ApplicationUserDto dto)
         {
-            var existingEntity = await _context.Users.FirstOrDefaultAsync(user => user.Id == dto.Id);
+            var existingEntity = await _context.Users.FirstOrDefaultAsync(e => e.Id == dto.Id);
             MapDtoToExistingEntity(dto, existingEntity);
             await _context.SaveChangesAsync();
         }

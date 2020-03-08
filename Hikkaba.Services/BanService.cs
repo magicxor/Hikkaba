@@ -80,7 +80,7 @@ namespace Hikkaba.Services
         
         public async Task<BanDto> GetAsync(TPrimaryKey id)
         {
-            var entity = await _context.Bans.FirstOrDefaultAsync(u => u.Id == id);
+            var entity = await _context.Bans.FirstOrDefaultAsync(e => e.Id == id);
             var dto = MapEntityToDto<BanDto, Ban>(entity);
             return dto;
         }

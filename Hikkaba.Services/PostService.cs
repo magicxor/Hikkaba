@@ -77,7 +77,7 @@ namespace Hikkaba.Services
         
         private IQueryable<Post> Query<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false)
         {
-            var query = _context.Posts.Include(p => p.Attachments).AsQueryable();
+            var query = _context.Posts.Include(e => e.Attachments).AsQueryable();
 
             if (where != null)
             {
@@ -101,7 +101,7 @@ namespace Hikkaba.Services
         
         public async Task<PostDto> GetAsync(TPrimaryKey id)
         {
-            var entity = await _context.Posts.FirstOrDefaultAsync(u => u.Id == id);
+            var entity = await _context.Posts.FirstOrDefaultAsync(e => e.Id == id);
             var dto = MapEntityToDto<PostDto, Post>(entity);
             return dto;
         }
@@ -135,7 +135,7 @@ namespace Hikkaba.Services
 
         public async Task EditAsync(PostDto dto)
         {
-            var existingEntity = await _context.Posts.FirstOrDefaultAsync(p => p.Id == dto.Id);
+            var existingEntity = await _context.Posts.FirstOrDefaultAsync(e => e.Id == dto.Id);
             MapDtoToExistingEntity(dto, existingEntity);
             await _context.SaveChangesAsync();
         }

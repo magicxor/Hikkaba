@@ -24,7 +24,7 @@ namespace Hikkaba.Services
 
         public bool IsPictureExtensionSupported(string extension)
         {
-            return _supportedPictureExtensions.Any(x => x.Equals(extension));
+            return _supportedPictureExtensions.Any(ext => ext.Equals(extension));
         }
 
         public FileAttachmentDto CreateAttachmentDto(string fileName)

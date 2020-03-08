@@ -99,14 +99,14 @@ namespace Hikkaba.Services
         
         public async Task<CategoryDto> GetAsync(TPrimaryKey id)
         {
-            var entity = await _context.Categories.FirstOrDefaultAsync(u => u.Id == id);
+            var entity = await _context.Categories.FirstOrDefaultAsync(e => e.Id == id);
             var dto = MapEntityToDto<CategoryDto, Category>(entity);
             return dto;
         }
         
         public async Task<CategoryDto> GetAsync(string alias)
         {
-            var entity = await _context.Categories.FirstOrDefaultAsync(c => c.Alias == alias);
+            var entity = await _context.Categories.FirstOrDefaultAsync(e => e.Alias == alias);
             var dto = MapEntityToDto<CategoryDto, Category>(entity);
             return dto;
         }
@@ -122,7 +122,7 @@ namespace Hikkaba.Services
 
         public async Task EditAsync(CategoryDto dto)
         {
-            var existingEntity = await _context.Categories.FirstOrDefaultAsync(c => c.Id == dto.Id);
+            var existingEntity = await _context.Categories.FirstOrDefaultAsync(e => e.Id == dto.Id);
             MapDtoToExistingEntity(dto, existingEntity);
             existingEntity.Board = _context.GetLocalOrAttach<Board>(dto.BoardId);
             await _context.SaveChangesAsync();
