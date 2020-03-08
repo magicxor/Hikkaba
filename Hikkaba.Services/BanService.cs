@@ -32,7 +32,7 @@ namespace Hikkaba.Services
         
         Task<PostingPermissionDto> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress);
         
-        Task<TPrimaryKey> GetOrCreateAsync(BanDto dto);
+        Task<TPrimaryKey> CreateAsync(BanDto dto);
         
         Task EditAsync(BanDto dto);
         
@@ -112,7 +112,7 @@ namespace Hikkaba.Services
             return pagedList;
         }
 
-        public async Task<TPrimaryKey> GetOrCreateAsync(BanDto dto)
+        public async Task<TPrimaryKey> CreateAsync(BanDto dto)
         {
             if (dto == null)
             {

@@ -65,7 +65,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 var dto = _mapper.Map<BanDto>(viewModel);
-                var id = await _banService.GetOrCreateAsync(dto);
+                var id = await _banService.CreateAsync(dto);
                 
                 return RedirectToAction("Details", new {id = id});
             }
