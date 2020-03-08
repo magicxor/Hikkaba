@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
+        <div class="panel @(Model.IsDeleted ? "panel-danger" : "panel-default")">
             <div class="panel-body">
                 <h4>
                     <b>@Model.Title</b>
