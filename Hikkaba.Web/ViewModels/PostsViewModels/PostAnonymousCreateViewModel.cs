@@ -11,10 +11,10 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         [Display(Name = @"Sage")]
         public bool IsSageEnabled { get; set; }
 
+        [Required]
         [DataType(DataType.MultilineText)]
         [MinLength(Defaults.MinMessageLength)]
         [MaxLength(Defaults.MaxMessageLength)]
-        [Required]
         [Display(Name = @"Message")]
         public string Message { get; set; }
 

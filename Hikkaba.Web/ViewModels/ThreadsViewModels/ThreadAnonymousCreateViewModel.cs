@@ -6,21 +6,21 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
 {
     public class ThreadAnonymousCreateViewModel
     {
+        [Required]
         [MinLength(Defaults.MinTitleLength)]
         [MaxLength(Defaults.MaxTitleLength)]
-        [Required]
         [Display(Name = @"Title")]
         public string Title { get; set; }
 
+        [Required]
         [DataType(DataType.MultilineText)]
         [MinLength(Defaults.MinMessageLength)]
         [MaxLength(Defaults.MaxMessageLength)]
-        [Required]
         [Display(Name = @"Message")]
         public string Message { get; set; }
 
-        [DataType(DataType.Upload)]
         [Required]
+        [DataType(DataType.Upload)]
         [Display(Name = @"Attachments")]
         public IFormFileCollection Attachments { get; set; }
 

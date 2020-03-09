@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities.Attachments.Base;
 using Hikkaba.Data.Entities.Base.Current;
 
@@ -12,13 +13,16 @@ namespace Hikkaba.Data.Entities
         [Required]
         public bool IsSageEnabled { get; set; }
 
-        [MaxLength(8000)]
+        [MinLength(Defaults.MinMessageLength)]
+        [MaxLength(Defaults.MaxMessageLength)]
         public string Message { get; set; }
 
         [Required]
+        [MaxLength(Defaults.MaxIpAddressLength)]
         public string UserIpAddress { get; set; }
 
         [Required]
+        [MaxLength(Defaults.MaxUserAgentLength)]
         public string UserAgent { get; set; }
 
         [Required]
