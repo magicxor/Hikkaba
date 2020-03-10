@@ -70,25 +70,32 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             if (ModelState.IsValid)
             {
-                var thread = await _threadService.GetAsync(viewModel.ThreadId);
-                if (!thread.IsClosed)
+                var categoryDto = await _categoryService.GetAsync(viewModel.CategoryAlias);
+                var threadDto = await _threadService.GetAsync(viewModel.ThreadId);
+                if (!threadDto.IsClosed)
                 {
                     var postDto = _mapper.Map<PostDto>(viewModel);
                     postDto.UserIpAddress = UserIpAddress.ToString();
                     postDto.UserAgent = UserAgent;
-
-                    var postId = await _postService.CreateAsync(viewModel.Attachments, postDto);
-                    return
-                        Redirect(Url.Action("Details", "Threads",
-                        new
-                        {
-                            categoryAlias = viewModel.CategoryAlias,
-                            threadId = viewModel.ThreadId
-                        }) + "#" + postId);
+                    
+                    var threadPostCreateDto = new ThreadPostCreateDto
+                    {
+                        Category = categoryDto,
+                        Thread = threadDto,
+                        Post = postDto,
+                    };
+                    
+                    var createResultDto = await _threadService.CreateThreadPostAsync(viewModel.Attachments, threadPostCreateDto, false);
+                    return Redirect(Url.Action("Details", "Threads",
+                                        new
+                                        {
+                                            categoryAlias = viewModel.CategoryAlias,
+                                            threadId = createResultDto.ThreadId,
+                                        }) + "#" + createResultDto.PostId);
                 }
                 else
                 {
-                    throw new HttpResponseException(HttpStatusCode.Forbidden, $"Thread {thread.Id} is closed.");
+                    throw new HttpResponseException(HttpStatusCode.Forbidden, $"Thread {threadDto.Id} is closed.");
                 }
             }
             else
@@ -113,10 +120,11 @@ namespace Hikkaba.Web.Controllers.Mvc
                 var latestPostsDtoList = await _postService
                                            .PagedListAsync(
                                                post =>
-                                                    (!post.IsDeleted) &&
-                                                        ((post.Message.Contains(query)) ||
-                                                            (post.Thread.Title.Contains(query) &&
-                                                            (post == post.Thread.Posts.OrderBy(tp => tp.Created).FirstOrDefault()))
+                                                    !post.IsDeleted
+                                                    && !post.Thread.IsDeleted
+                                                    && !post.Thread.Category.IsDeleted
+                                                    && (post.Message.Contains(query) 
+                                                        || (post.Thread.Title.Contains(query) && post == post.Thread.Posts.OrderBy(tp => tp.Created).FirstOrDefault())
                                                         ),
                                                post => post.Created,
                                                true,
@@ -216,7 +224,9 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
         }
         
-        public async Task<IActionResult> ToggleIsDeletedOption(TPrimaryKey postId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetIsDeleted(TPrimaryKey postId, bool isDeleted)
         {
             var postDto = await _postService.GetAsync(postId);
             var threadDto = await _threadService.GetAsync(postDto.ThreadId);
@@ -224,9 +234,8 @@ namespace Hikkaba.Web.Controllers.Mvc
                                                 .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
-                postDto.IsDeleted = !postDto.IsDeleted;
-                await _postService.EditAsync(postDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                await _postService.SetIsDeletedAsync(postId, isDeleted);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
             else

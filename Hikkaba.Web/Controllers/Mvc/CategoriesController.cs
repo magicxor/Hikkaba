@@ -157,7 +157,8 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             if (ModelState.IsValid)
             {
-                var dto = _mapper.Map<CategoryDto>(viewModel);
+                var dto = await _categoryService.GetAsync(viewModel.Id);
+                _mapper.Map(viewModel, dto);
                 await _categoryService.EditAsync(dto);
                 return RedirectToAction("Index");
             }
@@ -181,7 +182,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
-            await _categoryService.DeleteAsync(id);
+            await _categoryService.SetIsDeletedAsync(id, true);
             return RedirectToAction("Index");
         }
     }

@@ -33,8 +33,8 @@ namespace Hikkaba.Services
         Task<TPrimaryKey> CreateAsync(CategoryDto dto);
         
         Task EditAsync(CategoryDto dto);
-        
-        Task DeleteAsync(TPrimaryKey id);
+
+        Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
     }
 
     public class CategoryService : BaseEntityService, ICategoryService
@@ -128,10 +128,10 @@ namespace Hikkaba.Services
             await _context.SaveChangesAsync();
         }
         
-        public async Task DeleteAsync(TPrimaryKey id)
+        public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
         {
             var entity = _context.GetLocalOrAttach<Category>(id);
-            entity.IsDeleted = true;
+            entity.IsDeleted = newValue;
             _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
             await _context.SaveChangesAsync();
         }

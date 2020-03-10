@@ -31,8 +31,8 @@ namespace Hikkaba.Services
         Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto);
         
         Task EditAsync(ApplicationUserDto dto);
-        
-        Task DeleteAsync(TPrimaryKey id);
+
+        Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
     }
     
     public class ApplicationUserService : BaseEntityService, IApplicationUserService
@@ -117,13 +117,11 @@ namespace Hikkaba.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(TPrimaryKey id)
+        public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
         {
             var entity = _context.GetLocalOrAttach<ApplicationUser>(id);
-            entity.IsDeleted = true;
-            entity.LockoutEnabled = true;
+            entity.IsDeleted = newValue;
             _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
-            _context.Entry(entity).Property(e => e.LockoutEnabled).IsModified = true;
             await _context.SaveChangesAsync();
         }
     }

@@ -2,10 +2,11 @@
 
 namespace Hikkaba.Models.Dto
 {
-    public class ThreadPostsAggregationDto
+    public class ThreadAggregationDto
     {
-        public CategoryDto Category { get; set; }
         public ThreadDto Thread { get; set; }
+        public CategoryDto Category { get; set; }
+        public BoardDto Board { get; set; }
         public IList<PostDto> Posts { get; set; }
     }
 }

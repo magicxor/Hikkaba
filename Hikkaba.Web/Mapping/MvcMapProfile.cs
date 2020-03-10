@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿using TPrimaryKey = System.Guid;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using AutoMapper;
 using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Attachments;
 using Hikkaba.Infrastructure.Extensions;
@@ -39,15 +43,23 @@ namespace Hikkaba.Web.Mapping
                     dest.Notices.ForEach(destElement => destElement.ThreadId = src.ThreadId);
                     dest.Pictures.ForEach(destElement => destElement.ThreadId = src.ThreadId);
                     dest.Video.ForEach(destElement => destElement.ThreadId = src.ThreadId);
-                })
-                .ReverseMap();
+                });
+            CreateMap<PostDetailsViewModel, PostDto>()
+                .ForMember(dest => dest.CreatedBy, opts => opts.Ignore())
+                .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore())
+                .ForMember(dest => dest.Audio, opts => opts.Ignore())
+                .ForMember(dest => dest.Documents, opts => opts.Ignore())
+                .ForMember(dest => dest.Notices, opts => opts.Ignore())
+                .ForMember(dest => dest.Pictures, opts => opts.Ignore())
+                .ForMember(dest => dest.Video, opts => opts.Ignore());
             CreateMap<PostDto, PostEditViewModel>()
                 .ForMember(dest => dest.CategoryAlias, opts => opts.Ignore())
                 .ReverseMap();
             CreateMap<CategoryDto, CategoryViewModel>()
                 .ReverseMap();
-            CreateMap<BanDto, BanViewModel>()
-                .ReverseMap();
+            CreateMap<BanDto, BanDetailsViewModel>();
+            CreateMap<BanDto, BanEditViewModel>();
+            CreateMap<BanEditViewModel, BanEditDto>();
             CreateMap<AudioDto, AudioViewModel>()
                 .ForMember(dest => dest.ThreadId, opts => opts.Ignore());
             CreateMap<DocumentDto, DocumentViewModel>()
@@ -101,6 +113,35 @@ namespace Hikkaba.Web.Mapping
                 .ForMember(dest => dest.CreatedBy, opts => opts.Ignore())
                 .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore())
                 .ForMember(dest => dest.Id, opts => opts.Ignore());
+            CreateMap<ThreadAggregationDto, ThreadDetailsViewModel>()
+                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Thread.Id))
+                .ForMember(dest => dest.IsDeleted, opts => opts.MapFrom(src => src.Thread.IsDeleted))
+                .ForMember(dest => dest.Created, opts => opts.MapFrom(src => src.Thread.Created))
+                .ForMember(dest => dest.Modified, opts => opts.MapFrom(src => src.Thread.Modified))
+                .ForMember(dest => dest.Title, opts => opts.MapFrom(src => src.Thread.Title))
+                .ForMember(dest => dest.IsPinned, opts => opts.MapFrom(src => src.Thread.IsPinned))
+                .ForMember(dest => dest.IsClosed, opts => opts.MapFrom(src => src.Thread.IsClosed))
+                .ForMember(dest => dest.BumpLimit, opts => opts.MapFrom(src => src.Thread.BumpLimit))
+                .ForMember(dest => dest.ShowThreadLocalUserHash, opts => opts.MapFrom(src => src.Thread.ShowThreadLocalUserHash))
+                .ForMember(dest => dest.CategoryId, opts => opts.MapFrom(src => src.Thread.CategoryId))
+                .ForMember(dest => dest.CategoryAlias, opts => opts.MapFrom(src => src.Category.Alias))
+                .ForMember(dest => dest.CategoryName, opts => opts.MapFrom(src => src.Category.Name))
+                .ForMember(dest => dest.PostCount, opts => opts.MapFrom(src => src.Posts.Count))
+                .ForMember(dest => dest.Posts, opts => opts.MapFrom(src => src.Posts))
+                .AfterMap((src, dest) =>
+                {
+                    dest.Posts.ForEach((index, destElement) =>
+                    {
+                        destElement.Index = index;
+                        destElement.ThreadShowThreadLocalUserHash = src.Thread.ShowThreadLocalUserHash;
+                        destElement.CategoryAlias = src.Category.Alias;
+                        destElement.CategoryId = src.Category.Id;
+                        destElement.Answers = new List<TPrimaryKey>(src.Posts
+                            .Where(answer => Regex.IsMatch(answer.Message, $@">>{destElement.Id}(?![\w])"))
+                            .Select(answer => answer.Id))
+                            .ToList();
+                    });
+                });
         }
     }
 }

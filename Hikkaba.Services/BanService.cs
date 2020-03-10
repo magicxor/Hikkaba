@@ -24,7 +24,7 @@ namespace Hikkaba.Services
             Expression<Func<Ban, bool>> where = null, 
             Expression<Func<Ban, TOrderKey>> orderBy = null, 
             bool isDescending = false);
-
+        
         Task<BasePagedList<BanDto>> PagedListAsync<TOrderKey>(
             Expression<Func<Ban, bool>> where = null,
             Expression<Func<Ban, TOrderKey>> orderBy = null, bool isDescending = false,
@@ -32,11 +32,11 @@ namespace Hikkaba.Services
         
         Task<PostingPermissionDto> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress);
         
-        Task<TPrimaryKey> CreateAsync(BanDto dto);
+        Task<TPrimaryKey> CreateAsync(BanEditDto dto);
         
-        Task EditAsync(BanDto dto);
+        Task EditAsync(BanEditDto dto);
         
-        Task DeleteAsync(TPrimaryKey id);
+        Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
     }
 
     public class BanService : BaseEntityService, IBanService
@@ -112,7 +112,7 @@ namespace Hikkaba.Services
             return pagedList;
         }
 
-        public async Task<TPrimaryKey> CreateAsync(BanDto dto)
+        public async Task<TPrimaryKey> CreateAsync(BanEditDto dto)
         {
             if (dto == null)
             {
@@ -133,7 +133,7 @@ namespace Hikkaba.Services
             }
             else
             {
-                var entity = MapDtoToNewEntity<BanDto, Ban>(dto);
+                var entity = MapDtoToNewEntity<BanEditDto, Ban>(dto);
                 entity.Category = dto.Category == null ? null : _context.GetLocalOrAttach<Category>(dto.Category.Id);
                 entity.RelatedPost = dto.RelatedPost == null ? null : _context.GetLocalOrAttach<Post>(dto.RelatedPost.Id);
                 await _context.Bans.AddAsync(entity);
@@ -143,7 +143,7 @@ namespace Hikkaba.Services
             }
         }
         
-        public async Task EditAsync(BanDto dto)
+        public async Task EditAsync(BanEditDto dto)
         {
             var existingEntity = await _context.Bans.FirstOrDefaultAsync(ban => ban.Id == dto.Id);
             existingEntity.Category = dto.Category == null ? null : _context.GetLocalOrAttach<Category>(dto.Category.Id);
@@ -178,10 +178,10 @@ namespace Hikkaba.Services
             return new PostingPermissionDto { IsPostingAllowed = isPostingAllowed, Ban = banDto };
         }
         
-        public async Task DeleteAsync(TPrimaryKey id)
+        public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
         {
             var entity = _context.GetLocalOrAttach<Ban>(id);
-            entity.IsDeleted = true;
+            entity.IsDeleted = newValue;
             _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
             await _context.SaveChangesAsync();
         }

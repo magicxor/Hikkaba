@@ -7,10 +7,10 @@ using Hikkaba.Common.Constants;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels
 {
-    public class BanViewModel
+    public class BanDetailsViewModel
     {
         [Display(Name = @"Id")]
-        public TPrimaryKey? Id { get; set; }
+        public TPrimaryKey Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }
