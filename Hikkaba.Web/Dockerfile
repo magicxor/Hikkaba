@@ -12,6 +12,12 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Hikkaba.Web/Hikkaba.Web.csproj", "Hikkaba.Web/"]
+COPY ["Hikkaba.Data/Hikkaba.Data.csproj", "Hikkaba.Data/"]
+COPY ["Hikkaba.Common/Hikkaba.Common.csproj", "Hikkaba.Common/"]
+COPY ["Hikkaba.Models/Hikkaba.Models.csproj", "Hikkaba.Models/"]
+COPY ["CodeKicker.BBCode/CodeKicker.BBCode.csproj", "CodeKicker.BBCode/"]
+COPY ["Hikkaba.Services/Hikkaba.Services.csproj", "Hikkaba.Services/"]
+COPY ["Hikkaba.Infrastructure/Hikkaba.Infrastructure.csproj", "Hikkaba.Infrastructure/"]
 RUN dotnet restore "Hikkaba.Web/Hikkaba.Web.csproj"
 COPY . .
 WORKDIR "/src/Hikkaba.Web"

@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoMapper;
+using Hikkaba.Data.Aggregations;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Extensions;
@@ -54,8 +55,14 @@ namespace Hikkaba.Infrastructure.Mapping
                 .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore())
                 .ForMember(dest => dest.Created, opts => opts.Ignore())
                 .ForMember(dest => dest.CreatedBy, opts => opts.Ignore());
-
+            
             CreateMap<Thread, ThreadDto>();
+            CreateMap<ThreadPosts, ThreadAggregationDto>()
+                .ForMember(dest => dest.Thread, opts => opts.MapFrom(src => src.Thread))
+                .ForMember(dest => dest.Category, opts => opts.MapFrom(src => src.Thread.Category))
+                .ForMember(dest => dest.Board, opts => opts.MapFrom(src => src.Thread.Category.Board))
+                .ForMember(dest => dest.Posts, opts => opts.MapFrom(src => src.Posts));
+            
             CreateMap<ThreadDto, Thread>()
                 .ForMember(dest => dest.Category, opts => opts.Ignore())
                 .ForMember(dest => dest.Posts, opts => opts.Ignore())
@@ -72,7 +79,8 @@ namespace Hikkaba.Infrastructure.Mapping
             CreateMap<DocumentDto, Document>()
                 .ForMember(dest => dest.Post, opts => opts.Ignore());
             
-            CreateMap<Notice, NoticeDto>();
+            CreateMap<Notice, NoticeDto>()
+                .ForMember(dest => dest.AuthorName, opts => opts.MapFrom(src => src.Author.UserName));
             CreateMap<NoticeDto, Notice>()
                 .ForMember(dest => dest.Post, opts => opts.Ignore())
                 .ForMember(dest => dest.Author, opts => opts.Ignore());

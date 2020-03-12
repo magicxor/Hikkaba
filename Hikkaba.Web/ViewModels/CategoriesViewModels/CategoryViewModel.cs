@@ -7,7 +7,7 @@ namespace Hikkaba.Web.ViewModels.CategoriesViewModels
     public class CategoryViewModel
     {
         [Display(Name = @"Id")]
-        public TPrimaryKey? Id { get; set; }
+        public TPrimaryKey Id { get; set; }
 
         [Display(Name = @"Is deleted")]
         public bool IsDeleted { get; set; }

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Common.Attributes;
+using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities.Base.Current;
 
 namespace Hikkaba.Data.Entities
@@ -18,12 +19,15 @@ namespace Hikkaba.Data.Entities
         public DateTime End { get; set; }
         
         [Required]
+        [MaxLength(Defaults.MaxIpAddressLength)]
         public string LowerIpAddress { get; set; }
 
         [Required]
+        [MaxLength(Defaults.MaxIpAddressLength)]
         public string UpperIpAddress { get; set; }
 
         [Required]
+        [MaxLength(Defaults.MaxReasonLength)]
         public string Reason { get; set; }
 
         public virtual Post RelatedPost { get; set; }

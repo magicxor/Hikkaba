@@ -116,6 +116,7 @@ namespace Hikkaba.Web
             {
                 var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
                 var path = Path.Combine(webHostEnvironment.WebRootPath, Defaults.AttachmentsStorageDirectoryName);
+                Directory.CreateDirectory(path);
                 return new LocalStorageProvider(path);
             });
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -123,7 +124,21 @@ namespace Hikkaba.Web
             services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
 
             // AutoMapper
-            services.AddAutoMapper(typeof(MapProfile), typeof(MvcMapProfile));
+            var mapperConfiguration = new MapperConfiguration(expression =>
+            {
+                expression.DisableConstructorMapping();
+                expression.AddProfile<MapProfile>();
+                expression.AddProfile<MvcMapProfile>();
+            });
+            services.AddSingleton<IMapper>(s =>
+            {
+                var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
+                if (webHostEnvironment.IsDevelopment())
+                {
+                    mapperConfiguration.AssertConfigurationIsValid();
+                }
+                return new Mapper(mapperConfiguration);
+            });
 
             // Hikkaba stuff
             services.Scan(scan => scan
@@ -156,8 +171,7 @@ namespace Hikkaba.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-
-            Directory.CreateDirectory(Path.Combine(env.WebRootPath, Defaults.AttachmentsStorageDirectoryName));
+            
             app.UseStaticFiles();
 
             app.UseSession();

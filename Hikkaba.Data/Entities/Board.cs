@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities.Base.Current;
 
 namespace Hikkaba.Data.Entities
@@ -9,7 +10,8 @@ namespace Hikkaba.Data.Entities
     public class Board: BaseEntity
     {
         [Required]
-        [MaxLength(100)]
+        [MinLength(Defaults.MinCategoryAndBoardNameLength)]
+        [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
         public string Name { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; }

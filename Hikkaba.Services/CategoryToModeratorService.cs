@@ -63,7 +63,7 @@ namespace Hikkaba.Services
                 .Select(user => new
                 {
                     Moderator = user,
-                    Categories = user.ModerationCategories.Select(mc => mc.Category).OrderBy(u => u.Alias).ToList()
+                    Categories = user.ModerationCategories.Select(cm => cm.Category).OrderBy(c => c.Alias).ToList()
                 })
                 .ToListAsync();
             var moderatorsCategoriesDtoList = new Dictionary<ApplicationUserDto, IList<CategoryDto>>();
@@ -88,7 +88,7 @@ namespace Hikkaba.Services
                 {
                     var userId = TPrimaryKey.Parse(_userManager.GetUserId(user));
                     return await _context.CategoriesToModerators
-                        .AnyAsync(x => x.CategoryId == categoryId && x.ApplicationUserId == userId);
+                        .AnyAsync(cm => cm.CategoryId == categoryId && cm.ApplicationUserId == userId);
                 }
             }
             else
@@ -100,9 +100,9 @@ namespace Hikkaba.Services
         public async Task DeleteAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId)
         {
             _context.CategoriesToModerators.RemoveRange(
-                _context.CategoriesToModerators.Where(e => 
-                    e.CategoryId == categoryId 
-                    && e.ApplicationUserId == moderatorId));
+                _context.CategoriesToModerators.Where(cm => 
+                    cm.CategoryId == categoryId 
+                    && cm.ApplicationUserId == moderatorId));
             await _context.SaveChangesAsync();
         }
     }

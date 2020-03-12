@@ -14,7 +14,7 @@
         @if ((Model.Threads.TotalItemsCount > 0) && (Model.Threads.CurrentPage.PageNumber > 0))
         {
             @Html.DisplayFor(model => model.Threads.CurrentPageItems)
-            <partial name="_PagerPartial" model="new PageInfoViewModel()
+            <partial name="_PagerPartial" model="new PageInfoViewModel
                                            {
                                                CurrentPageNumber = Model.Threads.CurrentPage.PageNumber,
                                                TotalPageCount = Model.Threads.TotalPageCount
@@ -22,7 +22,7 @@
         }
         else
         {
-            <p class="text-center">There is no threads yet.</p>
+            <p class="text-center">There are no threads yet.</p>
         }
     </div>
 </div>

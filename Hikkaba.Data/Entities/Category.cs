@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities.Base.Current;
 
 namespace Hikkaba.Data.Entities
@@ -9,11 +10,13 @@ namespace Hikkaba.Data.Entities
     public class Category: BaseMutableEntity
     { 
         [Required]
-        [MaxLength(10)]
+        [MinLength(Defaults.MinCategoryAliasLength)]
+        [MaxLength(Defaults.MaxCategoryAliasLength)]
         public string Alias { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MinLength(Defaults.MinCategoryAndBoardNameLength)]
+        [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
         public string Name { get; set; }
 
         [Required]

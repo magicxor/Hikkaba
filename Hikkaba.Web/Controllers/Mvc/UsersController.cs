@@ -81,7 +81,8 @@ namespace Hikkaba.Web.Controllers.Mvc
         {
             if (ModelState.IsValid)
             {
-                var dto = _mapper.Map<ApplicationUserDto>(viewModel);
+                var dto = await _applicationUserService.GetAsync(viewModel.Id);
+                _mapper.Map(viewModel, dto);
                 await _applicationUserService.EditAsync(dto);
                 return RedirectToAction("Details", new { id = dto.Id });
             }
@@ -105,7 +106,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
-            await _applicationUserService.DeleteAsync(id);
+            await _applicationUserService.SetIsDeletedAsync(id, true);;
             return RedirectToAction("Index");
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities.Base.Current;
 
 namespace Hikkaba.Data.Entities
@@ -9,7 +10,8 @@ namespace Hikkaba.Data.Entities
     public class Thread: BaseMutableEntity
     {
         [Required]
-        [MaxLength(100)]
+        [MinLength(Defaults.MinTitleLength)]
+        [MaxLength(Defaults.MaxTitleLength)]
         public string Title { get; set; }
 
         [Required]

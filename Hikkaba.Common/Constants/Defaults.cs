@@ -14,14 +14,31 @@ namespace Hikkaba.Common.Constants
         public const string AdministratorUserName = "Administrator";
         public const string AdministratorRoleName = "administrator";
 
+        public const int MaxIpAddressLength = 50;
+        public const int MaxUserAgentLength = 500;
+
         public const int MaxAttachmentSize = 20000000;
         public const int MaxAttachmentsTotalSize = 20000000;
         public const int MaxAttachmentsCount = 6;
-
+        public const int MaxFileNameLength = 100;
+        public const int MaxFileExtensionLength = 10;
+        public const int MaxFileHashLength = 255;
+        public const int MinSearchTermLength = 3;
+        public const int MaxSearchTermLength = 100;
+        public const int MinCategoryAliasLength = 1;
+        public const int MaxCategoryAliasLength = 10;
+        public const int MinCategoryAndBoardNameLength = 2;
+        public const int MaxCategoryAndBoardNameLength = 100;
         public const int MinMessageLength = 3;
+        // As long as your nvarchar column is less than 4000 characters (2 bytes each) - SQL Server will use the nvarchar(n) type.
+        // The upper limit is 4000 characters - if you specify a length greater than that, there's no alternative but to use nvarchar(max)
         public const int MaxMessageLength = 4000;
-        public const int MinTitleLength = 3;
+        public const int MinTitleLength = 2;
         public const int MaxTitleLength = 100;
+        public const int MaxReasonLength = 500;
+        public const int MaxNoticeLength = 500;
+        public const int MinBumpLimit = 500;
+        public const int MaxBumpLimit = 2000;
 
         public const string DefaultMimeType = "application/octet-stream";
         public static string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123

@@ -7,6 +7,7 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Services;
+using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -38,16 +39,25 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Details(TPrimaryKey id)
         {
             var dto = await _banService.GetAsync(id);
-            var viewModel = _mapper.Map<BanViewModel>(dto);
+            var viewModel = _mapper.Map<BanDetailsViewModel>(dto);
             return View(viewModel);
         }
 
         [Route("Bans")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int size = 10)
         {
-            // todo: pagination
-            var dtoList = await _banService.ListAsync(ban => (ban.End >= DateTime.UtcNow), ban => ban.Created, true);
-            var viewModelList = _mapper.Map<List<BanViewModel>>(dtoList);
+            var pageDto = new PageDto(page, size);
+            var dtoList = await _banService.PagedListAsync(ban => (ban.End >= DateTime.UtcNow), ban => ban.Created, true);
+            var detailsViewModels = _mapper.Map<IList<BanDetailsViewModel>>(dtoList.CurrentPageItems);
+            var viewModelList = new BanIndexViewModel
+            {
+                Bans = new BasePagedList<BanDetailsViewModel>
+                {
+                    TotalItemsCount = dtoList.TotalItemsCount,
+                    CurrentPage = pageDto,
+                    CurrentPageItems = detailsViewModels,
+                },
+            };
             return View(viewModelList);
         }
 
@@ -60,12 +70,12 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Bans/Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BanViewModel viewModel)
+        public async Task<IActionResult> Create(BanEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var dto = _mapper.Map<BanDto>(viewModel);
-                var id = await _banService.GetOrCreateAsync(dto);
+                var dto = _mapper.Map<BanEditDto>(viewModel);
+                var id = await _banService.CreateAsync(dto);
                 
                 return RedirectToAction("Details", new {id = id});
             }
@@ -80,18 +90,18 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Edit(TPrimaryKey id)
         {
             var dto = await _banService.GetAsync(id);
-            var viewModel = _mapper.Map<BanViewModel>(dto);
+            var viewModel = _mapper.Map<BanEditViewModel>(dto);
             return View(viewModel);
         }
 
         [Route("Bans/{id}/Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(BanViewModel viewModel)
+        public async Task<IActionResult> Edit(BanEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var dto = _mapper.Map<BanDto>(viewModel);
+                var dto = _mapper.Map<BanEditDto>(viewModel);
                 await _banService.EditAsync(dto);
                 return RedirectToAction("Details", new {id = dto.Id});
             }
@@ -106,7 +116,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         public async Task<IActionResult> Delete(TPrimaryKey id)
         {
             var dto = await _banService.GetAsync(id);
-            var viewModel = _mapper.Map<BanViewModel>(dto);
+            var viewModel = _mapper.Map<BanDetailsViewModel>(dto);
             return View(viewModel);
         }
 
@@ -115,7 +125,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
         {
-            await _banService.DeleteAsync(id);
+            await _banService.SetIsDeletedAsync(id, true);
             return RedirectToAction("Index");
         }
     }

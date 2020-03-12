@@ -1,10 +1,15 @@
 ﻿using TPrimaryKey = System.Guid;
-using Hikkaba.Models.Dto.Attachments;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments
 {
-    public class VideoViewModel : VideoDto
+    public class VideoViewModel
     {
+        public TPrimaryKey Id { get; set; }
+        public TPrimaryKey PostId { get; set; }
         public TPrimaryKey ThreadId { get; set; }
+        public string FileName { get; set; }
+        public string FileExtension { get; set; }
+        public long Size { get; set; }
+        public string Hash { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using TPrimaryKey = System.Guid;
 using System.ComponentModel.DataAnnotations;
+using Hikkaba.Common.Constants;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels
 {
@@ -8,9 +9,9 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
         [Required]
         public TPrimaryKey Id { get; set; }
 
-        [MinLength(3)]
-        [MaxLength(100)]
         [Required]
+        [MinLength(Defaults.MinTitleLength)]
+        [MaxLength(Defaults.MaxTitleLength)]
         [Display(Name = @"Title")]
         public string Title { get; set; }
 
@@ -24,6 +25,7 @@ namespace Hikkaba.Web.ViewModels.ThreadsViewModels
 
         [Required]
         [Display(Name = @"Bump limit")]
+        [Range(Defaults.MinBumpLimit, Defaults.MaxBumpLimit)]
         public int BumpLimit { get; set; }
 
         [Required]

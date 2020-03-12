@@ -61,7 +61,7 @@ namespace Hikkaba.Services
                     {
                         Category = category,
                         Moderators = category.Moderators
-                            .OrderBy(moderator => moderator.ApplicationUser.UserName)
+                            .OrderBy(categoryToModerator => categoryToModerator.ApplicationUser.UserName)
                             .Select(categoryToModerator => categoryToModerator.ApplicationUser),
                     })
                  .ToListAsync();

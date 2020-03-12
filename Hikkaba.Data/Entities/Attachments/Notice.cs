@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities.Attachments.Base;
 
 namespace Hikkaba.Data.Entities.Attachments
@@ -7,6 +7,7 @@ namespace Hikkaba.Data.Entities.Attachments
     public class Notice: Attachment
     {
         [Required]
+        [MaxLength(Defaults.MaxNoticeLength)]
         public string Text { get; set; }
 
         [Required]

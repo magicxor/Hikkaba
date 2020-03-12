@@ -7,9 +7,19 @@ namespace Hikkaba.Infrastructure.Extensions
     {
         public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
         {
-            foreach (T item in enumeration)
+            foreach (var item in enumeration)
             {
                 action(item);
+            }
+        }
+        
+        public static void ForEach<T>(this IEnumerable<T> enumeration, Action<int, T> action)
+        {
+            var i = 0;
+            foreach (var item in enumeration)
+            {
+                action(i, item);
+                i++;
             }
         }
     }

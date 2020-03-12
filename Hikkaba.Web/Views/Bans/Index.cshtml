@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Hikkaba.Web.ViewModels.BansViewModels.BanViewModel>
+﻿@using Hikkaba.Web.ViewModels
+@using Hikkaba.Web.ViewModels.BansViewModels
+@model Hikkaba.Web.ViewModels.BansViewModels.BanIndexViewModel
 @{
     ViewData["Title"] = $"Bans";
 }
@@ -7,23 +9,37 @@
 <hr />
 @Html.ActionLink("Create", "Create")
 <hr />
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Created)</th>
-            <th>@Html.DisplayNameFor(model => model.Category.Alias)</th>
-            <th>@Html.DisplayNameFor(model => model.LowerIpAddress)</th>
-            <th>@Html.DisplayNameFor(model => model.UpperIpAddress)</th>
-            <th>@Html.DisplayNameFor(model => model.Reason)</th>
-            <th>@Html.DisplayNameFor(model => model.Start)</th>
-            <th>@Html.DisplayNameFor(model => model.End)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+
+<div class="row">
+    <div class="col-md-12">
+        @if ((Model.Bans.TotalItemsCount > 0) && (Model.Bans.CurrentPage.PageNumber > 0))
         {
-            @Html.DisplayFor(model => item)
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Created)</th>
+                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Category.Alias)</th>
+                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.LowerIpAddress)</th>
+                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.UpperIpAddress)</th>
+                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Reason)</th>
+                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Start)</th>
+                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.End)</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    @Html.DisplayFor(model => model.Bans.CurrentPageItems)
+                </tbody>
+            </table>
+            <partial name="_PagerPartial" model="new PageInfoViewModel
+                                           {
+                                               CurrentPageNumber = Model.Bans.CurrentPage.PageNumber,
+                                               TotalPageCount = Model.Bans.TotalPageCount,
+                                           }"/>
         }
-    </tbody>
-</table>
+        else
+        {
+            <p class="text-center">There are no bans yet.</p>
+        }
+    </div>
+</div>

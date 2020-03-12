@@ -1,7 +1,5 @@
 using TPrimaryKey = System.Guid;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -14,7 +12,6 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
 using Hikkaba.Services;
 using Hikkaba.Web.Controllers.Mvc.Base;
-using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -31,7 +28,6 @@ namespace Hikkaba.Web.Controllers.Mvc
         private readonly IMapper _mapper;
         private readonly ICategoryService _categoryService;
         private readonly IThreadService _threadService;
-        private readonly IPostService _postService;
         private readonly ICategoryToModeratorService _categoryToModeratorService;
 
         public ThreadsController(
@@ -40,14 +36,12 @@ namespace Hikkaba.Web.Controllers.Mvc
             IMapper mapper,
             ICategoryService categoryService,
             IThreadService threadService,
-            IPostService postService,
             ICategoryToModeratorService categoryToModeratorService) : base(userManager)
         {
             _logger = logger;
             _mapper = mapper;
             _categoryService = categoryService;
             _threadService = threadService;
-            _postService = postService;
             _categoryToModeratorService = categoryToModeratorService;
         }
 
@@ -55,48 +49,8 @@ namespace Hikkaba.Web.Controllers.Mvc
         [AllowAnonymous]
         public async Task<IActionResult> Details(string categoryAlias, TPrimaryKey threadId)
         {
-            var threadDto = await _threadService.GetAsync(threadId);
-            var categoryDto = await _categoryService.GetAsync(categoryAlias);
-
-            var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
-            if ((threadDto.IsDeleted || categoryDto.IsDeleted) && (!isCurrentUserCategoryModerator))
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound, $"Thread {threadId} not found.");
-            }
-
-            if (threadDto.CategoryId != categoryDto.Id)
-            {
-                categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
-                return RedirectToAction("Details", new {categoryAlias = categoryDto.Alias, threadId = threadDto.Id});
-            }
-
-            var postDtoList = await _postService.ListAsync(
-                post => (isCurrentUserCategoryModerator || (!post.IsDeleted)) 
-                        && (post.Thread.Id == threadId), 
-                post => post.Created);
-
-            var postDetailsViewModels = _mapper.Map<IList<PostDetailsViewModel>>(postDtoList);
-            var i = 0;
-            foreach (var postDetailsViewModel in postDetailsViewModels)
-            {
-                i++;
-                postDetailsViewModel.Index = i;
-                postDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
-                postDetailsViewModel.CategoryAlias = categoryDto.Alias;
-                postDetailsViewModel.CategoryId = categoryDto.Id;
-                postDetailsViewModel.Answers = new List<TPrimaryKey>(
-                    postDetailsViewModels
-                        .Where(answer => answer.Message.Contains(">>" + postDetailsViewModel.Id.ToString()))
-                        .Select(answer => answer.Id));
-            }
-
-            var threadDetailsViewModel = _mapper.Map<ThreadDetailsViewModel>(threadDto);
-            threadDetailsViewModel.PostCount = postDetailsViewModels.Count;
-            threadDetailsViewModel.CategoryAlias = categoryDto.Alias;
-            threadDetailsViewModel.CategoryName = categoryDto.Name;
-            threadDetailsViewModel.Posts = postDetailsViewModels;
-
+            var aggregationDto = await _threadService.GetAggregationAsync(threadId, User);
+            var threadDetailsViewModel = _mapper.Map<ThreadDetailsViewModel>(aggregationDto);
             return View(threadDetailsViewModel);
         }
 
@@ -126,32 +80,26 @@ namespace Hikkaba.Web.Controllers.Mvc
             {
                 try
                 {
-                    var category = await _categoryService.GetAsync(viewModel.CategoryAlias);
-
+                    var categoryDto = await _categoryService.GetAsync(viewModel.CategoryAlias);
+                    
                     var threadDto = _mapper.Map<ThreadDto>(viewModel);
-                    threadDto.BumpLimit = category.DefaultBumpLimit;
-                    threadDto.ShowThreadLocalUserHash = category.DefaultShowThreadLocalUserHash;
-                    threadDto.CategoryId = category.Id;
-
-                    var threadId = await _threadService.CreateAsync(threadDto);
-
+                    threadDto.BumpLimit = categoryDto.DefaultBumpLimit;
+                    threadDto.ShowThreadLocalUserHash = categoryDto.DefaultShowThreadLocalUserHash;
+                    threadDto.CategoryId = categoryDto.Id;
+                    
                     var postDto = _mapper.Map<PostDto>(viewModel);
-                    postDto.ThreadId = threadId;
                     postDto.UserIpAddress = UserIpAddress.ToString();
                     postDto.UserAgent = UserAgent;
-
-                    try
+                    
+                    var threadCreateDto = new ThreadPostCreateDto
                     {
-                        var postId = await _postService.CreateAsync(viewModel.Attachments, postDto);
-                        return RedirectToAction("Details", "Threads", new { categoryAlias = viewModel.CategoryAlias, threadId = threadId });
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(EventIdentifiers.PostCreateError.ToEventId(), ex, $"Can't create new post due to exception. Thread creation failed");
-                        
-                        await _threadService.DeleteAsync(threadId);
-                        throw;
-                    }
+                        Category = categoryDto,
+                        Thread = threadDto,
+                        Post = postDto,
+                    };
+                    
+                    var createResultDto = await _threadService.CreateThreadPostAsync(viewModel.Attachments, threadCreateDto, true);
+                    return RedirectToAction("Details", "Threads", new { categoryAlias = viewModel.CategoryAlias, threadId = createResultDto.ThreadId });
                 }
                 catch (Exception ex)
                 {
@@ -232,7 +180,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                                                 .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
-                await _threadService.DeleteAsync(threadId);
+                await _threadService.SetIsDeletedAsync(threadId, true);
                 return RedirectToAction("Details", "Categories", new { categoryAlias = categoryAlias });
             }
             else
@@ -243,16 +191,15 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleIsPinnedOption(TPrimaryKey threadId)
+        public async Task<IActionResult> SetIsPinned(TPrimaryKey threadId, bool isPinned)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
-                threadDto.IsPinned = !threadDto.IsPinned;
-                await _threadService.EditAsync(threadDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                await _threadService.SetIsPinnedAsync(threadId, isPinned);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
             else
@@ -263,16 +210,15 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleIsClosedOption(TPrimaryKey threadId)
+        public async Task<IActionResult> SetIsClosed(TPrimaryKey threadId, bool isClosed)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
-                threadDto.IsClosed = !threadDto.IsClosed;
-                await _threadService.EditAsync(threadDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+                await _threadService.SetIsClosedAsync(threadId, isClosed);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
             else
@@ -283,17 +229,16 @@ namespace Hikkaba.Web.Controllers.Mvc
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleIsDeletedOption(TPrimaryKey threadId)
+        public async Task<IActionResult> SetIsDeleted(TPrimaryKey threadId, bool isDeleted)
         {
             var threadDto = await _threadService.GetAsync(threadId);
             var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
+                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
             if (isCurrentUserCategoryModerator)
             {
-                threadDto.IsDeleted = !threadDto.IsDeleted;
-                await _threadService.EditAsync(threadDto);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
-                return RedirectToAction("Details", "Categories", new {categoryAlias = categoryDto.Alias});
+                await _threadService.SetIsDeletedAsync(threadId, isDeleted);
+                return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
             else
             {

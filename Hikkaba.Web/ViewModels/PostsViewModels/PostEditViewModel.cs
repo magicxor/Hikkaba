@@ -1,5 +1,6 @@
 ﻿using TPrimaryKey = System.Guid;
 using System.ComponentModel.DataAnnotations;
+using Hikkaba.Common.Constants;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels
 {
@@ -9,7 +10,7 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
         public TPrimaryKey Id { get; set; }
 
         [DataType(DataType.MultilineText)]
-        [MaxLength(4000)]
+        [MaxLength(Defaults.MaxMessageLength)]
         [Display(Name = @"Message")]
         public string Message { get; set; }
 

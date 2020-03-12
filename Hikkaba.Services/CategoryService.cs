@@ -33,8 +33,8 @@ namespace Hikkaba.Services
         Task<TPrimaryKey> CreateAsync(CategoryDto dto);
         
         Task EditAsync(CategoryDto dto);
-        
-        Task DeleteAsync(TPrimaryKey id);
+
+        Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
     }
 
     public class CategoryService : BaseEntityService, ICategoryService
@@ -99,14 +99,14 @@ namespace Hikkaba.Services
         
         public async Task<CategoryDto> GetAsync(TPrimaryKey id)
         {
-            var entity = await _context.Categories.FirstOrDefaultAsync(u => u.Id == id);
+            var entity = await _context.Categories.FirstOrDefaultAsync(e => e.Id == id);
             var dto = MapEntityToDto<CategoryDto, Category>(entity);
             return dto;
         }
         
         public async Task<CategoryDto> GetAsync(string alias)
         {
-            var entity = await _context.Categories.FirstOrDefaultAsync(c => c.Alias == alias);
+            var entity = await _context.Categories.FirstOrDefaultAsync(e => e.Alias == alias);
             var dto = MapEntityToDto<CategoryDto, Category>(entity);
             return dto;
         }
@@ -122,16 +122,16 @@ namespace Hikkaba.Services
 
         public async Task EditAsync(CategoryDto dto)
         {
-            var existingEntity = await _context.Categories.FirstOrDefaultAsync(c => c.Id == dto.Id);
+            var existingEntity = await _context.Categories.FirstOrDefaultAsync(e => e.Id == dto.Id);
             MapDtoToExistingEntity(dto, existingEntity);
             existingEntity.Board = _context.GetLocalOrAttach<Board>(dto.BoardId);
             await _context.SaveChangesAsync();
         }
         
-        public async Task DeleteAsync(TPrimaryKey id)
+        public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
         {
             var entity = _context.GetLocalOrAttach<Category>(id);
-            entity.IsDeleted = true;
+            entity.IsDeleted = newValue;
             _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
             await _context.SaveChangesAsync();
         }
