@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Hikkaba.Web.ViewModels.AdministrationViewModels.ApplicationUserViewModel>
 @{
-    ViewData["Title"] = $"Categories";
+    ViewData["Title"] = $"Users";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
@@ -11,6 +11,7 @@
             <th>@Html.DisplayNameFor(model => model.UserName)</th>
             <th>@Html.DisplayNameFor(model => model.Email)</th>
             <th>@Html.DisplayNameFor(model => model.LastLogin)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>

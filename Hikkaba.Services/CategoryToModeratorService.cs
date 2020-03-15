@@ -18,6 +18,7 @@ namespace Hikkaba.Services
         Task<bool> IsUserCategoryModeratorAsync(TPrimaryKey categoryId, ClaimsPrincipal user);
         Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModeratorsAsync();
         Task<IDictionary<ApplicationUserDto, IList<CategoryDto>>> ListModeratorsCategoriesAsync();
+        Task AddAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId);
         Task DeleteAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId);
     }
 
@@ -95,6 +96,17 @@ namespace Hikkaba.Services
             {
                 return false;
             }
+        }
+        
+        public async Task AddAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId)
+        {
+            var entity = new CategoryToModerator
+            {
+                CategoryId = categoryId,
+                ApplicationUserId = moderatorId,
+            };
+            await _context.CategoriesToModerators.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
         
         public async Task DeleteAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId)

@@ -32,7 +32,7 @@
                             <div class="btn-group thread-moderation-panel" role="group">
                                 <form asp-controller="Threads" asp-action="SetIsPinned" method="post" class="display-inline">
                                     <input name="threadId" type="hidden" value="@Model.Id" />
-                                    <input name="isPinned" type="hidden" value="@(!Model.IsPinned)"/>
+                                    <input name="isPinned" type="hidden" value="@((!Model.IsPinned).ToString())"/>
                                     <button type="submit" class="btn btn-primary">
                                         <i class="@(Model.IsPinned ? "fa fa-arrow-down" : "fa fa-thumb-tack")" aria-hidden="true"></i>
                                         @(Model.IsPinned ? "Unpin" : "Pin")
@@ -40,7 +40,7 @@
                                 </form>
                                 <form asp-controller="Threads" asp-action="SetIsClosed" method="post" class="display-inline">
                                     <input name="threadId" type="hidden" value="@Model.Id" />
-                                    <input name="isClosed" type="hidden" value="@(!Model.IsClosed)"/>
+                                    <input name="isClosed" type="hidden" value="@((!Model.IsClosed).ToString())"/>
                                     <button type="submit" class="btn btn-warning">
                                         <i class="@(Model.IsClosed ? "fa fa-unlock" : "fa fa-lock")" aria-hidden="true"></i>
                                         @(Model.IsClosed ? "Open" : "Close")
@@ -48,7 +48,7 @@
                                 </form>
                                 <form asp-controller="Threads" asp-action="SetIsDeleted" method="post" class="display-inline">
                                     <input name="threadId" type="hidden" value="@Model.Id" />
-                                    <input name="isDeleted" type="hidden" value="@(!Model.IsDeleted)"/>
+                                    <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
                                     <button type="submit" class="btn btn-danger">
                                         <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
                                         @(Model.IsDeleted ? "Restore" : "Delete")

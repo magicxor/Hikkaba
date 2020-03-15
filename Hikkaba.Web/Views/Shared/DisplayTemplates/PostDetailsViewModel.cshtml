@@ -58,7 +58,7 @@
                                 </form>
                                 <form asp-controller="Posts" asp-action="SetIsDeleted" method="post" class="display-inline">
                                     <input name="postId" type="hidden" value="@Model.Id"/>
-                                    <input name="isDeleted" type="hidden" value="@(!Model.IsDeleted)"/>
+                                    <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
                                     <button type="submit" class="btn btn-danger">
                                         <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
                                         @(Model.IsDeleted ? "Restore" : "Delete")

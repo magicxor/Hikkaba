@@ -1,27 +1,53 @@
-﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.DashboardViewModel
+﻿@using Hikkaba.Web.ViewModels.AdministrationViewModels
+@using Hikkaba.Web.ViewModels.CategoriesViewModels
+@model Hikkaba.Web.ViewModels.AdministrationViewModels.DashboardViewModel
 
 @{
     ViewData["Title"] = "Administration";
 }
 
-<h2 class="text-center">Board</h2>
-<hr />
-@Html.DisplayFor(model => model.Board)
-
-<h2 class="text-center">Categories</h2>
+<h2 class="text-center">@Html.DisplayNameFor(model => model.Board)</h2>
 <hr />
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Alias</th>
-            <th>Name</th>
-            <th>Default bump limit</th>
-            <th>Show thread-local user hash by default</th>
-            <th>Is hidden</th>
-            <th>Moderators</th>
+            <th class="text-center">@Html.DisplayNameFor(model => model.Board)</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="text-center">@Html.DisplayFor(model => model.Board.Name)</td>
+        <td class="text-center">@Html.ActionLink("Edit", "Edit", "Board", new {id = @Model.Board.Id})</td>
+    </tr>
+    </tbody>
+</table>
+
+<h2 class="text-center">Categories</h2>
+<hr />
+@Html.ActionLink("Create", "Create", "Categories")
+<hr />
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Alias)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Name)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.DefaultBumpLimit)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.DefaultShowThreadLocalUserHash)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.IsHidden)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((DashboardViewModel dashboard) => dashboard.CategoriesModerators)</th>
+            <th class="text-center">Actions</th>
         </tr>
     </thead>
     <tbody>
         @Html.DisplayFor(model => model.CategoriesModerators)
     </tbody>
 </table>
+
+<h2 class="text-center">@Html.ActionLink("Users", "Index", "Users")</h2>
+<hr />
+
+<h2 class="text-center">@Html.ActionLink("Bans", "Index", "Bans")</h2>
+<hr />
+
+<h2 class="text-center">@Html.ActionLink("Delete all content", "DeleteAllContent", "Administration")</h2>

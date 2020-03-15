@@ -53,7 +53,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 latestPostDetailsViewModel.CategoryId = categoryDto.Id;
             }
             var categoriesDtoList = await _categoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
-            var categoryViewModels = _mapper.Map<List<CategoryViewModel>>(categoriesDtoList);
+            var categoryViewModels = _mapper.Map<List<CategoryDetailsViewModel>>(categoriesDtoList);
             var homeIndexViewModel = new HomeIndexViewModel
             {
                 Categories = categoryViewModels,

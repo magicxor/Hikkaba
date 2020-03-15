@@ -11,6 +11,7 @@ namespace Hikkaba.Services
     public interface IBoardService
     {
         Task<BoardDto> GetBoardAsync();
+        Task EditBoardAsync(BoardDto dto);
     }
 
     public class BoardService : BaseEntityService, IBoardService
@@ -27,6 +28,13 @@ namespace Hikkaba.Services
             var entity = await _context.Boards.FirstOrDefaultAsync();
             var dto = MapEntityToDto<BoardDto, Board>(entity);
             return dto;
+        }
+
+        public async Task EditBoardAsync(BoardDto dto)
+        {
+            var existingEntity = await _context.Boards.FirstOrDefaultAsync();
+            MapDtoToExistingEntity(dto, existingEntity);
+            await _context.SaveChangesAsync();
         }
     }
 }

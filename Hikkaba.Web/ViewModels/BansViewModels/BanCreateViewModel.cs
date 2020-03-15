@@ -7,20 +7,8 @@ using Hikkaba.Common.Constants;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels
 {
-    public class BanDetailsViewModel
+    public class BanCreateViewModel
     {
-        [Display(Name = @"Id")]
-        public TPrimaryKey Id { get; set; }
-
-        [Display(Name = @"Is deleted")]
-        public bool IsDeleted { get; set; }
-
-        [Display(Name = @"Creation date and time")]
-        public DateTime Created { get; set; }
-
-        [Display(Name = @"Modification date and time")]
-        public DateTime? Modified { get; set; }
-
         [Display(Name = @"Start")]
         public DateTime Start { get; set; }
 

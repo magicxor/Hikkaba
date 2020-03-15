@@ -46,7 +46,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             {
                 categoriesModeratorsViewModelList.Add(new CategoryModeratorsViewModel
                 {
-                    Category = _mapper.Map<CategoryViewModel>(dtoPair.Key),
+                    Category = _mapper.Map<CategoryDetailsViewModel>(dtoPair.Key),
                     Moderators = _mapper.Map<List<ApplicationUserViewModel>>(dtoPair.Value),
                 });
             }

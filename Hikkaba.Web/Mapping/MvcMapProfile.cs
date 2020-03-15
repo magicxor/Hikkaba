@@ -20,8 +20,10 @@ namespace Hikkaba.Web.Mapping
     {
         public MvcMapProfile()
         {
-            CreateMap<BoardDto, BoardViewModel>();
-            CreateMap<ApplicationUserDto, ApplicationUserViewModel>();
+            CreateMap<BoardDto, BoardViewModel>()
+                .ReverseMap();
+            CreateMap<ApplicationUserDto, ApplicationUserViewModel>()
+                .ReverseMap();
             CreateMap<ThreadDto, ThreadDetailsViewModel>()
                 .ForMember(dest => dest.CategoryAlias, opts => opts.Ignore())
                 .ForMember(dest => dest.CategoryName, opts => opts.Ignore())
@@ -55,7 +57,24 @@ namespace Hikkaba.Web.Mapping
             CreateMap<PostDto, PostEditViewModel>()
                 .ForMember(dest => dest.CategoryAlias, opts => opts.Ignore())
                 .ReverseMap();
-            CreateMap<CategoryDto, CategoryViewModel>()
+
+            CreateMap<CategoryCreateViewModel, CategoryDto>()
+                .ForMember(dest => dest.Id, opts => opts.Ignore())
+                .ForMember(dest => dest.BoardId, opts => opts.Ignore())
+                .ForMember(dest => dest.IsDeleted, opts => opts.Ignore())
+                .ForMember(dest => dest.Created, opts => opts.Ignore())
+                .ForMember(dest => dest.Modified, opts => opts.Ignore())
+                .ForMember(dest => dest.CreatedBy, opts => opts.Ignore())
+                .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore());
+            CreateMap<CategoryEditViewModel, CategoryDto>()
+                .ForMember(dest => dest.BoardId, opts => opts.Ignore())
+                .ForMember(dest => dest.IsDeleted, opts => opts.Ignore())
+                .ForMember(dest => dest.Created, opts => opts.Ignore())
+                .ForMember(dest => dest.Modified, opts => opts.Ignore())
+                .ForMember(dest => dest.CreatedBy, opts => opts.Ignore())
+                .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore())
+                .ReverseMap();
+            CreateMap<CategoryDto, CategoryDetailsViewModel>()
                 .ReverseMap();
             CreateMap<BanDto, BanDetailsViewModel>();
             CreateMap<BanDto, BanEditViewModel>();
