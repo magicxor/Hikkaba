@@ -112,7 +112,7 @@ namespace Hikkaba.Web
             services.AddDNTCaptcha(options => options.UseSessionStorageProvider());
 
             // File storage
-            services.AddScoped<IStorageProvider>(s => 
+            services.AddScoped<IStorageProvider>(s =>
             {
                 var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
                 var path = Path.Combine(webHostEnvironment.WebRootPath, Defaults.AttachmentsStorageDirectoryName);
@@ -130,15 +130,9 @@ namespace Hikkaba.Web
                 expression.AddProfile<MapProfile>();
                 expression.AddProfile<MvcMapProfile>();
             });
-            services.AddSingleton<IMapper>(s =>
-            {
-                var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
-                if (webHostEnvironment.IsDevelopment())
-                {
-                    mapperConfiguration.AssertConfigurationIsValid();
-                }
-                return new Mapper(mapperConfiguration);
-            });
+            mapperConfiguration.AssertConfigurationIsValid();
+            mapperConfiguration.CompileMappings();
+            services.AddSingleton<IMapper>(new Mapper(mapperConfiguration));
 
             // Hikkaba stuff
             services.Scan(scan => scan
@@ -171,7 +165,7 @@ namespace Hikkaba.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            
+
             app.UseStaticFiles();
 
             app.UseSession();
@@ -180,7 +174,7 @@ namespace Hikkaba.Web
             app.UseHttpsRedirection();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseAuthorization();    
+            app.UseAuthorization();
             app.UseMiddleware<SetAuthenticatedUserMiddleware>();
 
             app.UseEndpoints(endpoints =>
