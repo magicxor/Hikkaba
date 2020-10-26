@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="9.0.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
-    <PackageReference Include="TwentyTwenty.Storage" Version="2.12.3" />
-    <PackageReference Include="TwentyTwenty.Storage.Local" Version="2.12.3" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+    <PackageReference Include="TwentyTwenty.Storage" Version="2.14.0" />
+    <PackageReference Include="TwentyTwenty.Storage.Local" Version="2.14.0" />
   </ItemGroup>
 
   <ItemGroup>
