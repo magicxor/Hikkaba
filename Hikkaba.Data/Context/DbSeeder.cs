@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
@@ -12,9 +12,7 @@ namespace Hikkaba.Data.Context
 {
     public static class DbSeeder
     {
-        private const int DefaultBumpLimit = 500;
-
-        private static async Task SeedNewCategoryAsync(ApplicationDbContext context, ApplicationUser createdBy, Board board, string alias, string name, bool isHidden = false, bool defaultShowThreadLocalUserHash = false, int defaultBumpLimit = DefaultBumpLimit)
+        private static async Task SeedNewCategoryAsync(ApplicationDbContext context, ApplicationUser createdBy, Board board, string alias, string name, bool isHidden = false, bool defaultShowThreadLocalUserHash = false, int defaultBumpLimit = Defaults.DefaultBumpLimit)
         {
             await context.Categories.AddAsync(new Category
             {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Hikkaba.Common.Constants
 {
@@ -39,6 +39,7 @@ namespace Hikkaba.Common.Constants
         public const int MaxNoticeLength = 500;
         public const int MinBumpLimit = 500;
         public const int MaxBumpLimit = 2000;
+        public const int DefaultBumpLimit = 500;
 
         public const string DefaultMimeType = "application/octet-stream";
         public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
