@@ -39,10 +39,10 @@ namespace Hikkaba.Web
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -63,7 +63,7 @@ namespace Hikkaba.Web
                 }
                 options
                     .UseLazyLoadingProxies()
-                    .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                    .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
             });
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -73,8 +73,8 @@ namespace Hikkaba.Web
                 .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, TPrimaryKey>>();
 
             services.AddOptions();
-            services.Configure<HikkabaConfiguration>(Configuration.GetSection(typeof(HikkabaConfiguration).Name));
-            services.Configure<SeedConfiguration>(Configuration.GetSection(typeof(SeedConfiguration).Name));
+            services.Configure<HikkabaConfiguration>(_configuration.GetSection(nameof(HikkabaConfiguration)));
+            services.Configure<SeedConfiguration>(_configuration.GetSection(nameof(SeedConfiguration)));
 
             services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
@@ -93,7 +93,7 @@ namespace Hikkaba.Web
                     options.ApplicationDiscriminator = "4036e12c07fa7f8fb6f58a70c90ee85b52c15be531acf7bd0d480d1ca7f9ea5d";
                 })
                .SetApplicationName("Hikkaba")
-               .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(Configuration.GetSection(typeof(HikkabaConfiguration).Name).Get<HikkabaConfiguration>()))
+               .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(_configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>()))
                .PersistKeysToFileSystem(new DirectoryInfo("/home/hikkaba/keys"));
             services.AddControllersWithViews();
             services.AddRazorPages();
