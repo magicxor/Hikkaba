@@ -8,7 +8,7 @@ namespace Hikkaba.Data.Entities
 {
     [Table("Categories")]
     public class Category: BaseMutableEntity
-    { 
+    {
         [Required]
         [MinLength(Defaults.MinCategoryAliasLength)]
         [MaxLength(Defaults.MaxCategoryAliasLength)]

@@ -1,0 +1,31 @@
+﻿@using Hikkaba.Web.ViewModels.AdministrationViewModels
+@model Hikkaba.Web.ViewModels.AdministrationViewModels.CategoryModeratorsViewModel
+
+@{
+    var title = $"/{Model.Category.Alias} - {Model.Category.Name}: Add moderator";
+    ViewData["Title"] = title;
+}
+
+<h2 class="text-center">@(title)</h2>
+<hr />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameForInnerType((ApplicationUserViewModel user) => user.UserName)</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model.Moderators)
+    {
+        <tr>
+            <td>
+                <form asp-action="AddModerator" asp-controller="Categories" method="post">
+                    <input type="hidden" name="id" value="@Model.Category.Id" />
+                    <input type="hidden" name="moderatorId" value="@user.Id" />
+                    <button type="submit" class="btn-link">@user.UserName</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

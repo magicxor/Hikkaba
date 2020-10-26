@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    // todo: implement views
-
     [Authorize(Roles = Defaults.AdministratorRoleName)]
     public class UsersController : Controller
     {
@@ -57,7 +55,7 @@ namespace Hikkaba.Web.Controllers.Mvc
             {
                 var dto = _mapper.Map<ApplicationUserDto>(viewModel);
                 var id = await _applicationUserService.CreateAsync(dto);
-                return RedirectToAction("Details", new { id = id });
+                return RedirectToAction("Index");
             }
             else
             {
@@ -84,7 +82,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 var dto = await _applicationUserService.GetAsync(viewModel.Id);
                 _mapper.Map(viewModel, dto);
                 await _applicationUserService.EditAsync(dto);
-                return RedirectToAction("Details", new { id = dto.Id });
+                return RedirectToAction("Index");
             }
             else
             {

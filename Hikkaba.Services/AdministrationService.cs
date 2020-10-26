@@ -11,6 +11,7 @@ using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Administration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TwentyTwenty.Storage;
@@ -28,26 +29,20 @@ namespace Hikkaba.Services
         private readonly IStorageProvider _storageProvider;
         private readonly ILogger _logger;
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly IOptions<SeedConfiguration> _seedConfOptions;
         private readonly IMapper _mapper;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         public AdministrationService(
             ILogger<AdministrationService> logger,
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager,
-            IOptions<SeedConfiguration> seedConfOptions,
             IStorageProvider storageProvider,
-            IMapper mapper)
+            IMapper mapper,
+            IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
             _context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _seedConfOptions = seedConfOptions;
             _mapper = mapper;
+            _scopeFactory = scopeFactory;
             _storageProvider = storageProvider;
         }
 
@@ -80,11 +75,26 @@ namespace Hikkaba.Services
             };
         }
 
+        private async Task RunSeedInNewScopeAsync()
+        {
+            // new scope to reset EF cache
+            using(var scope = _scopeFactory.CreateScope())
+            {
+                var applicationDbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                var userMgr = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+                var roleMgr = scope.ServiceProvider.GetService<RoleManager<ApplicationRole>>();
+                var seedSettings = scope.ServiceProvider.GetService<IOptions<SeedConfiguration>>();
+
+                await _context.Database.MigrateAsync();
+                await DbSeeder.SeedAsync(applicationDbContext, userMgr, roleMgr, seedSettings);
+            }
+        }
+
         public async Task DeleteAllContentAsync()
         {
             _logger.LogInformation("Wiping all database tables and media files...");
             var threadIdList = await _context.Threads.Select(thread => thread.Id).ToListAsync();
-            
+
             _logger.LogDebug($"Deleting content files (media) from {threadIdList.Count} threads");
             foreach (var threadId in threadIdList)
             {
@@ -116,8 +126,7 @@ namespace Hikkaba.Services
             _logger.LogDebug("OK");
 
             _logger.LogDebug("Running migrations and seed...");
-            await _context.Database.MigrateAsync();
-            await DbSeeder.SeedAsync(_context, _userManager, _roleManager, _seedConfOptions);
+            await RunSeedInNewScopeAsync();
             _logger.LogDebug("OK");
         }
     }

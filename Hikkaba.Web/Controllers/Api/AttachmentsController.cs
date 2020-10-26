@@ -10,32 +10,26 @@ namespace Hikkaba.Web.Controllers.Api
 {
     public class AttachmentsController : Controller
     {
-        private readonly IContentTypeProvider _contentTypeProvider = new FileExtensionContentTypeProvider();
         private readonly IStorageProvider _storageProvider;
+        private readonly FileExtensionContentTypeProvider _contentTypeProvider;
 
-        public AttachmentsController(IStorageProvider storageProvider)
+        public AttachmentsController(IStorageProvider storageProvider,
+            FileExtensionContentTypeProvider contentTypeProvider)
         {
             _storageProvider = storageProvider;
+            _contentTypeProvider = contentTypeProvider;
         }
 
         private string GetContentTypeByFileName(string fileName)
         {
-            string contentType;
-            if (_contentTypeProvider.TryGetContentType(fileName, out contentType))
-            {
-                return contentType;
-            }
-            else
-            {
-                return Defaults.DefaultMimeType;
-            }
+            return _contentTypeProvider.TryGetContentType(fileName, out var contentType) ? contentType : Defaults.DefaultMimeType;
         }
-        
+
         [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Any, Duration = Defaults.DefaultAttachmentsCacheDuration)]
         public async Task<IActionResult> Get(string containerName, string blobName, string fileExtension, bool getThumbnail)
         {
             HttpContext.Response.Headers[HeaderNames.LastModified] = Defaults.DefaultLastModified;
-            
+
             if (HttpContext.Request.Headers.ContainsKey(HeaderNames.IfModifiedSince))
             {
                 return StatusCode(StatusCodes.Status304NotModified);
@@ -50,7 +44,7 @@ namespace Hikkaba.Web.Controllers.Api
                 var contentType = GetContentTypeByFileName(fileName);
                 var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(containerName, blobName);
                 var blobStream = await _storageProvider.GetBlobStreamAsync(containerName, blobName);
-                
+
                 HttpContext.Response.Headers[HeaderNames.ContentDisposition] = "inline; filename=" + fileName;
                 HttpContext.Response.ContentType = contentType;
                 HttpContext.Response.ContentLength = blobDescriptor.Length;

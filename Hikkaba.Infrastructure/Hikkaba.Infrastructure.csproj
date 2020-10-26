@@ -3,10 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Library</OutputType>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
   </ItemGroup>
 
   <ItemGroup>

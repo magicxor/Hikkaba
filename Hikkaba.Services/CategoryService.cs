@@ -80,7 +80,7 @@ namespace Hikkaba.Services
 
         public async Task<BasePagedList<CategoryDto>> PagedListAsync<TOrderKey>(Expression<Func<Category, bool>> where = null, Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false, PageDto page = null)
         {
-            page = page ?? new PageDto();
+            page ??= new PageDto();
 
             var query = Query(where, orderBy, isDescending);
 

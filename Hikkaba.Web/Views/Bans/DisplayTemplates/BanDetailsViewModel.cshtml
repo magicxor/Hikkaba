@@ -1,0 +1,14 @@
+@using Hikkaba.Web.Extensions
+@model Hikkaba.Web.ViewModels.BansViewModels.BanDetailsViewModel
+
+<tr class="@(Model.IsDeleted ? "deleted" : "")">
+    <td>@Html.DisplayFor(model => model.Created)</td>
+    <td>@(Model?.Category?.Alias == null ? "" : "/" + Model.Category.Alias)</td>
+    <td><a href="@(Model?.RelatedPost?.Id == null ? "#" : Model.RelatedPost.GetUri(Url))">@(Model?.RelatedPost?.Id == null ? "" : Model.RelatedPost.Id.ToString())</a></td>
+    <td>@Html.DisplayFor(model => model.LowerIpAddress)</td>
+    <td>@Html.DisplayFor(model => model.UpperIpAddress)</td>
+    <td>@Html.DisplayFor(model => model.Reason)</td>
+    <td>@Html.DisplayFor(model => model.Start)</td>
+    <td>@Html.DisplayFor(model => model.End)</td>
+    <td>@Html.ActionLink("Edit", "Edit", new { banId = Model.Id }) | @Html.ActionLink("Details", "Details", new { banId = Model.Id })</td>
+</tr>

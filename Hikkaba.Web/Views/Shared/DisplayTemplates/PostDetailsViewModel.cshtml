@@ -1,6 +1,7 @@
-﻿@using Hikkaba.Common.Constants
+@using Hikkaba.Common.Constants
 @using Hikkaba.Services
 @using Hikkaba.Web.Services
+@using Hikkaba.Web.Extensions 
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IMessagePostProcessor MessagePostProcessor
 @inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator
@@ -31,7 +32,7 @@
                         }
                     }
                     &nbsp;
-                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId})#@Model.Id">@Html.DisplayFor(model => model.Id)</a>
+                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Model.GetUri(Url)">@Html.DisplayFor(model => model.Id)</a>
                     &nbsp;
                     @{
                         if (Model.Index > 0)
@@ -58,7 +59,7 @@
                                 </form>
                                 <form asp-controller="Posts" asp-action="SetIsDeleted" method="post" class="display-inline">
                                     <input name="postId" type="hidden" value="@Model.Id"/>
-                                    <input name="isDeleted" type="hidden" value="@(!Model.IsDeleted)"/>
+                                    <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
                                     <button type="submit" class="btn btn-danger">
                                         <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
                                         @(Model.IsDeleted ? "Restore" : "Delete")
@@ -84,14 +85,14 @@
                 }
                 <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.CategoryAlias, Model.ThreadId, Model.Message))</span>
             </div>
-            @if ((Model.Answers != null) && (Model.Answers.Any()))
+            @if ((Model.Replies != null) && (Model.Replies.Any()))
             {
                 <div class="panel-footer">
                     <ul class="list-inline">
-                        @foreach (var answer in Model.Answers)
+                        @foreach (var reply in Model.Replies)
                         {
                             <li>
-                                <a href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias,threadId = Model.ThreadId})#@(answer.ToString())">&gt;&gt;@(answer.ToString())</a>
+                                <a href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias,threadId = Model.ThreadId})#@(reply.ToString())">&gt;&gt;@(reply.ToString())</a>
                             </li>
                         }
                     </ul>

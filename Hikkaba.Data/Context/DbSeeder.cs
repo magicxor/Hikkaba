@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
@@ -12,9 +12,7 @@ namespace Hikkaba.Data.Context
 {
     public static class DbSeeder
     {
-        private const int DefaultBumpLimit = 500;
-
-        private static async Task SeedNewCategoryAsync(ApplicationDbContext context, Board board, string alias, string name, bool isHidden = false, bool defaultShowThreadLocalUserHash = false, int defaultBumpLimit = DefaultBumpLimit, string creatorUserName = Defaults.AdministratorUserName)
+        private static async Task SeedNewCategoryAsync(ApplicationDbContext context, ApplicationUser createdBy, Board board, string alias, string name, bool isHidden = false, bool defaultShowThreadLocalUserHash = false, int defaultBumpLimit = Defaults.DefaultBumpLimit)
         {
             await context.Categories.AddAsync(new Category
             {
@@ -24,33 +22,32 @@ namespace Hikkaba.Data.Context
                 DefaultShowThreadLocalUserHash = defaultShowThreadLocalUserHash,
                 DefaultBumpLimit = defaultBumpLimit,
                 Board = board,
-                CreatedBy = await context.Users.FirstOrDefaultAsync(u => u.UserName == creatorUserName),
+                CreatedBy = createdBy,
             });
         }
 
         public static async Task SeedAsync(ApplicationDbContext context, UserManager<ApplicationUser> userMgr, RoleManager<ApplicationRole> roleMgr, IOptions<SeedConfiguration> settings)
         {
             var seedConfiguration = settings.Value;
-            
-            if (!context.Roles.Any())
+
+            var adminRole = await roleMgr.FindByNameAsync(Defaults.AdministratorRoleName);
+            if (adminRole == null)
             {
                 // create admin role
-                var adminRole = await roleMgr.FindByNameAsync(Defaults.AdministratorRoleName);
-                if (adminRole == null)
+                adminRole = new ApplicationRole { Name = Defaults.AdministratorRoleName };
+                var roleCreateResult = await roleMgr.CreateAsync(adminRole);
+                if (!roleCreateResult.Succeeded)
                 {
-                    adminRole = new ApplicationRole { Name = Defaults.AdministratorRoleName };
-                    var roleCreateResult = await roleMgr.CreateAsync(adminRole);
-                    if (!roleCreateResult.Succeeded)
-                    {
-                        throw new Exception($"Can't create role {Defaults.AdministratorRoleName}: {string.Join(", ", roleCreateResult.Errors.Select(e => $"{e.Code}:{e.Description}"))}");
-                    }
+                    throw new Exception($"Can't create role {Defaults.AdministratorRoleName}: {string.Join(", ", roleCreateResult.Errors.Select(e => $"{e.Code}:{e.Description}"))}");
                 }
             }
 
-            if (!context.Users.Any())
+            var adminUserToRole = await context.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == adminRole.Id);
+            ApplicationUser adminUser;
+            if (adminUserToRole == null)
             {
                 // create admin user
-                var adminUser = new ApplicationUser
+                adminUser = new ApplicationUser
                 {
                     UserName = Defaults.AdministratorUserName,
                     Email = seedConfiguration.AdministratorEmail,
@@ -64,9 +61,12 @@ namespace Hikkaba.Data.Context
                 }
                 await userMgr.AddToRoleAsync(adminUser, Defaults.AdministratorRoleName);
             }
+            else
+            {
+                adminUser = await userMgr.FindByIdAsync(adminUserToRole.UserId.ToString());
+            }
 
             Board board;
-
             if (!context.Boards.Any())
             {
                 board = new Board {Name = Defaults.BoardName};
@@ -79,13 +79,13 @@ namespace Hikkaba.Data.Context
 
             if (!context.Categories.Any())
             {
-                await SeedNewCategoryAsync(context, board, "a", "Anime");
-                await SeedNewCategoryAsync(context, board, "b", "Random");
-                await SeedNewCategoryAsync(context, board, "mu", "Music");
-                await SeedNewCategoryAsync(context, board, "nsfw", "18+ content", true);
-                await SeedNewCategoryAsync(context, board, "vg", "Video Games");
-                await SeedNewCategoryAsync(context, board, "wp", "Wallpapers");
-                await SeedNewCategoryAsync(context, board, "d", "Discussions about " + Defaults.BoardName, false, true);
+                await SeedNewCategoryAsync(context, adminUser, board, "a", "Anime");
+                await SeedNewCategoryAsync(context, adminUser, board, "b", "Random");
+                await SeedNewCategoryAsync(context, adminUser, board, "mu", "Music");
+                await SeedNewCategoryAsync(context, adminUser, board, "nsfw", "18+ content", true);
+                await SeedNewCategoryAsync(context, adminUser, board, "vg", "Video Games");
+                await SeedNewCategoryAsync(context, adminUser, board, "wp", "Wallpapers");
+                await SeedNewCategoryAsync(context, adminUser, board, "d", "Discussions about " + Defaults.BoardName, false, true);
             }
 
             await context.SaveChangesAsync();

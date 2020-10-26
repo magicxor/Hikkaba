@@ -70,7 +70,7 @@ namespace Hikkaba.Web.Controllers.Mvc
         [Route("Bans/Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BanEditViewModel viewModel)
+        public async Task<IActionResult> Create(BanCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {

@@ -251,11 +251,9 @@ paket-files/
 .idea/
 *.sln.iml
 
-src/Hikkaba.Web/wwwroot/AttachmentsStorage/
-src/Hikkaba.Web/Properties/PublishProfiles/
-src/Hikkaba.Web/wwwroot/css/site.min.css
-src/Hikkaba.Web/wwwroot/js/site.min.js
+Hikkaba.Web/Properties/PublishProfiles/
+Hikkaba.Web/wwwroot/AttachmentsStorage/
 .vscode/
 Hikkaba.Web/seedconfig.json
-Hikkaba.Web/wwwroot/AttachmentsStorage/
 Hikkaba.Web/appsettings.json
+Hikkaba.Web/WwwRootSources/_output/

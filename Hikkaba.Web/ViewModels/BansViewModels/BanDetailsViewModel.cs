@@ -1,4 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
+using TPrimaryKey = System.Guid;
 using System;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
@@ -22,9 +22,11 @@ namespace Hikkaba.Web.ViewModels.BansViewModels
         public DateTime? Modified { get; set; }
 
         [Display(Name = @"Start")]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd HH:mm")]
         public DateTime Start { get; set; }
 
         [Display(Name = @"End")]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd HH:mm")]
         public DateTime End { get; set; }
 
         [Display(Name = @"Lower IP address")]
@@ -40,6 +42,6 @@ namespace Hikkaba.Web.ViewModels.BansViewModels
         public string Reason { get; set; }
 
         public PostDetailsViewModel RelatedPost { get; set; }
-        public CategoryViewModel Category { get; set; }
+        public CategoryDetailsViewModel Category { get; set; }
     }
 }

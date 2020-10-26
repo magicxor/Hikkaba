@@ -1,0 +1,49 @@
+@model Hikkaba.Web.ViewModels.BansViewModels.BanEditViewModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="form-group">
+    <label asp-for="Start" class="col-md-2 control-label"></label>
+    <div class='col-md-10 input-group date datetimepicker-enabled'>
+        <input asp-for="Start" class="form-control" />
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+        <span asp-validation-for="Start" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label asp-for="End" class="col-md-2 control-label"></label>
+    <div class='col-md-10 input-group date datetimepicker-enabled'>
+        <input asp-for="End" class="form-control" />
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+        <span asp-validation-for="End" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label asp-for="LowerIpAddress" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <input asp-for="LowerIpAddress" class="form-control" />
+        <span asp-validation-for="LowerIpAddress" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label asp-for="UpperIpAddress" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <input asp-for="UpperIpAddress" class="form-control" />
+        <span asp-validation-for="UpperIpAddress" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label asp-for="Reason" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <input asp-for="Reason" class="form-control" />
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+</div>

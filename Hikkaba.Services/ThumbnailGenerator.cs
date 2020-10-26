@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Hikkaba.Models.Dto;
 using SixLabors.ImageSharp;
@@ -10,12 +10,12 @@ namespace Hikkaba.Services
 {
     public interface IThumbnailGenerator
     {
-        ThumbnailDto GenerateThumbnail(Image<Rgba32> image, int maxWidth, int maxHeight);
+        ThumbnailDto GenerateThumbnail(Image image, int maxWidth, int maxHeight);
     }
 
     public class ThumbnailGenerator : IThumbnailGenerator
     {
-        public ThumbnailDto GenerateThumbnail(Image<Rgba32> image, int maxWidth, int maxHeight)
+        public ThumbnailDto GenerateThumbnail(Image image, int maxWidth, int maxHeight)
         {
             var ratioX = (double)maxWidth / image.Width;
             var ratioY = (double)maxHeight / image.Height;

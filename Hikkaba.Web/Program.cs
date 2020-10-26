@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Configuration;
@@ -14,9 +15,11 @@ using NLog.Web;
 
 namespace Hikkaba.Web
 {
-    public class Program
+    internal class Program
     {
-        public static void Main(string[] args)
+        private const string EnvPrefix = "Hikkaba_";
+
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
@@ -30,24 +33,25 @@ namespace Hikkaba.Web
                 var seedConfig = services.GetRequiredService<IOptions<SeedConfiguration>>();
                 try
                 {
-                    context.Database.Migrate();
-                    DbSeeder.SeedAsync(context, userManager, roleManager, seedConfig).Wait();
+                    await context.Database.MigrateAsync();
+                    await DbSeeder.SeedAsync(context, userManager, roleManager, seedConfig);
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
+                    logger.LogError(ex, "An error occurred seeding the DB");
                     throw;
                 }
             }
 
-            host.Run();
+            await host.RunAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((builderContext, config) =>
                 {
+                    config.AddEnvironmentVariables(EnvPrefix);
                     config.AddJsonFile("seedconfig.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureLogging(logging =>

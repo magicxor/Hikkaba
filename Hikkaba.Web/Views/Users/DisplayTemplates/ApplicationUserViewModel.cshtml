@@ -1,8 +1,11 @@
 ﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.ApplicationUserViewModel
 
 <tr>
-    <td>/@Model.Email</td>
+    <td>@Model.Email</td>
     <td>@Model.UserName</td>
     <td>@Model.LastLogin</td>
-    <td></td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", "Users", new { id = @Model.Id })
+        | @Html.ActionLink("Delete", "Delete", "Users", new { id = @Model.Id })
+    </td>
 </tr>

@@ -1,4 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
+using TPrimaryKey = System.Guid;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,8 +20,10 @@ namespace Hikkaba.Web.Mapping
     {
         public MvcMapProfile()
         {
-            CreateMap<BoardDto, BoardViewModel>();
-            CreateMap<ApplicationUserDto, ApplicationUserViewModel>();
+            CreateMap<BoardDto, BoardViewModel>()
+                .ReverseMap();
+            CreateMap<ApplicationUserDto, ApplicationUserViewModel>()
+                .ReverseMap();
             CreateMap<ThreadDto, ThreadDetailsViewModel>()
                 .ForMember(dest => dest.CategoryAlias, opts => opts.Ignore())
                 .ForMember(dest => dest.CategoryName, opts => opts.Ignore())
@@ -35,7 +37,7 @@ namespace Hikkaba.Web.Mapping
                 .ForMember(dest => dest.ThreadShowThreadLocalUserHash, opts => opts.Ignore())
                 .ForMember(dest => dest.CategoryAlias, opts => opts.Ignore())
                 .ForMember(dest => dest.CategoryId, opts => opts.Ignore())
-                .ForMember(dest => dest.Answers, opts => opts.Ignore())
+                .ForMember(dest => dest.Replies, opts => opts.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.Audio.ForEach(destElement => destElement.ThreadId = src.ThreadId);
@@ -55,11 +57,30 @@ namespace Hikkaba.Web.Mapping
             CreateMap<PostDto, PostEditViewModel>()
                 .ForMember(dest => dest.CategoryAlias, opts => opts.Ignore())
                 .ReverseMap();
-            CreateMap<CategoryDto, CategoryViewModel>()
+
+            CreateMap<CategoryCreateViewModel, CategoryDto>()
+                .ForMember(dest => dest.Id, opts => opts.Ignore())
+                .ForMember(dest => dest.BoardId, opts => opts.Ignore())
+                .ForMember(dest => dest.IsDeleted, opts => opts.Ignore())
+                .ForMember(dest => dest.Created, opts => opts.Ignore())
+                .ForMember(dest => dest.Modified, opts => opts.Ignore())
+                .ForMember(dest => dest.CreatedBy, opts => opts.Ignore())
+                .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore());
+            CreateMap<CategoryEditViewModel, CategoryDto>()
+                .ForMember(dest => dest.BoardId, opts => opts.Ignore())
+                .ForMember(dest => dest.IsDeleted, opts => opts.Ignore())
+                .ForMember(dest => dest.Created, opts => opts.Ignore())
+                .ForMember(dest => dest.Modified, opts => opts.Ignore())
+                .ForMember(dest => dest.CreatedBy, opts => opts.Ignore())
+                .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore())
+                .ReverseMap();
+            CreateMap<CategoryDto, CategoryDetailsViewModel>()
                 .ReverseMap();
             CreateMap<BanDto, BanDetailsViewModel>();
             CreateMap<BanDto, BanEditViewModel>();
             CreateMap<BanEditViewModel, BanEditDto>();
+            CreateMap<BanCreateViewModel, BanEditDto>()
+                .ForMember(dest => dest.Id, opts => opts.Ignore());
             CreateMap<AudioDto, AudioViewModel>()
                 .ForMember(dest => dest.ThreadId, opts => opts.Ignore());
             CreateMap<DocumentDto, DocumentViewModel>()
@@ -136,10 +157,9 @@ namespace Hikkaba.Web.Mapping
                         destElement.ThreadShowThreadLocalUserHash = src.Thread.ShowThreadLocalUserHash;
                         destElement.CategoryAlias = src.Category.Alias;
                         destElement.CategoryId = src.Category.Id;
-                        destElement.Answers = new List<TPrimaryKey>(src.Posts
-                            .Where(answer => Regex.IsMatch(answer.Message, $@">>{destElement.Id}(?![\w])"))
-                            .Select(answer => answer.Id))
-                            .ToList();
+                        destElement.Replies = new List<TPrimaryKey>(src.Posts
+                            .Where(reply => Regex.IsMatch(reply.Message, $@">>{destElement.Id}(?![\w])"))
+                            .Select(reply => reply.Id));
                     });
                 });
         }

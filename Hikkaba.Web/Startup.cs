@@ -30,8 +30,10 @@ using TwentyTwenty.Storage;
 using Microsoft.AspNetCore.DataProtection;
 using System;
 using Hikkaba.Data.Services;
+using Hikkaba.Models.Extensions;
 using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Utils;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Hikkaba.Web
 {
@@ -39,10 +41,10 @@ namespace Hikkaba.Web
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -63,7 +65,7 @@ namespace Hikkaba.Web
                 }
                 options
                     .UseLazyLoadingProxies()
-                    .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                    .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
             });
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -73,8 +75,8 @@ namespace Hikkaba.Web
                 .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, TPrimaryKey>>();
 
             services.AddOptions();
-            services.Configure<HikkabaConfiguration>(Configuration.GetSection(typeof(HikkabaConfiguration).Name));
-            services.Configure<SeedConfiguration>(Configuration.GetSection(typeof(SeedConfiguration).Name));
+            services.Configure<HikkabaConfiguration>(_configuration.GetSection(nameof(HikkabaConfiguration)));
+            services.Configure<SeedConfiguration>(_configuration.GetSection(nameof(SeedConfiguration)));
 
             services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
@@ -88,13 +90,19 @@ namespace Hikkaba.Web
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-            services.AddDataProtection(options =>
+
+            var hikkabaConfiguration = _configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
+            if (hikkabaConfiguration != null)
+            {
+                services.AddDataProtection(options =>
                 {
                     options.ApplicationDiscriminator = "4036e12c07fa7f8fb6f58a70c90ee85b52c15be531acf7bd0d480d1ca7f9ea5d";
                 })
                .SetApplicationName("Hikkaba")
-               .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(Configuration.GetSection(typeof(HikkabaConfiguration).Name).Get<HikkabaConfiguration>()))
+               .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(hikkabaConfiguration))
                .PersistKeysToFileSystem(new DirectoryInfo("/home/hikkaba/keys"));
+            }
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -112,7 +120,8 @@ namespace Hikkaba.Web
             services.AddDNTCaptcha(options => options.UseSessionStorageProvider());
 
             // File storage
-            services.AddScoped<IStorageProvider>(s => 
+            services.AddScoped<FileExtensionContentTypeProvider>();
+            services.AddScoped<IStorageProvider>(s =>
             {
                 var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
                 var path = Path.Combine(webHostEnvironment.WebRootPath, Defaults.AttachmentsStorageDirectoryName);
@@ -130,15 +139,9 @@ namespace Hikkaba.Web
                 expression.AddProfile<MapProfile>();
                 expression.AddProfile<MvcMapProfile>();
             });
-            services.AddSingleton<IMapper>(s =>
-            {
-                var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
-                if (webHostEnvironment.IsDevelopment())
-                {
-                    mapperConfiguration.AssertConfigurationIsValid();
-                }
-                return new Mapper(mapperConfiguration);
-            });
+            mapperConfiguration.AssertConfigurationIsValid();
+            mapperConfiguration.CompileMappings();
+            services.AddSingleton<IMapper>(new Mapper(mapperConfiguration));
 
             // Hikkaba stuff
             services.Scan(scan => scan
@@ -153,11 +156,15 @@ namespace Hikkaba.Web
                 .AsImplementedInterfaces()
                 // And lastly, we specify the lifetime of these registrations.
                 .WithScopedLifetime());
+
+            services.AddResponseCompression();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<HikkabaConfiguration> settings)
         {
+            var cacheMaxAgeSeconds = settings.Value.GetCacheMaxAgeSecondsOrDefault();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -171,8 +178,14 @@ namespace Hikkaba.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            
-            app.UseStaticFiles();
+            app.UseResponseCompression();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.CacheControl] = $"public,max-age={cacheMaxAgeSeconds}";
+                }
+            });
 
             app.UseSession();
             app.UseRouting();
@@ -180,7 +193,7 @@ namespace Hikkaba.Web
             app.UseHttpsRedirection();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseAuthorization();    
+            app.UseAuthorization();
             app.UseMiddleware<SetAuthenticatedUserMiddleware>();
 
             app.UseEndpoints(endpoints =>

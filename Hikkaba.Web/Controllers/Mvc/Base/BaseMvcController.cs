@@ -28,11 +28,9 @@ namespace Hikkaba.Web.Controllers.Mvc.Base
                 throw new HttpResponseException(HttpStatusCode.Unauthorized, "User is not authenticated");
             }
         }
-        
-        public bool IsCurrentUserAdmin => User.Identity.IsAuthenticated && User.IsInRole(Defaults.AdministratorRoleName);
 
-        public string UserAgent => Request.Headers.ContainsKey("User-Agent") ? Request.Headers["User-Agent"].ToString() : "";
-        
-        public IPAddress UserIpAddress => Request.HttpContext.Connection.RemoteIpAddress;
+        protected string UserAgent => Request.Headers.ContainsKey("User-Agent") ? Request.Headers["User-Agent"].ToString() : "";
+
+        protected IPAddress UserIpAddress => Request.HttpContext.Connection.RemoteIpAddress;
     }
 }

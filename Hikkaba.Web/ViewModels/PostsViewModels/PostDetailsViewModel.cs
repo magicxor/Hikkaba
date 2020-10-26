@@ -1,4 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +9,8 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
     public class PostDetailsViewModel
     {
         public int Index { get; set; }
+
+        [Display(Name = @"Post id")]
         public TPrimaryKey Id { get; set; }
 
         [Display(Name = @"Is deleted")]
@@ -60,7 +62,7 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
 
         public TPrimaryKey CategoryId { get; set; }
 
-        [Display(Name = @"Answers")]
-        public ICollection<TPrimaryKey> Answers { get; set; }
+        [Display(Name = @"Replies")]
+        public ICollection<TPrimaryKey> Replies { get; set; }
     }
 }

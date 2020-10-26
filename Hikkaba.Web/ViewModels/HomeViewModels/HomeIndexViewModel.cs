@@ -9,7 +9,7 @@ namespace Hikkaba.Web.ViewModels.HomeViewModels
     public class HomeIndexViewModel
     {
         [Display(Name = @"Categories")]
-        public IList<CategoryViewModel> Categories { get; set; }
+        public IList<CategoryDetailsViewModel> Categories { get; set; }
 
         [Display(Name = @"Latest posts")]
         public BasePagedList<PostDetailsViewModel> Posts { get; set; }

@@ -3,6 +3,7 @@ Hikkaba [pre-alpha]
 
 Hikkaba is an imageboard written in ASP.NET Core and Entity Framework with minimal JavaScript usage.
 
+
 Features
 ========
 
@@ -46,6 +47,7 @@ Features
 - [ ] Custom primary key type (guid/long/int/etc) [in progress]
 - [x] Docker
 
+
 Screenshots
 ========
 
@@ -66,3 +68,10 @@ Screenshots
 
 ## Search
 ![Search](http://i.imgur.com/wkp4WoR.png)
+
+
+EF Migrations
+========
+```powershell
+$env:Hikkaba_ConnectionStrings__DefaultConnection="Server=(localdb)\mssqllocaldb;Database=Hikkaba;Integrated Security=true;"; dotnet ef migrations list --project Hikkaba.Data --startup-project Hikkaba.Web --verbose
+```
