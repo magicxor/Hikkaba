@@ -11,6 +11,8 @@ services:
     hostname: hikkaba.web.dev.local
     ports:
       - "35443:443"
+    env_file:
+      - Hikkaba.Web/Development.env
     depends_on:
       - db
       - mailhog

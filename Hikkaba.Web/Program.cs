@@ -17,6 +17,8 @@ namespace Hikkaba.Web
 {
     internal class Program
     {
+        private const string EnvPrefix = "Hikkaba_";
+
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
@@ -37,7 +39,7 @@ namespace Hikkaba.Web
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
+                    logger.LogError(ex, "An error occurred seeding the DB");
                     throw;
                 }
             }
@@ -49,6 +51,7 @@ namespace Hikkaba.Web
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((builderContext, config) =>
                 {
+                    config.AddEnvironmentVariables(EnvPrefix);
                     config.AddJsonFile("seedconfig.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureLogging(logging =>
