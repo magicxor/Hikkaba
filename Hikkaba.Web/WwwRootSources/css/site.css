@@ -1,0 +1,177 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+/*-------------------------------------------------*/
+
+/* Remove borders from list-group */
+li.borderless {
+    border: none;
+}
+
+span.visible-line-breaks {
+    white-space: pre-line;
+}
+
+    /* Fix PRE tag in post body */
+    span.visible-line-breaks pre {
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+/* Spoiler */
+.censored {
+    color: black;
+    background-color: black;
+    padding: 1px;
+}
+
+    .censored a {
+        color: black;
+        text-decoration: underline;
+        padding: 1px;
+    }
+
+    .censored:hover {
+        color: inherit;
+        background-color: inherit !important;
+    }
+
+/* Post/thread datetime */
+.timestamp {
+    padding: 2px 4px;
+    font-size: 90%;
+    color: #c7254e;
+    background-color: #f9f2f4;
+    border-radius: 4px;
+    font-weight: 500;
+    line-height: 1.1;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    box-sizing: border-box;
+}
+
+/* Long identifiers */
+.post-title {
+    word-wrap: break-word;
+}
+
+/* Set standard style for links in post title */
+a.post-title {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+    a.post-title:hover, a.post-title:focus {
+        color: #23527c;
+        text-decoration: underline;
+    }
+
+.post-content {
+    overflow: auto;
+}
+
+.display-inline {
+    display: inline;
+}
+
+.thread-moderation-panel {
+    margin: 0.5em;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 100%;
+}
+
+.deleted {
+    background-color: rgb(200, 200, 200);
+    color: rgb(109, 109, 109);
+    font-style: italic;
+}
+
+form.form-inline{
+    display: inline;
+}
+
+body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}

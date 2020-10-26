@@ -1,6 +1,7 @@
-﻿@using Hikkaba.Common.Constants
+@using Hikkaba.Common.Constants
 @using Hikkaba.Services
 @using Hikkaba.Web.Services
+@using Hikkaba.Web.Extensions 
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IMessagePostProcessor MessagePostProcessor
 @inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator
@@ -31,7 +32,7 @@
                         }
                     }
                     &nbsp;
-                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId})#@Model.Id">@Html.DisplayFor(model => model.Id)</a>
+                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Model.GetUri(Url)">@Html.DisplayFor(model => model.Id)</a>
                     &nbsp;
                     @{
                         if (Model.Index > 0)

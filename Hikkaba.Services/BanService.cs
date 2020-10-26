@@ -1,4 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -165,7 +165,7 @@ namespace Hikkaba.Services
 
             var relatedBan = bans
                 .FirstOrDefault(ban =>
-                    _ipAddressCalculator.IsInRange(userIpAddress, ban.LowerIpAddress, ban.UpperIpAddress));
+                    _ipAddressCalculator.IsInRange(ban.LowerIpAddress, ban.UpperIpAddress, userIpAddress));
 
             var isPostingAllowed = relatedBan == null;
 

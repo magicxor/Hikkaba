@@ -1,19 +1,25 @@
-﻿@model Hikkaba.Web.ViewModels.BansViewModels.BanEditViewModel
+@model Hikkaba.Web.ViewModels.BansViewModels.BanEditViewModel
 
 <div asp-validation-summary="All" class="text-danger"></div>
 
 <div class="form-group">
     <label asp-for="Start" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
-        <input asp-for="Start" class="form-control datetimepicker-enabled" />
+    <div class='col-md-10 input-group date datetimepicker-enabled'>
+        <input asp-for="Start" class="form-control" />
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
         <span asp-validation-for="Start" class="text-danger"></span>
     </div>
 </div>
 
 <div class="form-group">
     <label asp-for="End" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
-        <input asp-for="End" class="form-control datetimepicker-enabled" />
+    <div class='col-md-10 input-group date datetimepicker-enabled'>
+        <input asp-for="End" class="form-control" />
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
         <span asp-validation-for="End" class="text-danger"></span>
     </div>
 </div>

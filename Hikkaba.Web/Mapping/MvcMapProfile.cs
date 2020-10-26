@@ -1,4 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
+using TPrimaryKey = System.Guid;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -79,6 +79,8 @@ namespace Hikkaba.Web.Mapping
             CreateMap<BanDto, BanDetailsViewModel>();
             CreateMap<BanDto, BanEditViewModel>();
             CreateMap<BanEditViewModel, BanEditDto>();
+            CreateMap<BanCreateViewModel, BanEditDto>()
+                .ForMember(dest => dest.Id, opts => opts.Ignore());
             CreateMap<AudioDto, AudioViewModel>()
                 .ForMember(dest => dest.ThreadId, opts => opts.Ignore());
             CreateMap<DocumentDto, DocumentViewModel>()

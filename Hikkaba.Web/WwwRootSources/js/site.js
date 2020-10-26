@@ -1,4 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
 var navigationFn = {
@@ -13,7 +13,7 @@ $(function () {
     $("time.time-localizable").each(function () {
         var el = $(this);
         var dt = moment(el.attr("datetime"));
-        el.text(dt.format("DD.MM.YYYY ddd HH:mm:ss"));
+        el.text(dt.format("YYYY-MM-DD ddd HH:mm:ss"));
     });
 
     // if js is enabled and post form exists, prevent href=... and insert >>post id to form
@@ -27,6 +27,17 @@ $(function () {
             navigationFn.goToSection("new-post-message-input");
         });
     }
+
+    $(".datetimepicker-enabled").each(function () {
+        const dtDateOnly = 'YYYY-MM-DD';
+        const dtFull = dtDateOnly + ' HH:mm';
+        var el = $(this);
+        el.datetimepicker({
+            format: dtFull,
+            minDate: moment().format(dtDateOnly),
+            defaultDate: moment().format(dtDateOnly)
+        });
+    });
 });
 
 function getSelectionText() {

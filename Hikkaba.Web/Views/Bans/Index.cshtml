@@ -1,4 +1,4 @@
-﻿@using Hikkaba.Web.ViewModels
+@using Hikkaba.Web.ViewModels
 @using Hikkaba.Web.ViewModels.BansViewModels
 @model Hikkaba.Web.ViewModels.BansViewModels.BanIndexViewModel
 @{
@@ -16,16 +16,17 @@
         {
             <table class="table table-bordered">
                 <thead>
-                <tr>
-                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Created)</th>
-                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Category.Alias)</th>
-                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.LowerIpAddress)</th>
-                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.UpperIpAddress)</th>
-                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Reason)</th>
-                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Start)</th>
-                    <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.End)</th>
-                    <th></th>
-                </tr>
+                    <tr>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Created)</th>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Category.Alias)</th>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.RelatedPost.Id)</th>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.LowerIpAddress)</th>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.UpperIpAddress)</th>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Reason)</th>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.Start)</th>
+                        <th>@Html.DisplayNameForInnerType((BanDetailsViewModel ban) => ban.End)</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
                     @Html.DisplayFor(model => model.Bans.CurrentPageItems)
@@ -35,7 +36,7 @@
                                            {
                                                CurrentPageNumber = Model.Bans.CurrentPage.PageNumber,
                                                TotalPageCount = Model.Bans.TotalPageCount,
-                                           }"/>
+                                           }" />
         }
         else
         {

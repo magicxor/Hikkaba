@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoMapper;
 using Hikkaba.Data.Aggregations;
 using Hikkaba.Data.Entities;
@@ -20,9 +20,8 @@ namespace Hikkaba.Infrastructure.Mapping
             CreateMap<ApplicationUser, ApplicationUserDto>().ReverseMap();
 
             CreateMap<Ban, BanDto>();
-            CreateMap<BanDto, Ban>()
-                .ForMember(dest => dest.RelatedPost, opts => opts.Ignore())
-                .ForMember(dest => dest.Category, opts => opts.Ignore())
+            CreateMap<BanEditDto, Ban>()
+                .ForMember(dest => dest.IsDeleted, opts => opts.Ignore())
                 .ForMember(dest => dest.Modified, opts => opts.Ignore())
                 .ForMember(dest => dest.ModifiedBy, opts => opts.Ignore())
                 .ForMember(dest => dest.Created, opts => opts.Ignore())
