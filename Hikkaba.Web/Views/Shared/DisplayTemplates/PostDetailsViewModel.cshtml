@@ -85,14 +85,14 @@
                 }
                 <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.CategoryAlias, Model.ThreadId, Model.Message))</span>
             </div>
-            @if ((Model.Answers != null) && (Model.Answers.Any()))
+            @if ((Model.Replies != null) && (Model.Replies.Any()))
             {
                 <div class="panel-footer">
                     <ul class="list-inline">
-                        @foreach (var answer in Model.Answers)
+                        @foreach (var reply in Model.Replies)
                         {
                             <li>
-                                <a href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias,threadId = Model.ThreadId})#@(answer.ToString())">&gt;&gt;@(answer.ToString())</a>
+                                <a href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias,threadId = Model.ThreadId})#@(reply.ToString())">&gt;&gt;@(reply.ToString())</a>
                             </li>
                         }
                     </ul>

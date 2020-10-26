@@ -62,7 +62,7 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels
 
         public TPrimaryKey CategoryId { get; set; }
 
-        [Display(Name = @"Answers")]
-        public ICollection<TPrimaryKey> Answers { get; set; }
+        [Display(Name = @"Replies")]
+        public ICollection<TPrimaryKey> Replies { get; set; }
     }
 }

@@ -37,7 +37,7 @@ namespace Hikkaba.Web.Mapping
                 .ForMember(dest => dest.ThreadShowThreadLocalUserHash, opts => opts.Ignore())
                 .ForMember(dest => dest.CategoryAlias, opts => opts.Ignore())
                 .ForMember(dest => dest.CategoryId, opts => opts.Ignore())
-                .ForMember(dest => dest.Answers, opts => opts.Ignore())
+                .ForMember(dest => dest.Replies, opts => opts.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.Audio.ForEach(destElement => destElement.ThreadId = src.ThreadId);
@@ -157,9 +157,9 @@ namespace Hikkaba.Web.Mapping
                         destElement.ThreadShowThreadLocalUserHash = src.Thread.ShowThreadLocalUserHash;
                         destElement.CategoryAlias = src.Category.Alias;
                         destElement.CategoryId = src.Category.Id;
-                        destElement.Answers = new List<TPrimaryKey>(src.Posts
-                            .Where(answer => Regex.IsMatch(answer.Message, $@">>{destElement.Id}(?![\w])"))
-                            .Select(answer => answer.Id));
+                        destElement.Replies = new List<TPrimaryKey>(src.Posts
+                            .Where(reply => Regex.IsMatch(reply.Message, $@">>{destElement.Id}(?![\w])"))
+                            .Select(reply => reply.Id));
                     });
                 });
         }
