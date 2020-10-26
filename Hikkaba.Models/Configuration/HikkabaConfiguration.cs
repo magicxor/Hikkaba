@@ -4,6 +4,8 @@ namespace Hikkaba.Models.Configuration
 {
     public class HikkabaConfiguration
     {
+        public int CacheMaxAgeSeconds { get; set; }
+
         public int ThumbnailsMaxWidth { get; set; } = 100;
         public int ThumbnailsMaxHeight { get; set; } = 100;
 

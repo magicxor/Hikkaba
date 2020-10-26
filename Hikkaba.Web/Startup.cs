@@ -30,8 +30,10 @@ using TwentyTwenty.Storage;
 using Microsoft.AspNetCore.DataProtection;
 using System;
 using Hikkaba.Data.Services;
+using Hikkaba.Models.Extensions;
 using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Utils;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Hikkaba.Web
 {
@@ -112,6 +114,7 @@ namespace Hikkaba.Web
             services.AddDNTCaptcha(options => options.UseSessionStorageProvider());
 
             // File storage
+            services.AddScoped<FileExtensionContentTypeProvider>();
             services.AddScoped<IStorageProvider>(s =>
             {
                 var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
@@ -150,8 +153,10 @@ namespace Hikkaba.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<HikkabaConfiguration> settings)
         {
+            var cacheMaxAgeSeconds = settings.Value.GetCacheMaxAgeSecondsOrDefault();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -166,7 +171,13 @@ namespace Hikkaba.Web
             }
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.CacheControl] = $"public,max-age={cacheMaxAgeSeconds}";
+                }
+            });
 
             app.UseSession();
             app.UseRouting();
