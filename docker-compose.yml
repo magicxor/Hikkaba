@@ -10,31 +10,33 @@ services:
     domainname: hikkaba.web.dev.local
     hostname: hikkaba.web.dev.local
     ports:
-      - "55443:443"
+      - "35443:443"
     depends_on:
       - db
+      - mailhog
 
   db:
     container_name: hikkaba.db.dev.local
     domainname: hikkaba.db.dev.local
     hostname: hikkaba.db.dev.local
-    image: "mcr.microsoft.com/mssql/server:2017-CU11-ubuntu"
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    user: root
     environment:
       MSSQL_SA_PASSWORD: "dev_passworD@4568919"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
-      MSSQL_AGENT_ENABLED: "true"
-      MSSQL_ENABLE_HADR: "1"
       MSSQL_IP_ADDRESS: "0.0.0.0"
-      MSSQL_MEMORY_LIMIT_MB: "2176"
     ports:
-      - "51433:1433"
+      - "31433:1433"
     volumes:
-      - "C:/docker-linux/hikkaba/db/data:/var/opt/mssql/data"
-      - "C:/docker-linux/hikkaba/db/log:/var/opt/mssql/log"
-      - "C:/docker-linux/hikkaba/db/backup:/var/opt/mssql/backup"
-    deploy:
-      resources:
-        limits:
-          memory: 2816M
+      - "hikkaba_mssql:/var/opt/mssql"
+      - "C:/docker-linux/hikkaba/db_backups:/var/db_backups"
 
+  mailhog:
+    container_name: hikkaba.mailhog.dev.local
+    domainname: hikkaba.mailhog.dev.local
+    hostname: hikkaba.mailhog.dev.local
+    image: "mailhog/mailhog"
+
+volumes:
+  hikkaba_mssql:
