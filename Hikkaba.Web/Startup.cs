@@ -150,6 +150,8 @@ namespace Hikkaba.Web
                 .AsImplementedInterfaces()
                 // And lastly, we specify the lifetime of these registrations.
                 .WithScopedLifetime());
+
+            services.AddResponseCompression();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -170,7 +172,7 @@ namespace Hikkaba.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-
+            app.UseResponseCompression();
             app.UseStaticFiles(new StaticFileOptions
             {
                 OnPrepareResponse = ctx =>
