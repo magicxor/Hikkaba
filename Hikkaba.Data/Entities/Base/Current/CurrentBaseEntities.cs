@@ -51,6 +51,4 @@ namespace Hikkaba.Data.Entities.Base.Current
             Id = GenerateNewId();
         }
     }
-
-    public abstract class BaseManyToManyEntity { }
 }
