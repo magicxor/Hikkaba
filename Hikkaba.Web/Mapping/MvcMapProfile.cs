@@ -157,8 +157,7 @@ namespace Hikkaba.Web.Mapping
                         destElement.CategoryId = src.Category.Id;
                         destElement.Answers = new List<TPrimaryKey>(src.Posts
                             .Where(answer => Regex.IsMatch(answer.Message, $@">>{destElement.Id}(?![\w])"))
-                            .Select(answer => answer.Id))
-                            .ToList();
+                            .Select(answer => answer.Id));
                     });
                 });
         }
