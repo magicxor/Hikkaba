@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var rename = require('gulp-rename');
 var $ = require('gulp-load-plugins')({
     pattern: ['gulp-*']
 });
@@ -18,6 +19,7 @@ gulp.task('styles', function() {
     return gulp.src('./css/site.css')
         .pipe($.sourcemaps.init())
         .pipe($.cleanCss({ advanced: true }))
+        .pipe(rename({ suffix: '.min' }))
         .pipe($.sourcemaps.write('.'))
         .pipe(gulp.dest(outputDir));
 });
