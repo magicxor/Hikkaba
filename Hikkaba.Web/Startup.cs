@@ -90,13 +90,19 @@ namespace Hikkaba.Web
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-            services.AddDataProtection(options =>
+
+            var hikkabaConfiguration = _configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
+            if (hikkabaConfiguration != null)
+            {
+                services.AddDataProtection(options =>
                 {
                     options.ApplicationDiscriminator = "4036e12c07fa7f8fb6f58a70c90ee85b52c15be531acf7bd0d480d1ca7f9ea5d";
                 })
                .SetApplicationName("Hikkaba")
-               .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(_configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>()))
+               .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(hikkabaConfiguration))
                .PersistKeysToFileSystem(new DirectoryInfo("/home/hikkaba/keys"));
+            }
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
