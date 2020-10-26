@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Models.Configuration;
@@ -14,9 +15,9 @@ using NLog.Web;
 
 namespace Hikkaba.Web
 {
-    public class Program
+    internal class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
@@ -30,8 +31,8 @@ namespace Hikkaba.Web
                 var seedConfig = services.GetRequiredService<IOptions<SeedConfiguration>>();
                 try
                 {
-                    context.Database.Migrate();
-                    DbSeeder.SeedAsync(context, userManager, roleManager, seedConfig).Wait();
+                    await context.Database.MigrateAsync();
+                    await DbSeeder.SeedAsync(context, userManager, roleManager, seedConfig);
                 }
                 catch (Exception ex)
                 {
@@ -41,7 +42,7 @@ namespace Hikkaba.Web
                 }
             }
 
-            host.Run();
+            await host.RunAsync();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
