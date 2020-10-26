@@ -152,43 +152,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                 throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
             }
         }
-
-        [Route("{categoryAlias}/Threads/{threadId}/Delete")]
-        public async Task<IActionResult> Delete(string categoryAlias, TPrimaryKey threadId)
-        {
-            var threadDto = await _threadService.GetAsync(threadId);
-            var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
-            if (isCurrentUserCategoryModerator)
-            {
-                var threadEditViewModel = _mapper.Map<ThreadEditViewModel>(threadDto);
-                return View(threadEditViewModel);
-            }
-            else
-            {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
-            }
-        }
-
-        [Route("{categoryAlias}/Threads/{threadId}/Delete")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string categoryAlias, TPrimaryKey threadId)
-        {
-            var threadDto = await _threadService.GetAsync(threadId);
-            var isCurrentUserCategoryModerator = await _categoryToModeratorService
-                                                .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
-            if (isCurrentUserCategoryModerator)
-            {
-                await _threadService.SetIsDeletedAsync(threadId, true);
-                return RedirectToAction("Details", "Categories", new { categoryAlias = categoryAlias });
-            }
-            else
-            {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
-            }
-        }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetIsPinned(TPrimaryKey threadId, bool isPinned)

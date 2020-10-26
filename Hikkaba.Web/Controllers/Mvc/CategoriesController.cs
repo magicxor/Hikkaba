@@ -23,9 +23,6 @@ using Hikkaba.Web.ViewModels.AdministrationViewModels;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    // todo: add details page for categories
-    // todo: category moderators management
-
     [Authorize(Roles = Defaults.AdministratorRoleName)]
     public class CategoriesController : BaseMvcController
     {
@@ -170,7 +167,6 @@ namespace Hikkaba.Web.Controllers.Mvc
             }
         }
         
-        [Authorize(Roles = Defaults.AdministratorRoleName)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetIsDeleted(TPrimaryKey id, bool isDeleted)
@@ -190,7 +186,6 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
         
         [Route("Categories/{id}/AddModerator")]
-        [Authorize(Roles = Defaults.AdministratorRoleName)]
         public async Task<IActionResult> AddModerator(TPrimaryKey id)
         {
             var categoryDto = await _categoryService.GetAsync(id);
@@ -208,7 +203,6 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
         
         [Route("Categories/{id}/AddModerator")]
-        [Authorize(Roles = Defaults.AdministratorRoleName)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddModeratorConfirmed(TPrimaryKey id, TPrimaryKey moderatorId)
@@ -218,7 +212,6 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
         
         [Route("Categories/{id}/RemoveModerator")]
-        [Authorize(Roles = Defaults.AdministratorRoleName)]
         public async Task<IActionResult> RemoveModerator(TPrimaryKey id)
         {
             var categoryDto = await _categoryService.GetAsync(id);
@@ -235,7 +228,6 @@ namespace Hikkaba.Web.Controllers.Mvc
         }
         
         [Route("Categories/{id}/RemoveModerator")]
-        [Authorize(Roles = Defaults.AdministratorRoleName)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveModeratorConfirmed(TPrimaryKey id, TPrimaryKey moderatorId)

@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
-    // todo: implement views
-
     [Authorize(Roles = Defaults.AdministratorRoleName)]
     public class UsersController : Controller
     {
