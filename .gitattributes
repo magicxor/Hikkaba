@@ -1,0 +1,51 @@
+# tells Git: Every time you extract the file from the index to the work-tree,
+# apply the detection code to the file. If the detection code claims that 
+# the file is a text file, apply the end of line conversions while rehydrating 
+# the freeze-dried copy of the file from the index into the usable form in the work-tree.
+# If the detection code claims that the file is binary, leave it alone.
+* text=auto eol=crlf
+
+*.cs text diff=csharp
+
+*.sln text eol=crlf
+*.csproj text eol=crlf
+*.cshtml text eol=crlf
+
+*.css text eol=crlf
+*.sass text eol=crlf
+*.scss text eol=crlf
+*.less text eol=crlf
+*.js text eol=crlf
+*.json text eol=crlf
+*.jsx text eol=crlf
+*.htm text diff=html
+*.html text diff=html
+
+*.map text -diff
+
+*.sql text eol=crlf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Media
+*.bmp             binary
+*.gif             binary
+*.ico             binary
+*.jpg             binary
+*.jpeg            binary
+*.pdf             binary
+*.png             binary
+*.wbmp            binary
+*.webp            binary
+*.mp4             binary
+*.webm            binary
+*.zip             binary
+
+# Fonts
+*.ttf             binary
+*.eot             binary
+*.otf             binary
+*.woff            binary
+*.woff2           binary
