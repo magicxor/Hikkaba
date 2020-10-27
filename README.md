@@ -1,4 +1,5 @@
 Hikkaba [pre-alpha]
+![Azure deploy](https://github.com/magicxor/Hikkaba/workflows/Azure%20deploy/badge.svg)
 =====
 
 Hikkaba is an imageboard written in ASP.NET Core and Entity Framework with minimal JavaScript usage.
