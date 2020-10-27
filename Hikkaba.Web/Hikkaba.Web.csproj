@@ -10,18 +10,6 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="seedconfig.example.json" />
-    <Content Remove="seedconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="seedconfig.example.json" />
-    <None Include="seedconfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />

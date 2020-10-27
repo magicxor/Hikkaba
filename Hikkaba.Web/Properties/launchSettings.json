@@ -16,6 +16,8 @@
             "NLOG_INTERNAL_LOG_TO_TRACE": "true",
             "NLOG_INTERNAL_LOG_TO_CONSOLE": "true",
             "Hikkaba_AllowedHosts": "*",
+            "Hikkaba_SeedConfiguration__AdministratorEmail": "your@email.domain",
+            "Hikkaba_SeedConfiguration__AdministratorPassword": "your_password",
             "Hikkaba_HikkabaConfiguration__CacheMaxAgeSeconds": "31536000",
             "Hikkaba_HikkabaConfiguration__ThumbnailsMaxWidth": "200",
             "Hikkaba_HikkabaConfiguration__ThumbnailsMaxHeight": "200",
