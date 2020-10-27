@@ -27,7 +27,7 @@ jobs:
     - name: Build with dotnet
       run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release
 
-    - name: dotnet publish
+    - name: Dotnet publish
       run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
     - name: Deploy to Azure Web App
