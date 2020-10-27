@@ -8,6 +8,9 @@ on:
     branches:
       - master
 
+env:
+  DOTNET_VERSION: '3.1.x'
+
 jobs:
   build-and-deploy:
     runs-on: windows-latest
@@ -18,10 +21,10 @@ jobs:
     - name: Set up .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.102'
+        dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build Hikkaba.Web --configuration Release
 
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
@@ -32,4 +35,4 @@ jobs:
         app-name: 'hikkaba'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_cd2df2bed6934dfc8cc112c85dd1a184 }}
-        package: ${{env.DOTNET_ROOT}}/myapp 
+        package: ${{env.DOTNET_ROOT}}/myapp
