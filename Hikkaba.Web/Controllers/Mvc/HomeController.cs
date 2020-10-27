@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Models.Dto;
+using Hikkaba.Models.Enums;
 using Hikkaba.Services;
 using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
@@ -41,6 +42,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                                         .PagedListAsync(
                                             post => (!post.IsDeleted) && (!post.Thread.IsDeleted) && (!post.Thread.Category.IsHidden),
                                             post => post.Created,
+                                            AdditionalRecordType.None,
                                             true,
                                             page);
             var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.CurrentPageItems);

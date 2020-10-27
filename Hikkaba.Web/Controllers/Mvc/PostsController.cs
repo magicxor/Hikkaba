@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
+using Hikkaba.Models.Enums;
 
 namespace Hikkaba.Web.Controllers.Mvc
 {
@@ -127,6 +128,7 @@ namespace Hikkaba.Web.Controllers.Mvc
                                                         || (post.Thread.Title.Contains(query) && post == post.Thread.Posts.OrderBy(tp => tp.Created).FirstOrDefault())
                                                         ),
                                                post => post.Created,
+                                               AdditionalRecordType.None,
                                                true,
                                                pageDto);
                 var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.CurrentPageItems);
