@@ -52,7 +52,6 @@ namespace Hikkaba.Web
                 .ConfigureAppConfiguration((builderContext, config) =>
                 {
                     config.AddEnvironmentVariables(EnvPrefix);
-                    config.AddJsonFile("seedconfig.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureLogging(logging =>
                 {

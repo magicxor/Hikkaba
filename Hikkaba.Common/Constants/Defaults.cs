@@ -41,6 +41,8 @@ namespace Hikkaba.Common.Constants
         public const int MaxBumpLimit = 2000;
         public const int DefaultBumpLimit = 500;
 
+        public const int LatestPostsCountOnCategoryPage = 3;
+
         public const string DefaultMimeType = "application/octet-stream";
         public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
         public const int DefaultAttachmentsCacheDuration = 31536000; // ~ 1 year

@@ -9,8 +9,4 @@
     <ProjectReference Include="..\Hikkaba.Common\Hikkaba.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dto\ApplicationUser" />
-  </ItemGroup>
-
 </Project>

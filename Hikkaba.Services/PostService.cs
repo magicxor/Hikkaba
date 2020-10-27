@@ -1,4 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
+using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,7 @@ using Hikkaba.Data.Extensions;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.EntityFrameworkCore;
+using Hikkaba.Models.Enums;
 
 namespace Hikkaba.Services
 {
@@ -25,7 +26,9 @@ namespace Hikkaba.Services
 
         Task<BasePagedList<PostDto>> PagedListAsync<TOrderKey>(
             Expression<Func<Post, bool>> where = null,
-            Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false,
+            Expression<Func<Post, TOrderKey>> orderBy = null,
+            AdditionalRecordType additionalRecordType = AdditionalRecordType.None,
+            bool isDescending = false,
             PageDto page = null);
         
         Task EditAsync(PostDto dto);
@@ -42,7 +45,12 @@ namespace Hikkaba.Services
         {
             _context = context;
         }
-        
+
+        private IQueryable<Post> Sort<TOrderKey>(IQueryable<Post> query, Expression<Func<Post, TOrderKey>> orderBy, bool isDescending)
+        {
+            return isDescending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
+        }
+
         private IQueryable<Post> Query<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false)
         {
             var query = _context.Posts.Include(e => e.Attachments).AsQueryable();
@@ -54,7 +62,7 @@ namespace Hikkaba.Services
 
             if (orderBy != null)
             {
-                query = isDescending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
+                query = Sort(query, orderBy, isDescending);
             }
 
             return query;
@@ -75,13 +83,23 @@ namespace Hikkaba.Services
             return dtoList;
         }
         
-        public async Task<BasePagedList<PostDto>> PagedListAsync<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false, PageDto page = null)
+        public async Task<BasePagedList<PostDto>> PagedListAsync<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, AdditionalRecordType additionalRecordType = AdditionalRecordType.None, bool isDescending = false, PageDto page = null)
         {
             page ??= new PageDto();
 
             var query = Query(where, orderBy, isDescending);
 
             var pageQuery = query.Skip(page.Skip).Take(page.PageSize);
+
+            switch (additionalRecordType)
+            {
+                case AdditionalRecordType.First:
+                    pageQuery = query.Take(1).Union(pageQuery);
+                    break;
+                case AdditionalRecordType.Last:
+                    pageQuery = Sort(query, orderBy, !isDescending).Take(1).Union(pageQuery);
+                    break;
+            }
 
             var entityList = await pageQuery.ToListAsync();
             var dtoList = MapEntityListToDtoList<PostDto, Post>(entityList);
