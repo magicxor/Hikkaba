@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,6 +75,61 @@ namespace Hikkaba.Services
             };
         }
 
+        private async Task WipeDatabase()
+        {
+            if (new[]
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer",
+                "EntityFrameworkCore.SqlServerCompact35",
+                "EntityFrameworkCore.SqlServerCompact40",
+            }
+            .Contains(_context.Database.ProviderName))
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+@"
+DECLARE @sql NVARCHAR(2000);
+
+WHILE EXISTS ( SELECT 1
+               FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+               WHERE 
+                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
+                 (TABLE_NAME IN (
+                   SELECT TABLE_NAME
+                   FROM INFORMATION_SCHEMA.TABLES
+                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
+                 ))
+             )
+    BEGIN
+        SELECT TOP 1 @sql = 'ALTER TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+'] DROP CONSTRAINT ['+CONSTRAINT_NAME+']'
+        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+               WHERE 
+                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
+                 (TABLE_NAME IN (
+                   SELECT TABLE_NAME
+                   FROM INFORMATION_SCHEMA.TABLES
+                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
+                 ))
+        EXEC (@sql);
+    END;
+
+WHILE EXISTS ( SELECT 1
+               FROM INFORMATION_SCHEMA.TABLES
+               WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
+             )
+    BEGIN
+        SELECT TOP 1 @sql = 'DROP TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+']'
+        FROM INFORMATION_SCHEMA.TABLES
+        WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%');
+        EXEC (@sql);
+    END;
+");
+            }
+            else
+            {
+                await _context.Database.EnsureDeletedAsync();
+            }
+        }
+
         private async Task RunSeedInNewScopeAsync()
         {
             // new scope to reset EF cache
@@ -121,8 +176,8 @@ namespace Hikkaba.Services
                 _logger.LogDebug("OK");
             }
 
-            _logger.LogDebug("Deleting all database tables...");
-            await _context.Database.EnsureDeletedAsync();
+            _logger.LogDebug("Wiping database tables...");
+            await WipeDatabase();
             _logger.LogDebug("OK");
 
             _logger.LogDebug("Running migrations and seed...");

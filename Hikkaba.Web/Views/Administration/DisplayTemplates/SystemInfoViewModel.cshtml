@@ -1,0 +1,41 @@
+@using Hikkaba.Web.ViewModels.AdministrationViewModels
+@model SystemInfoViewModel
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="text-center">Key</th>
+            <th class="text-center">Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center">@Html.DisplayNameFor(model => model.DatabaseProvider)</td>
+            <td class="text-center">@Html.DisplayFor(model => model.DatabaseProvider)</td>
+        </tr>
+        <tr>
+            <td class="text-center">@Html.DisplayNameFor(model => model.FrameworkDescription)</td>
+            <td class="text-center">@Html.DisplayFor(model => model.FrameworkDescription)</td>
+        </tr>
+        <tr>
+            <td class="text-center">@Html.DisplayNameFor(model => model.OsArchitecture)</td>
+            <td class="text-center">@Html.DisplayFor(model => model.OsArchitecture)</td>
+        </tr>
+        <tr>
+            <td class="text-center">@Html.DisplayNameFor(model => model.OsPlatform)</td>
+            <td class="text-center">@Html.DisplayFor(model => model.OsPlatform)</td>
+        </tr>
+        <tr>
+            <td class="text-center">@Html.DisplayNameFor(model => model.OsDescription)</td>
+            <td class="text-center">@Html.DisplayFor(model => model.OsDescription)</td>
+        </tr>
+        <tr>
+            <td class="text-center">@Html.DisplayNameFor(model => model.ProcessArchitecture)</td>
+            <td class="text-center">@Html.DisplayFor(model => model.ProcessArchitecture)</td>
+        </tr>
+        <tr>
+            <td class="text-center">@Html.DisplayNameFor(model => model.MemoryUsage)</td>
+            <td class="text-center">@Html.DisplayFor(model => model.MemoryUsage)</td>
+        </tr>
+    </tbody>
+</table>

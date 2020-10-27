@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.BoardViewModels;
 
@@ -11,5 +11,8 @@ namespace Hikkaba.Web.ViewModels.AdministrationViewModels
         
         [Display(Name = @"Moderators")]
         public IList<CategoryModeratorsViewModel> CategoriesModerators { get; set; }
+
+        [Display(Name = @"System info")]
+        public SystemInfoViewModel SystemInfo { get; set; }
     }
 }

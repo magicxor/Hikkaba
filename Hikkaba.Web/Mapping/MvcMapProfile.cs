@@ -13,6 +13,8 @@ using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
+using Humanizer.Bytes;
+using Humanizer;
 
 namespace Hikkaba.Web.Mapping
 {
@@ -162,6 +164,11 @@ namespace Hikkaba.Web.Mapping
                             .Select(reply => reply.Id));
                     });
                 });
+
+            CreateMap<SystemInfoDto, SystemInfoViewModel>()
+                .ForMember(dest => dest.OsArchitecture, opts => opts.MapFrom(src => src.OsArchitecture.ToString()))
+                .ForMember(dest => dest.ProcessArchitecture, opts => opts.MapFrom(src => src.ProcessArchitecture.ToString()))
+                .ForMember(dest => dest.MemoryUsage, opts => opts.MapFrom(src => ByteSize.FromBytes(src.MemoryUsage).Humanize("#.##")));
         }
     }
 }
