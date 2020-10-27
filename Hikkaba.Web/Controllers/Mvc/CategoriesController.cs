@@ -85,15 +85,25 @@ namespace Hikkaba.Web.Controllers.Mvc
                                                 post => post.Created,
                                                 AdditionalRecordType.Last,
                                                 true,
-                                                new PageDto(1, 3));
+                                                new PageDto(1, Defaults.LatestPostsCountOnCategoryPage));
                 var postCount = postsDtoListReversed.TotalItemsCount;
                 var lastPostsDtoList = postsDtoListReversed.CurrentPageItems.OrderBy(post => post.Created).ToList();
                 var postDetailsViewModels = _mapper.Map<IList<PostDetailsViewModel>>(lastPostsDtoList);
+                var i = 0;
                 foreach (var latestPostDetailsViewModel in postDetailsViewModels)
                 {
+                    if (i == 0)
+                    {
+                        latestPostDetailsViewModel.Index = 0;
+                    }
+                    else
+                    {
+                        latestPostDetailsViewModel.Index = postCount - (Defaults.LatestPostsCountOnCategoryPage - (i - 1));
+                    }
                     latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDetailsViewModel.ShowThreadLocalUserHash;
                     latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
                     latestPostDetailsViewModel.CategoryId = categoryDto.Id;
+                    i++;
                 }
 
                 threadDetailsViewModel.Posts = postDetailsViewModels;
