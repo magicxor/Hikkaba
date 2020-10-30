@@ -1,11 +1,11 @@
-﻿using Hikkaba.Web.Services;
+using Hikkaba.Web.Services;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using NUnit.Framework;
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hikkaba.Tests
+namespace Hikkaba.UnitTests
 {
     public class MessagePostProcessorTests
     {
