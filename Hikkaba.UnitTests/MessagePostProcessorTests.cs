@@ -64,9 +64,10 @@ BREAKS")]
         }
 
         [TestCase("[b]bold[/b]", "<b>bold</b>")]
-        [TestCase("http://example.com", "<a href=\"http://example.com\">http://example.com</a>")]
-        [TestCase("https://example.com", "<a href=\"https://example.com\">https://example.com</a>")]
-        [TestCase("ftp://example.com", "<a href=\"ftp://example.com\">ftp://example.com</a>")]
+        [TestCase("http://example.com", "<a href=\"http://example.com\" rel=\"nofollow noopener noreferrer external\">http://example.com</a>")]
+        [TestCase("https://example.com", "<a href=\"https://example.com\" rel=\"nofollow noopener noreferrer external\">https://example.com</a>")]
+        [TestCase("ftp://example.com", "<a href=\"ftp://example.com\" rel=\"nofollow noopener noreferrer external\">ftp://example.com</a>")]
+        [TestCase("http://example.com/item/a-b-c/1823888278.html?spm=2114.30010708.3.17.2rt7qZ&ws_ab_test=searchweb201556_8,searchweb201602_", "<a href=\"http://example.com/item/a-b-c/1823888278.html?spm=2114.30010708.3.17.2rt7qZ&amp;ws_ab_test=searchweb201556_8,searchweb201602_\" rel=\"nofollow noopener noreferrer external\">http://example.com/item/a-b-c/1823888278.html?spm=2114.30010708.3.17.2rt7qZ&amp;ws_ab_test=searchweb201556_8,searchweb201602_</a>")]
         [TestCase(">>abc", "<a href=\"some_action_link#abc\">&gt;&gt;abc</a>")]
         [TestCase(">>0", "<a href=\"some_action_link#0\">&gt;&gt;0</a>")]
         [TestCase(">>999", "<a href=\"some_action_link#999\">&gt;&gt;999</a>")]
