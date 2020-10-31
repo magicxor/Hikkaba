@@ -54,7 +54,8 @@ namespace Hikkaba.Common.Constants
         /// <para>- <a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/time.html#time.attrs.datetime">time</a></para>
         /// <para>See also: <a href="https://msdn.microsoft.com/en-us/library/az4se3k1(v=vs.110).aspx#Roundtrip">The Round-trip ("O", "o") Format Specifier</a></para>
         /// </summary>
-        public const string CsharpGlobalDateTimeFormatString = "{0:o}";
+        /// <remarks>w3c: A fraction of a second must be one, two, or three digits.</remarks>
+        public const string CsharpGlobalDateTimeFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK";
 
         /// <summary>
         /// <para><a href="http://www.w3.org/TR/2012/WD-html-markup-20120329/datatypes.html#form.data.datetime-local-def">Local date and time</a>.</para>
