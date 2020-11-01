@@ -1,8 +1,9 @@
-﻿@model DateTime?
+@using Hikkaba.Common.Constants 
+@model DateTime?
 
 @if (Model.HasValue)
 {
-    <time class="time-localizable" datetime="@Model.Value.ToString("o")">@Model.Value.ToString("o")</time>
+    <time class="time-localizable" datetime="@Model.Value.ToString(Defaults.CsharpGlobalDateTimeFormatString)">@Model.Value.ToString(Defaults.CsharpGlobalDateTimeFormatString)</time>
 }
 else
 {

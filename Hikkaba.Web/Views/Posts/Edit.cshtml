@@ -1,4 +1,4 @@
-﻿@model Hikkaba.Web.ViewModels.PostsViewModels.PostEditViewModel
+@model Hikkaba.Web.ViewModels.PostsViewModels.PostEditViewModel
 @{
     ViewData["Title"] = $"Edit post {Model.Id}";
 }
@@ -12,7 +12,7 @@
     <div class="form-group">
         <label asp-for="Message" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <textarea asp-for="Message" class="form-control" id="new-post-message-input"></textarea>
+            <textarea asp-for="Message" class="form-control"></textarea>
             <span asp-validation-for="Message" class="text-danger"></span>
         </div>
     </div>

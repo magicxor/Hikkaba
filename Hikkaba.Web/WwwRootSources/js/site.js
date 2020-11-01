@@ -88,14 +88,14 @@ $(function () {
     });
 
     // if js is enabled and post form exists, prevent href=... and insert >>post id to form
-    const inputId = "new-post-message-input";
+    const inputId = "Message";
     if ($("#" + inputId).length) {
         $(".post-id-link").attr("onclick", "return false;");
         $(".post-id-link").click(function () {
             const thisElement = $(this);
-            writeLineToInput("new-post-message-input", ">>" + thisElement.text(), "");
-            writeSelectionLineToInput("new-post-message-input");
-            navigationFn.goToSection("new-post-message-input");
+            writeLineToInput(inputId, ">>" + thisElement.text(), "");
+            writeSelectionLineToInput(inputId);
+            navigationFn.goToSection(inputId);
         });
     }
 

@@ -46,7 +46,7 @@ namespace Hikkaba.Common.Constants
         public const string DefaultMimeType = "application/octet-stream";
         public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
         public const int DefaultAttachmentsCacheDuration = 31536000; // ~ 1 year
-
+        public const string AspNetEnvIntegrationTesting = "IntegrationTesting";
         /// <summary>
         /// <para><a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/datatypes.html#common.data.datetime-def">Date and time</a> (RFC 3339, ISO 8601).</para>
         /// <para>This format string should be used to output DateTime to following elements:</para>
@@ -54,7 +54,8 @@ namespace Hikkaba.Common.Constants
         /// <para>- <a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/time.html#time.attrs.datetime">time</a></para>
         /// <para>See also: <a href="https://msdn.microsoft.com/en-us/library/az4se3k1(v=vs.110).aspx#Roundtrip">The Round-trip ("O", "o") Format Specifier</a></para>
         /// </summary>
-        public const string CsharpGlobalDateTimeFormatString = "{0:o}";
+        /// <remarks>w3c: A fraction of a second must be one, two, or three digits.</remarks>
+        public const string CsharpGlobalDateTimeFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK";
 
         /// <summary>
         /// <para><a href="http://www.w3.org/TR/2012/WD-html-markup-20120329/datatypes.html#form.data.datetime-local-def">Local date and time</a>.</para>

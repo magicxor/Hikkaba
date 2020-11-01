@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 
-namespace Hikkaba.Tests
+namespace Hikkaba.UnitTests
 {
     public class IpAddressCalculatorTests
     {

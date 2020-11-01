@@ -27,7 +27,7 @@ namespace Hikkaba.Web.Services
                     new BBTag("quote", "<span class=\"text-success\">&gt; ", "</span>"),
                 });
 
-        private static readonly Regex UriRegex = new Regex(@"(https?|ftp)(:\/\/[^:;(),!{}""\s]+)(\s|$|\&\#x[a-zA-Z0-9]+?;|\&quot;|!|,|\?|\(|\))", RegexOptions.Compiled);
+        private static readonly Regex UriRegex = new Regex(@"(((https?|ftp):)(//([^\s/?#]*))?([^\s?#]*)(\?([^\s#]*))?(#([^\s]*))?)", RegexOptions.Compiled);
         private static readonly Regex CrossLinkRegex = new Regex(@"&gt;&gt;([a-z0-9\-]+)", RegexOptions.Compiled);
         private static readonly Regex ReplaceLineTerminatorsRegex = new Regex(@"\u000D\u000A|\u000A|\u000B|\u000C|\u000D|\u0085|\u2028|\u2029", RegexOptions.Compiled);
         private static readonly Regex LimitLineTerminatorCountRegex = new Regex(@"(\u000D\u000A){3,}", RegexOptions.Compiled);
@@ -39,7 +39,7 @@ namespace Hikkaba.Web.Services
 
         private string UriToHtmlLinks(string text)
         {
-            return UriRegex.Replace(text, @"<a href=""$1$2"">$1$2</a>$3");
+            return UriRegex.Replace(text, @"<a href=""$1"" rel=""nofollow noopener noreferrer external"">$1</a>");
         }
 
         private string CrossLinksToHtmlLinks(string categoryAlias, TPrimaryKey threadId, string text)

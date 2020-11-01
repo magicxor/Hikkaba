@@ -34,17 +34,21 @@ using Hikkaba.Models.Extensions;
 using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.CookiePolicy;
+using Hikkaba.Web.Extensions;
 
 namespace Hikkaba.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
-
-        private readonly IConfiguration _configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -53,7 +57,8 @@ namespace Hikkaba.Web
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict;
+                options.HttpOnly = HttpOnlyPolicy.Always;
             });
 
             services.AddDbContext<ApplicationDbContext>((provider, options) =>
@@ -117,7 +122,14 @@ namespace Hikkaba.Web
             services.AddScoped<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
 
             // Captcha
-            services.AddDNTCaptcha(options => options.UseSessionStorageProvider());
+            if (_webHostEnvironment.EnvironmentName != Defaults.AspNetEnvIntegrationTesting)
+            {
+                services.AddDNTCaptcha(options => options.UseSessionStorageProvider());
+            }
+            else
+            {
+                services.AddDNTCaptchaMock();
+            }
 
             // File storage
             services.AddScoped<FileExtensionContentTypeProvider>();
