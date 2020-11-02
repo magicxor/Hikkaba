@@ -1,3 +1,4 @@
+using System;
 using Hikkaba.Data.Context;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using System.Diagnostics;
@@ -51,6 +52,8 @@ namespace Hikkaba.Services
                 ProcessArchitecture = RuntimeInformation.ProcessArchitecture,
                 OsPlatform = GetOsPlatform(),
                 MemoryUsage = Process.GetCurrentProcess().WorkingSet64,
+                ProcessorCount = Environment.ProcessorCount,
+                UserName = Environment.UserName,
             };
         }
     }
