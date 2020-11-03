@@ -11,5 +11,7 @@ namespace Hikkaba.Web.ViewModels.AdministrationViewModels
         public Architecture ProcessArchitecture { get; set; }
         public string OsPlatform { get; set; }
         public long MemoryUsage { get; set; }
+        public int ProcessorCount { get; set; }
+        public string UserName { get; set; }
     }
 }
