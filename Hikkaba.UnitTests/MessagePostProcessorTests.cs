@@ -9,6 +9,8 @@ namespace Hikkaba.UnitTests
 {
     public class MessagePostProcessorTests
     {
+        private const string ActionLinkExample = "/b/Threads/1dcc5435-f3bd-43eb-97b3-155f34206514";
+
         private IUrlHelperFactoryWrapper _wrapper;
 
         [SetUp]
@@ -16,8 +18,8 @@ namespace Hikkaba.UnitTests
         {
             var urlHelper = new Mock<IUrlHelper>();
             urlHelper.Setup(helper => helper.Action(It.IsAny<UrlActionContext>()))
-                .Returns("some_action_link");
-            
+                .Returns(ActionLinkExample);
+
             var wrapper = new Mock<IUrlHelperFactoryWrapper>();
             wrapper.Setup(w => w.GetUrlHelper())
                 .Returns(urlHelper.Object);
@@ -41,7 +43,7 @@ BREAKS")]
             var result = messagePostProcessor.Process("a", Guid.Parse("d133c970-580f-4926-9588-3f49bb914162"), text);
             Assert.IsTrue(text.Equals(result), $"{nameof(text)} {text} != {nameof(result)} {result}");
         }
-        
+
         [TestCase("TEXT\r\nWITH\r\nLINE\r\nBREAKS", true)]
         [TestCase("TEXT\r\n\r\n\r\nWITH LINE BREAKS", false)]
         [TestCase("TEXT\r\nWITH LINE BREAKS", true)]
@@ -68,9 +70,9 @@ BREAKS")]
         [TestCase("https://example.com", "<a href=\"https://example.com\" rel=\"nofollow noopener noreferrer external\">https://example.com</a>")]
         [TestCase("ftp://example.com", "<a href=\"ftp://example.com\" rel=\"nofollow noopener noreferrer external\">ftp://example.com</a>")]
         [TestCase("http://example.com/item/a-b-c/1823888278.html?spm=2114.30010708.3.17.2rt7qZ&ws_ab_test=searchweb201556_8,searchweb201602_", "<a href=\"http://example.com/item/a-b-c/1823888278.html?spm=2114.30010708.3.17.2rt7qZ&amp;ws_ab_test=searchweb201556_8,searchweb201602_\" rel=\"nofollow noopener noreferrer external\">http://example.com/item/a-b-c/1823888278.html?spm=2114.30010708.3.17.2rt7qZ&amp;ws_ab_test=searchweb201556_8,searchweb201602_</a>")]
-        [TestCase(">>abc", "<a href=\"some_action_link#abc\">&gt;&gt;abc</a>")]
-        [TestCase(">>0", "<a href=\"some_action_link#0\">&gt;&gt;0</a>")]
-        [TestCase(">>999", "<a href=\"some_action_link#999\">&gt;&gt;999</a>")]
+        [TestCase(">>abc", "<a href=\""+ ActionLinkExample +"#abc\">&gt;&gt;abc</a>")]
+        [TestCase(">>0", "<a href=\""+ ActionLinkExample +"#0\">&gt;&gt;0</a>")]
+        [TestCase(">>999", "<a href=\""+ ActionLinkExample +"#999\">&gt;&gt;999</a>")]
         public void TestTransformations(string source, string expectedResult)
         {
             var messagePostProcessor = new MessagePostProcessor(_wrapper);

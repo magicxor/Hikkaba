@@ -44,12 +44,12 @@ namespace Hikkaba.Web.Services
 
         private string CrossLinksToHtmlLinks(string categoryAlias, TPrimaryKey threadId, string text)
         {
-            var threadUri = Regex.Escape(_urlHelper.Action("Details", "Threads",
+            var threadUri = _urlHelper.Action("Details", "Threads",
                         new
                         {
                             categoryAlias = categoryAlias,
                             threadId = threadId
-                        }));
+                        });
             return CrossLinkRegex.Replace(text, @"<a href=""" + threadUri + "#$1" + @""">&gt;&gt;$1</a>");
         }
 
