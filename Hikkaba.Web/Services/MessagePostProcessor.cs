@@ -37,12 +37,12 @@ namespace Hikkaba.Web.Services
             _urlHelper = urlHelperFactoryWrapper.GetUrlHelper();
         }
 
-        private string UriToHtmlLinks(string text)
+        private string ReplaceUrisWithHtmlLinks(string text)
         {
             return UriRegex.Replace(text, @"<a href=""$1"" rel=""nofollow noopener noreferrer external"">$1</a>");
         }
 
-        private string CrossLinksToHtmlLinks(string categoryAlias, TPrimaryKey threadId, string text)
+        private string ReplaceCrossLinksWithHtmlLinks(string categoryAlias, TPrimaryKey threadId, string text)
         {
             var threadUri = _urlHelper.Action("Details", "Threads",
                         new
@@ -53,25 +53,24 @@ namespace Hikkaba.Web.Services
             return CrossLinkRegex.Replace(text, @"<a href=""" + threadUri + "#$1" + @""">&gt;&gt;$1</a>");
         }
 
-        private string ReplaceLineTerminators(string text)
+        private string NormalizeLineBreaks(string text)
         {
             return ReplaceLineTerminatorsRegex.Replace(text, "\r\n");
         }
 
-        private string LimitLineTerminatorCount(string text)
+        private string LimitLineBreaksCount(string text)
         {
             return LimitLineTerminatorCountRegex.Replace(text, "\r\n\r\n");
         }
 
         public string Process(string categoryAlias, TPrimaryKey threadId, string text)
         {
-            text = ReplaceLineTerminators(text);
-            text = LimitLineTerminatorCount(text);
-            var bbParsed = _bbCodeParser.ToHtml(text);
-            var uriParsed = UriToHtmlLinks(bbParsed);
-            var crossLinksParsed = CrossLinksToHtmlLinks(categoryAlias, threadId, uriParsed);
-            var result = crossLinksParsed;
-            return result;
+            var normalizedLineBreaks = NormalizeLineBreaks(text);
+            var limitedLineBreaksCount = LimitLineBreaksCount(normalizedLineBreaks);
+            var convertedToHtml = _bbCodeParser.ToHtml(limitedLineBreaksCount);
+            var linksProcessed = ReplaceUrisWithHtmlLinks(convertedToHtml);
+            var crossLinksProcessed = ReplaceCrossLinksWithHtmlLinks(categoryAlias, threadId, linksProcessed);
+            return crossLinksProcessed;
         }
     }
 }
