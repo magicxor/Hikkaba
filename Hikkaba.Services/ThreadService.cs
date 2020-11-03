@@ -1,4 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
+using TPrimaryKey = System.Guid;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -30,7 +30,7 @@ namespace Hikkaba.Services
     public interface IThreadService
     {
         Task<ThreadDto> GetAsync(TPrimaryKey id);
-        Task<ThreadAggregationDto> GetAggregationAsync(Guid id, ClaimsPrincipal user);
+        Task<ThreadAggregationDto> GetAggregationAsync(TPrimaryKey id, ClaimsPrincipal user);
         
         Task<IList<ThreadDto>> ListAsync<TOrderKey>(
             Expression<Func<Thread, bool>> where = null, 
@@ -105,7 +105,7 @@ namespace Hikkaba.Services
             return dto;
         }
 
-        public async Task<ThreadAggregationDto> GetAggregationAsync(Guid id, ClaimsPrincipal user)
+        public async Task<ThreadAggregationDto> GetAggregationAsync(TPrimaryKey id, ClaimsPrincipal user)
         {
             var thread = await _context.Threads
                 .Include(t => t.Category)
@@ -331,7 +331,7 @@ namespace Hikkaba.Services
             return pagedList;
         }
 
-        public async Task SetIsPinnedAsync(Guid id, bool newValue)
+        public async Task SetIsPinnedAsync(TPrimaryKey id, bool newValue)
         {
             var entity = _context.GetLocalOrAttach<Thread>(id);
             entity.IsPinned = newValue;
@@ -339,7 +339,7 @@ namespace Hikkaba.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task SetIsClosedAsync(Guid id, bool newValue)
+        public async Task SetIsClosedAsync(TPrimaryKey id, bool newValue)
         {
             var entity = _context.GetLocalOrAttach<Thread>(id);
             entity.IsClosed = newValue;
