@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Hikkaba.Common.Constants
 {
@@ -40,12 +41,19 @@ namespace Hikkaba.Common.Constants
         public const int MinBumpLimit = 500;
         public const int MaxBumpLimit = 2000;
         public const int DefaultBumpLimit = 500;
-
+        public const int MaxAttachmentsCountPerPost = 10;
+        public const int MaxAttachmentsBytesPerPost = 20000000;
         public const int LatestPostsCountOnCategoryPage = 3;
 
         public const string DefaultMimeType = "application/octet-stream";
         public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
         public const int DefaultAttachmentsCacheDuration = 31536000; // ~ 1 year
+        public const int CacheCategoriesExpirationSeconds = 3600;
+        public const int ThumbnailsMaxWidth = 200;
+        public const int ThumbnailsMaxHeight = 200;
+        public static ICollection<string> AudioExtensions { get; set; } = new List<string> { "mp3", "ogg", "aac" };
+        public static ICollection<string> PictureExtensions { get; set; } = new List<string> { "jpg", "jpeg", "png", "gif", "svg" };
+        public static ICollection<string> VideoExtensions { get; set; } = new List<string> { "webm", "mp4" };
         public const string AspNetEnvIntegrationTesting = "IntegrationTesting";
         /// <summary>
         /// <para><a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/datatypes.html#common.data.datetime-def">Date and time</a> (RFC 3339, ISO 8601).</para>
@@ -66,5 +74,7 @@ namespace Hikkaba.Common.Constants
         public const string CsharpLocalDateTimeFormatString = "{0:s}";
 
         public const string HtmlNewPostFormId = "NewPostForm";
+
+        public const string CacheKeyCategories = "categories";
     }
 }

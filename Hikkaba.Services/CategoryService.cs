@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -11,6 +11,10 @@ using Hikkaba.Data.Extensions;
 using Hikkaba.Models.Dto;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Hikkaba.Common.Constants;
+using Microsoft.Extensions.Options;
+using Hikkaba.Models.Configuration;
 
 namespace Hikkaba.Services
 {
@@ -40,10 +44,17 @@ namespace Hikkaba.Services
     public class CategoryService : BaseEntityService, ICategoryService
     {
         private readonly ApplicationDbContext _context;
-        
-        public CategoryService(IMapper mapper, ApplicationDbContext context) : base(mapper)
+        private readonly IMemoryCache _memoryCache;
+        private readonly IOptions<HikkabaConfiguration> _options;
+
+        public CategoryService(IMapper mapper,
+            ApplicationDbContext context,
+            IMemoryCache memoryCache,
+            IOptions<HikkabaConfiguration> options) : base(mapper)
         {
             _context = context;
+            _memoryCache = memoryCache;
+            _options = options;
         }
         
         private IQueryable<Category> Query<TOrderKey>(Expression<Func<Category, bool>> where = null, Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false)
@@ -69,13 +80,23 @@ namespace Hikkaba.Services
 
             return query;
         }
-        
-        public async Task<IList<CategoryDto>> ListAsync<TOrderKey>(Expression<Func<Category, bool>> where = null, Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false)
+
+        private async Task<IList<CategoryDto>> ListNonCachedAsync<TOrderKey>(Expression<Func<Category, bool>> where, Expression<Func<Category, TOrderKey>> orderBy, bool isDescending)
         {
             var query = Query(where, orderBy, isDescending);
             var entityList = await query.ToListAsync();
             var dtoList = MapEntityListToDtoList<CategoryDto, Category>(entityList);
             return dtoList;
+        }
+        
+        public async Task<IList<CategoryDto>> ListAsync<TOrderKey>(Expression<Func<Category, bool>> where = null, Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false)
+        {
+            return await _memoryCache.GetOrCreateAsync(Defaults.CacheKeyCategories,
+                async x =>
+                {
+                    x.SetAbsoluteExpiration(TimeSpan.FromSeconds(_options.Value.CacheCategoriesExpirationSeconds));
+                    return await ListNonCachedAsync(where, orderBy, isDescending);
+                });
         }
 
         public async Task<BasePagedList<CategoryDto>> PagedListAsync<TOrderKey>(Expression<Func<Category, bool>> where = null, Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false, PageDto page = null)
