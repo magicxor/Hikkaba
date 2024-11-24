@@ -1,8 +1,7 @@
-﻿namespace Hikkaba.Models.Dto
+﻿namespace Hikkaba.Models.Dto;
+
+public class PostingPermissionDto
 {
-    public class PostingPermissionDto
-    {
-        public bool IsPostingAllowed { get; set; }
-        public BanDto Ban { get; set; }
-    }
+    public bool IsPostingAllowed { get; set; }
+    public BanDto Ban { get; set; }
 }

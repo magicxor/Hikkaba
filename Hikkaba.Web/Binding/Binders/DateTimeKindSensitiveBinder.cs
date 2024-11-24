@@ -5,38 +5,37 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.Extensions.Logging;
 
-namespace Hikkaba.Web.Binding.Binders
+namespace Hikkaba.Web.Binding.Binders;
+
+public class DateTimeKindSensitiveBinder : IModelBinder
 {
-    public class DateTimeKindSensitiveBinder : IModelBinder
+    private SimpleTypeModelBinder _baseBinder;
+
+    public DateTimeKindSensitiveBinder(Type type, ILoggerFactory loggerFactory)
     {
-        SimpleTypeModelBinder _baseBinder;
+        _baseBinder = new SimpleTypeModelBinder(type, loggerFactory);
+    }
 
-        public DateTimeKindSensitiveBinder(Type type, ILoggerFactory loggerFactory)
+    /// <inheritdoc />
+    public Task BindModelAsync(ModelBindingContext bindingContext)
+    {
+        if (bindingContext == null){ throw new ArgumentNullException(nameof(bindingContext)); }
+
+        // Check the value sent in
+        var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+        if (valueProviderResult != ValueProviderResult.None)
         {
-            _baseBinder = new SimpleTypeModelBinder(type, loggerFactory);
-        }
+            bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
 
-        /// <inheritdoc />
-        public Task BindModelAsync(ModelBindingContext bindingContext)
-        {
-            if (bindingContext == null){ throw new ArgumentNullException(nameof(bindingContext)); }
-
-            // Check the value sent in
-            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
-            if (valueProviderResult != ValueProviderResult.None)
+            DateTime model;
+            if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out model))
             {
-                bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
-
-                DateTime model;
-                if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out model))
-                {
-                    bindingContext.Result = ModelBindingResult.Success(model);
-                    return Task.CompletedTask;
-                }
+                bindingContext.Result = ModelBindingResult.Success(model);
+                return Task.CompletedTask;
             }
-
-            // If we haven't handled it, then we'll let the base SimpleTypeModelBinder handle it
-            return _baseBinder.BindModelAsync(bindingContext);
         }
+
+        // If we haven't handled it, then we'll let the base SimpleTypeModelBinder handle it
+        return _baseBinder.BindModelAsync(bindingContext);
     }
 }

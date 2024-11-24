@@ -12,117 +12,116 @@ using Hikkaba.Models.Dto;
 using Hikkaba.Services.Base.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hikkaba.Services
+namespace Hikkaba.Services;
+
+public interface IApplicationUserService
 {
-    public interface IApplicationUserService
-    {
-        Task<ApplicationUserDto> GetAsync(TPrimaryKey id);
+    Task<ApplicationUserDto> GetAsync(TPrimaryKey id);
         
-        Task<IList<ApplicationUserDto>> ListAsync<TOrderKey>(
-            Expression<Func<ApplicationUser, bool>> where = null, 
-            Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, 
-            bool isDescending = false);
+    Task<IList<ApplicationUserDto>> ListAsync<TOrderKey>(
+        Expression<Func<ApplicationUser, bool>> where = null, 
+        Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, 
+        bool isDescending = false);
 
-        Task<BasePagedList<ApplicationUserDto>> PagedListAsync<TOrderKey>(
-            Expression<Func<ApplicationUser, bool>> where = null,
-            Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false,
-            PageDto page = null);
+    Task<BasePagedList<ApplicationUserDto>> PagedListAsync<TOrderKey>(
+        Expression<Func<ApplicationUser, bool>> where = null,
+        Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false,
+        PageDto page = null);
         
-        Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto);
+    Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto);
         
-        Task EditAsync(ApplicationUserDto dto);
+    Task EditAsync(ApplicationUserDto dto);
 
-        Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
-    }
+    Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
+}
     
-    public class ApplicationUserService : BaseEntityService, IApplicationUserService
+public class ApplicationUserService : BaseEntityService, IApplicationUserService
+{
+    private readonly ApplicationDbContext _context;
+
+    public ApplicationUserService(IMapper mapper, ApplicationDbContext context) : base(mapper)
     {
-        private readonly ApplicationDbContext _context;
-
-        public ApplicationUserService(IMapper mapper, ApplicationDbContext context) : base(mapper)
-        {
-            _context = context;
-        }
+        _context = context;
+    }
         
-        private IQueryable<ApplicationUser> Query<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false)
-        {
-            var query = _context.Users.AsQueryable();
+    private IQueryable<ApplicationUser> Query<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false)
+    {
+        var query = _context.Users.AsQueryable();
 
-            if (where != null)
+        if (where != null)
+        {
+            query = query.Where(where);
+        }
+
+        if (orderBy != null)
+        {
+            if (isDescending)
             {
-                query = query.Where(where);
+                query = query.OrderByDescending(orderBy);
             }
-
-            if (orderBy != null)
+            else
             {
-                if (isDescending)
-                {
-                    query = query.OrderByDescending(orderBy);
-                }
-                else
-                {
-                    query = query.OrderBy(orderBy);
-                }
+                query = query.OrderBy(orderBy);
             }
-
-            return query;
         }
+
+        return query;
+    }
         
-        public async Task<ApplicationUserDto> GetAsync(TPrimaryKey id)
-        {
-            var entity = await _context.Users.FirstOrDefaultAsync(e => e.Id == id);
-            var dto = MapEntityToDto<ApplicationUserDto, ApplicationUser>(entity);
-            return dto;
-        }
+    public async Task<ApplicationUserDto> GetAsync(TPrimaryKey id)
+    {
+        var entity = await _context.Users.FirstOrDefaultAsync(e => e.Id == id);
+        var dto = MapEntityToDto<ApplicationUserDto, ApplicationUser>(entity);
+        return dto;
+    }
         
-        public async Task<IList<ApplicationUserDto>> ListAsync<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false)
+    public async Task<IList<ApplicationUserDto>> ListAsync<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false)
+    {
+        var query = Query(where, orderBy, isDescending);
+        var entityList = await query.ToListAsync();
+        var dtoList = MapEntityListToDtoList<ApplicationUserDto, ApplicationUser>(entityList);
+        return dtoList;
+    }
+
+    public async Task<BasePagedList<ApplicationUserDto>> PagedListAsync<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false, PageDto page = null)
+    {
+        page = page ?? new PageDto();
+
+        var query = Query(where, orderBy, isDescending);
+
+        var pageQuery = query.Skip(page.Skip).Take(page.PageSize);
+
+        var entityList = await pageQuery.ToListAsync();
+        var dtoList = MapEntityListToDtoList<ApplicationUserDto, ApplicationUser>(entityList);
+        var pagedList = new BasePagedList<ApplicationUserDto>
         {
-            var query = Query(where, orderBy, isDescending);
-            var entityList = await query.ToListAsync();
-            var dtoList = MapEntityListToDtoList<ApplicationUserDto, ApplicationUser>(entityList);
-            return dtoList;
-        }
-
-        public async Task<BasePagedList<ApplicationUserDto>> PagedListAsync<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false, PageDto page = null)
-        {
-            page = page ?? new PageDto();
-
-            var query = Query(where, orderBy, isDescending);
-
-            var pageQuery = query.Skip(page.Skip).Take(page.PageSize);
-
-            var entityList = await pageQuery.ToListAsync();
-            var dtoList = MapEntityListToDtoList<ApplicationUserDto, ApplicationUser>(entityList);
-            var pagedList = new BasePagedList<ApplicationUserDto>
-            {
-                TotalItemsCount = query.Count(),
-                CurrentPage = page,
-                CurrentPageItems = dtoList,
-            };
-            return pagedList;
-        }
+            TotalItemsCount = query.Count(),
+            CurrentPage = page,
+            CurrentPageItems = dtoList,
+        };
+        return pagedList;
+    }
         
-        public async Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto)
-        {
-            var entity = MapDtoToNewEntity<ApplicationUserDto, ApplicationUser>(dto);
-            await _context.Users.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return entity.Id;
-        }
+    public async Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto)
+    {
+        var entity = MapDtoToNewEntity<ApplicationUserDto, ApplicationUser>(dto);
+        await _context.Users.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return entity.Id;
+    }
 
-        public async Task EditAsync(ApplicationUserDto dto)
-        {
-            var existingEntity = await _context.Users.FirstOrDefaultAsync(e => e.Id == dto.Id);
-            MapDtoToExistingEntity(dto, existingEntity);
-            await _context.SaveChangesAsync();
-        }
+    public async Task EditAsync(ApplicationUserDto dto)
+    {
+        var existingEntity = await _context.Users.FirstOrDefaultAsync(e => e.Id == dto.Id);
+        MapDtoToExistingEntity(dto, existingEntity);
+        await _context.SaveChangesAsync();
+    }
 
-        public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
-        {
-            var entity = _context.GetLocalOrAttach<ApplicationUser>(id);
-            entity.IsDeleted = newValue;
-            _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
-            await _context.SaveChangesAsync();
-        }
+    public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
+    {
+        var entity = _context.GetLocalOrAttach<ApplicationUser>(id);
+        entity.IsDeleted = newValue;
+        _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
+        await _context.SaveChangesAsync();
     }
 }

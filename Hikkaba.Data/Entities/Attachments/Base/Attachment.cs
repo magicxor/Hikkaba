@@ -2,12 +2,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Data.Entities.Base.Current;
 
-namespace Hikkaba.Data.Entities.Attachments.Base
+namespace Hikkaba.Data.Entities.Attachments.Base;
+
+[Table("Attachments")]
+public abstract class Attachment: BaseEntity
 {
-    [Table("Attachments")]
-    public abstract class Attachment: BaseEntity
-    {
-        [Required]
-        public virtual Post Post { get; set; }
-    }
+    [Required]
+    public virtual Post Post { get; set; }
 }

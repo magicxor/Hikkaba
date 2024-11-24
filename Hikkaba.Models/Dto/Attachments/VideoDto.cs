@@ -1,8 +1,7 @@
 ﻿using Hikkaba.Models.Dto.Attachments.Base;
 
-namespace Hikkaba.Models.Dto.Attachments
+namespace Hikkaba.Models.Dto.Attachments;
+
+public class VideoDto : FileAttachmentDto
 {
-    public class VideoDto : FileAttachmentDto
-    {
-    }
 }

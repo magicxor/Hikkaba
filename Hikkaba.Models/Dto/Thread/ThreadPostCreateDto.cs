@@ -1,9 +1,8 @@
-﻿namespace Hikkaba.Models.Dto
+﻿namespace Hikkaba.Models.Dto;
+
+public class ThreadPostCreateDto
 {
-    public class ThreadPostCreateDto
-    {
-        public CategoryDto Category { get; set; }
-        public ThreadDto Thread { get; set; }
-        public PostDto Post { get; set; }
-    }
+    public CategoryDto Category { get; set; }
+    public ThreadDto Thread { get; set; }
+    public PostDto Post { get; set; }
 }

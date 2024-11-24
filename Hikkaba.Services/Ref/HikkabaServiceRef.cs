@@ -1,6 +1,5 @@
-﻿namespace Hikkaba.Services.Ref
+﻿namespace Hikkaba.Services.Ref;
+
+public class HikkabaServiceRef
 {
-    public class HikkabaServiceRef
-    {
-    }
 }

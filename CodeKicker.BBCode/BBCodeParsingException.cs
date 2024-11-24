@@ -1,16 +1,15 @@
 using System;
 
-namespace CodeKicker.BBCode
+namespace CodeKicker.BBCode;
+
+[Serializable]
+public class BBCodeParsingException : Exception
 {
-    [Serializable]
-    public class BBCodeParsingException : Exception
+    public BBCodeParsingException()
     {
-        public BBCodeParsingException()
-        {
-        }
-        public BBCodeParsingException(string message)
-            : base(message)
-        {
-        }
+    }
+    public BBCodeParsingException(string message)
+        : base(message)
+    {
     }
 }

@@ -4,47 +4,46 @@ using Hikkaba.Models.Dto.Attachments;
 using Hikkaba.Models.Dto.Attachments.Base;
 using Microsoft.Extensions.Options;
 
-namespace Hikkaba.Services
+namespace Hikkaba.Services;
+
+public interface IAttachmentCategorizer
 {
-    public interface IAttachmentCategorizer
+    bool IsPictureExtensionSupported(string extension);
+    FileAttachmentDto CreateAttachmentDto(string fileName);
+}
+
+public class AttachmentCategorizer : IAttachmentCategorizer
+{
+    private readonly HikkabaConfiguration _hikkabaConfiguration;
+    private readonly string[] _supportedPictureExtensions = { "jpg", "jpeg", "png", "gif" };
+
+    public AttachmentCategorizer(IOptions<HikkabaConfiguration> settings)
     {
-        bool IsPictureExtensionSupported(string extension);
-        FileAttachmentDto CreateAttachmentDto(string fileName);
+        _hikkabaConfiguration = settings.Value;
     }
 
-    public class AttachmentCategorizer : IAttachmentCategorizer
+    public bool IsPictureExtensionSupported(string extension)
     {
-        private readonly HikkabaConfiguration _hikkabaConfiguration;
-        private readonly string[] _supportedPictureExtensions = { "jpg", "jpeg", "png", "gif" };
+        return _supportedPictureExtensions.Any(ext => ext.Equals(extension));
+    }
 
-        public AttachmentCategorizer(IOptions<HikkabaConfiguration> settings)
+    public FileAttachmentDto CreateAttachmentDto(string fileName)
+    {
+        if (_hikkabaConfiguration.AudioExtensions.Any(fileName.EndsWith))
         {
-            _hikkabaConfiguration = settings.Value;
+            return new AudioDto();
         }
-
-        public bool IsPictureExtensionSupported(string extension)
+        else if (_hikkabaConfiguration.PictureExtensions.Any(fileName.EndsWith))
         {
-            return _supportedPictureExtensions.Any(ext => ext.Equals(extension));
+            return new PictureDto();
         }
-
-        public FileAttachmentDto CreateAttachmentDto(string fileName)
+        else if (_hikkabaConfiguration.VideoExtensions.Any(fileName.EndsWith))
         {
-            if (_hikkabaConfiguration.AudioExtensions.Any(fileName.EndsWith))
-            {
-                return new AudioDto();
-            }
-            else if (_hikkabaConfiguration.PictureExtensions.Any(fileName.EndsWith))
-            {
-                return new PictureDto();
-            }
-            else if (_hikkabaConfiguration.VideoExtensions.Any(fileName.EndsWith))
-            {
-                return new VideoDto();
-            }
-            else
-            {
-                return new DocumentDto();
-            }
+            return new VideoDto();
+        }
+        else
+        {
+            return new DocumentDto();
         }
     }
 }

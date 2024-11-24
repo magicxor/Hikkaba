@@ -5,7 +5,7 @@
 @inject IOptions<HikkabaConfiguration> Settings
 
 @{
-    var fileSizeString = FileSizeStringifier.Stringify(@Model.Size);
+    var fileSizeString = FileSizeStringifier.Stringify(Model.Size);
     var picturePropertiesString = ((Model.Width > 0) && (Model.Height > 0)) ? $"{Model.Width}x{Model.Height}" : "";
     var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}, {picturePropertiesString}";
 }

@@ -11,5 +11,5 @@
 
 @if (!Model.IsClosed)
 {
-    <partial name="_ReplyForm" model="new PostAnonymousCreateViewModel() { ThreadId = Model.Id, CategoryAlias = Model.CategoryAlias }"/>
+    <partial name="_ReplyForm" model="new PostAnonymousCreateViewModel { ThreadId = Model.Id, CategoryAlias = Model.CategoryAlias }"/>
 }

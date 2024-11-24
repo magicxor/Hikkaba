@@ -1,9 +1,8 @@
-namespace Hikkaba.Models.Enums
+namespace Hikkaba.Models.Enums;
+
+public enum AdditionalRecordType
 {
-    public enum AdditionalRecordType
-    {
-        None,
-        First,
-        Last,
-    }
+    None,
+    First,
+    Last,
 }

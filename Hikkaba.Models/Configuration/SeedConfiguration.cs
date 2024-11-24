@@ -1,8 +1,7 @@
-﻿namespace Hikkaba.Models.Configuration
+﻿namespace Hikkaba.Models.Configuration;
+
+public class SeedConfiguration
 {
-    public class SeedConfiguration
-    {
-        public string AdministratorEmail { get; set; }
-        public string AdministratorPassword { get; set; }
-    }
+    public string AdministratorEmail { get; set; }
+    public string AdministratorPassword { get; set; }
 }

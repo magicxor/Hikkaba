@@ -1,22 +1,21 @@
-﻿namespace Hikkaba.Services
+﻿namespace Hikkaba.Services;
+
+public interface IThreadLocalUserHashGenerator
 {
-    public interface IThreadLocalUserHashGenerator
+    string Generate(string threadId, string userIpAddress);
+}
+
+public class ThreadLocalUserHashGenerator: IThreadLocalUserHashGenerator
+{
+    private readonly ICryptoService _cryptoService;
+
+    public ThreadLocalUserHashGenerator(ICryptoService cryptoService)
     {
-        string Generate(string threadId, string userIpAddress);
+        _cryptoService = cryptoService;
     }
 
-    public class ThreadLocalUserHashGenerator: IThreadLocalUserHashGenerator
+    public string Generate(string threadId, string userIpAddress)
     {
-        private readonly ICryptoService _cryptoService;
-
-        public ThreadLocalUserHashGenerator(ICryptoService cryptoService)
-        {
-            _cryptoService = cryptoService;
-        }
-
-        public string Generate(string threadId, string userIpAddress)
-        {
-            return _cryptoService.HashHmacHex(threadId, userIpAddress);
-        }
+        return _cryptoService.HashHmacHex(threadId, userIpAddress);
     }
 }

@@ -2,21 +2,20 @@
 using AutoMapper;
 using Hikkaba.Infrastructure.Extensions;
 
-namespace Hikkaba.Infrastructure.Mapping
-{
-    public class DateTimeToUtcConverter : ITypeConverter<DateTime, DateTime>
-    {
-        public DateTime Convert(DateTime source, DateTime destination, ResolutionContext context)
-        {
-            return source.AsUtc();
-        }
-    }
+namespace Hikkaba.Infrastructure.Mapping;
 
-    public class NullableDateTimeToUtcConverter : ITypeConverter<DateTime?, DateTime?>
+public class DateTimeToUtcConverter : ITypeConverter<DateTime, DateTime>
+{
+    public DateTime Convert(DateTime source, DateTime destination, ResolutionContext context)
     {
-        public DateTime? Convert(DateTime? source, DateTime? destination, ResolutionContext context)
-        {
-            return source.AsUtc();
-        }
+        return source.AsUtc();
+    }
+}
+
+public class NullableDateTimeToUtcConverter : ITypeConverter<DateTime?, DateTime?>
+{
+    public DateTime? Convert(DateTime? source, DateTime? destination, ResolutionContext context)
+    {
+        return source.AsUtc();
     }
 }
