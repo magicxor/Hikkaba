@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hikkaba.UnitTests
+namespace Hikkaba.Tests.Unit
 {
     public class MessagePostProcessorTests
     {

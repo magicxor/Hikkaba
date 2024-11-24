@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Hikkaba.IntegrationTests
+namespace Hikkaba.Tests.Integration
 {
     public class PostingTests
     {
