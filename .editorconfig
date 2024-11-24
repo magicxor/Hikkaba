@@ -10,4 +10,320 @@ insert_final_newline = true
 
 [*.cs]
 # CS1998: Async method lacks 'await' operators and will run synchronously
+# Reason: sometimes we need to have async mocks
 dotnet_diagnostic.CS1998.severity = suggestion
+
+# CA1848: For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogDebug(ILogger, string?, params object?[])'
+# Reason: it could be too verbose to use it everywhere, but this is a good reminder
+dotnet_diagnostic.CA1848.severity = suggestion
+
+# CA1716: Rename namespace Constants so that it no longer conflicts with the reserved language keyword 'Shared'.
+# Using a reserved keyword as the name of a namespace makes it harder for consumers in other languages to use the namespace.
+# Reason: we decided to keep it as is for now
+dotnet_diagnostic.CA1716.severity = suggestion
+
+# CA1822: Member 'GetPagedResult' does not access instance data and can be marked as static
+# Reason: it may be more convenient to preserve a method as non-static
+dotnet_diagnostic.CA1822.severity = suggestion
+
+# S2325: Make 'UpdateDeactivated' a static method.
+# Reason: it may be more convenient to preserve a method as non-static
+dotnet_diagnostic.S2325.severity = suggestion
+
+# S3993: Specify AttributeUsage on 'SecurityHeadersAttribute' to improve readability, even though it inherits it from its base type
+dotnet_diagnostic.S3993.severity = suggestion
+
+# SA1600: Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
+
+# SA1601: Partial elements should be documented
+# Reason: doesn't work well with source generators
+dotnet_diagnostic.SA1601.severity = none
+
+# SA1623: The property's documentation summary text should begin with: 'Gets or sets'
+dotnet_diagnostic.SA1623.severity = none
+
+# SA1629: Documentation text should end with a period
+dotnet_diagnostic.SA1629.severity = none
+
+# SA1611: The documentation for parameter 'userContext' is missing
+dotnet_diagnostic.SA1611.severity = none
+
+# SA1602: Enumeration items should be documented
+dotnet_diagnostic.SA1602.severity = none
+
+# SA1615: Element return value should be documented
+dotnet_diagnostic.SA1615.severity = none
+
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1503: Braces should not be omitted
+dotnet_diagnostic.SA1503.severity = none
+
+# SA1516: Elements should be separated by blank line
+dotnet_diagnostic.SA1516.severity = none
+
+# SA1513: Closing brace should be followed by blank line
+dotnet_diagnostic.SA1513.severity = none
+
+# SA1633: The file header is missing or not located at the top of the file.
+dotnet_diagnostic.SA1633.severity = none
+
+# SA1200: Using directive should appear within a namespace declaration
+dotnet_diagnostic.SA1200.severity = none
+
+# SA1000: The keyword 'new' should be followed by a space.
+dotnet_diagnostic.SA1000.severity = none
+
+# SA1015: Closing generic bracket should be followed by a space.
+# Reason: this fails on generic attributes
+dotnet_diagnostic.SA1015.severity = none
+
+# SA1208: Using directive for 'System.Collections.Generic' should appear before directive for 'Microsoft.AspNetCore.Identity'
+dotnet_diagnostic.SA1208.severity = none
+
+# SA1309: Field '_address' should not begin with an underscore
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1201 A field should not follow a property
+dotnet_diagnostic.SA1201.severity = none
+
+# SA1206: The 'required' modifier should appear before 'public'
+dotnet_diagnostic.SA1206.severity = none
+
+# S1135 Complete the task associated to this 'T O D O' comment.
+dotnet_diagnostic.S1135.severity = suggestion
+
+# SA0001: XML comment analysis is disabled due to project configuration
+dotnet_diagnostic.SA0001.severity = none
+
+# S4487: Remove this unread private field '_xxx' or refactor the code to use its value.
+dotnet_diagnostic.S4487.severity = suggestion
+
+# SA1124: Do not use regions
+dotnet_diagnostic.SA1124.severity = none
+
+# SA1210: Using directives should be ordered alphabetically by the namespaces.
+dotnet_diagnostic.SA1210.severity = none
+
+# S101: Rename class 'CRMCompaniesSortingFields' to match pascal case naming rules, consider using 'CrmCompaniesSortingFields'.
+dotnet_diagnostic.S101.severity = suggestion
+
+# SA1313: Parameter 'Id' should begin with lower-case letter
+# Reason: it's invalid for records
+dotnet_diagnostic.SA1313.severity = none
+
+# SA1006: Preprocessor keyword 'region' should not be preceded by a space.
+dotnet_diagnostic.SA1006.severity = none
+
+# RCS1194: Implement exception constructors.
+dotnet_diagnostic.RCS1194.severity = suggestion
+
+# S3925: Update this implementation of 'ISerializable' to conform to the recommended serialization pattern.
+dotnet_diagnostic.S3925.severity = suggestion
+
+# SA1111: Closing parenthesis should be on line of last parameter
+# Reason: sometimes it's more readable to have a line break before closing parenthesis
+dotnet_diagnostic.SA1111.severity = none
+
+# SA1009: Closing parenthesis should not be preceded by a space.
+# Reason: sometimes it's more readable to have a line break before closing parenthesis
+dotnet_diagnostic.SA1009.severity = none
+
+# SA1110: Opening parenthesis or bracket should be on declaration line.
+dotnet_diagnostic.SA1110.severity = error
+
+# S125: Remove this commented out code. (todo: enable this rule)
+dotnet_diagnostic.S125.severity = suggestion
+
+# SA1512: Single-line comments should not be followed by blank line
+# Reason: it may be convenient for debugging
+dotnet_diagnostic.SA1512.severity = suggestion
+
+# SA1515: Single-line comment should be preceded by blank line
+# Reason: it may be convenient for debugging
+dotnet_diagnostic.SA1515.severity = suggestion
+
+# SA1129: Do not use default value type constructor
+dotnet_diagnostic.SA1129.severity = suggestion
+
+# SA1026: The keyword 'new' should not be followed by a space or a blank line.
+dotnet_diagnostic.SA1026.severity = suggestion
+
+# SA1202: 'public' members should come before 'private' members
+dotnet_diagnostic.SA1202.severity = none
+
+# SA1519: Braces should not be omitted from multi-line child statement
+dotnet_diagnostic.SA1519.severity = none
+
+# S6608: Indexing at 0 should be used instead of the "Enumerable" extension method "First"
+dotnet_diagnostic.S6608.severity = suggestion
+
+# SA1203: Constant fields should appear before non-constant fields
+dotnet_diagnostic.SA1203.severity = suggestion
+
+# SA1116: The parameters should begin on the line after the declaration,
+# whenever the parameter span across multiple lines
+dotnet_diagnostic.SA1116.severity = none
+
+# S1450: Remove the field '_consumer' and declare it as a local variable in the relevant methods.
+dotnet_diagnostic.S1450.severity = suggestion
+
+# SA1209: Using alias directives should be placed after all using namespace directives.
+dotnet_diagnostic.SA1209.severity = suggestion
+
+# S3358: Extract this nested ternary operation into an independent statement.
+dotnet_diagnostic.S3358.severity = suggestion
+
+# SA1127: Generic type constraints should be on their own line
+dotnet_diagnostic.SA1127.severity = suggestion
+
+# S1172: Remove this unused method parameter 'tenantId'.
+dotnet_diagnostic.S1172.severity = suggestion
+
+# RCS1163: Unused parameter 'tenantId'.
+dotnet_diagnostic.RCS1163.severity = suggestion
+
+# S1481: Remove the unused local variable 'surveyService'.
+# Reason: it's not convenient during development
+dotnet_diagnostic.S1481.severity = suggestion
+
+# S1144: Remove the unused private method
+# Reason: it's not convenient during development
+dotnet_diagnostic.S1144.severity = suggestion
+
+# RCS1213: Remove unused method declaration.
+# Reason: it's not convenient during development
+dotnet_diagnostic.RCS1213.severity = suggestion
+
+# S2094: Remove this empty class, write its code or make it an "interface".
+# Reason: sometimes we need to inherit an empty class from an abstract class
+dotnet_diagnostic.S2094.severity = suggestion
+
+# S3267: Loops should be simplified with "LINQ" expressions
+# Reason: resulting code is less readable
+dotnet_diagnostic.S3267.severity = none
+
+# SA1123: Region should not be located within a code element.
+dotnet_diagnostic.SA1123.severity = none
+
+# S1133: Do not forget to remove this deprecated code someday.
+dotnet_diagnostic.S1133.severity = suggestion
+
+# S1199: Extract this nested code block into a separate method.
+dotnet_diagnostic.S1199.severity = suggestion
+
+# RCS0027: Place new line after/before binary operator
+dotnet_diagnostic.RCS0027.severity = error
+
+# RCS0028: Place new line after/before '?:' operator
+dotnet_diagnostic.RCS0028.severity = error
+
+# RCS0054: Fix formatting of a call chain
+# Reason: sometimes it fails to format correctly
+dotnet_diagnostic.RCS0054.severity = suggestion
+
+# RCS0059: Place new line after/before null-conditional operator
+dotnet_diagnostic.RCS0059.severity = error
+
+# ROS0003: Analyzer requires config option to be specified.
+dotnet_diagnostic.ROS0003.severity = warning
+
+# RCS1006: Merge 'else' with nested 'if'
+dotnet_diagnostic.RCS1006.severity = error
+
+# RCS1013: Use predefined type
+dotnet_diagnostic.RCS1013.severity = error
+
+# RCS1019: Order modifiers
+dotnet_diagnostic.RCS1019.severity = error
+
+# RCS1113: Use 'string.IsNullOrEmpty' method
+dotnet_diagnostic.RCS1113.severity = error
+
+# RCS1190: Join string expressions
+dotnet_diagnostic.RCS1190.severity = error
+
+# RCS1197: Optimize StringBuilder.Append/AppendLine call
+dotnet_diagnostic.RCS1197.severity = error
+
+# RCS1200: Call 'Enumerable.ThenBy' instead of 'Enumerable.OrderBy'
+dotnet_diagnostic.RCS1200.severity = error
+
+# RCS1222: Merge preprocessor directives
+dotnet_diagnostic.RCS1222.severity = error
+
+# RCS1233: Use short-circuiting operator
+dotnet_diagnostic.RCS1233.severity = error
+
+# RCS1235: Optimize method call
+dotnet_diagnostic.RCS1235.severity = error
+
+# SA1028: Code should not contain trailing whitespace
+# Reason: Visual Studio Code does not respect trim_trailing_whitespace = true
+dotnet_diagnostic.SA1028.severity = none
+
+# RCS1037: Remove trailing white-space.
+# Reason: Visual Studio Code does not respect trim_trailing_whitespace = true
+dotnet_diagnostic.RCS1037.severity = none
+
+# IDE0160: Convert to file-scoped namespace
+csharp_style_namespace_declarations = file_scoped:error
+dotnet_diagnostic.IDE0161.severity = error
+
+# IDE0290: Use primary constructor
+csharp_style_prefer_primary_constructors = false
+dotnet_diagnostic.IDE0290.severity = none
+
+# CA1860: Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance
+dotnet_diagnostic.CA1860.severity = suggestion
+
+# CA1859: Change return type of method 'Create' from 'IPathProvider' to 'PathProvider' for improved performance
+dotnet_diagnostic.CA1859.severity = none
+
+# S2139: Either log this exception and handle it, or rethrow it with some contextual information
+dotnet_diagnostic.S2139.severity = suggestion
+
+# S6672: Update this logger to use its enclosing type.
+dotnet_diagnostic.S6672.severity = suggestion
+
+# SA1010: Opening square brackets should be spaced correctly
+# Reason: it doesn't support collection expressions yet: [a, b, c]
+dotnet_diagnostic.SA1010.severity = none
+
+# SA1118: Parameter should not span multiple lines
+# Reason: it doesn't support collection expressions yet: [a, b, c]
+dotnet_diagnostic.SA1118.severity = none
+
+# SA1204: Static members should appear before non-static members
+dotnet_diagnostic.SA1204.severity = none
+
+# S6960: This controller has multiple responsibilities and could be split into 7 smaller controllers.
+dotnet_diagnostic.S6960.severity = suggestion
+
+# S6964: Value type property used as input in a controller action should be nullable, required or annotated with the JsonRequiredAttribute to avoid under-posting.
+dotnet_diagnostic.S6964.severity = suggestion
+
+# S6602: "Array. Find" static method should be used instead of the "FirstOrDefault" extension method
+dotnet_diagnostic.S6602.severity = suggestion
+
+# S6605: Collection-specific "Exists" method should be used instead of the "Any" extension.
+dotnet_diagnostic.S6605.severity = suggestion
+
+# Function is not convertible to SQL and must not be called in the database context
+# Reason: false positive when using LinqKit
+resharper_entity_framework_unsupported_server_side_function_call_highlighting = none
+
+# Put local function after 'return' or 'continue'
+# Reason: it looks ugly
+resharper_move_local_function_after_jump_statement_highlighting = none
+
+# formatting rules
+indent_size = 4
+roslynator_binary_operator_new_line = before
+roslynator_conditional_operator_new_line = before
+roslynator_null_conditional_operator_new_line = before
+
+[*.{json,env,yml,yaml,xml,xsd,html,cshtml,csproj,dcproj,props,sln,resx}]
+indent_size = 2

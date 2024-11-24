@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
 
 namespace CodeKicker.BBCode.Tests;
 
-public static class BBCodeTestUtil
+public static class BbCodeTestUtil
 {
-    public static SequenceNode CreateRootNode(BBTag[] allowedTags)
+    public static SequenceNode CreateRootNode(BbTag[] allowedTags)
     {
         var node = new SequenceNode();
         AddSubnodes(allowedTags, node);
         return node;
     }
 
-    private static SyntaxTreeNode CreateNode(BBTag[] allowedTags, bool allowText)
+    private static SyntaxTreeNode CreateNode(BbTag[] allowedTags, bool allowText)
     {
         var tag = allowedTags.First();
         var node = new TagNode(tag);
@@ -24,18 +25,18 @@ public static class BBCodeTestUtil
             var selectedIds = new List<string>();
             foreach (var attr in tag.Attributes)
             {
-                if (!selectedIds.Contains(attr.ID))
+                if (!selectedIds.Contains(attr.Id))
                 {
                     var val = "hello";
                     node.AttributeValues[attr] = val;
-                    selectedIds.Add(attr.ID);
+                    selectedIds.Add(attr.Id);
                 }
             }
         }
         return node;
     }
 
-    private static void AddSubnodes(BBTag[] allowedTags, SyntaxTreeNode node)
+    private static void AddSubnodes(BbTag[] allowedTags, SyntaxTreeNode node)
     {
         int count = 3;
         bool lastWasText = false;
@@ -47,21 +48,21 @@ public static class BBCodeTestUtil
         }
     }
 
-    public static BBCodeParser GetParserForTest(ErrorMode errorMode, bool includePlaceholder, BBTagClosingStyle listItemBBTagClosingStyle, bool enableIterationElementBehavior)
+    public static BbCodeParser GetParserForTest(ErrorMode errorMode, bool includePlaceholder, BbTagClosingStyle listItemBbTagClosingStyle, bool enableIterationElementBehavior)
     {
-        return new BBCodeParser(errorMode, null, new[]
+        return new BbCodeParser(errorMode, null, new[]
         {
-            new BBTag("b", "<b>", "</b>"), 
-            new BBTag("i", "<span style=\"font-style:italic;\">", "</span>"), 
-            new BBTag("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
-            new BBTag("code", "<pre class=\"prettyprint\">", "</pre>"), 
-            new BBTag("img", "<img src=\"${content}\" />", "", false, true), 
-            new BBTag("quote", "<blockquote>", "</blockquote>"), 
-            new BBTag("list", "<ul>", "</ul>"), 
-            new BBTag("*", "<li>", "</li>", true, listItemBBTagClosingStyle, null, enableIterationElementBehavior), 
-            new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")), 
-            new BBTag("url2", "<a href=\"${href}\">", "</a>", new BBAttribute("href", "", GetUrl2Href), new BBAttribute("href", "href", GetUrl2Href)), 
-            !includePlaceholder ? null : new BBTag("placeholder", "${name}", "", false, BBTagClosingStyle.LeafElementWithoutContent, null, new BBAttribute("name", "", name => "xxx" + name.AttributeValue + "yyy")), 
+            new BbTag("b", "<b>", "</b>"),
+            new BbTag("i", "<span style=\"font-style:italic;\">", "</span>"),
+            new BbTag("u", "<span style=\"text-decoration:underline;\">", "</span>"),
+            new BbTag("code", "<pre class=\"prettyprint\">", "</pre>"),
+            new BbTag("img", "<img src=\"${content}\" />", "", false, true),
+            new BbTag("quote", "<blockquote>", "</blockquote>"),
+            new BbTag("list", "<ul>", "</ul>"),
+            new BbTag("*", "<li>", "</li>", true, listItemBbTagClosingStyle, null, enableIterationElementBehavior),
+            new BbTag("url", "<a href=\"${href}\">", "</a>", new BbAttribute("href", ""), new BbAttribute("href", "href")),
+            new BbTag("url2", "<a href=\"${href}\">", "</a>", new BbAttribute("href", "", GetUrl2Href), new BbAttribute("href", "href", GetUrl2Href)),
+            !includePlaceholder ? null : new BbTag("placeholder", "${name}", "", false, BbTagClosingStyle.LeafElementWithoutContent, null, new BbAttribute("name", "", name => "xxx" + name.AttributeValue + "yyy")),
         }.Where(x => x != null).ToArray());
     }
 
@@ -69,21 +70,20 @@ public static class BBCodeTestUtil
     {
         if (!string.IsNullOrEmpty(attributeRenderingContext.AttributeValue)) return attributeRenderingContext.AttributeValue;
 
-        var content = attributeRenderingContext.GetAttributeValueByID(BBTag.ContentPlaceholderName);
-        if (!string.IsNullOrEmpty(content) && content.StartsWith("http:")) return content;
+        var content = attributeRenderingContext.GetAttributeValueById(BbTag.ContentPlaceholderName);
+        if (!string.IsNullOrEmpty(content) && content.StartsWith("http:", StringComparison.Ordinal)) return content;
 
         return null;
     }
 
-    public static BBCodeParser GetSimpleParserForTest(ErrorMode errorMode)
+    public static BbCodeParser GetSimpleParserForTest(ErrorMode errorMode)
     {
-        return new BBCodeParser(errorMode, null, new[]
-        {
-            new BBTag("x", "${content}${x}", "${y}", true, true, new BBAttribute("x", "x"), new BBAttribute("y", "y", x => x.AttributeValue)), 
-        });
+        return new BbCodeParser(errorMode, null, [
+            new BbTag("x", "${content}${x}", "${y}", true, true, new BbAttribute("x", "x"), new BbAttribute("y", "y", x => x.AttributeValue)),
+        ]);
     }
 
-    public static string SimpleBBEncodeForTest(string bbCode, ErrorMode errorMode)
+    public static string SimpleBbEncodeForTest(string bbCode, ErrorMode errorMode)
     {
         return GetSimpleParserForTest(errorMode).ToHtml(bbCode);
     }
@@ -92,7 +92,7 @@ public static class BBCodeTestUtil
     {
         try
         {
-            BBCodeParserTest.BBEncodeForTest(bbCode, errorMode);
+            BbCodeParserTest.BbEncodeForTest(bbCode, errorMode);
             return true;
         }
         catch (Exception)
@@ -103,7 +103,7 @@ public static class BBCodeTestUtil
 
     public static SequenceNode GetAnyTree()
     {
-        var parser = GetParserForTest(ErrorMode.Strict, true, BBTagClosingStyle.AutoCloseElement, false);
+        var parser = GetParserForTest(ErrorMode.Strict, true, BbTagClosingStyle.AutoCloseElement, false);
         return CreateRootNode(parser.Tags.ToArray());
     }
 }

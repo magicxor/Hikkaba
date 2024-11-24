@@ -14,17 +14,17 @@ public class MessagePostProcessor : IMessagePostProcessor
 {
     private readonly IUrlHelper _urlHelper;
 
-    private readonly BBCodeParser _bbCodeParser = new BBCodeParser(new[]
+    private readonly BbCodeParser _bbCodeParser = new BbCodeParser(new[]
     {
-        new BBTag("b", "<b>", "</b>"),
-        new BBTag("i", "<i>", "</i>"),
-        new BBTag("u", "<u>", "</u>"),
-        new BBTag("s", "<s>", "</s>"),
-        new BBTag("pre", "<pre>", "</pre>"){StopProcessing = true},
-        new BBTag("sub", "<sub>", "</sub>"),
-        new BBTag("sup", "<sup>", "</sup>"),
-        new BBTag("spoiler", "<span class=\"censored\">", "</span>"),
-        new BBTag("quote", "<span class=\"text-success\">&gt; ", "</span>"),
+        new BbTag("b", "<b>", "</b>"),
+        new BbTag("i", "<i>", "</i>"),
+        new BbTag("u", "<u>", "</u>"),
+        new BbTag("s", "<s>", "</s>"),
+        new BbTag("pre", "<pre>", "</pre>"){StopProcessing = true},
+        new BbTag("sub", "<sub>", "</sub>"),
+        new BbTag("sup", "<sup>", "</sup>"),
+        new BbTag("spoiler", "<span class=\"censored\">", "</span>"),
+        new BbTag("quote", "<span class=\"text-success\">&gt; ", "</span>"),
     });
 
     private static readonly Regex UriRegex = new Regex(@"(((https?|ftp):)(//([^\s/?#]*))?([^\s?#]*)(\?([^\s#]*))?(#([^\s]*))?)", RegexOptions.Compiled);

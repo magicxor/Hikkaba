@@ -1,5 +1,6 @@
 using TPrimaryKey = System.Guid;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AutoMapper;
@@ -168,6 +169,6 @@ public class MvcMapProfile : Profile
         CreateMap<SystemInfoDto, SystemInfoViewModel>()
             .ForMember(dest => dest.OsArchitecture, opts => opts.MapFrom(src => src.OsArchitecture.ToString()))
             .ForMember(dest => dest.ProcessArchitecture, opts => opts.MapFrom(src => src.ProcessArchitecture.ToString()))
-            .ForMember(dest => dest.MemoryUsage, opts => opts.MapFrom(src => ByteSize.FromBytes(src.MemoryUsage).Humanize("#.##")));
+            .ForMember(dest => dest.MemoryUsage, opts => opts.MapFrom(src => ByteSize.FromBytes(src.MemoryUsage).Humanize("#.##", CultureInfo.InvariantCulture)));
     }
 }

@@ -1,0 +1,3 @@
+[*.cs]
+# CA1707: Remove the underscores from member name
+dotnet_diagnostic.CA1707.severity = none

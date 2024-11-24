@@ -35,7 +35,6 @@ using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.CookiePolicy;
-using Hikkaba.Web.Extensions;
 
 namespace Hikkaba.Web;
 
@@ -56,7 +55,6 @@ public class Startup
         services.Configure<CookiePolicyOptions>(options =>
         {
             // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-            options.CheckConsentNeeded = context => true;
             options.MinimumSameSitePolicy = SameSiteMode.Strict;
             options.HttpOnly = HttpOnlyPolicy.Always;
         });
@@ -122,14 +120,9 @@ public class Startup
         services.AddScoped<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
 
         // Captcha
-        if (_webHostEnvironment.EnvironmentName != Defaults.AspNetEnvIntegrationTesting)
-        {
-            services.AddDNTCaptcha(options => options.UseSessionStorageProvider());
-        }
-        else
-        {
-            services.AddDntCaptchaMock();
-        }
+        services.AddDNTCaptcha(options => options
+            .UseSessionStorageProvider()
+            .WithEncryptionKey(hikkabaConfiguration?.AuthCertificatePassword ?? throw new Exception("AuthCertificatePassword is not set")));
 
         // File storage
         services.AddScoped<FileExtensionContentTypeProvider>();

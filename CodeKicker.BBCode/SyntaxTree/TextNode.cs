@@ -14,7 +14,7 @@ public sealed class TextNode : SyntaxTreeNode
     public TextNode(string text, string htmlTemplate)
         : base(null)
     {
-        if (text == null) throw new ArgumentNullException("text");
+        ArgumentNullException.ThrowIfNull(text);
         Text = text;
         HtmlTemplate = htmlTemplate;
     }
@@ -26,7 +26,7 @@ public sealed class TextNode : SyntaxTreeNode
     {
         return HtmlTemplate == null ? HttpUtility.HtmlEncode(Text) : HtmlTemplate.Replace("${content}", HttpUtility.HtmlEncode(Text));
     }
-    public override string ToBBCode()
+    public override string ToBbCode()
     {
         return Text.Replace("\\", "\\\\").Replace("[", "\\[").Replace("]", "\\]");
     }
@@ -37,13 +37,13 @@ public sealed class TextNode : SyntaxTreeNode
 
     public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
     {
-        if (subNodes == null) throw new ArgumentNullException("subNodes");
+        ArgumentNullException.ThrowIfNull(subNodes);
         if (subNodes.Any()) throw new ArgumentException("subNodes cannot contain any nodes for a TextNode");
         return this;
     }
     internal override SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor)
     {
-        if (visitor == null) throw new ArgumentNullException("visitor");
+        ArgumentNullException.ThrowIfNull(visitor);
         return visitor.Visit(this);
     }
 

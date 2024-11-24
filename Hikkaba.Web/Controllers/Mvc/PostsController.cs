@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using DNTCaptcha.Core;
-using DNTCaptcha.Core.Providers;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
@@ -62,9 +61,7 @@ public class PostsController : BaseMvcController
 
     [Route("{categoryAlias}/Threads/{threadId}/Posts/Create")]
     [HttpPost]
-    [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number",
-        CaptchaGeneratorDisplayMode = DisplayMode.ShowDigits,
-        CaptchaGeneratorLanguage = Language.English)]
+    [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number")]
     [ValidateAntiForgeryToken]
     [AllowAnonymous]
     public async Task<IActionResult> Create(PostAnonymousCreateViewModel viewModel)
@@ -78,14 +75,14 @@ public class PostsController : BaseMvcController
                 var postDto = _mapper.Map<PostDto>(viewModel);
                 postDto.UserIpAddress = UserIpAddress.ToString();
                 postDto.UserAgent = UserAgent;
-                    
+
                 var threadPostCreateDto = new ThreadPostCreateDto
                 {
                     Category = categoryDto,
                     Thread = threadDto,
                     Post = postDto,
                 };
-                    
+
                 var createResultDto = await _threadService.CreateThreadPostAsync(viewModel.Attachments, threadPostCreateDto, false);
                 return Redirect(Url.Action("Details", "Threads",
                     new
@@ -124,7 +121,7 @@ public class PostsController : BaseMvcController
                         !post.IsDeleted
                         && !post.Thread.IsDeleted
                         && !post.Thread.Category.IsDeleted
-                        && (post.Message.Contains(query) 
+                        && (post.Message.Contains(query)
                             || (post.Thread.Title.Contains(query) && post == post.Thread.Posts.OrderBy(tp => tp.Created).FirstOrDefault())
                         ),
                     post => post.Created,
@@ -225,7 +222,7 @@ public class PostsController : BaseMvcController
             return View(viewModel);
         }
     }
-        
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetIsDeleted(TPrimaryKey postId, bool isDeleted)

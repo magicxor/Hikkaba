@@ -17,7 +17,7 @@ public class CryptoService: ICryptoService
 
     private string HashEncode(byte[] hash)
     {
-        return BitConverter.ToString(hash).Replace("-", "").ToLower();
+        return Convert.ToHexStringLower(hash);
     }
 
     private byte[] HashHmac(byte[] key, byte[] message)
@@ -31,7 +31,7 @@ public class CryptoService: ICryptoService
         byte[] hash = HashHmac(Encoding.Unicode.GetBytes(key), Encoding.Unicode.GetBytes(message));
         return HashEncode(hash);
     }
-        
+
     private byte[] Hash(Stream inputStream)
     {
         return _algorithm.ComputeHash(inputStream);

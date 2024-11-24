@@ -1,23 +1,27 @@
-﻿using System.Resources;
+﻿using System.Globalization;
+using System.Resources;
 
 namespace CodeKicker.BBCode;
 
 internal static class MessagesHelper
 {
-    private static readonly ResourceManager resMgr;
+    private static readonly ResourceManager ResMgr;
 
     static MessagesHelper()
     {
-        resMgr = new ResourceManager(typeof(Messages));
+        ResMgr = new ResourceManager(typeof(Messages));
     }
 
     public static string GetString(string key)
     {
-        return resMgr.GetString(key);
+        return ResMgr.GetString(key, CultureInfo.InvariantCulture);
     }
     public static string GetString(string key, params string[] parameters)
     {
-        return string.Format(resMgr.GetString(key), parameters);
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            ResMgr.GetString(key, CultureInfo.InvariantCulture) ?? string.Empty,
+            parameters);
     }
 }
 

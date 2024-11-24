@@ -12,21 +12,21 @@ public sealed class SequenceNode : SyntaxTreeNode
     public SequenceNode(SyntaxTreeNodeCollection subNodes)
         : base(subNodes)
     {
-        if (subNodes == null) throw new ArgumentNullException("subNodes");
+        ArgumentNullException.ThrowIfNull(subNodes);
     }
     public SequenceNode(IEnumerable<SyntaxTreeNode> subNodes)
         : base(subNodes)
     {
-        if (subNodes == null) throw new ArgumentNullException("subNodes");
+        ArgumentNullException.ThrowIfNull(subNodes);
     }
 
     public override string ToHtml()
     {
         return string.Concat(SubNodes.Select(s => s.ToHtml()).ToArray());
     }
-    public override string ToBBCode()
+    public override string ToBbCode()
     {
-        return string.Concat(SubNodes.Select(s => s.ToBBCode()).ToArray());
+        return string.Concat(SubNodes.Select(s => s.ToBbCode()).ToArray());
     }
     public override string ToText()
     {
@@ -35,12 +35,12 @@ public sealed class SequenceNode : SyntaxTreeNode
 
     public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
     {
-        if (subNodes == null) throw new ArgumentNullException("subNodes");
+        ArgumentNullException.ThrowIfNull(subNodes);
         return new SequenceNode(subNodes);
     }
     internal override SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor)
     {
-        if (visitor == null) throw new ArgumentNullException("visitor");
+        ArgumentNullException.ThrowIfNull(visitor);
         return visitor.Visit(this);
     }
     protected override bool EqualsCore(SyntaxTreeNode b)

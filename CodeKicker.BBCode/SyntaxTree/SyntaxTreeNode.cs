@@ -20,14 +20,14 @@ public abstract class SyntaxTreeNode : IEquatable<SyntaxTreeNode>
 
     public override string ToString()
     {
-        return ToBBCode();
+        return ToBbCode();
     }
 
     //not null
     public ISyntaxTreeNodeCollection SubNodes { get; private set; }
 
     public abstract string ToHtml();
-    public abstract string ToBBCode();
+    public abstract string ToBbCode();
     public abstract string ToText();
 
     public abstract SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes);

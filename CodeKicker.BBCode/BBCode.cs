@@ -6,9 +6,9 @@ using CodeKicker.BBCode.SyntaxTree;
 
 namespace CodeKicker.BBCode;
 
-public static class BBCode
+public static class BbCode
 {
-    private static readonly BBCodeParser defaultParser = GetParser();
+    private static readonly BbCodeParser DefaultParser = GetParser();
 
     /// <summary>
     /// Transforms the given BBCode into safe HTML with the default configuration from http://codekicker.de
@@ -19,27 +19,27 @@ public static class BBCode
     /// <returns></returns>
     public static string ToHtml(string bbCode)
     {
-        if (bbCode == null) throw new ArgumentNullException("bbCode");
-        return defaultParser.ToHtml(bbCode);
+        ArgumentNullException.ThrowIfNull(bbCode);
+        return DefaultParser.ToHtml(bbCode);
     }
 
-    private static BBCodeParser GetParser()
+    private static BbCodeParser GetParser()
     {
-        return new BBCodeParser(ErrorMode.ErrorFree, null, new[]
+        return new BbCodeParser(ErrorMode.ErrorFree, null, new[]
         {
-            new BBTag("b", "<b>", "</b>"), 
-            new BBTag("i", "<span style=\"font-style:italic;\">", "</span>"), 
-            new BBTag("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
-            new BBTag("code", "<pre class=\"prettyprint\">", "</pre>"), 
-            new BBTag("img", "<img src=\"${content}\" />", "", false, true), 
-            new BBTag("quote", "<blockquote>", "</blockquote>"), 
-            new BBTag("list", "<ul>", "</ul>"), 
-            new BBTag("*", "<li>", "</li>", true, false), 
-            new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")), 
+            new BbTag("b", "<b>", "</b>"),
+            new BbTag("i", "<span style=\"font-style:italic;\">", "</span>"),
+            new BbTag("u", "<span style=\"text-decoration:underline;\">", "</span>"),
+            new BbTag("code", "<pre class=\"prettyprint\">", "</pre>"),
+            new BbTag("img", "<img src=\"${content}\" />", "", false, true),
+            new BbTag("quote", "<blockquote>", "</blockquote>"),
+            new BbTag("list", "<ul>", "</ul>"),
+            new BbTag("*", "<li>", "</li>", true, false),
+            new BbTag("url", "<a href=\"${href}\">", "</a>", new BbAttribute("href", ""), new BbAttribute("href", "href")),
         });
     }
 
-    public static readonly string InvalidBBCodeTextChars = @"[]\";
+    public static readonly string InvalidBbCodeTextChars = @"[]\";
 
     /// <summary>
     /// Encodes an arbitrary string to be valid BBCode. Example: "[b]" => "\[b\]". The resulting string is safe against
@@ -48,7 +48,7 @@ public static class BBCode
     /// </summary>
     public static string EscapeText(string text)
     {
-        if (text == null) throw new ArgumentNullException("text");
+        ArgumentNullException.ThrowIfNull(text);
 
         int escapeCount = 0;
         for (int i = 0; i < text.Length; i++)
@@ -78,15 +78,15 @@ public static class BBCode
     /// </summary>
     public static string UnescapeText(string text)
     {
-        if (text == null) throw new ArgumentNullException("text");
+        ArgumentNullException.ThrowIfNull(text);
 
         return text.Replace("\\[", "[").Replace("\\]", "]").Replace("\\\\", "\\");
     }
 
     public static SyntaxTreeNode ReplaceTextSpans(SyntaxTreeNode node, Func<string, IList<TextSpanReplaceInfo>> getTextSpansToReplace, Func<TagNode, bool> tagFilter)
     {
-        if (node == null) throw new ArgumentNullException("node");
-        if (getTextSpansToReplace == null) throw new ArgumentNullException("getTextSpansToReplace");
+        ArgumentNullException.ThrowIfNull(node);
+        ArgumentNullException.ThrowIfNull(getTextSpansToReplace);
 
         if (node is TextNode)
         {
@@ -137,8 +137,8 @@ public static class BBCode
 
     public static void VisitTextNodes(SyntaxTreeNode node, Action<string> visitText, Func<TagNode, bool> tagFilter)
     {
-        if (node == null) throw new ArgumentNullException("node");
-        if (visitText == null) throw new ArgumentNullException("visitText");
+        ArgumentNullException.ThrowIfNull(node);
+        ArgumentNullException.ThrowIfNull(visitText);
 
         if (node is TextNode)
         {
@@ -174,8 +174,8 @@ public class TextSpanReplaceInfo
 {
     public TextSpanReplaceInfo(int index, int length, SyntaxTreeNode replacement)
     {
-        if (index < 0) throw new ArgumentOutOfRangeException("index");
-        if (length < 0) throw new ArgumentOutOfRangeException("index");
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
 
         Index = index;
         Length = length;

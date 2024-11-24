@@ -76,7 +76,7 @@ public class DeletePersonalDataModel : PageModel
 
         await _signInManager.SignOutAsync();
 
-        _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+        _logger.LogInformation("User with ID '{UserId}' deleted themselves", userId);
 
         return Redirect("~/");
     }

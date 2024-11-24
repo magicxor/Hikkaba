@@ -4,12 +4,12 @@ using Xunit;
 
 namespace CodeKicker.BBCode.Tests;
 
-public partial class SyntaxTreeVisitorTest
+public class SyntaxTreeVisitorTest
 {
     [Fact]
     public void DefaultVisitorModifiesNothing()
     {
-        var tree = BBCodeTestUtil.GetAnyTree();
+        var tree = BbCodeTestUtil.GetAnyTree();
         var tree2 = new SyntaxTreeVisitor().Visit(tree);
         Assert.True(ReferenceEquals(tree, tree2));
     }
@@ -17,7 +17,7 @@ public partial class SyntaxTreeVisitorTest
     [Fact]
     public void TextModifiedTreesAreNotEqual()
     {
-        var tree = BBCodeTestUtil.GetAnyTree();
+        var tree = BbCodeTestUtil.GetAnyTree();
         var tree2 = new TextModificationSyntaxTreeVisitor().Visit(tree);
         Assert.True(tree != tree2);
     }
@@ -31,12 +31,12 @@ public partial class SyntaxTreeVisitorTest
         protected override SyntaxTreeNode Visit(SequenceNode node)
         {
             var baseResult = base.Visit(node);
-            return baseResult.SetSubNodes(baseResult.SubNodes.Concat(new[] { new TextNode("y") }));
+            return baseResult.SetSubNodes(baseResult.SubNodes.Concat([new TextNode("y")]));
         }
         protected override SyntaxTreeNode Visit(TagNode node)
         {
             var baseResult = base.Visit(node);
-            return baseResult.SetSubNodes(baseResult.SubNodes.Concat(new[] { new TextNode("z") }));
+            return baseResult.SetSubNodes(baseResult.SubNodes.Concat([new TextNode("z")]));
         }
     }
 }

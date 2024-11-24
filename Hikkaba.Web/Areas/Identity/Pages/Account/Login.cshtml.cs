@@ -79,7 +79,7 @@ public class LoginModel : PageModel
             var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                _logger.LogInformation("User logged in.");
+                _logger.LogInformation("User logged in");
                 return LocalRedirect(returnUrl);
             }
             if (result.RequiresTwoFactor)
@@ -88,7 +88,7 @@ public class LoginModel : PageModel
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning("User account locked out.");
+                _logger.LogWarning("User account locked out");
                 return RedirectToPage("./Lockout");
             }
             else

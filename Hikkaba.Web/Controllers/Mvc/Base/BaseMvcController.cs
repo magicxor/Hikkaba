@@ -18,9 +18,10 @@ public class BaseMvcController: Controller
 
     public TPrimaryKey GetCurrentUserId()
     {
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity?.IsAuthenticated == true
+            && UserManager.GetUserId(User) is { } uid)
         {
-            return TPrimaryKey.Parse(UserManager.GetUserId(User));
+            return TPrimaryKey.Parse(uid);
         }
         else
         {
@@ -28,7 +29,7 @@ public class BaseMvcController: Controller
         }
     }
 
-    protected string UserAgent => Request.Headers.ContainsKey("User-Agent") ? Request.Headers["User-Agent"].ToString() : "";
+    protected string UserAgent => Request.Headers.TryGetValue("User-Agent", out Microsoft.Extensions.Primitives.StringValues value) ? value.ToString() : "";
 
     protected IPAddress UserIpAddress => Request.HttpContext.Connection.RemoteIpAddress;
 }

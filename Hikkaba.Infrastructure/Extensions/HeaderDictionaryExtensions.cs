@@ -8,10 +8,7 @@ public static class HeaderDictionaryExtensions
 {
     public static void AddOrReplaceHeaderKey(this IHeaderDictionary headerDictionary, string key, string value)
     {
-        if (headerDictionary.ContainsKey(key))
-        {
-            headerDictionary.Remove(key);
-        }
+        headerDictionary.Remove(key);
         headerDictionary.Add(new KeyValuePair<string, StringValues>(key, value));
     }
 }

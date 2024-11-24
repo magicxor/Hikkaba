@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using DNTCaptcha.Core;
-using DNTCaptcha.Core.Providers;
 using Hikkaba.Common.Constants;
 using Hikkaba.Common.Extensions;
 using Hikkaba.Models.Dto;
@@ -69,9 +68,7 @@ public class ThreadsController : BaseMvcController
 
     [Route("{categoryAlias}/Threads/Create")]
     [HttpPost]
-    [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number",
-        CaptchaGeneratorDisplayMode = DisplayMode.ShowDigits,
-        CaptchaGeneratorLanguage = Language.English)]
+    [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number")]
     [ValidateAntiForgeryToken]
     [AllowAnonymous]
     public async Task<IActionResult> Create(ThreadAnonymousCreateViewModel viewModel)
@@ -81,30 +78,30 @@ public class ThreadsController : BaseMvcController
             try
             {
                 var categoryDto = await _categoryService.GetAsync(viewModel.CategoryAlias);
-                    
+
                 var threadDto = _mapper.Map<ThreadDto>(viewModel);
                 threadDto.BumpLimit = categoryDto.DefaultBumpLimit;
                 threadDto.ShowThreadLocalUserHash = categoryDto.DefaultShowThreadLocalUserHash;
                 threadDto.CategoryId = categoryDto.Id;
-                    
+
                 var postDto = _mapper.Map<PostDto>(viewModel);
                 postDto.UserIpAddress = UserIpAddress.ToString();
                 postDto.UserAgent = UserAgent;
-                    
+
                 var threadCreateDto = new ThreadPostCreateDto
                 {
                     Category = categoryDto,
                     Thread = threadDto,
                     Post = postDto,
                 };
-                    
+
                 var createResultDto = await _threadService.CreateThreadPostAsync(viewModel.Attachments, threadCreateDto, true);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = viewModel.CategoryAlias, threadId = createResultDto.ThreadId });
             }
             catch (Exception ex)
             {
                 _logger.LogError(EventIdentifiers.ThreadCreateError.ToEventId(), ex, $"Can't create new thread due to exception");
-                    
+
                 ViewBag.ErrorMessage = "Can't create new thread";
                 return View(viewModel);
             }
@@ -152,7 +149,7 @@ public class ThreadsController : BaseMvcController
             throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
-        
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetIsPinned(TPrimaryKey threadId, bool isPinned)

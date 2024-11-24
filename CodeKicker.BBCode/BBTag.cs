@@ -2,16 +2,16 @@ using System;
 
 namespace CodeKicker.BBCode;
 
-public class BBTag
+public class BbTag
 {
     public const string ContentPlaceholderName = "content";
 
-    public BBTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, BBTagClosingStyle tagClosingClosingStyle, Func<string, string> contentTransformer, bool enableIterationElementBehavior, params BBAttribute[] attributes)
+    public BbTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, BbTagClosingStyle tagClosingClosingStyle, Func<string, string> contentTransformer, bool enableIterationElementBehavior, params BbAttribute[] attributes)
     {
-        if (name == null) throw new ArgumentNullException("name");
-        if (openTagTemplate == null) throw new ArgumentNullException("openTagTemplate");
-        if (closeTagTemplate == null) throw new ArgumentNullException("closeTagTemplate");
-        if (!Enum.IsDefined(typeof(BBTagClosingStyle), tagClosingClosingStyle)) throw new ArgumentException("tagClosingClosingStyle");
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(openTagTemplate);
+        ArgumentNullException.ThrowIfNull(closeTagTemplate);
+        if (!Enum.IsDefined(tagClosingClosingStyle)) throw new ArgumentOutOfRangeException(nameof(tagClosingClosingStyle));
 
         Name = name;
         OpenTagTemplate = openTagTemplate;
@@ -20,25 +20,25 @@ public class BBTag
         TagClosingStyle = tagClosingClosingStyle;
         ContentTransformer = contentTransformer;
         EnableIterationElementBehavior = enableIterationElementBehavior;
-        Attributes = attributes ?? new BBAttribute[0];
+        Attributes = attributes ?? [];
     }
-        
-    public BBTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, BBTagClosingStyle tagClosingClosingStyle, Func<string, string> contentTransformer, params BBAttribute[] attributes)
+
+    public BbTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, BbTagClosingStyle tagClosingClosingStyle, Func<string, string> contentTransformer, params BbAttribute[] attributes)
         : this(name, openTagTemplate, closeTagTemplate, autoRenderContent, tagClosingClosingStyle, contentTransformer, false, attributes)
     {
     }
 
-    public BBTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, bool requireClosingTag, Func<string, string> contentTransformer, params BBAttribute[] attributes)
-        : this(name, openTagTemplate, closeTagTemplate, autoRenderContent, requireClosingTag ? BBTagClosingStyle.RequiresClosingTag : BBTagClosingStyle.AutoCloseElement, contentTransformer, attributes)
+    public BbTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, bool requireClosingTag, Func<string, string> contentTransformer, params BbAttribute[] attributes)
+        : this(name, openTagTemplate, closeTagTemplate, autoRenderContent, requireClosingTag ? BbTagClosingStyle.RequiresClosingTag : BbTagClosingStyle.AutoCloseElement, contentTransformer, attributes)
     {
     }
 
-    public BBTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, bool requireClosingTag, params BBAttribute[] attributes)
+    public BbTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, bool requireClosingTag, params BbAttribute[] attributes)
         : this(name, openTagTemplate, closeTagTemplate, autoRenderContent, requireClosingTag, null, attributes)
     {
     }
 
-    public BBTag(string name, string openTagTemplate, string closeTagTemplate, params BBAttribute[] attributes)
+    public BbTag(string name, string openTagTemplate, string closeTagTemplate, params BbAttribute[] attributes)
         : this(name, openTagTemplate, closeTagTemplate, true, true, attributes)
     {
     }
@@ -51,19 +51,19 @@ public class BBTag
     public bool EnableIterationElementBehavior { get; private set; }
     public bool RequiresClosingTag
     {
-        get { return TagClosingStyle == BBTagClosingStyle.RequiresClosingTag; }
+        get { return TagClosingStyle == BbTagClosingStyle.RequiresClosingTag; }
     }
-    public BBTagClosingStyle TagClosingStyle { get; private set; }
+    public BbTagClosingStyle TagClosingStyle { get; private set; }
     public Func<string, string> ContentTransformer { get; private set; } //allows for custom modification of the tag content before rendering takes place
-    public BBAttribute[] Attributes { get; private set; }
+    public BbAttribute[] Attributes { get; private set; }
 
-    public BBAttribute FindAttribute(string name)
+    public BbAttribute FindAttribute(string name)
     {
         return Array.Find(Attributes, a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 }
 
-public enum BBTagClosingStyle
+public enum BbTagClosingStyle
 {
     RequiresClosingTag = 0,
     AutoCloseElement = 1,

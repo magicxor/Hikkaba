@@ -18,17 +18,17 @@ public class SyntaxTreeNodeCollection : Collection<SyntaxTreeNode>, ISyntaxTreeN
     public SyntaxTreeNodeCollection(IEnumerable<SyntaxTreeNode> list)
         : base(list.ToArray())
     {
-        if (list == null) throw new ArgumentNullException(nameof(list));
+        ArgumentNullException.ThrowIfNull(list);
     }
 
     protected override void SetItem(int index, SyntaxTreeNode item)
     {
-        if (item == null) throw new ArgumentNullException("item");
+        ArgumentNullException.ThrowIfNull(item);
         base.SetItem(index, item);
     }
     protected override void InsertItem(int index, SyntaxTreeNode item)
     {
-        if (item == null) throw new ArgumentNullException("item");
+        ArgumentNullException.ThrowIfNull(item);
         base.InsertItem(index, item);
     }
 }
@@ -38,16 +38,10 @@ public class ImmutableSyntaxTreeNodeCollection : ReadOnlyCollection<SyntaxTreeNo
     public ImmutableSyntaxTreeNodeCollection(IEnumerable<SyntaxTreeNode> list)
         : base(list.ToArray())
     {
-        if (list == null) throw new ArgumentNullException("list");
+        ArgumentNullException.ThrowIfNull(list);
     }
     internal ImmutableSyntaxTreeNodeCollection(IList<SyntaxTreeNode> list, bool isFresh)
         : base(isFresh ? list : list.ToArray())
     {
-    }
-
-    private static readonly ImmutableSyntaxTreeNodeCollection empty = new ImmutableSyntaxTreeNodeCollection(new SyntaxTreeNode[0], true);
-    public static ImmutableSyntaxTreeNodeCollection Empty
-    {
-        get { return empty; }
     }
 }

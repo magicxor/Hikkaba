@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace CodeKicker.BBCode;
 
@@ -11,35 +12,35 @@ namespace CodeKicker.BBCode;
 /// and how they are translated to HTML.
 /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
 /// </summary>
-public class BBCodeParser
+public class BbCodeParser
 {
-    public BBCodeParser(IList<BBTag> tags)
+    public BbCodeParser(IList<BbTag> tags)
         : this(ErrorMode.ErrorFree, null, tags)
     {
     }
 
-    public BBCodeParser(ErrorMode errorMode, string textNodeHtmlTemplate, IList<BBTag> tags)
+    public BbCodeParser(ErrorMode errorMode, string textNodeHtmlTemplate, IList<BbTag> tags)
     {
-        if (!Enum.IsDefined(typeof(ErrorMode), errorMode)) throw new ArgumentOutOfRangeException("errorMode");
-        if (tags == null) throw new ArgumentNullException("tags");
+        if (!Enum.IsDefined(errorMode)) throw new ArgumentOutOfRangeException(nameof(errorMode));
+        ArgumentNullException.ThrowIfNull(tags);
 
         ErrorMode = errorMode;
         TextNodeHtmlTemplate = textNodeHtmlTemplate;
         Tags = tags;
     }
 
-    public IList<BBTag> Tags { get; private set; }
+    public IList<BbTag> Tags { get; private set; }
     public string TextNodeHtmlTemplate { get; private set; }
     public ErrorMode ErrorMode { get; private set; }
 
     public virtual string ToHtml(string bbCode)
     {
-        if (bbCode == null) throw new ArgumentNullException("bbCode");
+        ArgumentNullException.ThrowIfNull(bbCode);
         return ParseSyntaxTree(bbCode).ToHtml();
     }
     public virtual SequenceNode ParseSyntaxTree(string bbCode)
     {
-        if (bbCode == null) throw new ArgumentNullException("bbCode");
+        ArgumentNullException.ThrowIfNull(bbCode);
 
         Stack<SyntaxTreeNode> stack = new Stack<SyntaxTreeNode>();
         var rootNode = new SequenceNode();
@@ -58,7 +59,7 @@ public class BBCodeParser
                 continue;
 
             if (ErrorMode != ErrorMode.ErrorFree)
-                throw new BBCodeParsingException(""); //there is no possible match at the current position
+                throw new BbCodeParsingException(""); //there is no possible match at the current position
 
             AppendText(bbCode[end].ToString(), stack); //if the error free mode is enabled force interpretation as text if no other match could be made
             end++;
@@ -69,13 +70,13 @@ public class BBCodeParser
         while (stack.Count > 1) //close all tags that are still open and can be closed implicitly
         {
             var node = (TagNode)stack.Pop();
-            if (node.Tag.RequiresClosingTag && ErrorMode == ErrorMode.Strict) throw new BBCodeParsingException(MessagesHelper.GetString("TagNotClosed", node.Tag.Name));
+            if (node.Tag.RequiresClosingTag && ErrorMode == ErrorMode.Strict) throw new BbCodeParsingException(MessagesHelper.GetString("TagNotClosed", node.Tag.Name));
         }
 
         if (stack.Count != 1)
         {
             Debug.Assert(ErrorMode != ErrorMode.ErrorFree);
-            throw new BBCodeParsingException(""); //only the root node may be left
+            throw new BbCodeParsingException(""); //only the root node may be left
         }
 
         return rootNode;
@@ -169,7 +170,7 @@ public class BBCodeParser
             }
 
             stack.Peek().SubNodes.Add(tag);
-            if (tag.Tag.TagClosingStyle != BBTagClosingStyle.LeafElementWithoutContent)
+            if (tag.Tag.TagClosingStyle != BbTagClosingStyle.LeafElementWithoutContent)
                 stack.Push(tag); //leaf elements have no content - they are closed immediately
             pos = end;
             return true;
@@ -269,7 +270,7 @@ public class BBCodeParser
         if (!ParseChar(input, ref end, ']'))
         {
             if (ErrorMode == ErrorMode.ErrorFree) return null;
-            else throw new BBCodeParsingException("");
+            else throw new BbCodeParsingException("");
         }
 
         pos = end;
@@ -287,7 +288,7 @@ public class BBCodeParser
             if (input[end] == ']' && !escapeFound)
             {
                 if (ErrorMode == ErrorMode.Strict)
-                    throw new BBCodeParsingException(MessagesHelper.GetString("NonescapedChar"));
+                    throw new BbCodeParsingException(MessagesHelper.GetString("NonescapedChar"));
             }
 
             if (input[end] == '\\' && !escapeFound)
@@ -300,7 +301,7 @@ public class BBCodeParser
                 if (!(input[end] == '[' || input[end] == ']' || input[end] == '\\'))
                 {
                     if (ErrorMode == ErrorMode.Strict)
-                        throw new BBCodeParsingException(MessagesHelper.GetString("EscapeChar"));
+                        throw new BbCodeParsingException(MessagesHelper.GetString("EscapeChar"));
                 }
                 escapeFound = false;
             }
@@ -311,7 +312,7 @@ public class BBCodeParser
         if (escapeFound)
         {
             if (ErrorMode == ErrorMode.Strict)
-                throw new BBCodeParsingException("");
+                throw new BbCodeParsingException("");
         }
 
         var result = input.Substring(pos, end - pos);
@@ -353,7 +354,7 @@ public class BBCodeParser
     private static string ParseName(string input, ref int pos)
     {
         int end = pos;
-        for (; end < input.Length && (char.ToLower(input[end]) >= 'a' && char.ToLower(input[end]) <= 'z' || (input[end]) >= '0' && (input[end]) <= '9' || input[end] == '*'); end++) ;
+        for (; end < input.Length && (char.ToLower(input[end], CultureInfo.InvariantCulture) >= 'a' && char.ToLower(input[end], CultureInfo.InvariantCulture) <= 'z' || (input[end]) >= '0' && (input[end]) <= '9' || input[end] == '*'); end++) ;
         if (end - pos == 0) return null;
 
         var result = input.Substring(pos, end - pos);
@@ -398,7 +399,7 @@ public class BBCodeParser
     private bool ErrorOrReturn(string msgKey, params string[] parameters)
     {
         if (ErrorMode == ErrorMode.ErrorFree) return true;
-        else throw new BBCodeParsingException(string.IsNullOrEmpty(msgKey) ? "" : MessagesHelper.GetString(msgKey, parameters));
+        else throw new BbCodeParsingException(string.IsNullOrEmpty(msgKey) ? "" : MessagesHelper.GetString(msgKey, parameters));
     }
 }
 

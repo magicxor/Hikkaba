@@ -1,18 +1,17 @@
 using NUnit.Framework;
 
-namespace Hikkaba.Tests.Integration
-{
-    public class PostingTests
-    {
-        [SetUp]
-        public void Setup()
-        {
-        }
+namespace Hikkaba.Tests.Integration;
 
-        [Test]
-        public void Test1()
-        {
-            Assert.Pass();
-        }
+public class PostingTests
+{
+    [SetUp]
+    public void Setup()
+    {
+    }
+
+    [Test]
+    public void Test1()
+    {
+        Assert.Pass();
     }
 }

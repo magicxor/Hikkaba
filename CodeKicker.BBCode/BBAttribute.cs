@@ -1,30 +1,32 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeKicker.BBCode;
 
-public class BBAttribute
+[SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
+public class BbAttribute
 {
-    public BBAttribute(string id, string name)
+    public BbAttribute(string id, string name)
         : this(id, name, null, HtmlEncodingMode.HtmlAttributeEncode)
     {
     }
-    public BBAttribute(string id, string name, Func<IAttributeRenderingContext, string> contentTransformer)
+    public BbAttribute(string id, string name, Func<IAttributeRenderingContext, string> contentTransformer)
         : this(id, name, contentTransformer, HtmlEncodingMode.HtmlAttributeEncode)
     {
     }
-    public BBAttribute(string id, string name, Func<IAttributeRenderingContext, string> contentTransformer, HtmlEncodingMode htmlEncodingMode)
+    public BbAttribute(string id, string name, Func<IAttributeRenderingContext, string> contentTransformer, HtmlEncodingMode htmlEncodingMode)
     {
-        if (id == null) throw new ArgumentNullException("id");
-        if (name == null) throw new ArgumentNullException("name");
-        if (!Enum.IsDefined(typeof(HtmlEncodingMode), htmlEncodingMode)) throw new ArgumentException("htmlEncodingMode");
+        ArgumentNullException.ThrowIfNull(id);
+        ArgumentNullException.ThrowIfNull(name);
+        if (!Enum.IsDefined(htmlEncodingMode)) throw new ArgumentOutOfRangeException(nameof(htmlEncodingMode));
 
-        ID = id;
+        Id = id;
         Name = name;
         ContentTransformer = contentTransformer;
         HtmlEncodingMode = htmlEncodingMode;
     }
 
-    public string ID { get; private set; } //ID is used to reference the attribute value
+    public string Id { get; private set; } //ID is used to reference the attribute value
     public string Name { get; private set; } //Name is used during parsing
     public Func<IAttributeRenderingContext, string> ContentTransformer { get; private set; } //allows for custom modification of the attribute value before rendering takes place
     public HtmlEncodingMode HtmlEncodingMode { get; set; }
@@ -36,7 +38,7 @@ public class BBAttribute
 }
 public interface IAttributeRenderingContext
 {
-    BBAttribute Attribute { get; }
+    BbAttribute Attribute { get; }
     string AttributeValue { get; }
-    string GetAttributeValueByID(string id);
+    string GetAttributeValueById(string id);
 }

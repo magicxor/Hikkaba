@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
@@ -93,7 +94,7 @@ public class EnableAuthenticatorModel : PageModel
 
         await _userManager.SetTwoFactorEnabledAsync(user, true);
         var userId = await _userManager.GetUserIdAsync(user);
-        _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
+        _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app", userId);
 
         StatusMessage = "Your authenticator app has been verified.";
 
@@ -131,12 +132,12 @@ public class EnableAuthenticatorModel : PageModel
         int currentPosition = 0;
         while (currentPosition + 4 < unformattedKey.Length)
         {
-            result.Append(unformattedKey.Substring(currentPosition, 4)).Append(" ");
+            result.Append(unformattedKey.AsSpan(currentPosition, 4)).Append(' ');
             currentPosition += 4;
         }
         if (currentPosition < unformattedKey.Length)
         {
-            result.Append(unformattedKey.Substring(currentPosition));
+            result.Append(unformattedKey.AsSpan(currentPosition));
         }
 
         return result.ToString().ToLowerInvariant();

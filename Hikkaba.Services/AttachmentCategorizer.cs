@@ -24,7 +24,7 @@ public class AttachmentCategorizer : IAttachmentCategorizer
 
     public bool IsPictureExtensionSupported(string extension)
     {
-        return _supportedPictureExtensions.Any(ext => ext.Equals(extension));
+        return _supportedPictureExtensions.Any(ext => ext.Equals(extension, System.StringComparison.OrdinalIgnoreCase));
     }
 
     public FileAttachmentDto CreateAttachmentDto(string fileName)

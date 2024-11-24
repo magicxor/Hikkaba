@@ -3,12 +3,12 @@ using System;
 namespace CodeKicker.BBCode;
 
 [Serializable]
-public class BBCodeParsingException : Exception
+public class BbCodeParsingException : Exception
 {
-    public BBCodeParsingException()
+    public BbCodeParsingException()
     {
     }
-    public BBCodeParsingException(string message)
+    public BbCodeParsingException(string message)
         : base(message)
     {
     }

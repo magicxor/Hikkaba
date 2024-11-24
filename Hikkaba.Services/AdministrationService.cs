@@ -31,6 +31,12 @@ public class AdministrationService : IAdministrationService
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IServiceScopeFactory _scopeFactory;
+    private static readonly string[] SupportedDbProviders =
+    [
+        "Microsoft.EntityFrameworkCore.SqlServer",
+        "EntityFrameworkCore.SqlServerCompact35",
+        "EntityFrameworkCore.SqlServerCompact40",
+    ];
 
     public AdministrationService(
         ILogger<AdministrationService> logger,
@@ -77,13 +83,7 @@ public class AdministrationService : IAdministrationService
 
     private async Task WipeDatabase()
     {
-        if (new[]
-            {
-                "Microsoft.EntityFrameworkCore.SqlServer",
-                "EntityFrameworkCore.SqlServerCompact35",
-                "EntityFrameworkCore.SqlServerCompact40",
-            }
-            .Contains(_context.Database.ProviderName))
+        if (SupportedDbProviders.Contains(_context.Database.ProviderName))
         {
             await _context.Database.ExecuteSqlRawAsync(
                 @"
@@ -133,16 +133,15 @@ WHILE EXISTS ( SELECT 1
     private async Task RunSeedInNewScopeAsync()
     {
         // new scope to reset EF cache
-        using(var scope = _scopeFactory.CreateScope())
-        {
-            var applicationDbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
-            var userMgr = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
-            var roleMgr = scope.ServiceProvider.GetService<RoleManager<ApplicationRole>>();
-            var seedSettings = scope.ServiceProvider.GetService<IOptions<SeedConfiguration>>();
+        using var scope = _scopeFactory.CreateScope();
 
-            await _context.Database.MigrateAsync();
-            await DbSeeder.SeedAsync(applicationDbContext, userMgr, roleMgr, seedSettings);
-        }
+        var applicationDbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+        var userMgr = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+        var roleMgr = scope.ServiceProvider.GetService<RoleManager<ApplicationRole>>();
+        var seedSettings = scope.ServiceProvider.GetService<IOptions<SeedConfiguration>>();
+
+        await _context.Database.MigrateAsync();
+        await DbSeeder.SeedAsync(applicationDbContext, userMgr, roleMgr, seedSettings);
     }
 
     public async Task DeleteAllContentAsync()

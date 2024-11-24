@@ -6,16 +6,16 @@ namespace Hikkaba.Data.Context;
 
 public class DateTimeOfKindValueConverterFactory
 {
-    private static readonly DateTimeKind[] _dateTimeKinds = (DateTimeKind[])Enum.GetValues(typeof(DateTimeKind));
+    private static readonly DateTimeKind[] DateTimeKinds = Enum.GetValues<DateTimeKind>();
     private readonly IReadOnlyDictionary<DateTimeKind, ValueConverter<DateTime, DateTime>> _dateTimeValueConverters;
     private readonly IReadOnlyDictionary<DateTimeKind, ValueConverter<DateTime?, DateTime?>> _nullableDateTimeValueConverters;
 
     public DateTimeOfKindValueConverterFactory()
     {
-        var dateTimeValueConverters = new Dictionary<DateTimeKind, ValueConverter<DateTime, DateTime>>(_dateTimeKinds.Length);
-        var nullableDateTimeValueConverters = new Dictionary<DateTimeKind, ValueConverter<DateTime?, DateTime?>>(_dateTimeKinds.Length);
+        var dateTimeValueConverters = new Dictionary<DateTimeKind, ValueConverter<DateTime, DateTime>>(DateTimeKinds.Length);
+        var nullableDateTimeValueConverters = new Dictionary<DateTimeKind, ValueConverter<DateTime?, DateTime?>>(DateTimeKinds.Length);
 
-        foreach (var dateTimeKind in _dateTimeKinds)
+        foreach (var dateTimeKind in DateTimeKinds)
         {
             dateTimeValueConverters.Add(dateTimeKind, new ValueConverter<DateTime, DateTime>(v => v, v => DateTime.SpecifyKind(v, dateTimeKind)));
             nullableDateTimeValueConverters.Add(dateTimeKind, new ValueConverter<DateTime?, DateTime?>(v => v, v => v.HasValue ? DateTime.SpecifyKind(v.Value, dateTimeKind) : v));
