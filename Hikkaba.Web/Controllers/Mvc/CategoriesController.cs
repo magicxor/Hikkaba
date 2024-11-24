@@ -1,4 +1,3 @@
-using TPrimaryKey = System.Guid;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -37,12 +36,12 @@ public class CategoriesController : BaseMvcController
     private readonly IApplicationUserService _applicationUserService;
 
     public CategoriesController(
-        UserManager<ApplicationUser> userManager, 
+        UserManager<ApplicationUser> userManager,
         ILogger<CategoriesController> logger,
         IMapper mapper,
         IBoardService boardService,
-        ICategoryService categoryService, 
-        IThreadService threadService, 
+        ICategoryService categoryService,
+        IThreadService threadService,
         IPostService postService,
         ICategoryToModeratorService categoryToModeratorService,
         IApplicationUserService applicationUserService) : base(userManager)
@@ -56,7 +55,7 @@ public class CategoriesController : BaseMvcController
         _categoryToModeratorService = categoryToModeratorService;
         _applicationUserService = applicationUserService;
     }
-        
+
     [AllowAnonymous]
     [Route("{categoryAlias}")]
     public async Task<IActionResult> Details(string categoryAlias, int page = 1, int size = 10)
@@ -65,10 +64,10 @@ public class CategoriesController : BaseMvcController
         var categoryDto = await _categoryService.GetAsync(categoryAlias);
         var isCurrentUserCategoryModerator = await _categoryToModeratorService
             .IsUserCategoryModeratorAsync(categoryDto.Id, User);
-        var threadDtoList = await _threadService.PagedListAsync(thread => 
-                (isCurrentUserCategoryModerator || !thread.IsDeleted) 
-                && (isCurrentUserCategoryModerator || thread.Posts.Any(p => !p.IsDeleted)) 
-                && (thread.Category.Id == categoryDto.Id), 
+        var threadDtoList = await _threadService.PagedListAsync(thread =>
+                (isCurrentUserCategoryModerator || !thread.IsDeleted)
+                && (isCurrentUserCategoryModerator || thread.Posts.Any(p => !p.IsDeleted))
+                && (thread.Category.Id == categoryDto.Id),
             pageDto);
 
         if ((categoryDto.IsDeleted) && (!isCurrentUserCategoryModerator))
@@ -111,7 +110,7 @@ public class CategoriesController : BaseMvcController
             threadDetailsViewModel.CategoryName = categoryDto.Name;
             threadDetailsViewModel.PostCount = postCount;
         }
-            
+
         var categoryViewModel = _mapper.Map<CategoryDetailsViewModel>(categoryDto);
         var categoryDetailsViewModel = new CategoryThreadsViewModel
         {
@@ -125,7 +124,7 @@ public class CategoriesController : BaseMvcController
         };
         return View(categoryDetailsViewModel);
     }
-        
+
     [Route("Categories/Create")]
     public IActionResult Create()
     {
@@ -178,7 +177,7 @@ public class CategoriesController : BaseMvcController
             return View(viewModel);
         }
     }
-        
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetIsDeleted(TPrimaryKey id, bool isDeleted)
@@ -196,12 +195,12 @@ public class CategoriesController : BaseMvcController
             throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
-        
+
     [Route("Categories/{id}/AddModerator")]
     public async Task<IActionResult> AddModerator(TPrimaryKey id)
     {
         var categoryDto = await _categoryService.GetAsync(id);
-        var usersDto = await _applicationUserService.ListAsync(user => !user.IsDeleted 
+        var usersDto = await _applicationUserService.ListAsync(user => !user.IsDeleted
                                                                        && (user.ModerationCategories.All(c => c.CategoryId != id) || !user.ModerationCategories.Any()),
             user => user.NormalizedUserName);
         var categoryDetailsViewModel = _mapper.Map<CategoryDetailsViewModel>(categoryDto);
@@ -213,7 +212,7 @@ public class CategoriesController : BaseMvcController
         };
         return View(viewModel);
     }
-        
+
     [Route("Categories/{id}/AddModerator")]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -222,7 +221,7 @@ public class CategoriesController : BaseMvcController
         await _categoryToModeratorService.AddAsync(id, moderatorId);
         return RedirectToAction("Index", "Administration");
     }
-        
+
     [Route("Categories/{id}/RemoveModerator")]
     public async Task<IActionResult> RemoveModerator(TPrimaryKey id)
     {
@@ -238,7 +237,7 @@ public class CategoriesController : BaseMvcController
         };
         return View(viewModel);
     }
-        
+
     [Route("Categories/{id}/RemoveModerator")]
     [HttpPost]
     [ValidateAntiForgeryToken]

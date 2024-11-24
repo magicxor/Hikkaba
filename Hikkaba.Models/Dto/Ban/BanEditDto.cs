@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System;
+﻿using System;
 using Hikkaba.Models.Dto.Base.Current;
 
 namespace Hikkaba.Models.Dto;

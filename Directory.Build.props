@@ -22,6 +22,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="System.Guid" Alias="TPrimaryKey " />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)BannedSymbols.SolutionWide.txt" />
   </ItemGroup>
 

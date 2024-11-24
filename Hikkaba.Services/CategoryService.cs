@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using TPrimaryKey = System.Guid;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Data.Context;
@@ -21,21 +20,21 @@ namespace Hikkaba.Services;
 public interface ICategoryService
 {
     Task<IList<CategoryDto>> ListAsync<TOrderKey>(
-        Expression<Func<Category, bool>> where = null, 
-        Expression<Func<Category, TOrderKey>> orderBy = null, 
+        Expression<Func<Category, bool>> where = null,
+        Expression<Func<Category, TOrderKey>> orderBy = null,
         bool isDescending = false);
 
     Task<BasePagedList<CategoryDto>> PagedListAsync<TOrderKey>(
         Expression<Func<Category, bool>> where = null,
         Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false,
         PageDto page = null);
-        
+
     Task<CategoryDto> GetAsync(TPrimaryKey id);
-        
+
     Task<CategoryDto> GetAsync(string alias);
-        
+
     Task<TPrimaryKey> CreateAsync(CategoryDto dto);
-        
+
     Task EditAsync(CategoryDto dto);
 
     Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
@@ -56,7 +55,7 @@ public class CategoryService : BaseEntityService, ICategoryService
         _memoryCache = memoryCache;
         _options = options;
     }
-        
+
     private IQueryable<Category> Query<TOrderKey>(Expression<Func<Category, bool>> where = null, Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false)
     {
         var query = _context.Categories.AsQueryable();
@@ -88,7 +87,7 @@ public class CategoryService : BaseEntityService, ICategoryService
         var dtoList = MapEntityListToDtoList<CategoryDto, Category>(entityList);
         return dtoList;
     }
-        
+
     public async Task<IList<CategoryDto>> ListAsync<TOrderKey>(Expression<Func<Category, bool>> where = null, Expression<Func<Category, TOrderKey>> orderBy = null, bool isDescending = false)
     {
         return await _memoryCache.GetOrCreateAsync(Defaults.CacheKeyCategories,
@@ -117,21 +116,21 @@ public class CategoryService : BaseEntityService, ICategoryService
         };
         return pagedList;
     }
-        
+
     public async Task<CategoryDto> GetAsync(TPrimaryKey id)
     {
         var entity = await _context.Categories.FirstOrDefaultAsync(e => e.Id == id);
         var dto = MapEntityToDto<CategoryDto, Category>(entity);
         return dto;
     }
-        
+
     public async Task<CategoryDto> GetAsync(string alias)
     {
         var entity = await _context.Categories.FirstOrDefaultAsync(e => e.Alias == alias);
         var dto = MapEntityToDto<CategoryDto, Category>(entity);
         return dto;
     }
-        
+
     public async Task<TPrimaryKey> CreateAsync(CategoryDto dto)
     {
         var entity = MapDtoToNewEntity<CategoryDto, Category>(dto);
@@ -148,7 +147,7 @@ public class CategoryService : BaseEntityService, ICategoryService
         existingEntity.Board = _context.GetLocalOrAttach<Board>(dto.BoardId);
         await _context.SaveChangesAsync();
     }
-        
+
     public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
     {
         var entity = _context.GetLocalOrAttach<Category>(id);

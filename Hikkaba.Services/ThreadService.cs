@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Data.Context;
@@ -31,18 +30,18 @@ public interface IThreadService
 {
     Task<ThreadDto> GetAsync(TPrimaryKey id);
     Task<ThreadAggregationDto> GetAggregationAsync(TPrimaryKey id, ClaimsPrincipal user);
-        
+
     Task<IList<ThreadDto>> ListAsync<TOrderKey>(
-        Expression<Func<Thread, bool>> where = null, 
-        Expression<Func<Thread, TOrderKey>> orderBy = null, 
+        Expression<Func<Thread, bool>> where = null,
+        Expression<Func<Thread, TOrderKey>> orderBy = null,
         bool isDescending = false);
 
     Task<ThreadPostCreateResultDto> CreateThreadPostAsync(IFormFileCollection attachments, ThreadPostCreateDto dto, bool createNewThread);
-        
+
     Task EditAsync(ThreadDto dto);
-        
+
     Task<BasePagedList<ThreadDto>> PagedListAsync(Expression<Func<Thread, bool>> where, PageDto page = null);
-        
+
     Task SetIsPinnedAsync(TPrimaryKey id, bool newValue);
     Task SetIsClosedAsync(TPrimaryKey id, bool newValue);
     Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
@@ -80,7 +79,7 @@ public class ThreadService : BaseEntityService, IThreadService
         _thumbnailGenerator = thumbnailGenerator;
         _attachmentCategorizer = attachmentCategorizer;
     }
-        
+
     private IQueryable<Thread> Query<TOrderKey>(Expression<Func<Thread, bool>> where = null, Expression<Func<Thread, TOrderKey>> orderBy = null, bool isDescending = false)
     {
         var query = _context.Threads.AsQueryable();
@@ -97,7 +96,7 @@ public class ThreadService : BaseEntityService, IThreadService
 
         return query;
     }
-        
+
     public async Task<ThreadDto> GetAsync(TPrimaryKey id)
     {
         var entity = await _context.Threads.FirstOrDefaultAsync(e => e.Id == id);
@@ -111,10 +110,10 @@ public class ThreadService : BaseEntityService, IThreadService
             .Include(t => t.Category)
             .ThenInclude(c => c.Board)
             .FirstOrDefaultAsync(e => e.Id == id);
-            
+
         var isUserCategoryModerator = await _categoryToModeratorService
             .IsUserCategoryModeratorAsync(thread.Category.Id, user);
-            
+
         if ((thread.IsDeleted || thread.Category.IsDeleted) && (!isUserCategoryModerator))
         {
             throw new HttpResponseException(HttpStatusCode.NotFound, $"Thread {id} not found.");
@@ -131,19 +130,19 @@ public class ThreadService : BaseEntityService, IThreadService
                 return post => post.Thread.Id == id && !post.IsDeleted;
             }
         }
-            
+
         var posts = await _context.Posts
             .Include(e => e.Attachments)
             .Where(BuildPostFilterExpression())
             .OrderBy(post => post.Created)
             .ToListAsync();
-            
+
         var threadPosts = new ThreadPosts
         {
             Thread = thread,
             Posts = posts,
         };
-            
+
         var dto = _mapper.Map<ThreadAggregationDto>(threadPosts);
         return dto;
     }
@@ -190,13 +189,13 @@ public class ThreadService : BaseEntityService, IThreadService
                         {
                             pictureDto.Width = image.Width;
                             pictureDto.Height = image.Height;
-                                        
+
                             var pictureEntity = MapDtoToNewEntity<PictureDto, Picture>(pictureDto);
                             pictureEntity.Post = postEntity;
                             await _context.Pictures.AddAsync(pictureEntity);
                             await _context.SaveChangesAsync();
                             blobName = pictureEntity.Id.ToString();
-                            
+
                             // generate thumbnail
                             var thumbnail = _thumbnailGenerator.GenerateThumbnail(
                                 image,
@@ -214,7 +213,7 @@ public class ThreadService : BaseEntityService, IThreadService
                         await _context.Pictures.AddAsync(pictureEntity);
                         await _context.SaveChangesAsync();
                         blobName = pictureEntity.Id.ToString();
-                            
+
                         // save original image as thumbnail
                         await _storageProvider.SaveBlobStreamAsync(containerName + Defaults.ThumbnailPostfix,
                             blobName,
@@ -243,7 +242,7 @@ public class ThreadService : BaseEntityService, IThreadService
                 default:
                     throw new Exception($"Unknown attachment type: {attachmentParentDto.GetType().Name}");
             }
-                
+
             if (string.IsNullOrWhiteSpace(blobName))
             {
                 throw new Exception($"{nameof(blobName)} is null or whitespace");
@@ -251,7 +250,7 @@ public class ThreadService : BaseEntityService, IThreadService
             await _storageProvider.SaveBlobStreamAsync(containerName, blobName, attachment.OpenReadStream());
         }
     }
-        
+
     public async Task<ThreadPostCreateResultDto> CreateThreadPostAsync(IFormFileCollection attachments, ThreadPostCreateDto dto, bool createNewThread)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -274,7 +273,7 @@ public class ThreadService : BaseEntityService, IThreadService
             postEntity.Thread = _context.GetLocalOrAttach<Thread>(dto.Post.ThreadId);
             await _context.Posts.AddAsync(postEntity);
             await _context.SaveChangesAsync();
-                
+
             var containerName = dto.Post.ThreadId.ToString();
             if (string.IsNullOrWhiteSpace(containerName))
             {
@@ -289,12 +288,12 @@ public class ThreadService : BaseEntityService, IThreadService
             await transaction.CommitAsync();
             return new ThreadPostCreateResultDto
             {
-                PostId = postEntity.Id, 
+                PostId = postEntity.Id,
                 ThreadId = dto.Post.ThreadId,
             };
         }
     }
-        
+
     public async Task EditAsync(ThreadDto dto)
     {
         var existingEntity = await _context.Threads.FirstOrDefaultAsync(e => e.Id == dto.Id);
@@ -302,7 +301,7 @@ public class ThreadService : BaseEntityService, IThreadService
         existingEntity.Category = _context.GetLocalOrAttach<Category>(dto.CategoryId);
         await _context.SaveChangesAsync();
     }
-        
+
     public async Task<BasePagedList<ThreadDto>> PagedListAsync(Expression<Func<Thread, bool>> where, PageDto page = null)
     {
         page ??= new PageDto();

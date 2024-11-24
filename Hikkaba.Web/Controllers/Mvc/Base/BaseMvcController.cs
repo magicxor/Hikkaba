@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Net;
+﻿using System.Net;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Identity;

@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Services;
 using Hikkaba.Web.Utils;
@@ -23,7 +22,7 @@ public class BoardController : Controller
         _mapper = mapper;
         _boardService = boardService;
     }
-        
+
     [Route("Board/Edit")]
     public async Task<IActionResult> Edit(TPrimaryKey id)
     {

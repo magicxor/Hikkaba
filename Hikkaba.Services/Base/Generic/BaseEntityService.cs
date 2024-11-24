@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AutoMapper;
 using Hikkaba.Data.Entities.Base.Generic;
 using Hikkaba.Models.Dto.Base.Generic;

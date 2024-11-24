@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Hikkaba.Common.Constants;
 using Microsoft.AspNetCore.Http;
 

@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,24 +16,24 @@ namespace Hikkaba.Services;
 public interface IApplicationUserService
 {
     Task<ApplicationUserDto> GetAsync(TPrimaryKey id);
-        
+
     Task<IList<ApplicationUserDto>> ListAsync<TOrderKey>(
-        Expression<Func<ApplicationUser, bool>> where = null, 
-        Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, 
+        Expression<Func<ApplicationUser, bool>> where = null,
+        Expression<Func<ApplicationUser, TOrderKey>> orderBy = null,
         bool isDescending = false);
 
     Task<BasePagedList<ApplicationUserDto>> PagedListAsync<TOrderKey>(
         Expression<Func<ApplicationUser, bool>> where = null,
         Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false,
         PageDto page = null);
-        
+
     Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto);
-        
+
     Task EditAsync(ApplicationUserDto dto);
 
     Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
 }
-    
+
 public class ApplicationUserService : BaseEntityService, IApplicationUserService
 {
     private readonly ApplicationDbContext _context;
@@ -43,7 +42,7 @@ public class ApplicationUserService : BaseEntityService, IApplicationUserService
     {
         _context = context;
     }
-        
+
     private IQueryable<ApplicationUser> Query<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false)
     {
         var query = _context.Users.AsQueryable();
@@ -67,14 +66,14 @@ public class ApplicationUserService : BaseEntityService, IApplicationUserService
 
         return query;
     }
-        
+
     public async Task<ApplicationUserDto> GetAsync(TPrimaryKey id)
     {
         var entity = await _context.Users.FirstOrDefaultAsync(e => e.Id == id);
         var dto = MapEntityToDto<ApplicationUserDto, ApplicationUser>(entity);
         return dto;
     }
-        
+
     public async Task<IList<ApplicationUserDto>> ListAsync<TOrderKey>(Expression<Func<ApplicationUser, bool>> where = null, Expression<Func<ApplicationUser, TOrderKey>> orderBy = null, bool isDescending = false)
     {
         var query = Query(where, orderBy, isDescending);
@@ -101,7 +100,7 @@ public class ApplicationUserService : BaseEntityService, IApplicationUserService
         };
         return pagedList;
     }
-        
+
     public async Task<TPrimaryKey> CreateAsync(ApplicationUserDto dto)
     {
         var entity = MapDtoToNewEntity<ApplicationUserDto, ApplicationUser>(dto);

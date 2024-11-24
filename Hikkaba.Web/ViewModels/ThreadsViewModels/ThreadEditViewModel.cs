@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Hikkaba.Common.Constants;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels;
@@ -31,7 +30,7 @@ public class ThreadEditViewModel
     [Required]
     [Display(Name = @"Show thread-local user hash")]
     public bool ShowThreadLocalUserHash { get; set; }
-        
+
     [Required]
     [Display(Name = @"Category alias")]
     public string CategoryAlias { get; set; }

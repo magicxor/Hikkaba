@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Services;
 using Hikkaba.Models.Dto;
@@ -16,7 +15,7 @@ public class SetAuthenticatedUserMiddleware
     {
         _next = next;
     }
-        
+
     public async Task Invoke(HttpContext httpContext, IAuthenticatedUserService authenticatedUserService, UserManager<ApplicationUser> userManager)
     {
         if (httpContext.User.Identity.IsAuthenticated)

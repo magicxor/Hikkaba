@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-
+﻿
 namespace Hikkaba.Models.Dto;
 
 public class ThreadPostCreateResultDto

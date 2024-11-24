@@ -1,4 +1,3 @@
-using TPrimaryKey = System.Guid;
 using System.IO;
 using AutoMapper;
 using DNTCaptcha.Core;

@@ -1,4 +1,3 @@
-using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,23 +18,23 @@ namespace Hikkaba.Services;
 public interface IBanService
 {
     Task<BanDto> GetAsync(TPrimaryKey id);
-        
+
     Task<IList<BanDto>> ListAsync<TOrderKey>(
-        Expression<Func<Ban, bool>> where = null, 
-        Expression<Func<Ban, TOrderKey>> orderBy = null, 
+        Expression<Func<Ban, bool>> where = null,
+        Expression<Func<Ban, TOrderKey>> orderBy = null,
         bool isDescending = false);
-        
+
     Task<BasePagedList<BanDto>> PagedListAsync<TOrderKey>(
         Expression<Func<Ban, bool>> where = null,
         Expression<Func<Ban, TOrderKey>> orderBy = null, bool isDescending = false,
         PageDto page = null);
-        
+
     Task<PostingPermissionDto> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress);
-        
+
     Task<TPrimaryKey> CreateAsync(BanEditDto dto);
-        
+
     Task EditAsync(BanEditDto dto);
-        
+
     Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
 }
 
@@ -53,7 +52,7 @@ public class BanService : BaseEntityService, IBanService
         _context = context;
         _ipAddressCalculator = ipAddressCalculator;
     }
-        
+
     private IQueryable<Ban> Query<TOrderKey>(Expression<Func<Ban, bool>> where = null, Expression<Func<Ban, TOrderKey>> orderBy = null, bool isDescending = false)
     {
         var query = _context.Bans.AsQueryable();
@@ -77,7 +76,7 @@ public class BanService : BaseEntityService, IBanService
 
         return query;
     }
-        
+
     public async Task<BanDto> GetAsync(TPrimaryKey id)
     {
         var entity = await _context.Bans.FirstOrDefaultAsync(e => e.Id == id);
@@ -138,11 +137,11 @@ public class BanService : BaseEntityService, IBanService
             entity.RelatedPost = dto.RelatedPost == null ? null : _context.GetLocalOrAttach<Post>(dto.RelatedPost.Id);
             await _context.Bans.AddAsync(entity);
             await _context.SaveChangesAsync();
-                
+
             return entity.Id;
         }
     }
-        
+
     public async Task EditAsync(BanEditDto dto)
     {
         var existingEntity = await _context.Bans.FirstOrDefaultAsync(ban => ban.Id == dto.Id);
@@ -151,7 +150,7 @@ public class BanService : BaseEntityService, IBanService
         MapDtoToExistingEntity(dto, existingEntity);
         await _context.SaveChangesAsync();
     }
-        
+
     public async Task<PostingPermissionDto> IsPostingAllowedAsync(TPrimaryKey threadId, string userIpAddress)
     {
         var bans = await _context.Bans
@@ -177,7 +176,7 @@ public class BanService : BaseEntityService, IBanService
 
         return new PostingPermissionDto { IsPostingAllowed = isPostingAllowed, Ban = banDto };
     }
-        
+
     public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
     {
         var entity = _context.GetLocalOrAttach<Ban>(id);

@@ -1,4 +1,3 @@
-using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +17,10 @@ namespace Hikkaba.Services;
 public interface IPostService
 {
     Task<PostDto> GetAsync(TPrimaryKey id);
-        
+
     Task<IList<PostDto>> ListAsync<TOrderKey>(
-        Expression<Func<Post, bool>> where = null, 
-        Expression<Func<Post, TOrderKey>> orderBy = null, 
+        Expression<Func<Post, bool>> where = null,
+        Expression<Func<Post, TOrderKey>> orderBy = null,
         bool isDescending = false);
 
     Task<BasePagedList<PostDto>> PagedListAsync<TOrderKey>(
@@ -30,16 +29,16 @@ public interface IPostService
         AdditionalRecordType additionalRecordType = AdditionalRecordType.None,
         bool isDescending = false,
         PageDto page = null);
-        
+
     Task EditAsync(PostDto dto);
-        
+
     Task SetIsDeletedAsync(TPrimaryKey id, bool newValue);
 }
 
 public class PostService : BaseEntityService, IPostService
 {
     private readonly ApplicationDbContext _context;
-        
+
     public PostService(IMapper mapper,
         ApplicationDbContext context) : base(mapper)
     {
@@ -67,14 +66,14 @@ public class PostService : BaseEntityService, IPostService
 
         return query;
     }
-        
+
     public async Task<PostDto> GetAsync(TPrimaryKey id)
     {
         var entity = await _context.Posts.FirstOrDefaultAsync(e => e.Id == id);
         var dto = MapEntityToDto<PostDto, Post>(entity);
         return dto;
     }
-        
+
     public async Task<IList<PostDto>> ListAsync<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, bool isDescending = false)
     {
         var query = Query(where, orderBy, isDescending);
@@ -82,7 +81,7 @@ public class PostService : BaseEntityService, IPostService
         var dtoList = MapEntityListToDtoList<PostDto, Post>(entityList);
         return dtoList;
     }
-        
+
     public async Task<BasePagedList<PostDto>> PagedListAsync<TOrderKey>(Expression<Func<Post, bool>> where = null, Expression<Func<Post, TOrderKey>> orderBy = null, AdditionalRecordType additionalRecordType = AdditionalRecordType.None, bool isDescending = false, PageDto page = null)
     {
         page ??= new PageDto();
@@ -111,14 +110,14 @@ public class PostService : BaseEntityService, IPostService
         };
         return pagedList;
     }
-        
+
     public async Task EditAsync(PostDto dto)
     {
         var existingEntity = await _context.Posts.FirstOrDefaultAsync(e => e.Id == dto.Id);
         MapDtoToExistingEntity(dto, existingEntity);
         await _context.SaveChangesAsync();
     }
-        
+
     public async Task SetIsDeletedAsync(TPrimaryKey id, bool newValue)
     {
         var entity = _context.GetLocalOrAttach<Post>(id);

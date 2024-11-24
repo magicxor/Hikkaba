@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ public class CategoryToModeratorService : ICategoryToModeratorService
         _mapper = mapper;
         _userManager = userManager;
     }
-        
+
     public async Task<IDictionary<CategoryDto, IList<ApplicationUserDto>>> ListCategoriesModeratorsAsync()
     {
         var categoriesModeratorsEntityList = await _context.Categories
@@ -76,7 +75,7 @@ public class CategoryToModeratorService : ICategoryToModeratorService
         }
         return moderatorsCategoriesDtoList;
     }
-        
+
     public async Task<bool> IsUserCategoryModeratorAsync(TPrimaryKey categoryId, ClaimsPrincipal user)
     {
         if (user != null && user.Identity.IsAuthenticated)
@@ -97,7 +96,7 @@ public class CategoryToModeratorService : ICategoryToModeratorService
             return false;
         }
     }
-        
+
     public async Task AddAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId)
     {
         var entity = new CategoryToModerator
@@ -108,12 +107,12 @@ public class CategoryToModeratorService : ICategoryToModeratorService
         await _context.CategoriesToModerators.AddAsync(entity);
         await _context.SaveChangesAsync();
     }
-        
+
     public async Task DeleteAsync(TPrimaryKey categoryId, TPrimaryKey moderatorId)
     {
         _context.CategoriesToModerators.RemoveRange(
-            _context.CategoriesToModerators.Where(cm => 
-                cm.CategoryId == categoryId 
+            _context.CategoriesToModerators.Where(cm =>
+                cm.CategoryId == categoryId
                 && cm.ApplicationUserId == moderatorId));
         await _context.SaveChangesAsync();
     }

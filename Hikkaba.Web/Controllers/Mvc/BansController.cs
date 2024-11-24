@@ -1,4 +1,3 @@
-using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,9 +24,9 @@ public class BansController : BaseMvcController
 {
     private readonly IMapper _mapper;
     private readonly IBanService _banService;
-        
-    public BansController(UserManager<ApplicationUser> userManager, 
-        IMapper mapper, 
+
+    public BansController(UserManager<ApplicationUser> userManager,
+        IMapper mapper,
         IBanService banService) : base(userManager)
     {
         _mapper = mapper;
@@ -75,7 +74,7 @@ public class BansController : BaseMvcController
         {
             var dto = _mapper.Map<BanEditDto>(viewModel);
             var id = await _banService.CreateAsync(dto);
-                
+
             return RedirectToAction("Details", new {id = id});
         }
         else

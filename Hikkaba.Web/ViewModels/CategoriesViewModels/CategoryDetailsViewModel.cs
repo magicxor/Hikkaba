@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.CategoriesViewModels;

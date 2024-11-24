@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System;
+﻿using System;
 
 namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
 

@@ -1,5 +1,4 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using CodeKicker.BBCode;
 using Microsoft.AspNetCore.Mvc;
 
