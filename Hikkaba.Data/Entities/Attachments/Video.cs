@@ -1,8 +1,7 @@
 ﻿using Hikkaba.Data.Entities.Attachments.Base;
 
-namespace Hikkaba.Data.Entities.Attachments
+namespace Hikkaba.Data.Entities.Attachments;
+
+public class Video: FileAttachment
 {
-    public class Video: FileAttachment
-    {
-    }
 }

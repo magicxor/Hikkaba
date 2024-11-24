@@ -1,14 +1,13 @@
 ﻿using Hikkaba.Models.Dto;
 
-namespace Hikkaba.Data.Services
+namespace Hikkaba.Data.Services;
+
+public interface IAuthenticatedUserService
 {
-    public interface IAuthenticatedUserService
-    {
-        ApplicationUserClaimsDto ApplicationUserClaims { get; set; }
-    }
+    ApplicationUserClaimsDto ApplicationUserClaims { get; set; }
+}
     
-    public class AuthenticatedUserService: IAuthenticatedUserService
-    {
-        public ApplicationUserClaimsDto ApplicationUserClaims { get; set; }
-    }
+public class AuthenticatedUserService: IAuthenticatedUserService
+{
+    public ApplicationUserClaimsDto ApplicationUserClaims { get; set; }
 }

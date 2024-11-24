@@ -13,55 +13,54 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Web;
 
-namespace Hikkaba.Web
+namespace Hikkaba.Web;
+
+internal class Program
 {
-    internal class Program
+    private const string EnvPrefix = "Hikkaba_";
+
+    public static async Task Main(string[] args)
     {
-        private const string EnvPrefix = "Hikkaba_";
+        var host = CreateHostBuilder(args).Build();
 
-        public static async Task Main(string[] args)
+        // seed: https://dotnetthoughts.net/seed-database-in-aspnet-core/s
+        using (var scope = host.Services.CreateScope())
         {
-            var host = CreateHostBuilder(args).Build();
-
-            // seed: https://dotnetthoughts.net/seed-database-in-aspnet-core/s
-            using (var scope = host.Services.CreateScope())
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+            var seedConfig = services.GetRequiredService<IOptions<SeedConfiguration>>();
+            try
             {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<ApplicationDbContext>();
-                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
-                var seedConfig = services.GetRequiredService<IOptions<SeedConfiguration>>();
-                try
-                {
-                    await context.Database.MigrateAsync();
-                    await DbSeeder.SeedAsync(context, userManager, roleManager, seedConfig);
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB");
-                    throw;
-                }
+                await context.Database.MigrateAsync();
+                await DbSeeder.SeedAsync(context, userManager, roleManager, seedConfig);
             }
-
-            await host.RunAsync();
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the DB");
+                throw;
+            }
         }
 
-        private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((builderContext, config) =>
-                {
-                    config.AddEnvironmentVariables(EnvPrefix);
-                })
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                })
-                .UseNLog()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        await host.RunAsync();
     }
+
+    private static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((_, config) =>
+            {
+                config.AddEnvironmentVariables(EnvPrefix);
+            })
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.SetMinimumLevel(LogLevel.Trace);
+            })
+            .UseNLog()
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
 }

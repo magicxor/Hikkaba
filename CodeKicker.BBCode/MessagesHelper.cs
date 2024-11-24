@@ -1,30 +1,29 @@
 ﻿using System.Resources;
 
-namespace CodeKicker.BBCode
+namespace CodeKicker.BBCode;
+
+internal static class MessagesHelper
 {
-    static class MessagesHelper
+    private static readonly ResourceManager resMgr;
+
+    static MessagesHelper()
     {
-        static readonly ResourceManager resMgr;
-
-        static MessagesHelper()
-        {
-            resMgr = new ResourceManager(typeof(Messages));
-        }
-
-        public static string GetString(string key)
-        {
-            return resMgr.GetString(key);
-        }
-        public static string GetString(string key, params string[] parameters)
-        {
-            return string.Format(resMgr.GetString(key), parameters);
-        }
+        resMgr = new ResourceManager(typeof(Messages));
     }
 
-    /// <summary>
-    /// reflection-only use
-    /// </summary>
-    static class Messages
+    public static string GetString(string key)
     {
+        return resMgr.GetString(key);
     }
+    public static string GetString(string key, params string[] parameters)
+    {
+        return string.Format(resMgr.GetString(key), parameters);
+    }
+}
+
+/// <summary>
+/// reflection-only use
+/// </summary>
+internal static class Messages
+{
 }

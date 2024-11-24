@@ -2,7 +2,7 @@
 @model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.DocumentViewModel
 
 @{
-    var fileSizeString = FileSizeStringifier.Stringify(@Model.Size);
+    var fileSizeString = FileSizeStringifier.Stringify(Model.Size);
     var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
 }
 

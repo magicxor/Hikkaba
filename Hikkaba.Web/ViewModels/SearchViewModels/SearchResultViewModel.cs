@@ -1,11 +1,10 @@
 ﻿using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 
-namespace Hikkaba.Web.ViewModels.SearchViewModels
+namespace Hikkaba.Web.ViewModels.SearchViewModels;
+
+public class SearchResultViewModel
 {
-    public class SearchResultViewModel
-    {
-        public string Query { get; set; }
-        public BasePagedList<PostDetailsViewModel> Posts { get; set; }
-    }
+    public string Query { get; set; }
+    public BasePagedList<PostDetailsViewModel> Posts { get; set; }
 }

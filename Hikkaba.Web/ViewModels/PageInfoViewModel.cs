@@ -1,8 +1,7 @@
-﻿namespace Hikkaba.Web.ViewModels
+﻿namespace Hikkaba.Web.ViewModels;
+
+public class PageInfoViewModel
 {
-    public class PageInfoViewModel
-    {
-        public int CurrentPageNumber { get; set; }
-        public int TotalPageCount { get; set; }
-    }
+    public int CurrentPageNumber { get; set; }
+    public int TotalPageCount { get; set; }
 }

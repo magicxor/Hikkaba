@@ -1,10 +1,9 @@
 ﻿using TPrimaryKey = System.Guid;
 
-namespace Hikkaba.Models.Dto.Administration
+namespace Hikkaba.Models.Dto.Administration;
+
+public class ModeratorDto
 {
-    public class ModeratorDto
-    {
-        public TPrimaryKey Id { get; set; }
-        public string UserName { get; set; }
-    }
+    public TPrimaryKey Id { get; set; }
+    public string UserName { get; set; }
 }

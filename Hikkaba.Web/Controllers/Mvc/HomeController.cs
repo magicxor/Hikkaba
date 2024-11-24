@@ -11,62 +11,61 @@ using Hikkaba.Web.ViewModels.PostsViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Hikkaba.Web.Controllers.Mvc
+namespace Hikkaba.Web.Controllers.Mvc;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ILogger _logger;
+    private readonly IMapper _mapper;
+    private readonly ICategoryService _categoryService;
+    private readonly IThreadService _threadService;
+    private readonly IPostService _postService;
+
+    public HomeController(
+        ILogger<HomeController> logger,
+        IMapper mapper,
+        ICategoryService categoryService, 
+        IThreadService threadService, 
+        IPostService postService)
     {
-        private readonly ILogger _logger;
-        private readonly IMapper _mapper;
-        private readonly ICategoryService _categoryService;
-        private readonly IThreadService _threadService;
-        private readonly IPostService _postService;
+        _logger = logger;
+        _mapper = mapper;
+        _categoryService = categoryService;
+        _threadService = threadService;
+        _postService = postService;
+    }
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            IMapper mapper,
-            ICategoryService categoryService, 
-            IThreadService threadService, 
-            IPostService postService)
+    public async Task<IActionResult> Index()
+    {
+        var page = new PageDto();
+        var latestPostsDtoList = await _postService
+            .PagedListAsync(
+                post => (!post.IsDeleted) && (!post.Thread.IsDeleted) && (!post.Thread.Category.IsHidden),
+                post => post.Created,
+                AdditionalRecordType.None,
+                true,
+                page);
+        var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.CurrentPageItems);
+        foreach (var latestPostDetailsViewModel in latestPostDetailsViewModels)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _categoryService = categoryService;
-            _threadService = threadService;
-            _postService = postService;
+            var threadDto = await _threadService.GetAsync(latestPostDetailsViewModel.ThreadId);
+            var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
+            latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
+            latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
+            latestPostDetailsViewModel.CategoryId = categoryDto.Id;
         }
-
-        public async Task<IActionResult> Index()
+        var categoriesDtoList = await _categoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
+        var categoryViewModels = _mapper.Map<List<CategoryDetailsViewModel>>(categoriesDtoList);
+        var homeIndexViewModel = new HomeIndexViewModel
         {
-            var page = new PageDto();
-            var latestPostsDtoList = await _postService
-                                        .PagedListAsync(
-                                            post => (!post.IsDeleted) && (!post.Thread.IsDeleted) && (!post.Thread.Category.IsHidden),
-                                            post => post.Created,
-                                            AdditionalRecordType.None,
-                                            true,
-                                            page);
-            var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.CurrentPageItems);
-            foreach (var latestPostDetailsViewModel in latestPostDetailsViewModels)
+            Categories = categoryViewModels,
+            Posts = new BasePagedList<PostDetailsViewModel>
             {
-                var threadDto = await _threadService.GetAsync(latestPostDetailsViewModel.ThreadId);
-                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
-                latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
-                latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
-                latestPostDetailsViewModel.CategoryId = categoryDto.Id;
-            }
-            var categoriesDtoList = await _categoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
-            var categoryViewModels = _mapper.Map<List<CategoryDetailsViewModel>>(categoriesDtoList);
-            var homeIndexViewModel = new HomeIndexViewModel
-            {
-                Categories = categoryViewModels,
-                Posts = new BasePagedList<PostDetailsViewModel>
-                {
-                    CurrentPage = page,
-                    CurrentPageItems = latestPostDetailsViewModels,
-                    TotalItemsCount = latestPostsDtoList.TotalItemsCount,
-                },
-            };
-            return View(homeIndexViewModel);
-        }
+                CurrentPage = page,
+                CurrentPageItems = latestPostDetailsViewModels,
+                TotalItemsCount = latestPostsDtoList.TotalItemsCount,
+            },
+        };
+        return View(homeIndexViewModel);
     }
 }

@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Hikkaba.Infrastructure.Extensions
+namespace Hikkaba.Infrastructure.Extensions;
+
+public static class LinqEnumerableExtensions
 {
-    public static class LinqEnumerableExtensions
+    public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
     {
-        public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
+        foreach (var item in enumeration)
         {
-            foreach (var item in enumeration)
-            {
-                action(item);
-            }
+            action(item);
         }
+    }
         
-        public static void ForEach<T>(this IEnumerable<T> enumeration, Action<int, T> action)
+    public static void ForEach<T>(this IEnumerable<T> enumeration, Action<int, T> action)
+    {
+        var i = 0;
+        foreach (var item in enumeration)
         {
-            var i = 0;
-            foreach (var item in enumeration)
-            {
-                action(i, item);
-                i++;
-            }
+            action(i, item);
+            i++;
         }
     }
 }

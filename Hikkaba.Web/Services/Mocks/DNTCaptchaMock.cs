@@ -1,13 +1,12 @@
 using DNTCaptcha.Core.Contracts;
 using DNTCaptcha.Core.Providers;
 
-namespace Hikkaba.Web.Services.Mocks
+namespace Hikkaba.Web.Services.Mocks;
+
+public class DntCaptchaMock : IDNTCaptchaValidatorService
 {
-    public class DNTCaptchaMock : IDNTCaptchaValidatorService
+    public bool HasRequestValidCaptchaEntry(Language captchaGeneratorLanguage, DisplayMode captchaGeneratorDisplayMode, DNTCaptchaBase model = null)
     {
-        public bool HasRequestValidCaptchaEntry(Language captchaGeneratorLanguage, DisplayMode captchaGeneratorDisplayMode, DNTCaptchaBase model = null)
-        {
-            return true;
-        }
+        return true;
     }
 }

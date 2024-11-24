@@ -2,69 +2,68 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
 
-namespace Hikkaba.Services
+namespace Hikkaba.Services;
+
+public interface IIpAddressCalculator
 {
-    public interface IIpAddressCalculator
+    bool IsInRange(IPAddress lowerInclusive, IPAddress upperInclusive, IPAddress address);
+    bool IsInRange(string lowerInclusive, string upperInclusive, string address);
+}
+
+public class IpAddressCalculator : IIpAddressCalculator
+{
+    private readonly ILogger<IpAddressCalculator> _logger;
+
+    public IpAddressCalculator(ILogger<IpAddressCalculator> logger)
     {
-        bool IsInRange(IPAddress lowerInclusive, IPAddress upperInclusive, IPAddress address);
-        bool IsInRange(string lowerInclusive, string upperInclusive, string address);
+        _logger = logger;
     }
 
-    public class IpAddressCalculator : IIpAddressCalculator
+    public bool IsInRange(IPAddress lowerInclusive, IPAddress upperInclusive, IPAddress address)
     {
-        private readonly ILogger<IpAddressCalculator> _logger;
-
-        public IpAddressCalculator(ILogger<IpAddressCalculator> logger)
+        if (lowerInclusive.AddressFamily != upperInclusive.AddressFamily)
         {
-            _logger = logger;
+            return false;
         }
 
-        public bool IsInRange(IPAddress lowerInclusive, IPAddress upperInclusive, IPAddress address)
+        var addressFamily = lowerInclusive.AddressFamily;
+        var lowerBytes = lowerInclusive.GetAddressBytes();
+        var upperBytes = upperInclusive.GetAddressBytes();
+
+        if (address.AddressFamily != addressFamily)
         {
-            if (lowerInclusive.AddressFamily != upperInclusive.AddressFamily)
-            {
-                return false;
-            }
-
-            var addressFamily = lowerInclusive.AddressFamily;
-            var lowerBytes = lowerInclusive.GetAddressBytes();
-            var upperBytes = upperInclusive.GetAddressBytes();
-
-            if (address.AddressFamily != addressFamily)
-            {
-                return false;
-            }
-
-            var addressBytes = address.GetAddressBytes();
-
-            bool lowerBoundary = true, upperBoundary = true;
-
-            for (var i = 0; i < lowerBytes.Length && (lowerBoundary || upperBoundary); i++)
-            {
-                if ((lowerBoundary && addressBytes[i] < lowerBytes[i]) ||
-                    (upperBoundary && addressBytes[i] > upperBytes[i]))
-                {
-                    return false;
-                }
-
-                lowerBoundary &= (addressBytes[i] == lowerBytes[i]);
-                upperBoundary &= (addressBytes[i] == upperBytes[i]);
-            }
-
-            return true;
+            return false;
         }
 
-        public bool IsInRange(string lowerInclusive, string upperInclusive, string address)
+        var addressBytes = address.GetAddressBytes();
+
+        bool lowerBoundary = true, upperBoundary = true;
+
+        for (var i = 0; i < lowerBytes.Length && (lowerBoundary || upperBoundary); i++)
         {
-            try
+            if ((lowerBoundary && addressBytes[i] < lowerBytes[i]) ||
+                (upperBoundary && addressBytes[i] > upperBytes[i]))
             {
-                return IsInRange(IPAddress.Parse(lowerInclusive), IPAddress.Parse(upperInclusive), IPAddress.Parse(address));
-            }
-            catch (FormatException e)
-            {
-                _logger.LogError(e, $"Can't process {nameof(IsInRange)} with arguments {lowerInclusive}, {upperInclusive}, {address}");
                 return false;
             }
+
+            lowerBoundary &= (addressBytes[i] == lowerBytes[i]);
+            upperBoundary &= (addressBytes[i] == upperBytes[i]);
+        }
+
+        return true;
+    }
+
+    public bool IsInRange(string lowerInclusive, string upperInclusive, string address)
+    {
+        try
+        {
+            return IsInRange(IPAddress.Parse(lowerInclusive), IPAddress.Parse(upperInclusive), IPAddress.Parse(address));
+        }
+        catch (FormatException e)
+        {
+            _logger.LogError(e, "Can\'t process {IsInRangeName} with arguments {LowerInclusive}, {UpperInclusive}, {Address}", nameof(IsInRange), lowerInclusive, upperInclusive, address);
+            return false;
         }
     }
 }

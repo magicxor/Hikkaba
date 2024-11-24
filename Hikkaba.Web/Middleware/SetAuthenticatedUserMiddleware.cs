@@ -6,28 +6,27 @@ using Hikkaba.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
-namespace Hikkaba.Web.Middleware
-{
-    public class SetAuthenticatedUserMiddleware
-    {
-        private readonly RequestDelegate _next;
+namespace Hikkaba.Web.Middleware;
 
-        public SetAuthenticatedUserMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+public class SetAuthenticatedUserMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public SetAuthenticatedUserMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
         
-        public async Task Invoke(HttpContext httpContext, IAuthenticatedUserService authenticatedUserService, UserManager<ApplicationUser> userManager)
+    public async Task Invoke(HttpContext httpContext, IAuthenticatedUserService authenticatedUserService, UserManager<ApplicationUser> userManager)
+    {
+        if (httpContext.User.Identity.IsAuthenticated)
         {
-            if (httpContext.User.Identity.IsAuthenticated)
+            authenticatedUserService.ApplicationUserClaims = new ApplicationUserClaimsDto
             {
-                authenticatedUserService.ApplicationUserClaims = new ApplicationUserClaimsDto
-                {
-                    Id = TPrimaryKey.Parse(userManager.GetUserId(httpContext.User)),
-                    UserName = userManager.GetUserName(httpContext.User),
-                };
-            }
-            await _next(httpContext);
+                Id = TPrimaryKey.Parse(userManager.GetUserId(httpContext.User)),
+                UserName = userManager.GetUserName(httpContext.User),
+            };
         }
+        await _next(httpContext);
     }
 }
