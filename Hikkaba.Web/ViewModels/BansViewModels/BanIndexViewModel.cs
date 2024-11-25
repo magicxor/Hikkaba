@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hikkaba.Services.Base.Generic;
+using Hikkaba.Services.Implementations.Generic;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 

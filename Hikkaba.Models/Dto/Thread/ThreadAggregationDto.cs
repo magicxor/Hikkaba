@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Hikkaba.Models.Dto.Board;
+using Hikkaba.Models.Dto.Post;
 
-namespace Hikkaba.Models.Dto;
+namespace Hikkaba.Models.Dto.Thread;
 
 public class ThreadAggregationDto
 {

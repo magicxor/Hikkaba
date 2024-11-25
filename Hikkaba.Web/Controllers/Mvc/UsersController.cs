@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
-using Hikkaba.Services;
+using Hikkaba.Services.Contracts;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;

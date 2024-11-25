@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
+namespace Hikkaba.Models.Dto.Administration;
 
 public class SystemInfoDto
 {

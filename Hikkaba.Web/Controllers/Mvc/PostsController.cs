@@ -7,8 +7,8 @@ using DNTCaptcha.Core;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Services;
-using Hikkaba.Services.Base.Generic;
+using Hikkaba.Models.Dto.Post;
+using Hikkaba.Models.Dto.Thread;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.SearchViewModels;
@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
 using Hikkaba.Models.Enums;
+using Hikkaba.Services.Contracts;
+using Hikkaba.Services.Implementations.Generic;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 

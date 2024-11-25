@@ -42,7 +42,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeKicker.BBCode\CodeKicker.BBCode.csproj" />
+    <ProjectReference Include="..\CodeKicker.BbCode\CodeKicker.BbCode.csproj" />
     <ProjectReference Include="..\Hikkaba.Data\Hikkaba.Data.csproj" />
     <ProjectReference Include="..\Hikkaba.Models\Hikkaba.Models.csproj" />
     <ProjectReference Include="..\Hikkaba.Services\Hikkaba.Services.csproj" />

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
-using Hikkaba.Services;
+using Hikkaba.Services.Contracts;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BoardViewModels;
 using Microsoft.AspNetCore.Mvc;

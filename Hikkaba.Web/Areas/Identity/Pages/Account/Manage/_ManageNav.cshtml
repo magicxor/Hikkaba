@@ -1,4 +1,7 @@
-﻿@inject SignInManager<ApplicationUser> SignInManager
+﻿@using Hikkaba.Data.Entities
+@using Hikkaba.Web.Areas.Identity.Pages.Account.Manage
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

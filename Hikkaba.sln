@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Web", "Hikkaba.Web\
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BCFAD6BD-B992-44F8-979B-6DD31C543629}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeKicker.BBCode.Tests", "CodeKicker.BBCode.Tests\CodeKicker.BBCode.Tests.csproj", "{3F7A8B86-CF96-406D-97A4-32AA9DDEDC96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeKicker.BbCode.Tests.Unit", "CodeKicker.BbCode.Tests.Unit\CodeKicker.BbCode.Tests.Unit.csproj", "{3F7A8B86-CF96-406D-97A4-32AA9DDEDC96}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeKicker.BBCode", "CodeKicker.BBCode\CodeKicker.BBCode.csproj", "{278FCD99-D354-48DC-9D02-04F46BC817E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeKicker.BbCode", "CodeKicker.BbCode\CodeKicker.BbCode.csproj", "{278FCD99-D354-48DC-9D02-04F46BC817E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Common", "Hikkaba.Common\Hikkaba.Common.csproj", "{791245C8-F0FA-4E41-A54C-240B81094D07}"
 EndProject

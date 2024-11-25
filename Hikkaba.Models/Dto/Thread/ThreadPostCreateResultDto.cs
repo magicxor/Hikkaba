@@ -1,5 +1,5 @@
 ﻿
-namespace Hikkaba.Models.Dto;
+namespace Hikkaba.Models.Dto.Thread;
 
 public class ThreadPostCreateResultDto
 {

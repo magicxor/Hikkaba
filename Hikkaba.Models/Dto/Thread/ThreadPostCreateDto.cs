@@ -1,4 +1,6 @@
-﻿namespace Hikkaba.Models.Dto;
+﻿using Hikkaba.Models.Dto.Post;
+
+namespace Hikkaba.Models.Dto.Thread;
 
 public class ThreadPostCreateDto
 {

@@ -1,7 +1,8 @@
 ﻿using System;
 using Hikkaba.Models.Dto.Base.Current;
+using Hikkaba.Models.Dto.Post;
 
-namespace Hikkaba.Models.Dto;
+namespace Hikkaba.Models.Dto.Ban;
 
 public class BanDto: BaseMutableDto
 {

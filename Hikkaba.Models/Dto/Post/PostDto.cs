@@ -2,7 +2,7 @@
 using Hikkaba.Models.Dto.Attachments;
 using Hikkaba.Models.Dto.Base.Current;
 
-namespace Hikkaba.Models.Dto;
+namespace Hikkaba.Models.Dto.Post;
 
 public class PostDto : BaseMutableDto
 {

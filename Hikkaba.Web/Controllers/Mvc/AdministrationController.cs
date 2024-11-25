@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities;
-using Hikkaba.Services;
+using Hikkaba.Services.Contracts;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Hikkaba.Web.ViewModels.BoardViewModels;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;

@@ -11,11 +11,3 @@ public class DateTimeToUtcConverter : ITypeConverter<DateTime, DateTime>
         return source.AsUtc();
     }
 }
-
-public class NullableDateTimeToUtcConverter : ITypeConverter<DateTime?, DateTime?>
-{
-    public DateTime? Convert(DateTime? source, DateTime? destination, ResolutionContext context)
-    {
-        return source.AsUtc();
-    }
-}

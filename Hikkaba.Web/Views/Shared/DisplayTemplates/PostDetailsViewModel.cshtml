@@ -1,7 +1,8 @@
 @using Hikkaba.Common.Constants
-@using Hikkaba.Services
-@using Hikkaba.Web.Services
-@using Hikkaba.Web.Extensions 
+@using Hikkaba.Services.Contracts
+@using Hikkaba.Web.Extensions
+@using Hikkaba.Web.Services.Contracts
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IMessagePostProcessor MessagePostProcessor
 @inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator

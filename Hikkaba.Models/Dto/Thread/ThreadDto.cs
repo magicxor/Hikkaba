@@ -1,6 +1,6 @@
 ﻿using Hikkaba.Models.Dto.Base.Current;
 
-namespace Hikkaba.Models.Dto;
+namespace Hikkaba.Models.Dto.Thread;
 
 public class ThreadDto : BaseMutableDto
 {

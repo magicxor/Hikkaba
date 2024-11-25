@@ -7,8 +7,6 @@ using Hikkaba.Common.Constants;
 using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Services;
-using Hikkaba.Services.Base.Generic;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
@@ -20,6 +18,8 @@ using Microsoft.Extensions.Logging;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Hikkaba.Models.Enums;
+using Hikkaba.Services.Contracts;
+using Hikkaba.Services.Implementations.Generic;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 

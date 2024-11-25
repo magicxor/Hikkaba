@@ -1,4 +1,4 @@
-using Hikkaba.Services;
+using Hikkaba.Services.Implementations;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;

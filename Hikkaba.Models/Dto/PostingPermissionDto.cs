@@ -1,4 +1,6 @@
-﻿namespace Hikkaba.Models.Dto;
+﻿using Hikkaba.Models.Dto.Ban;
+
+namespace Hikkaba.Models.Dto;
 
 public class PostingPermissionDto
 {

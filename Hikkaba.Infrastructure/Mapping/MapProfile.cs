@@ -6,6 +6,10 @@ using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Extensions;
 using Hikkaba.Models.Dto;
 using Hikkaba.Models.Dto.Attachments;
+using Hikkaba.Models.Dto.Ban;
+using Hikkaba.Models.Dto.Board;
+using Hikkaba.Models.Dto.Post;
+using Hikkaba.Models.Dto.Thread;
 
 namespace Hikkaba.Infrastructure.Mapping;
 
