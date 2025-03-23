@@ -1,7 +1,7 @@
 using System.Net;
 using Hikkaba.Common.Constants;
+using Hikkaba.Common.Exceptions;
 using Hikkaba.Common.Extensions;
-using Hikkaba.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -43,7 +43,7 @@ public class ErrorController : Controller
             _logger.LogError(eventId, "Unhandled exception");
         }
 
-        var message = exception?.Message;
+        var message = exception?.Message ?? string.Empty;
         return Details(message, (HttpStatusCode)statusCode);
     }
 
@@ -53,15 +53,15 @@ public class ErrorController : Controller
         return Details(DefaultErrorMessage, statusCode);
     }
 
-    private IActionResult Details(string message = null, HttpStatusCode statusCode = HttpStatusCode.OK)
+    private IActionResult Details(string? message = null, HttpStatusCode statusCode = HttpStatusCode.OK)
     {
         if (string.IsNullOrEmpty(message))
         {
             message = DefaultErrorMessage;
         }
         var exception = statusCode == HttpStatusCode.OK
-            ? new HttpResponseException(HttpStatusCode.InternalServerError, message)
-            : new HttpResponseException(statusCode, message);
+            ? new HikkabaHttpResponseException(HttpStatusCode.InternalServerError, message)
+            : new HikkabaHttpResponseException(statusCode, message);
         return View("Details", exception);
     }
 }

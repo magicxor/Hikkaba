@@ -1,0 +1,309 @@
+using System;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using Hikkaba.Common.Enums;
+using Hikkaba.Common.Services.Implementations;
+using Hikkaba.Data.Context;
+using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Paging.Enums;
+using Hikkaba.Paging.Models;
+using Hikkaba.Repositories.Implementations;
+using Hikkaba.Tests.Integration.Constants;
+using Hikkaba.Tests.Integration.Extensions;
+using Hikkaba.Tests.Integration.Services;
+using Hikkaba.Tests.Integration.Utils;
+using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Thread = Hikkaba.Data.Entities.Thread;
+
+namespace Hikkaba.Tests.Integration.Tests;
+
+[TestFixture]
+[Parallelizable(scope: ParallelScope.Fixtures)]
+public sealed class BanRepositoryTests
+{
+    private RespawnableContextManager<ApplicationDbContext>? _contextManager;
+
+    [OneTimeSetUp]
+    public async Task OneTimeSetUpAsync()
+    {
+        _contextManager = await TestDbUtils.CreateNewRandomDbContextManagerAsync();
+    }
+
+    [OneTimeTearDown]
+    public async Task OneTimeTearDownAsync()
+    {
+        await _contextManager.StopIfNotNullAsync();
+    }
+
+    [MustDisposeResource]
+    private async Task<CustomAppFactory> CreateAppFactoryAsync()
+    {
+        var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
+        return new CustomAppFactory(connectionString);
+    }
+
+    [CancelAfter(TestDefaults.TestTimeout)]
+    [TestCase("176.213.241.52", true)]
+    [TestCase("b550:f112:2801:51d4:fdaf:21d8:6bbc:aaba", true)]
+    [TestCase("176.213.241.53", false)]
+    [TestCase("e226:df4a:8eb6:99b3:7dad:affa:5560:39d3", false)]
+    public async Task ListBansPaginatedAsync_WhenSearchExact_ReturnsExpectedResult(
+        string ipAddress,
+        bool expectedFound,
+        CancellationToken cancellationToken)
+    {
+        // Arrange
+        await using var customAppFactory = await CreateAppFactoryAsync();
+        using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any()) {
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+
+        // Seed
+        var admin = new ApplicationUser
+        {
+            UserName = "admin",
+            NormalizedUserName = "ADMIN",
+            Email = "admin@example.com",
+            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+            EmailConfirmed = true,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            ConcurrencyStamp = Guid.NewGuid().ToString(),
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+        };
+        dbContext.Users.Add(admin);
+
+        var board = new Board
+        {
+            Name = "Test Board Fizz",
+        };
+        dbContext.Boards.Add(board);
+
+        var category = new Category
+        {
+            IsDeleted = false,
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            ModifiedAt = null,
+            Alias = "b",
+            Name = "Random Foo",
+            IsHidden = false,
+            DefaultBumpLimit = 500,
+            DefaultShowThreadLocalUserHash = false,
+            Board = board,
+            CreatedBy = admin,
+        };
+        dbContext.Categories.Add(category);
+
+        var thread = new Thread
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            Title = "test thread 1 Buzz",
+            IsPinned = false,
+            IsClosed = false,
+            BumpLimit = 500,
+            ShowThreadLocalUserHash = false,
+            Category = category,
+            CreatedBy = null,
+        };
+        dbContext.Threads.Add(thread);
+
+        var post1 = new Post
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            IsSageEnabled = false,
+            MessageText = "test post 1 abc",
+            MessageHtml = "test post 1 abc",
+            UserIpAddress = IPAddress.Parse("176.213.241.52").GetAddressBytes(),
+            UserAgent = "Firefox",
+            Thread = thread,
+        };
+        var post2 = new Post
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            IsSageEnabled = false,
+            MessageText = "test post 2 def",
+            MessageHtml = "test post 2 def",
+            UserIpAddress = IPAddress.Parse("b550:f112:2801:51d4:fdaf:21d8:6bbc:aaba").GetAddressBytes(),
+            UserAgent = "Chrome",
+            Thread = thread,
+        };
+        dbContext.Posts.AddRange(post1, post2);
+
+        var ban1 = new Ban
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            EndsAt = timeProvider.GetUtcNow().UtcDateTime.AddYears(99),
+            IpAddressType = IpAddressType.IpV4,
+            BannedIpAddress = IPAddress.Parse("176.213.241.52").GetAddressBytes(),
+            Reason = "ban reason 1",
+            CreatedBy = admin,
+        };
+        var ban2 = new Ban
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            EndsAt = timeProvider.GetUtcNow().UtcDateTime.AddYears(99),
+            IpAddressType = IpAddressType.IpV6,
+            BannedIpAddress = IPAddress.Parse("b550:f112:2801:51d4:fdaf:21d8:6bbc:aaba").GetAddressBytes(),
+            Reason = "ban reason 2",
+            CreatedBy = admin,
+        };
+        dbContext.Bans.AddRange(ban1, ban2);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var repository = new BanRepository(dbContext, timeProvider, new UserContext());
+
+        // Act
+        var result = await repository.ListBansPaginatedAsync(new BanPagingFilter
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+            IpAddress = IPAddress.Parse(ipAddress),
+        });
+
+        // Assert
+        var any = result.Data.Count != 0;
+        Assert.That(any, Is.EqualTo(expectedFound));
+    }
+
+    [CancelAfter(TestDefaults.TestTimeout)]
+    [TestCase("176.213.224.37", true)]
+    [TestCase("2001:4860:0000:bbbb:0000:0000:0000:0", true)]
+    [TestCase("95.189.128.0", false)]
+    [TestCase("e226:df4a:8eb6:99b3:7dad:affa:5560:39d3", false)]
+    public async Task ListBansPaginatedAsync_WhenSearchInRange_ReturnsExpectedResult(
+        string ipAddress,
+        bool expectedFound,
+        CancellationToken cancellationToken)
+    {
+        // Arrange
+        await using var customAppFactory = await CreateAppFactoryAsync();
+        using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any()) {
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+
+        // Seed
+        var admin = new ApplicationUser
+        {
+            UserName = "admin",
+            NormalizedUserName = "ADMIN",
+            Email = "admin@example.com",
+            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+            EmailConfirmed = true,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            ConcurrencyStamp = Guid.NewGuid().ToString(),
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+        };
+        dbContext.Users.Add(admin);
+
+        var board = new Board
+        {
+            Name = "Test Board Fizz",
+        };
+        dbContext.Boards.Add(board);
+
+        var category = new Category
+        {
+            IsDeleted = false,
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            ModifiedAt = null,
+            Alias = "b",
+            Name = "Random Foo",
+            IsHidden = false,
+            DefaultBumpLimit = 500,
+            DefaultShowThreadLocalUserHash = false,
+            Board = board,
+            CreatedBy = admin,
+        };
+        dbContext.Categories.Add(category);
+
+        var thread = new Thread
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            Title = "test thread 1 Buzz",
+            IsPinned = false,
+            IsClosed = false,
+            BumpLimit = 500,
+            ShowThreadLocalUserHash = false,
+            Category = category,
+            CreatedBy = null,
+        };
+        dbContext.Threads.Add(thread);
+
+        var post1 = new Post
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            IsSageEnabled = false,
+            MessageText = "test post 1 abc",
+            MessageHtml = "test post 1 abc",
+            UserIpAddress = IPAddress.Parse("176.213.224.37").GetAddressBytes(),
+            UserAgent = "Firefox",
+            Thread = thread,
+        };
+        var post2 = new Post
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            IsSageEnabled = false,
+            MessageText = "test post 2 def",
+            MessageHtml = "test post 2 def",
+            UserIpAddress = IPAddress.Parse("2001:4860:0000:0000:0000:0000:ffff:0").GetAddressBytes(),
+            UserAgent = "Chrome",
+            Thread = thread,
+        };
+        dbContext.Posts.AddRange(post1, post2);
+
+        var ban1 = new Ban
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            EndsAt = timeProvider.GetUtcNow().UtcDateTime.AddYears(99),
+            IpAddressType = IpAddressType.IpV4,
+            BannedIpAddress = IPAddress.Parse("176.213.224.40").GetAddressBytes(),
+            BannedCidrLowerIpAddress = IPAddress.Parse("176.213.224.1").GetAddressBytes(),
+            BannedCidrUpperIpAddress = IPAddress.Parse("176.213.224.254").GetAddressBytes(),
+            Reason = "ban reason 1",
+            CreatedBy = admin,
+        };
+        var ban2 = new Ban
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            EndsAt = timeProvider.GetUtcNow().UtcDateTime.AddYears(99),
+            IpAddressType = IpAddressType.IpV6,
+            BannedIpAddress = IPAddress.Parse("2001:4860:0000:0000:ffff:0000:0000:0").GetAddressBytes(),
+            BannedCidrLowerIpAddress = IPAddress.Parse("2001:4860:0000:0000:0000:0000:0000:0").GetAddressBytes(),
+            BannedCidrUpperIpAddress = IPAddress.Parse("2001:4860:ffff:ffff:ffff:ffff:ffff:ffff").GetAddressBytes(),
+            Reason = "ban reason 2",
+            CreatedBy = admin,
+        };
+        dbContext.Bans.AddRange(ban1, ban2);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var repository = new BanRepository(dbContext, timeProvider, new UserContext());
+
+        // Act
+        var result = await repository.ListBansPaginatedAsync(new BanPagingFilter
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+            IpAddress = IPAddress.Parse(ipAddress),
+        });
+
+        // Assert
+        var any = result.Data.Count != 0;
+        Assert.That(any, Is.EqualTo(expectedFound));
+    }
+}

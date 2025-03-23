@@ -39,7 +39,7 @@ public class AttachmentsController : Controller
             var fileName = blobName + "." + fileExtension;
             if (getThumbnail)
             {
-                containerName = containerName + Defaults.ThumbnailPostfix;
+                containerName += Defaults.ThumbnailPostfix;
             }
             var contentType = GetContentTypeByFileName(fileName);
             var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(containerName, blobName);

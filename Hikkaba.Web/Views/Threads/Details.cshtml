@@ -1,15 +1,25 @@
 ﻿@using Hikkaba.Web.ViewModels.PostsViewModels
-@model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadDetailsViewModel
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadAggregationViewModel
 @{
-    ViewData["Title"] = $"{Model.Title} - {Model.CategoryName}";
+    ViewData["Title"] = $"{Model.Thread.Title} - {Model.Category.Name}";
 }
 
-<h2 class="text-center">/@Model.CategoryAlias - @Model.CategoryName</h2>
+<h2 class="text-center">/@Model.Category.Alias - @Model.Category.Name</h2>
 <hr />
 
 @Html.DisplayFor(model => model)
 
-@if (!Model.IsClosed)
+@if (!Model.Thread.IsClosed)
 {
-    <partial name="_ReplyForm" model="new PostAnonymousCreateViewModel { ThreadId = Model.Id, CategoryAlias = Model.CategoryAlias }"/>
+    <partial name="_ReplyForm" model="@(new PostAnonymousCreateViewModel
+    {
+      IsSageEnabled = false,
+      Message = string.Empty,
+      Attachments = new FormFileCollection(),
+      ThreadId = Model.Thread.Id,
+      CategoryAlias = Model.Category.Alias,
+      CategoryName = Model.Category.Name,
+    })"/>
 }

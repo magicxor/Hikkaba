@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <OutputType>Library</OutputType>
     <LangVersion>default</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hikkaba.Common\Hikkaba.Common.csproj" />
-    <ProjectReference Include="..\Hikkaba.Models\Hikkaba.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

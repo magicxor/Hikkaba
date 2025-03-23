@@ -15,25 +15,26 @@ public static class Defaults
     public const string AdministratorUserName = "Administrator";
     public const string AdministratorRoleName = "administrator";
 
-    public const int MaxIpAddressLength = 50;
+    public const int MaxIpAddressStringLength = 50;
+    public const int MaxIpAddressBytesLength = 16;
     public const int MaxUserAgentLength = 500;
+    public const int MaxAutonomousSystemOrganizationLength = 255;
+    public const int MaxCountryIsoCodeLength = 2;
 
     public const int MaxAttachmentSize = 20000000;
     public const int MaxAttachmentsTotalSize = 20000000;
     public const int MaxAttachmentsCount = 6;
     public const int MaxFileNameLength = 100;
     public const int MaxFileExtensionLength = 10;
-    public const int MaxFileHashLength = 255;
+    public const int MaxFileHashBytesLength = 32;
     public const int MinSearchTermLength = 3;
     public const int MaxSearchTermLength = 100;
     public const int MinCategoryAliasLength = 1;
     public const int MaxCategoryAliasLength = 10;
     public const int MinCategoryAndBoardNameLength = 2;
     public const int MaxCategoryAndBoardNameLength = 100;
-    public const int MinMessageLength = 3;
-    // As long as your nvarchar column is less than 4000 characters (2 bytes each) - SQL Server will use the nvarchar(n) type.
-    // The upper limit is 4000 characters - if you specify a length greater than that, there's no alternative but to use nvarchar(max)
     public const int MaxMessageLength = 4000;
+    public const int MaxMessageHtmlLength = 8192;
     public const int MinTitleLength = 2;
     public const int MaxTitleLength = 100;
     public const int MaxReasonLength = 500;
@@ -43,7 +44,7 @@ public static class Defaults
     public const int DefaultBumpLimit = 500;
     public const int MaxAttachmentsCountPerPost = 10;
     public const int MaxAttachmentsBytesPerPost = 20000000;
-    public const int LatestPostsCountOnCategoryPage = 3;
+    public const int LatestPostsCountInThreadPreview = 3;
 
     public const string DefaultMimeType = "application/octet-stream";
     public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
@@ -51,9 +52,10 @@ public static class Defaults
     public const int CacheCategoriesExpirationSeconds = 3600;
     public const int ThumbnailsMaxWidth = 200;
     public const int ThumbnailsMaxHeight = 200;
-    public static ICollection<string> AudioExtensions { get; set; } = new List<string> { "mp3", "ogg", "aac" };
-    public static ICollection<string> PictureExtensions { get; set; } = new List<string> { "jpg", "jpeg", "png", "gif", "svg" };
-    public static ICollection<string> VideoExtensions { get; set; } = new List<string> { "webm", "mp4" };
+    public const int UserIdleTimeoutMinutes = 60;
+    public static IReadOnlyCollection<string> AudioExtensions { get; set; } = new List<string> { "mp3", "ogg", "aac", "m4a", "opus" }.AsReadOnly();
+    public static IReadOnlyCollection<string> PictureExtensions { get; set; } = new List<string> { "jpg", "jpeg", "png", "gif", "svg", "webp", "avif" }.AsReadOnly();
+    public static IReadOnlyCollection<string> VideoExtensions { get; set; } = new List<string> { "webm", "mp4" }.AsReadOnly();
     public const string AspNetEnvIntegrationTesting = "IntegrationTesting";
     /// <summary>
     /// <para><a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/datatypes.html#common.data.datetime-def">Date and time</a> (RFC 3339, ISO 8601).</para>

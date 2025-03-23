@@ -6,14 +6,14 @@ namespace Hikkaba.Web.ViewModels.PostsViewModels;
 public class PostEditViewModel
 {
     [Required]
-    public TPrimaryKey Id { get; set; }
+    public required long Id { get; set; }
 
     [DataType(DataType.MultilineText)]
     [MaxLength(Defaults.MaxMessageLength)]
     [Display(Name = @"Message")]
-    public string Message { get; set; }
+    public required string Message { get; set; }
 
     [Required]
-    public string CategoryAlias { get; set; }
-    public TPrimaryKey ThreadId { get; set; }
+    public required string CategoryAlias { get; set; }
+    public required long ThreadId { get; set; }
 }

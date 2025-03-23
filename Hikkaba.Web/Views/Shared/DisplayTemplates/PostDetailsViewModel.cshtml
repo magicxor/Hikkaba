@@ -1,4 +1,5 @@
 @using Hikkaba.Common.Constants
+@using Hikkaba.Common.Services.Contracts
 @using Hikkaba.Services.Contracts
 @using Hikkaba.Web.Extensions
 @using Hikkaba.Web.Services.Contracts
@@ -6,7 +7,7 @@
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IMessagePostProcessor MessagePostProcessor
 @inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator
-@inject ICategoryToModeratorService CategoryToModeratorService
+@inject IUserContext UserContext
 
 <div class="row">
     <div class="col-md-12">
@@ -15,7 +16,7 @@
                 <h3 class="panel-title post-title">
                     @if (Model.ThreadShowThreadLocalUserHash)
                     {
-                        @(ThreadLocalUserHashGenerator.Generate(Model.ThreadId.ToString(), Model.UserIpAddress))
+                        @(ThreadLocalUserHashGenerator.Generate(Model.ThreadId.ToString(), Model.UserIpAddress.ToString()))
                     }
                     else
                     {
@@ -25,11 +26,11 @@
                     {
                         <b>SAGE</b>
                     }
-                    @Html.DisplayFor(model => model.Created)
+                    @Html.DisplayFor(model => model.CreatedAt)
                     @{
-                        if (Model.Modified.HasValue)
+                        if (Model.ModifiedAt.HasValue)
                         {
-                            <i>&nbsp;(&nbsp;</i><i class="fa fa-pencil" aria-hidden="true"></i><i>&nbsp;@Html.DisplayFor(model => model.Modified)&nbsp;)</i>
+                            <i>&nbsp;(&nbsp;</i><i class="fa fa-pencil" aria-hidden="true"></i><i>&nbsp;@Html.DisplayFor(model => model.ModifiedAt)&nbsp;)</i>
                         }
                     }
                     &nbsp;
@@ -47,7 +48,7 @@
                 </h3>
             </div>
             <div class="panel-body post-content">
-                @if (Context.User.Identity.IsAuthenticated && await CategoryToModeratorService.IsUserCategoryModeratorAsync(Model.CategoryId, User))
+                @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))
                 {
                     <div class="row">
                         <div class="col-md-12">
@@ -84,9 +85,9 @@
                         @Html.DisplayFor(model => model.Video)
                     </ul>
                 }
-                <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.CategoryAlias, Model.ThreadId, Model.Message))</span>
+                <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.CategoryAlias, Model.ThreadId, Model.MessageHtml))</span>
             </div>
-            @if ((Model.Replies != null) && (Model.Replies.Any()))
+            @if (Model.Replies.Any())
             {
                 <div class="panel-footer">
                     <ul class="list-inline">

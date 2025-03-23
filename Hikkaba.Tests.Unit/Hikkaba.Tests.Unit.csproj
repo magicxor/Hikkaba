@@ -14,8 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hikkaba.Services\Hikkaba.Services.csproj" />
-    <ProjectReference Include="..\Hikkaba.Web\Hikkaba.Web.csproj" />
+    <ProjectReference Include="..\Hikkaba.Services.Implementations\Hikkaba.Services.Implementations.csproj" />
   </ItemGroup>
 
 </Project>

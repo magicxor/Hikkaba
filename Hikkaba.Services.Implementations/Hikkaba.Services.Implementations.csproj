@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Hikkaba.Repositories.Contracts\Hikkaba.Repositories.Contracts.csproj" />
+      <ProjectReference Include="..\Hikkaba.Services.Contracts\Hikkaba.Services.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MaxMind.GeoIP2" />
+      <PackageReference Include="SixLabors.ImageSharp" />
+      <PackageReference Include="TwentyTwenty.Storage" />
+    </ItemGroup>
+
+</Project>

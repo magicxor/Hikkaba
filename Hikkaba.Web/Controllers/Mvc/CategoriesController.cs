@@ -1,130 +1,77 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Hikkaba.Common.Constants;
-using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Exceptions;
+using Hikkaba.Infrastructure.Models.Category;
+using Hikkaba.Paging.Enums;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
-using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Hikkaba.Web.Utils;
-using Hikkaba.Web.ViewModels.AdministrationViewModels;
-using Hikkaba.Models.Enums;
+using Hikkaba.Paging.Models;
 using Hikkaba.Services.Contracts;
-using Hikkaba.Services.Implementations.Generic;
+using Hikkaba.Web.Mappings;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 public class CategoriesController : BaseMvcController
 {
-    private readonly ILogger _logger;
-    private readonly IMapper _mapper;
     private readonly IBoardService _boardService;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
-    private readonly IPostService _postService;
-    private readonly ICategoryToModeratorService _categoryToModeratorService;
-    private readonly IApplicationUserService _applicationUserService;
 
     public CategoriesController(
         UserManager<ApplicationUser> userManager,
-        ILogger<CategoriesController> logger,
-        IMapper mapper,
         IBoardService boardService,
         ICategoryService categoryService,
-        IThreadService threadService,
-        IPostService postService,
-        ICategoryToModeratorService categoryToModeratorService,
-        IApplicationUserService applicationUserService) : base(userManager)
+        IThreadService threadService)
+        : base(userManager)
     {
-        _logger = logger;
-        _mapper = mapper;
         _boardService = boardService;
         _categoryService = categoryService;
         _threadService = threadService;
-        _postService = postService;
-        _categoryToModeratorService = categoryToModeratorService;
-        _applicationUserService = applicationUserService;
     }
 
     [AllowAnonymous]
     [Route("{categoryAlias}")]
-    public async Task<IActionResult> Details(string categoryAlias, int page = 1, int size = 10)
+    public async Task<IActionResult> Details(
+        string categoryAlias,
+        int page = 1,
+        int size = 10,
+        CancellationToken cancellationToken = default)
     {
-        var pageDto = new PageDto(page, size);
-        var categoryDto = await _categoryService.GetAsync(categoryAlias);
-        var isCurrentUserCategoryModerator = await _categoryToModeratorService
-            .IsUserCategoryModeratorAsync(categoryDto.Id, User);
-        var threadDtoList = await _threadService.PagedListAsync(thread =>
-                (isCurrentUserCategoryModerator || !thread.IsDeleted)
-                && (isCurrentUserCategoryModerator || thread.Posts.Any(p => !p.IsDeleted))
-                && (thread.Category.Id == categoryDto.Id),
-            pageDto);
-
-        if ((categoryDto.IsDeleted) && (!isCurrentUserCategoryModerator))
+        var category = await _categoryService.GetAsync(categoryAlias, false);
+        if (category is null)
         {
-            throw new HttpResponseException(HttpStatusCode.NotFound, $"Category {categoryDto.Alias} not found.");
+            // todo: add 404 page
+            return NotFound();
         }
 
-        var threadDetailsViewModels = _mapper.Map<IList<ThreadDetailsViewModel>>(threadDtoList.CurrentPageItems);
-        foreach (var threadDetailsViewModel in threadDetailsViewModels)
+        var filter = new ThreadPreviewsFilter
         {
-            var postsDtoListReversed = await _postService
-                .PagedListAsync(
-                    post => (!post.IsDeleted) && (post.Thread.Id == threadDetailsViewModel.Id),
-                    post => post.Created,
-                    AdditionalRecordType.Last,
-                    true,
-                    new PageDto(1, Defaults.LatestPostsCountOnCategoryPage));
-            var postCount = postsDtoListReversed.TotalItemsCount;
-            var lastPostsDtoList = postsDtoListReversed.CurrentPageItems.OrderBy(post => post.Created).ToList();
-            var postDetailsViewModels = _mapper.Map<IList<PostDetailsViewModel>>(lastPostsDtoList);
-            var i = 0;
-            foreach (var latestPostDetailsViewModel in postDetailsViewModels)
-            {
-                if (i == 0)
-                {
-                    latestPostDetailsViewModel.Index = 0;
-                }
-                else
-                {
-                    latestPostDetailsViewModel.Index = postCount - (Defaults.LatestPostsCountOnCategoryPage - (i - 1));
-                }
-                latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDetailsViewModel.ShowThreadLocalUserHash;
-                latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
-                latestPostDetailsViewModel.CategoryId = categoryDto.Id;
-                i++;
-            }
+            CategoryAlias = categoryAlias,
+            PageNumber = page,
+            PageSize = size,
+            OrderBy = [
+                new OrderByItem { Field = nameof(ThreadPreviewSm.IsPinned), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewSm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewSm.Id), Direction = OrderByDirection.Desc },
+            ],
+        };
+        var threads = await _threadService.ListThreadPreviewsPaginatedAsync(filter, cancellationToken);
 
-            threadDetailsViewModel.Posts = postDetailsViewModels;
-            threadDetailsViewModel.CategoryAlias = categoryDto.Alias;
-            threadDetailsViewModel.CategoryName = categoryDto.Name;
-            threadDetailsViewModel.PostCount = postCount;
-        }
-
-        var categoryViewModel = _mapper.Map<CategoryDetailsViewModel>(categoryDto);
         var categoryDetailsViewModel = new CategoryThreadsViewModel
         {
-            Category = categoryViewModel,
-            Threads = new BasePagedList<ThreadDetailsViewModel>
-            {
-                TotalItemsCount = threadDtoList.TotalItemsCount,
-                CurrentPage = pageDto,
-                CurrentPageItems = threadDetailsViewModels,
-            },
+            Category = category.ToViewModel(),
+            Threads = new PagedResult<ThreadDetailsViewModel>(threads.Data.ToViewModels(), filter, threads.TotalItemCount),
         };
         return View(categoryDetailsViewModel);
     }
 
+    /*
     [Route("Categories/Create")]
     public IActionResult Create()
     {
@@ -152,7 +99,7 @@ public class CategoriesController : BaseMvcController
     }
 
     [Route("Categories/{id}/Edit")]
-    public async Task<IActionResult> Edit(TPrimaryKey id)
+    public async Task<IActionResult> Edit(int id)
     {
         var dto = await _categoryService.GetAsync(id);
         var viewModel = _mapper.Map<CategoryEditViewModel>(dto);
@@ -180,7 +127,7 @@ public class CategoriesController : BaseMvcController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetIsDeleted(TPrimaryKey id, bool isDeleted)
+    public async Task<IActionResult> SetIsDeleted(int id, bool isDeleted)
     {
         var categoryDto = await _categoryService.GetAsync(id);
         var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -192,58 +139,50 @@ public class CategoriesController : BaseMvcController
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
 
     [Route("Categories/{id}/AddModerator")]
-    public async Task<IActionResult> AddModerator(TPrimaryKey id)
+    public async Task<IActionResult> AddModerator(int id)
     {
-        var categoryDto = await _categoryService.GetAsync(id);
-        var usersDto = await _applicationUserService.ListAsync(user => !user.IsDeleted
-                                                                       && (user.ModerationCategories.All(c => c.CategoryId != id) || !user.ModerationCategories.Any()),
-            user => user.NormalizedUserName);
-        var categoryDetailsViewModel = _mapper.Map<CategoryDetailsViewModel>(categoryDto);
-        var usersViewModel = _mapper.Map<IList<ApplicationUserViewModel>>(usersDto);
-        var viewModel = new CategoryModeratorsViewModel
+        var categoryModeratorsDto = await _categoryService.ListCategoryModeratorsAsync(new CategoryModeratorsFilter
         {
-            Category = categoryDetailsViewModel,
-            Moderators = usersViewModel,
-        };
-        return View(viewModel);
+            CategoryId = id,
+            OrderBy = [nameof(ApplicationUser.NormalizedUserName)],
+        });
+
+        return View(categoryModeratorsDto);
     }
 
     [Route("Categories/{id}/AddModerator")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddModeratorConfirmed(TPrimaryKey id, TPrimaryKey moderatorId)
+    public async Task<IActionResult> AddModeratorConfirmed(int id, int moderatorId)
     {
         await _categoryToModeratorService.AddAsync(id, moderatorId);
         return RedirectToAction("Index", "Administration");
     }
 
     [Route("Categories/{id}/RemoveModerator")]
-    public async Task<IActionResult> RemoveModerator(TPrimaryKey id)
+    public async Task<IActionResult> RemoveModerator(int id)
     {
-        var categoryDto = await _categoryService.GetAsync(id);
-        var usersDto = await _applicationUserService.ListAsync(u => u.ModerationCategories.Any(c => c.CategoryId == id),
-            user => user.NormalizedUserName);
-        var categoryDetailsViewModel = _mapper.Map<CategoryDetailsViewModel>(categoryDto);
-        var usersViewModel = _mapper.Map<IList<ApplicationUserViewModel>>(usersDto);
-        var viewModel = new CategoryModeratorsViewModel
+        var categoryModeratorsDto = await _categoryService.ListCategoryModeratorsAsync(new CategoryModeratorsFilter
         {
-            Category = categoryDetailsViewModel,
-            Moderators = usersViewModel,
-        };
-        return View(viewModel);
+            CategoryId = id,
+            OrderBy = [nameof(ApplicationUser.NormalizedUserName)],
+        });
+
+        return View(categoryModeratorsDto);
     }
 
     [Route("Categories/{id}/RemoveModerator")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RemoveModeratorConfirmed(TPrimaryKey id, TPrimaryKey moderatorId)
+    public async Task<IActionResult> RemoveModeratorConfirmed(int id, int moderatorId)
     {
         await _categoryToModeratorService.DeleteAsync(id, moderatorId);
         return RedirectToAction("Index", "Administration");
     }
+    */
 }

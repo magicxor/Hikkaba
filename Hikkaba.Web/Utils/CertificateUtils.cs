@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using Hikkaba.Models.Configuration;
+using Hikkaba.Infrastructure.Models.Configuration;
 
 namespace Hikkaba.Web.Utils;
 

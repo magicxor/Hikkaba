@@ -1,0 +1,18 @@
+using Hikkaba.Web.ViewModels.BansViewModels;
+using Hikkaba.Web.ViewModels.ThreadsViewModels;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Hikkaba.Web.Extensions;
+
+public static class BanViewModelExtensions
+{
+    public static string? GetUri(this BanViewModel banViewModel, IUrlHelper urlHelper)
+    {
+        return urlHelper.Action("Details", "Threads",
+            new
+            {
+                categoryAlias = banViewModel.CategoryAlias,
+                threadId = banViewModel.RelatedThreadId,
+            });
+    }
+}

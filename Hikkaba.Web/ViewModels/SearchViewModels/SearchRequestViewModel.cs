@@ -8,5 +8,5 @@ public class SearchRequestViewModel
     [Required]
     [MinLength(Defaults.MinSearchTermLength)]
     [MaxLength(Defaults.MaxSearchTermLength)]
-    public string Query { get; set; }
+    public required string Query { get; set; }
 }

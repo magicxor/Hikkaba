@@ -1,5 +1,5 @@
 ﻿@using System.Net
-@using Hikkaba.Infrastructure.Exceptions
+@using Hikkaba.Common.Exceptions
 @using TwentyTwenty.Storage
 @model Exception
 @{
@@ -7,9 +7,9 @@
 }
 
 <div class="jumbotron">
-    @if (Model is HttpResponseException)
+    @if (Model is HikkabaHttpResponseException)
     {
-        var customException = (HttpResponseException) Model;
+        var customException = (HikkabaHttpResponseException) Model;
         <h1>Error @((int)customException.HttpStatusCode) - @customException.HttpStatusCode</h1>
         <h3>@customException.Message</h3>
     }

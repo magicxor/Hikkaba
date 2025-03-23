@@ -5,5 +5,5 @@ namespace Hikkaba.Web.ViewModels.BansViewModels;
 public class BanEditViewModel: BanCreateViewModel
 {
     [Display(Name = @"Id")]
-    public TPrimaryKey Id { get; set; }
+    public int Id { get; set; }
 }

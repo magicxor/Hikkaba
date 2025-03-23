@@ -1,22 +1,15 @@
-using System;
 using System.Net;
 using System.Threading.Tasks;
-using AutoMapper;
-using DNTCaptcha.Core;
-using Hikkaba.Common.Constants;
-using Hikkaba.Common.Extensions;
+using Hikkaba.Common.Exceptions;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Models.Dto.Post;
-using Hikkaba.Models.Dto.Thread;
 using Hikkaba.Services.Contracts;
 using Hikkaba.Web.Controllers.Mvc.Base;
+using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
@@ -24,35 +17,31 @@ namespace Hikkaba.Web.Controllers.Mvc;
 public class ThreadsController : BaseMvcController
 {
     private readonly ILogger<ThreadsController> _logger;
-    private readonly IMapper _mapper;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
-    private readonly ICategoryToModeratorService _categoryToModeratorService;
 
     public ThreadsController(
         UserManager<ApplicationUser> userManager,
         ILogger<ThreadsController> logger,
-        IMapper mapper,
         ICategoryService categoryService,
-        IThreadService threadService,
-        ICategoryToModeratorService categoryToModeratorService) : base(userManager)
+        IThreadService threadService) : base(userManager)
     {
         _logger = logger;
-        _mapper = mapper;
         _categoryService = categoryService;
         _threadService = threadService;
-        _categoryToModeratorService = categoryToModeratorService;
     }
 
     [Route("{categoryAlias}/Threads/{threadId}")]
     [AllowAnonymous]
-    public async Task<IActionResult> Details(string categoryAlias, TPrimaryKey threadId)
+    public async Task<IActionResult> Details(string categoryAlias, long threadId)
     {
-        var aggregationDto = await _threadService.GetAggregationAsync(threadId, User);
-        var threadDetailsViewModel = _mapper.Map<ThreadDetailsViewModel>(aggregationDto);
+        var threadPosts = await _threadService.GetThreadDetailsAsync(threadId);
+        var threadDetailsViewModel = threadPosts.ToViewModel();
+
         return View(threadDetailsViewModel);
     }
 
+    /*
     [Route("{categoryAlias}/Threads/Create")]
     [AllowAnonymous]
     public async Task<IActionResult> Create(string categoryAlias)
@@ -79,7 +68,7 @@ public class ThreadsController : BaseMvcController
             {
                 var categoryDto = await _categoryService.GetAsync(viewModel.CategoryAlias);
 
-                var threadDto = _mapper.Map<ThreadDto>(viewModel);
+                var threadDto = _mapper.Map<ThreadEditSm>(viewModel);
                 threadDto.BumpLimit = categoryDto.DefaultBumpLimit;
                 threadDto.ShowThreadLocalUserHash = categoryDto.DefaultShowThreadLocalUserHash;
                 threadDto.CategoryId = categoryDto.Id;
@@ -88,7 +77,7 @@ public class ThreadsController : BaseMvcController
                 postDto.UserIpAddress = UserIpAddress.ToString();
                 postDto.UserAgent = UserAgent;
 
-                var threadCreateDto = new ThreadPostCreateDto
+                var threadCreateDto = new ThreadPostCreateSm
                 {
                     Category = categoryDto,
                     Thread = threadDto,
@@ -112,9 +101,11 @@ public class ThreadsController : BaseMvcController
             return View(viewModel);
         }
     }
+    */
 
+    /*
     [Route("{categoryAlias}/Threads/{threadId}/Edit")]
-    public async Task<IActionResult> Edit(string categoryAlias, TPrimaryKey threadId)
+    public async Task<IActionResult> Edit(string categoryAlias, long threadId)
     {
         var threadDto = await _threadService.GetAsync(threadId);
         var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -126,14 +117,14 @@ public class ThreadsController : BaseMvcController
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
 
     [Route("{categoryAlias}/Threads/{threadId}/Edit")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(string categoryAlias, TPrimaryKey threadId, ThreadEditViewModel threadEditViewModel)
+    public async Task<IActionResult> Edit(string categoryAlias, long threadId, ThreadEditViewModel threadEditViewModel)
     {
         var threadDto = await _threadService.GetAsync(threadId);
         _mapper.Map(threadEditViewModel, threadDto);
@@ -146,13 +137,13 @@ public class ThreadsController : BaseMvcController
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetIsPinned(TPrimaryKey threadId, bool isPinned)
+    public async Task<IActionResult> SetIsPinned(long threadId, bool isPinned)
     {
         var threadDto = await _threadService.GetAsync(threadId);
         var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -165,13 +156,13 @@ public class ThreadsController : BaseMvcController
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetIsClosed(TPrimaryKey threadId, bool isClosed)
+    public async Task<IActionResult> SetIsClosed(long threadId, bool isClosed)
     {
         var threadDto = await _threadService.GetAsync(threadId);
         var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -184,13 +175,13 @@ public class ThreadsController : BaseMvcController
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetIsDeleted(TPrimaryKey threadId, bool isDeleted)
+    public async Task<IActionResult> SetIsDeleted(long threadId, bool isDeleted)
     {
         var threadDto = await _threadService.GetAsync(threadId);
         var isCurrentUserCategoryModerator = await _categoryToModeratorService
@@ -203,7 +194,8 @@ public class ThreadsController : BaseMvcController
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
+    */
 }

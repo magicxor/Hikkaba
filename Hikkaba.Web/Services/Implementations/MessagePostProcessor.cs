@@ -36,7 +36,7 @@ public class MessagePostProcessor : IMessagePostProcessor
         return UriRegex.Replace(text, @"<a href=""$1"" rel=""nofollow noopener noreferrer external"">$1</a>");
     }
 
-    private string ReplaceCrossLinksWithHtmlLinks(string categoryAlias, TPrimaryKey threadId, string text)
+    private string ReplaceCrossLinksWithHtmlLinks(string categoryAlias, long threadId, string text)
     {
         var threadUri = _urlHelper.Action("Details", "Threads",
             new
@@ -57,7 +57,7 @@ public class MessagePostProcessor : IMessagePostProcessor
         return LimitLineTerminatorCountRegex.Replace(text, "\r\n\r\n");
     }
 
-    public string Process(string categoryAlias, TPrimaryKey threadId, string text)
+    public string Process(string categoryAlias, long threadId, string text)
     {
         var normalizedLineBreaks = NormalizeLineBreaks(text);
         var limitedLineBreaksCount = LimitLineBreaksCount(normalizedLineBreaks);

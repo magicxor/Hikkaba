@@ -2,17 +2,20 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Common.Constants;
-using Hikkaba.Data.Entities.Base.Current;
 
 namespace Hikkaba.Data.Entities;
 
 [Table("Boards")]
-public class Board: BaseEntity
+public class Board
 {
+    [Key]
+    public int Id { get; set; }
+
     [Required]
     [MinLength(Defaults.MinCategoryAndBoardNameLength)]
     [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
-    public virtual ICollection<Category> Categories { get; set; }
+    // Relations
+    public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 }

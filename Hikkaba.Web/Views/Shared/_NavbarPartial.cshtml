@@ -1,5 +1,6 @@
 ﻿@using Hikkaba.Common.Constants
 @using Hikkaba.Data.Entities
+@using Hikkaba.Infrastructure.Models.Category
 @using Hikkaba.Services.Contracts
 @using Hikkaba.Web.ViewModels.SearchViewModels
 @using Microsoft.AspNetCore.Identity
@@ -15,7 +16,7 @@
                 [@Html.ActionLink(Defaults.BoardName, "Index", "Home")]
                 [
                 @{
-                    var categories = await CategoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
+                    var categories = await CategoryService.ListAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] });
                     foreach (var category in categories)
                     {
                         @("/")
@@ -27,7 +28,7 @@
                 [
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity.Name</a>
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity?.Name</a>
                     @if (User.IsInRole(Defaults.AdministratorRoleName))
                     {
                         @("|")
@@ -48,7 +49,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <partial name="_SearchPartial" , model="new SearchRequestViewModel()" />
+            <partial name="_SearchPartial" model="@(new SearchRequestViewModel { Query = string.Empty })" />
         </div>
     </div>
 </div>

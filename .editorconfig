@@ -15,7 +15,7 @@ dotnet_diagnostic.CS1998.severity = suggestion
 
 # CA1848: For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogDebug(ILogger, string?, params object?[])'
 # Reason: it could be too verbose to use it everywhere, but this is a good reminder
-dotnet_diagnostic.CA1848.severity = suggestion
+dotnet_diagnostic.CA1848.severity = none
 
 # CA1716: Rename namespace Constants so that it no longer conflicts with the reserved language keyword 'Shared'.
 # Using a reserved keyword as the name of a namespace makes it harder for consumers in other languages to use the namespace.
@@ -319,11 +319,14 @@ resharper_entity_framework_unsupported_server_side_function_call_highlighting = 
 # Reason: it looks ugly
 resharper_move_local_function_after_jump_statement_highlighting = none
 
+# The relationship defined by this property contributes to a dependency loop
+resharper_entity_framework_model_validation_circular_dependency_highlighting = none
+
 # formatting rules
 indent_size = 4
 roslynator_binary_operator_new_line = before
 roslynator_conditional_operator_new_line = before
 roslynator_null_conditional_operator_new_line = before
 
-[*.{json,env,yml,yaml,xml,xsd,html,cshtml,csproj,dcproj,props,sln,resx}]
+[*.{json,env,yml,yaml,xml,xsd,html,cshtml,props,sln,resx}]
 indent_size = 2

@@ -1,6 +1,6 @@
 using Hikkaba.Services.Implementations;
 using Microsoft.Extensions.Logging;
-using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace Hikkaba.Tests.Unit;
@@ -32,7 +32,7 @@ public class IpAddressCalculatorTests
     private const string LongLoopbackIpv6 = "0:0:0:0:0:0:0:1";
     private const string LinkLocalIpv6 = "fe80::ad88:a298:5114:18bb";
 
-    private static readonly ILogger<IpAddressCalculator> Logger = Mock.Of<ILogger<IpAddressCalculator>>();
+    private static readonly ILogger<IpAddressCalculator> NullLogger = NullLoggerFactory.Instance.CreateLogger<IpAddressCalculator>();
 
     /* Local IPv4 */
     [TestCase(LowerLocalIpv4, LowerLocalIpv4, LowerLocalIpv4, true)]
@@ -79,10 +79,36 @@ public class IpAddressCalculatorTests
     [TestCase(InvalidIpv4, InvalidIpv4, InvalidIpv4, false)]
     [TestCase(InvalidIpv4, InvalidIpv4, LowerLocalIpv4, false)]
     [TestCase(LowerLocalIpv4, LinkLocalIpv6, LowerLocalIpv4, false)]
-    public void TestIpIsInRange(string lowerInclusive, string upperInclusive, string address, bool expectedResult)
+    public void TestIpIsInRangeByUpperLower(string lowerInclusive, string upperInclusive, string address, bool expectedResult)
     {
-        var ipAddressCalculator = new IpAddressCalculator(Logger);
+        var ipAddressCalculator = new IpAddressCalculator(NullLogger);
         var actualResult = ipAddressCalculator.IsInRange(lowerInclusive, upperInclusive, address);
+        if (expectedResult)
+        {
+            Assert.That(actualResult, Is.True);
+        }
+        else
+        {
+            Assert.That(actualResult, Is.False);
+        }
+    }
+
+    [TestCase("1.0.0.0/24", "1.0.0.1", true)]
+    [TestCase("1.0.224.0/19", "1.0.224.1", true)]
+    [TestCase("195.49.210.0/23", "195.49.210.1", true)]
+    [TestCase("223.255.254.0/24", "223.255.254.1", true)]
+    [TestCase("1.0.0.0/24", "4.0.0.1", false)]
+    [TestCase("1.0.224.0/19", "4.0.224.1", false)]
+    [TestCase("195.49.210.0/23", "1.49.210.1", false)]
+    [TestCase("223.255.254.0/24", "8.255.254.1", false)]
+    [TestCase("2001:200::/37", "2001:200::1", true)]
+    [TestCase("2604:de00:32::/47", "2604:de00:32::1", true)]
+    [TestCase("2604:dc00:1000::/44", "2604:dc00:1000::1", true)]
+    [TestCase("2c0f:fc89:809f:f3c6::/64", "2c0f:fc89:809f:f3c6::1", true)]
+    public void TestIpIsInRangeBySubnet(string networkAddress, string ipAddress, bool expectedResult)
+    {
+        var ipAddressCalculator = new IpAddressCalculator(NullLogger);
+        var actualResult = ipAddressCalculator.IsInRange(networkAddress, ipAddress);
         if (expectedResult)
         {
             Assert.That(actualResult, Is.True);

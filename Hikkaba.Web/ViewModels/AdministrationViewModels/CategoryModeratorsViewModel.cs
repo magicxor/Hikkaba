@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using Hikkaba.Infrastructure.Models.ApplicationUser;
+using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 
 namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
 
 public class CategoryModeratorsViewModel
 {
-    public CategoryDetailsViewModel Category { get; set; }
-    public IList<ApplicationUserViewModel> Moderators { get; set; }
+    public required CategoryDetailsViewModel Category { get; set; }
+    public required IReadOnlyList<ApplicationUserViewModel> Moderators { get; set; }
 }

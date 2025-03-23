@@ -11,7 +11,7 @@ public class SimilarityTests
     {
         Assembly assembly = typeof(SimilarityTests).GetTypeInfo().Assembly;
         string qualifiedName = $"{assembly.GetName().Name}.Files.{name}";
-        var stream = assembly.GetManifestResourceStream(qualifiedName) ?? throw new Exception($"Resource {qualifiedName} not found.");
+        var stream = assembly.GetManifestResourceStream(qualifiedName) ?? throw new UnitTestConfigException($"Resource {qualifiedName} not found.");
         using var sr = new StreamReader(stream);
         return sr.ReadToEnd();
     }

@@ -1,4 +1,5 @@
-﻿using Hikkaba.Web.Services.Contracts;
+﻿using System;
+using Hikkaba.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -18,6 +19,7 @@ public class UrlHelperFactoryWrapper: IUrlHelperFactoryWrapper
 
     public IUrlHelper GetUrlHelper()
     {
-        return _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
+        return _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext
+                                              ?? throw new InvalidOperationException("ActionContext is null"));
     }
 }

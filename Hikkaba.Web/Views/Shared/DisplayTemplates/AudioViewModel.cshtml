@@ -1,11 +1,11 @@
-﻿@using Hikkaba.Models.Configuration
+﻿@using Hikkaba.Infrastructure.Models.Configuration
 @using Hikkaba.Web.Utils
 @using Microsoft.Extensions.Options
 @model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.AudioViewModel
 @inject IOptions<HikkabaConfiguration> Settings
 
 @{
-    var fileSizeString = FileSizeStringifier.Stringify(Model.Size);
+    var fileSizeString = FileSizeStringifier.Stringify(Model.FileSize);
     var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
 }
 

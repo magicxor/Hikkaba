@@ -1,66 +1,64 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels;
 
 public class PostDetailsViewModel
 {
-    public int Index { get; set; }
+    public required int Index { get; set; }
 
     [Display(Name = @"Post id")]
-    public TPrimaryKey Id { get; set; }
+    public required long Id { get; set; }
 
     [Display(Name = @"Is deleted")]
-    public bool IsDeleted { get; set; }
+    public required bool IsDeleted { get; set; }
 
     [Display(Name = @"Creation date and time")]
-    public DateTime Created { get; set; }
+    public required DateTime CreatedAt { get; set; }
 
     [Display(Name = @"Modification date and time")]
-    public DateTime? Modified { get; set; }
-
+    public required DateTime? ModifiedAt { get; set; }
 
     [Display(Name = @"Sage")]
-    public bool IsSageEnabled { get; set; }
+    public required bool IsSageEnabled { get; set; }
 
     [Display(Name = @"Message")]
-    public string Message { get; set; }
+    public required string MessageHtml { get; set; }
 
     [Display(Name = @"IP")]
-    public string UserIpAddress { get; set; }
+    public required IPAddress UserIpAddress { get; set; }
 
     [Display(Name = @"User-agent")]
-    public string UserAgent { get; set; }
+    public required string UserAgent { get; set; }
 
     [Display(Name = @"Audio")]
-    public ICollection<AudioViewModel> Audio { get; set; }
+    public required IReadOnlyList<AudioViewModel> Audio { get; set; }
 
     [Display(Name = @"Documents")]
-    public ICollection<DocumentViewModel> Documents { get; set; }
+    public required IReadOnlyList<DocumentViewModel> Documents { get; set; }
 
     [Display(Name = @"Notices")]
-    public ICollection<NoticeViewModel> Notices { get; set; }
+    public required IReadOnlyList<NoticeViewModel> Notices { get; set; }
 
     [Display(Name = @"Pictures")]
-    public ICollection<PictureViewModel> Pictures { get; set; }
+    public required IReadOnlyList<PictureViewModel> Pictures { get; set; }
 
     [Display(Name = @"Video")]
-    public ICollection<VideoViewModel> Video { get; set; }
+    public required IReadOnlyList<VideoViewModel> Video { get; set; }
 
-
-    public TPrimaryKey ThreadId { get; set; }
-
+    public required long ThreadId { get; set; }
 
     [Display(Name = @"Show thread-local user hashes")]
-    public bool ThreadShowThreadLocalUserHash { get; set; }
+    public required bool ThreadShowThreadLocalUserHash { get; set; }
 
     [Display(Name = @"Category alias")]
-    public string CategoryAlias { get; set; }
+    public required string CategoryAlias { get; set; }
 
-    public TPrimaryKey CategoryId { get; set; }
+    public required int CategoryId { get; set; }
 
     [Display(Name = @"Replies")]
-    public ICollection<TPrimaryKey> Replies { get; set; }
+    public required IReadOnlyList<long> Replies { get; set; }
 }

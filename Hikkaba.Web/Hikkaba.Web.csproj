@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -8,11 +8,11 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <LangVersion>default</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" />
     <PackageReference Include="DNTCaptcha.Core" />
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MailKit" />
@@ -30,6 +30,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <PackageReference Include="NLog.Web.AspNetCore" />
+    <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="Sakura.AspNetCore.Mvc.PagedList" />
     <PackageReference Include="Sakura.AspNetCore.PagedList.Async" />
     <PackageReference Include="Scrutor" />
@@ -44,13 +45,27 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeKicker.BbCode\CodeKicker.BbCode.csproj" />
     <ProjectReference Include="..\Hikkaba.Data\Hikkaba.Data.csproj" />
-    <ProjectReference Include="..\Hikkaba.Models\Hikkaba.Models.csproj" />
-    <ProjectReference Include="..\Hikkaba.Services\Hikkaba.Services.csproj" />
+    <ProjectReference Include="..\Hikkaba.Repositories.Contracts\Hikkaba.Repositories.Contracts.csproj" />
+    <ProjectReference Include="..\Hikkaba.Repositories.Implementations\Hikkaba.Repositories.Implementations.csproj" />
+    <ProjectReference Include="..\Hikkaba.Services.Contracts\Hikkaba.Services.Contracts.csproj" />
+    <ProjectReference Include="..\Hikkaba.Services.Implementations\Hikkaba.Services.Implementations.csproj" />
   </ItemGroup>
 
 
   <ItemGroup>
     <Folder Include="WwwRootSources\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Remove="GeoIp\GeoLite2-Country.mmdb" />
+    <Content Include="GeoIp\GeoLite2-Country.mmdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="GeoIp\GeoLite2-ASN.mmdb" />
+    <Content Include="GeoIp\GeoLite2-ASN.mmdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

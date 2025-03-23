@@ -1,9 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+using Hikkaba.Common.Models;
+using Hikkaba.Common.Services.Contracts;
+using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
-using Hikkaba.Data.Services;
-using Hikkaba.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Web.Middleware;
 
@@ -16,16 +20,35 @@ public class SetAuthenticatedUserMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext httpContext, IAuthenticatedUserService authenticatedUserService, UserManager<ApplicationUser> userManager)
+    public async Task Invoke(
+        HttpContext httpContext,
+        IUserContext authenticatedUserService,
+        UserManager<ApplicationUser> userManager,
+        ApplicationDbContext applicationDbContext)
     {
-        if (httpContext.User.Identity.IsAuthenticated)
+        if (httpContext.User.Identity?.IsAuthenticated == true)
         {
-            authenticatedUserService.ApplicationUserClaims = new ApplicationUserClaimsDto
+            var userIdStr = userManager.GetUserId(httpContext.User);
+            var userName = userManager.GetUserName(httpContext.User);
+
+            if (userIdStr is not null
+                && userName is not null
+                && int.TryParse(userIdStr, CultureInfo.InvariantCulture, out var userId))
             {
-                Id = TPrimaryKey.Parse(userManager.GetUserId(httpContext.User)),
-                UserName = userManager.GetUserName(httpContext.User),
-            };
+                var moderatedCategories = await applicationDbContext.CategoriesToModerators
+                    .Where(mc => mc.ModeratorId == userId)
+                    .Select(mc => mc.CategoryId)
+                    .ToHashSetAsync();
+
+                authenticatedUserService.SetUser(new CurrentUser
+                {
+                    Id = userId,
+                    UserName = userName,
+                    ModeratedCategories = moderatedCategories,
+                });
+            }
         }
+
         await _next(httpContext);
     }
 }

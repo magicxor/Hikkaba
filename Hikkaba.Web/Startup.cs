@@ -1,14 +1,9 @@
 using System.IO;
-using AutoMapper;
 using DNTCaptcha.Core;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Mapping;
-using Hikkaba.Models.Configuration;
-using Hikkaba.Services.Ref;
 using Hikkaba.Web.Binding.Providers;
-using Hikkaba.Web.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -26,8 +21,15 @@ using TwentyTwenty.Storage.Local;
 using TwentyTwenty.Storage;
 using Microsoft.AspNetCore.DataProtection;
 using System;
-using Hikkaba.Data.Services;
-using Hikkaba.Models.Extensions;
+using Hikkaba.Common.Enums;
+using Hikkaba.Common.Exceptions;
+using Hikkaba.Common.Services.Contracts;
+using Hikkaba.Common.Services.Implementations;
+using Hikkaba.Data.Utils;
+using Hikkaba.Infrastructure.Models.Configuration;
+using Hikkaba.Infrastructure.Models.Extensions;
+using Hikkaba.Repositories.Contracts;
+using Hikkaba.Repositories.Implementations;
 using Hikkaba.Services.Contracts;
 using Hikkaba.Services.Implementations;
 using Hikkaba.Web.Middleware;
@@ -36,6 +38,7 @@ using Hikkaba.Web.Services.Implementations;
 using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web;
 
@@ -43,6 +46,9 @@ public class Startup
 {
     private readonly IConfiguration _configuration;
     private readonly IWebHostEnvironment _webHostEnvironment;
+
+    private static readonly Action<ILogger, string, Exception?> LogMessage =
+        LoggerMessage.Define<string>(LogLevel.Debug, LogEventIds.DbQuery, "DB query: {Message}");
 
     public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
@@ -62,33 +68,42 @@ public class Startup
 
         services.AddDbContext<ApplicationDbContext>((provider, options) =>
         {
+            var logger = provider.GetRequiredService<ILogger<ApplicationDbContext>>();
             var webHostEnvironment = provider.GetRequiredService<IWebHostEnvironment>();
-            if (webHostEnvironment.IsDevelopment())
+            if (webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
             {
                 options.EnableSensitiveDataLogging();
             }
+
             options
-                .UseLazyLoadingProxies()
-                .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+                .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"), ContextConfiguration.SqlServerOptionsAction)
+                .LogTo(msg => LogMessage(logger, msg, null));
         });
 
         services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, TPrimaryKey>>()
-            .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, TPrimaryKey>>();
+            .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, int>>()
+            .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, int>>();
 
-        services.AddOptions();
-        services.Configure<HikkabaConfiguration>(_configuration.GetSection(nameof(HikkabaConfiguration)));
-        services.Configure<SeedConfiguration>(_configuration.GetSection(nameof(SeedConfiguration)));
+        services.AddOptionsWithValidateOnStart<HikkabaConfiguration>()
+            .Bind(_configuration.GetSection(nameof(HikkabaConfiguration)))
+            .ValidateDataAnnotations();
+
+        services.AddOptionsWithValidateOnStart<SeedConfiguration>()
+            .Bind(_configuration.GetSection(nameof(SeedConfiguration)))
+            .ValidateDataAnnotations();
 
         services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
         services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
+        services.AddSingleton<GeoIpReaderAsn>(x => new GeoIpReaderAsn("./GeoIp/GeoLite2-ASN.mmdb"));
+        services.AddSingleton<GeoIpReaderCountry>(x => new GeoIpReaderCountry("./GeoIp/GeoLite2-Country.mmdb"));
+        services.AddSingleton<IGeoIpService, GeoIpService>();
 
         services.AddHealthChecks();
         services.AddSession(options =>
         {
-            options.IdleTimeout = TimeSpan.FromMinutes(60);
+            options.IdleTimeout = TimeSpan.FromMinutes(Defaults.UserIdleTimeoutMinutes);
             options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             options.Cookie.SameSite = SameSiteMode.Strict;
             options.Cookie.HttpOnly = true;
@@ -105,6 +120,11 @@ public class Startup
                 .SetApplicationName("Hikkaba")
                 .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(hikkabaConfiguration))
                 .PersistKeysToFileSystem(new DirectoryInfo("/home/hikkaba/keys"));
+
+            // Captcha
+            services.AddDNTCaptcha(options => options
+                .UseSessionStorageProvider()
+                .WithEncryptionKey(hikkabaConfiguration?.AuthCertificatePassword ?? throw new HikkabaConfigException("AuthCertificatePassword is not set")));
         }
 
         services.AddControllersWithViews();
@@ -115,15 +135,35 @@ public class Startup
             options.ConfigureDefault();
         });
 
-        // Add application services.
-        services.AddTransient<IEmailSender, AuthMessageSender>();
-        services.AddTransient<ISmsSender, AuthMessageSender>();
+        // add services
+        services.AddScoped<IEmailSender, AuthMessageSender>();
+        services.AddScoped<ISmsSender, AuthMessageSender>();
         services.AddScoped<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
+        services.AddScoped<IAdministrationService, AdministrationService>();
+        //services.AddScoped<IApplicationUserService, ApplicationUserService>();
+        services.AddScoped<IAttachmentCategorizer, AttachmentCategorizer>();
+        services.AddScoped<IBanService, BanService>();
+        services.AddScoped<IBoardService, BoardService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        //services.AddScoped<ICryptoService, CryptoService>();
+        services.AddScoped<IGeoIpService, GeoIpService>();
+        services.AddScoped<IHmacService, HmacService>();
+        services.AddScoped<IIpAddressCalculator, IpAddressCalculator>();
+        services.AddScoped<IPostService, PostService>();
+        services.AddScoped<ISystemInfoService, SystemInfoService>();
+        services.AddScoped<IThreadLocalUserHashGenerator, ThreadLocalUserHashGenerator>();
+        services.AddScoped<IThreadService, ThreadService>();
+        services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
 
-        // Captcha
-        services.AddDNTCaptcha(options => options
-            .UseSessionStorageProvider()
-            .WithEncryptionKey(hikkabaConfiguration?.AuthCertificatePassword ?? throw new Exception("AuthCertificatePassword is not set")));
+        // add repositories
+        services.AddScoped<IAdministrationRepository, AdministrationRepository>();
+        services.AddScoped<IBanRepository, BanRepository>();
+        services.AddScoped<IBoardRepository, BoardRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<IRolesRepository, RolesRepository>();
+        services.AddScoped<ISeedManager, SeedManager>();
+        services.AddScoped<IThreadRepository, ThreadRepository>();
 
         // File storage
         services.AddScoped<FileExtensionContentTypeProvider>();
@@ -136,32 +176,7 @@ public class Startup
         });
         services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
         services.AddScoped<IMessagePostProcessor, MessagePostProcessor>();
-        services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
-
-        // AutoMapper
-        var mapperConfiguration = new MapperConfiguration(expression =>
-        {
-            expression.DisableConstructorMapping();
-            expression.AddProfile<MapProfile>();
-            expression.AddProfile<MvcMapProfile>();
-        });
-        mapperConfiguration.AssertConfigurationIsValid();
-        mapperConfiguration.CompileMappings();
-        services.AddSingleton<IMapper>(new Mapper(mapperConfiguration));
-
-        // Hikkaba stuff
-        services.Scan(scan => scan
-            // We start out with all types in the assembly of ITransientService
-            .FromAssemblyOf<HikkabaServiceRef>()
-            // AddClasses starts out with all public, non-abstract types in this assembly.
-            // These types are then filtered by the delegate passed to the method.
-            .AddClasses()
-            // Whe then specify what type we want to register these classes as.
-            // In this case, we wan to register the types as all of its implemented interfaces.
-            // So if a type implements 3 interfaces; A, B, C, we'd end up with three separate registrations.
-            .AsImplementedInterfaces()
-            // And lastly, we specify the lifetime of these registrations.
-            .WithScopedLifetime());
+        services.AddScoped<IUserContext, UserContext>();
 
         services.AddResponseCompression();
     }
@@ -174,7 +189,6 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseDatabaseErrorPage();
         }
         else
         {

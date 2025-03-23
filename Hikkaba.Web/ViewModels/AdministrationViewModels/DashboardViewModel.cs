@@ -7,11 +7,11 @@ namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
 public class DashboardViewModel
 {
     [Display(Name = @"Board")]
-    public BoardViewModel Board { get; set; }
-        
+    public required BoardViewModel Board { get; set; }
+
     [Display(Name = @"Moderators")]
-    public IList<CategoryModeratorsViewModel> CategoriesModerators { get; set; }
+    public required IReadOnlyList<CategoryModeratorsViewModel> CategoriesModerators { get; set; }
 
     [Display(Name = @"System info")]
-    public SystemInfoViewModel SystemInfo { get; set; }
+    public required SystemInfoViewModel SystemInfo { get; set; }
 }

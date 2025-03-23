@@ -1,4 +1,4 @@
-﻿@model Hikkaba.Web.ViewModels.BansViewModels.BanDetailsViewModel
+﻿@model Hikkaba.Web.ViewModels.BansViewModels.BanViewModel
 @{
     ViewData["Title"] = "Delete ban";
 }
@@ -7,7 +7,7 @@
     <h4>@ViewData["Title"]</h4>
     <hr />
 
-    @Html.DisplayFor(model => model.LowerIpAddress) - @Html.DisplayFor(model => model.UpperIpAddress)
+    @Html.DisplayFor(model => model.BannedCidrLowerIpAddress) - @Html.DisplayFor(model => model.BannedCidrUpperIpAddress)
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">

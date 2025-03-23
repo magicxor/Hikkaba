@@ -2,5 +2,5 @@
 
 public interface IMessagePostProcessor
 {
-    string Process(string categoryAlias, TPrimaryKey threadId, string text);
+    string Process(string categoryAlias, long threadId, string text);
 }

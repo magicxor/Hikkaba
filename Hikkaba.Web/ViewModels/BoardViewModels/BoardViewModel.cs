@@ -6,10 +6,10 @@ namespace Hikkaba.Web.ViewModels.BoardViewModels;
 public class BoardViewModel
 {
     [Required]
-    public TPrimaryKey Id { get; set; }
+    public required int Id { get; set; }
 
     [Required]
     [MinLength(Defaults.MinCategoryAndBoardNameLength)]
     [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }

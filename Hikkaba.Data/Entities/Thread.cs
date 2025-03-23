@@ -1,18 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Hikkaba.Common.Constants;
-using Hikkaba.Data.Entities.Base.Current;
 
 namespace Hikkaba.Data.Entities;
 
 [Table("Threads")]
-public class Thread: BaseMutableEntity
+public class Thread
 {
+    [Key]
+    public long Id { get; set; }
+
+    [Required]
+    public bool IsDeleted { get; set; }
+
+    [Required]
+    public required DateTime CreatedAt { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
+
     [Required]
     [MinLength(Defaults.MinTitleLength)]
     [MaxLength(Defaults.MaxTitleLength)]
-    public string Title { get; set; }
+    public required string Title { get; set; }
 
     [Required]
     public bool IsPinned { get; set; }
@@ -25,9 +36,32 @@ public class Thread: BaseMutableEntity
 
     [Required]
     public bool ShowThreadLocalUserHash { get; set; }
-        
-    [Required]
-    public virtual Category Category { get; set; }
 
-    public virtual ICollection<Post> Posts { get; set; }
+    // FK id
+    [ForeignKey(nameof(Category))]
+    public int CategoryId { get; set; }
+
+    [ForeignKey(nameof(CreatedBy))]
+    public int? CreatedById { get; set; }
+
+    [ForeignKey(nameof(ModifiedBy))]
+    public int? ModifiedById { get; set; }
+
+    // FK models
+    [Required]
+    public virtual Category Category
+    {
+        get => _category
+               ?? throw new InvalidOperationException("Uninitialized property: " + nameof(Category));
+        set => _category = value;
+    }
+
+    private Category? _category;
+
+    public virtual ApplicationUser? CreatedBy { get; set; }
+
+    public virtual ApplicationUser? ModifiedBy { get; set; }
+
+    // Relations
+    public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 }

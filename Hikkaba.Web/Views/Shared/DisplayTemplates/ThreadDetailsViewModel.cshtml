@@ -1,8 +1,9 @@
+@using Hikkaba.Common.Services.Contracts
 @using Hikkaba.Services.Contracts
 @using Hikkaba.Web.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadDetailsViewModel
-@inject ICategoryToModeratorService CategoryToModeratorService
+@inject IUserContext UserContext
 
 <div class="row">
     <div class="col-md-12">
@@ -13,7 +14,7 @@
                     &nbsp;
                     @Model.PostCount posts
                     &nbsp;
-                    @Html.DisplayFor(model => model.Created)
+                    @Html.DisplayFor(model => model.CreatedAt)
                     &nbsp;
                     <a href="@Model.GetUri(Url)">@Model.Id</a>
                     @if (Model.IsPinned)
@@ -27,7 +28,7 @@
                         <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                     }
                 </h4>
-                @if (Context.User.Identity.IsAuthenticated && await CategoryToModeratorService.IsUserCategoryModeratorAsync(Model.CategoryId, User))
+                @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))
                 {
                     <div class="row">
                         <div class="col-md-12">

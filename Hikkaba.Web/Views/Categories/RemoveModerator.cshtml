@@ -1,5 +1,6 @@
 ﻿@using Hikkaba.Web.ViewModels.AdministrationViewModels
-@model Hikkaba.Web.ViewModels.AdministrationViewModels.CategoryModeratorsViewModel
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hikkaba.Infrastructure.Models.Administration.CategoryModeratorsRm
 
 @{
     var title = $"/{Model.Category.Alias} - {Model.Category.Name}: Remove moderator";

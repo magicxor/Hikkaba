@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hikkaba.Services.Implementations.Generic;
+using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Paging.Models;
+
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 
 public class BanIndexViewModel
 {
     [Display(Name = @"Bans")]
-    public BasePagedList<BanDetailsViewModel> Bans { get; set; }
+    public required PagedResult<BanViewModel> Bans { get; set; }
 }

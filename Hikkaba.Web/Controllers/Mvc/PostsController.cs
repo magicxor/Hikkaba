@@ -1,54 +1,39 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AutoMapper;
-using DNTCaptcha.Core;
-using Hikkaba.Models.Dto;
+using Hikkaba.Common.Exceptions;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Exceptions;
-using Hikkaba.Models.Dto.Post;
-using Hikkaba.Models.Dto.Thread;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.PostsViewModels;
-using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
-using Hikkaba.Models.Enums;
 using Hikkaba.Services.Contracts;
-using Hikkaba.Services.Implementations.Generic;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
 public class PostsController : BaseMvcController
 {
-    private readonly IMapper _mapper;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
     private readonly IPostService _postService;
-    private readonly ICategoryToModeratorService _categoryToModeratorService;
 
     public PostsController(
         UserManager<ApplicationUser> userManager,
-        IMapper mapper,
         ICategoryService categoryService,
         IThreadService threadService,
-        IPostService postService,
-        ICategoryToModeratorService categoryToModeratorService) : base(userManager)
+        IPostService postService) : base(userManager)
     {
-        _mapper = mapper;
         _categoryService = categoryService;
         _threadService = threadService;
         _postService = postService;
-        _categoryToModeratorService = categoryToModeratorService;
     }
 
+    /*
     [Route("{categoryAlias}/Threads/{threadId}/Posts/Create")]
     [AllowAnonymous]
-    public async Task<IActionResult> Create(string categoryAlias, TPrimaryKey threadId)
+    public async Task<IActionResult> Create(string categoryAlias, long threadId)
     {
         var category = await _categoryService.GetAsync(categoryAlias);
         var thread = await _threadService.GetAsync(threadId);
@@ -77,7 +62,7 @@ public class PostsController : BaseMvcController
                 postDto.UserIpAddress = UserIpAddress.ToString();
                 postDto.UserAgent = UserAgent;
 
-                var threadPostCreateDto = new ThreadPostCreateDto
+                var threadPostCreateDto = new ThreadPostCreateSm
                 {
                     Category = categoryDto,
                     Thread = threadDto,
@@ -94,7 +79,7 @@ public class PostsController : BaseMvcController
             }
             else
             {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Thread {threadDto.Id} is closed.");
+                throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Thread {threadDto.Id} is closed.");
             }
         }
         else
@@ -114,22 +99,15 @@ public class PostsController : BaseMvcController
         }
         else
         {
-            var pageDto = new PageDto(page, size);
-            var query = request.Query;
             var latestPostsDtoList = await _postService
-                .PagedListAsync(
-                    post =>
-                        !post.IsDeleted
-                        && !post.Thread.IsDeleted
-                        && !post.Thread.Category.IsDeleted
-                        && (post.Message.Contains(query)
-                            || (post.Thread.Title.Contains(query) && post == post.Thread.Posts.OrderBy(tp => tp.Created).FirstOrDefault())
-                        ),
-                    post => post.Created,
-                    AdditionalRecordType.None,
-                    true,
-                    pageDto);
-            var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.CurrentPageItems);
+                .ListPostsAsync(new PostSearchPagingFilter
+                {
+                    PageNumber = page,
+                    PageSize = size,
+                    OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+                    SearchQuery = request.Query,
+                });
+            var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.Data);
             foreach (var latestPostDetailsViewModel in latestPostDetailsViewModels)
             {
                 var threadDto = await _threadService.GetAsync(latestPostDetailsViewModel.ThreadId);
@@ -138,24 +116,25 @@ public class PostsController : BaseMvcController
                 latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
             }
 
-            var searchResultViewModel = new SearchResultViewModel
+            var searchResultViewModel = new PostSearchResultViewModel
             {
                 Query = query,
-                Posts = new BasePagedList<PostDetailsViewModel>
+                Posts = new PagedResult<PostDetailsViewModel>
                 {
                     CurrentPage = pageDto,
                     CurrentPageItems = latestPostDetailsViewModels,
-                    TotalItemsCount = latestPostsDtoList.TotalItemsCount,
+                    TotalItemsCount = latestPostsDtoList.TotalItemCount,
                 },
             };
             return View(searchResultViewModel);
         }
     }
 
+
     [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Edit")]
-    public async Task<IActionResult> Edit(string categoryAlias, TPrimaryKey threadId, TPrimaryKey postId)
+    public async Task<IActionResult> Edit(string categoryAlias, long threadId, long postId)
     {
-        var postDto = await _postService.GetAsync(postId);
+        var postDto = await _postService.GetPostAsync(postId);
         var threadDto = await _threadService.GetAsync(postDto.ThreadId);
         var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
 
@@ -179,7 +158,7 @@ public class PostsController : BaseMvcController
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
 
@@ -190,7 +169,7 @@ public class PostsController : BaseMvcController
     {
         if (ModelState.IsValid)
         {
-            var postDto = await _postService.GetAsync(viewModel.Id);
+            var postDto = await _postService.GetPostAsync(viewModel.Id);
             var threadDto = await _threadService.GetAsync(postDto.ThreadId);
             var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
 
@@ -209,12 +188,12 @@ public class PostsController : BaseMvcController
             if (isCurrentUserCategoryModerator)
             {
                 postDto = _mapper.Map(viewModel, postDto);
-                await _postService.EditAsync(postDto);
+                await _postService.EditPostAsync(postDto);
                 return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
             }
             else
             {
-                throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+                throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
             }
         }
         else
@@ -226,21 +205,22 @@ public class PostsController : BaseMvcController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetIsDeleted(TPrimaryKey postId, bool isDeleted)
+    public async Task<IActionResult> SetIsDeleted(long postId, bool isDeleted)
     {
-        var postDto = await _postService.GetAsync(postId);
+        var postDto = await _postService.GetPostAsync(postId);
         var threadDto = await _threadService.GetAsync(postDto.ThreadId);
         var isCurrentUserCategoryModerator = await _categoryToModeratorService
             .IsUserCategoryModeratorAsync(threadDto.CategoryId, User);
         if (isCurrentUserCategoryModerator)
         {
             var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
-            await _postService.SetIsDeletedAsync(postId, isDeleted);
+            await _postService.SetPostDeletedAsync(postId, isDeleted);
             return RedirectToAction("Details", "Threads", new { categoryAlias = categoryDto.Alias, threadId = threadDto.Id });
         }
         else
         {
-            throw new HttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Access denied");
         }
     }
+    */
 }

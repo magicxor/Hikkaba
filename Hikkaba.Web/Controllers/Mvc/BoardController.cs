@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Hikkaba.Services.Contracts;
+using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BoardViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -10,27 +10,26 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 public class BoardController : Controller
 {
-    private readonly ILogger<CategoriesController> _logger;
-    private readonly IMapper _mapper;
+    private readonly ILogger<BoardController> _logger;
     private readonly IBoardService _boardService;
 
-    public BoardController(ILogger<CategoriesController> logger,
-        IMapper mapper,
+    public BoardController(
+        ILogger<BoardController> logger,
         IBoardService boardService)
     {
         _logger = logger;
-        _mapper = mapper;
         _boardService = boardService;
     }
 
     [Route("Board/Edit")]
-    public async Task<IActionResult> Edit(TPrimaryKey id)
+    public async Task<IActionResult> Edit(int id)
     {
-        var dto = await _boardService.GetBoardAsync();
-        var viewModel = _mapper.Map<BoardViewModel>(dto);
+        var board = await _boardService.GetBoardAsync();
+        var viewModel = board.ToViewModel();
         return View(viewModel);
     }
 
+    /*
     [Route("Board/Edit")]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -49,4 +48,5 @@ public class BoardController : Controller
             return View(viewModel);
         }
     }
+    */
 }

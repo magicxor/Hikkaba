@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using Hikkaba.Common.Constants;
-using Hikkaba.Models.Dto;
+using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Models.ApplicationUser;
 using Hikkaba.Services.Contracts;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
@@ -14,17 +14,17 @@ namespace Hikkaba.Web.Controllers.Mvc;
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 public class UsersController : Controller
 {
-    private readonly IMapper _mapper;
     private readonly IApplicationUserService _applicationUserService;
 
-    public UsersController(IMapper mapper, IApplicationUserService applicationUserService)
+    public UsersController(
+        IApplicationUserService applicationUserService)
     {
-        _mapper = mapper;
         _applicationUserService = applicationUserService;
     }
 
+    /*
     [Route("Users/{id}")]
-    public async Task<IActionResult> Details(TPrimaryKey id)
+    public async Task<IActionResult> Details(int id)
     {
         var dto = await _applicationUserService.GetAsync(id);
         var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
@@ -34,7 +34,10 @@ public class UsersController : Controller
     [Route("Users")]
     public async Task<IActionResult> Index()
     {
-        var dtoList = await _applicationUserService.ListAsync(user => true, user => user.UserName);
+        var dtoList = await _applicationUserService.ListAsync(new ApplicationUserFilter
+        {
+            OrderBy = [nameof(ApplicationUser.UserName)],
+        });
         var viewModelList = _mapper.Map<List<ApplicationUserViewModel>>(dtoList);
         return View(viewModelList);
     }
@@ -64,7 +67,7 @@ public class UsersController : Controller
     }
 
     [Route("Users/{id}/Edit")]
-    public async Task<IActionResult> Edit(TPrimaryKey id)
+    public async Task<IActionResult> Edit(int id)
     {
         var dto = await _applicationUserService.GetAsync(id);
         var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
@@ -91,7 +94,7 @@ public class UsersController : Controller
     }
 
     [Route("Users/{id}/Delete")]
-    public async Task<IActionResult> Delete(TPrimaryKey id)
+    public async Task<IActionResult> Delete(int id)
     {
         var dto = await _applicationUserService.GetAsync(id);
         var viewModel = _mapper.Map<ApplicationUserViewModel>(dto);
@@ -101,9 +104,10 @@ public class UsersController : Controller
     [Route("Users/{id}/Delete")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
         await _applicationUserService.SetIsDeletedAsync(id, true);;
         return RedirectToAction("Index");
     }
+    */
 }

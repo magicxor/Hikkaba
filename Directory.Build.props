@@ -7,23 +7,14 @@
     <AnalysisLevel>9-Recommended</AnalysisLevel>
 
     <!-- Warnings and errors -->
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-
-    <!--
-    CS0618 - Member is obsolete
-    -->
-    <WarningsNotAsErrors>618</WarningsNotAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
 
     <!--
     CS1591 - Missing XML comment for publicly visible type or member 'Type_or_Member'
     -->
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Using Include="System.Guid" Alias="TPrimaryKey " />
-  </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)BannedSymbols.SolutionWide.txt" />

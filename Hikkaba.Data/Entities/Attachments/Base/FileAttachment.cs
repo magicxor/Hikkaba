@@ -1,5 +1,6 @@
 ﻿using Hikkaba.Common.Constants;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Hikkaba.Data.Entities.Attachments.Base;
 
@@ -7,16 +8,19 @@ public abstract class FileAttachment: Attachment
 {
     [Required]
     [MaxLength(Defaults.MaxFileNameLength)]
-    public string FileName { get; set; }
+    public required string FileName { get; set; }
 
     [Required]
     [MaxLength(Defaults.MaxFileExtensionLength)]
-    public string FileExtension { get; set; }
+    public required string FileExtension { get; set; }
 
     [Required]
-    public long Size { get; set; }
+    [Range(0, long.MaxValue)]
+    public required long FileSize { get; set; }
 
     [Required]
-    [MaxLength(Defaults.MaxFileHashLength)]
-    public string Hash { get; set; }
+    [MinLength(Defaults.MaxFileHashBytesLength)]
+    [MaxLength(Defaults.MaxFileHashBytesLength)]
+    [Column(TypeName = "binary(32)")]
+    public required byte[] FileHash { get; set; }
 }

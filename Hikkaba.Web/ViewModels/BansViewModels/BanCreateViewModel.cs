@@ -9,23 +9,23 @@ namespace Hikkaba.Web.ViewModels.BansViewModels;
 public class BanCreateViewModel
 {
     [Display(Name = @"Start")]
-    public DateTime Start { get; set; }
+    public required DateTime Start { get; set; }
 
     [Display(Name = @"End")]
-    public DateTime End { get; set; }
+    public required DateTime End { get; set; }
 
     [Display(Name = @"Lower IP address")]
-    [MaxLength(Defaults.MaxIpAddressLength)]
-    public string LowerIpAddress { get; set; }
+    [MaxLength(Defaults.MaxIpAddressStringLength)]
+    public required string LowerIpAddress { get; set; }
 
     [Display(Name = @"Upper IP address")]
-    [MaxLength(Defaults.MaxIpAddressLength)]
-    public string UpperIpAddress { get; set; }
+    [MaxLength(Defaults.MaxIpAddressStringLength)]
+    public required string UpperIpAddress { get; set; }
 
     [Display(Name = @"Reason")]
     [MaxLength(Defaults.MaxReasonLength)]
-    public string Reason { get; set; }
+    public required string Reason { get; set; }
 
-    public PostDetailsViewModel RelatedPost { get; set; }
-    public CategoryDetailsViewModel Category { get; set; }
+    public required PostDetailsViewModel RelatedPost { get; set; }
+    public required CategoryDetailsViewModel Category { get; set; }
 }

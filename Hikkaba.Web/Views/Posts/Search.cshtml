@@ -1,8 +1,8 @@
 ﻿@using Hikkaba.Web.ViewModels
-@model Hikkaba.Web.ViewModels.SearchViewModels.SearchResultViewModel
+@model Hikkaba.Web.ViewModels.SearchViewModels.PostSearchResultViewModel
 
 @{
-    ViewData["Title"] = $"Search for «{Model?.Query}» - {Model?.Posts?.TotalItemsCount} results";
+    ViewData["Title"] = $"Search for «{Model?.Query}» - {Model?.Posts?.TotalItemCount} results";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
@@ -10,14 +10,14 @@
 
 <div class="row">
     <div class="col-md-12">
-        @if ((Model?.Posts != null) && (Model.Posts.TotalItemsCount > 0) && (Model.Posts.CurrentPage.PageNumber > 0))
+        @if ((Model?.Posts != null) && (Model.Posts.TotalItemCount > 0) && (Model.Posts.PageNumber > 0))
         {
-            @Html.DisplayFor(model => model.Posts.CurrentPageItems)
-            <partial name="_PagerPartial" model="new PageInfoViewModel
-                                            {
-                                                CurrentPageNumber = Model.Posts.CurrentPage.PageNumber,
-                                                TotalPageCount = Model.Posts.TotalPageCount,
-                                            }"/>
+            @Html.DisplayFor(model => model.Posts.Data)
+            <partial name="_PagerPartial" model="@(new PageInfoViewModel
+                                                 {
+                                                   CurrentPageNumber = Model.Posts.PageNumber,
+                                                   TotalPageCount = Model.Posts.TotalPageCount ?? 0,
+                                                 })"/>
         }
         else
         {

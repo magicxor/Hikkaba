@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using Hikkaba.Common.Constants;
-using Hikkaba.Models.Dto;
 using Hikkaba.Data.Entities;
-using Hikkaba.Models.Dto.Ban;
+using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Paging.Models;
 using Hikkaba.Services.Contracts;
-using Hikkaba.Services.Implementations.Generic;
 using Hikkaba.Web.Controllers.Mvc.Base;
+using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -23,39 +22,43 @@ namespace Hikkaba.Web.Controllers.Mvc;
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 public class BansController : BaseMvcController
 {
-    private readonly IMapper _mapper;
     private readonly IBanService _banService;
 
-    public BansController(UserManager<ApplicationUser> userManager,
-        IMapper mapper,
+    public BansController(
+        UserManager<ApplicationUser> userManager,
         IBanService banService) : base(userManager)
     {
-        _mapper = mapper;
         _banService = banService;
     }
 
     [Route("Bans/{id}")]
-    public async Task<IActionResult> Details(TPrimaryKey id)
+    public async Task<IActionResult> Details(int id)
     {
-        var dto = await _banService.GetAsync(id);
-        var viewModel = _mapper.Map<BanDetailsViewModel>(dto);
-        return View(viewModel);
+        var ban = await _banService.GetBanAsync(id);
+        var viewModel = ban?.ToViewModel();
+
+        if (viewModel is null)
+        {
+            return View();
+        }
+        else
+        {
+            return View(viewModel);
+        }
     }
 
     [Route("Bans")]
     public async Task<IActionResult> Index(int page = 1, int size = 10)
     {
-        var pageDto = new PageDto(page, size);
-        var dtoList = await _banService.PagedListAsync(ban => (ban.End >= DateTime.UtcNow), ban => ban.Created, true);
-        var detailsViewModels = _mapper.Map<IList<BanDetailsViewModel>>(dtoList.CurrentPageItems);
+        var filter = new BanPagingFilter
+        {
+            EndsNotBefore = DateTime.UtcNow,
+        };
+        var bans = await _banService.ListBansPaginatedAsync(filter);
+
         var viewModelList = new BanIndexViewModel
         {
-            Bans = new BasePagedList<BanDetailsViewModel>
-            {
-                TotalItemsCount = dtoList.TotalItemsCount,
-                CurrentPage = pageDto,
-                CurrentPageItems = detailsViewModels,
-            },
+            Bans = new PagedResult<BanViewModel>(bans.Data.ToViewModels(), filter, bans.TotalItemCount),
         };
         return View(viewModelList);
     }
@@ -66,6 +69,7 @@ public class BansController : BaseMvcController
         return View();
     }
 
+    /*
     [Route("Bans/Create")]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -73,8 +77,8 @@ public class BansController : BaseMvcController
     {
         if (ModelState.IsValid)
         {
-            var dto = _mapper.Map<BanEditDto>(viewModel);
-            var id = await _banService.CreateAsync(dto);
+            var dto = _mapper.Map<BanCreateRequestSm>(viewModel);
+            var id = await _banService.CreateBanAsync(dto);
 
             return RedirectToAction("Details", new {id = id});
         }
@@ -86,9 +90,9 @@ public class BansController : BaseMvcController
     }
 
     [Route("Bans/{id}/Edit")]
-    public async Task<IActionResult> Edit(TPrimaryKey id)
+    public async Task<IActionResult> Edit(int id)
     {
-        var dto = await _banService.GetAsync(id);
+        var dto = await _banService.GetBanAsync(id);
         var viewModel = _mapper.Map<BanEditViewModel>(dto);
         return View(viewModel);
     }
@@ -100,7 +104,7 @@ public class BansController : BaseMvcController
     {
         if (ModelState.IsValid)
         {
-            var dto = _mapper.Map<BanEditDto>(viewModel);
+            var dto = _mapper.Map<BanEditRequestViewModel>(viewModel);
             await _banService.EditAsync(dto);
             return RedirectToAction("Details", new {id = dto.Id});
         }
@@ -110,21 +114,22 @@ public class BansController : BaseMvcController
             return View(viewModel);
         }
     }
+    */
 
     [Route("Bans/{id}/Delete")]
-    public async Task<IActionResult> Delete(TPrimaryKey id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var dto = await _banService.GetAsync(id);
-        var viewModel = _mapper.Map<BanDetailsViewModel>(dto);
+        var ban = await _banService.GetBanAsync(id);
+        var viewModel = ban?.ToViewModel();
         return View(viewModel);
     }
 
     [Route("Bans/{id}/Delete")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(TPrimaryKey id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        await _banService.SetIsDeletedAsync(id, true);
+        await _banService.SetBanDeletedAsync(id, true);
         return RedirectToAction("Index");
     }
 }
