@@ -135,6 +135,17 @@ public sealed class PostRepositoryTests
             UserAgent = "Chrome",
             Thread = thread,
         };
+        var post3 = new Post
+        {
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            IsDeleted = true,
+            IsSageEnabled = false,
+            MessageText = "test abc def Fizz Foo Buzz",
+            MessageHtml = "test abc def Fizz Foo Buzz",
+            UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
+            UserAgent = "Chrome",
+            Thread = thread,
+        };
         dbContext.AddRange(post1, post2);
 
         await dbContext.SaveChangesAsync(cancellationToken);
