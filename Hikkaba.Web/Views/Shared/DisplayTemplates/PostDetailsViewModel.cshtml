@@ -85,7 +85,7 @@
                         @Html.DisplayFor(model => model.Video)
                     </ul>
                 }
-                <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.Process(Model.CategoryAlias, Model.ThreadId, Model.MessageHtml))</span>
+                <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.MessageToSafeHtml(Model.CategoryAlias, Model.ThreadId, Model.MessageHtml))</span>
             </div>
             @if (Model.Replies.Any())
             {

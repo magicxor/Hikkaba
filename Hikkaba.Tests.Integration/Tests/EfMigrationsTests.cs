@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Hikkaba.Tests.Integration.Tests;
 
 [TestFixture]
+[Parallelizable(scope: ParallelScope.Fixtures)]
 public sealed class EfMigrationsTests
 {
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;

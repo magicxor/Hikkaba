@@ -1,20 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="HttpContextMoq" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+        <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+        <PackageReference Include="Moq" />
+        <PackageReference Include="NUnit" />
+        <PackageReference Include="NUnit3TestAdapter" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Moq" />
-    <PackageReference Include="NUnit" />
-    <PackageReference Include="NUnit3TestAdapter" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-  </ItemGroup>
+    <ItemGroup>
+        <Using Include="NUnit.Framework" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Hikkaba.Services.Implementations\Hikkaba.Services.Implementations.csproj" />
-  </ItemGroup>
+    <PropertyGroup>
+        <CodeAnalysisRuleSet>NUnit.Analyzers.Suppressions.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Hikkaba.Services.Implementations\Hikkaba.Services.Implementations.csproj" />
+        <ProjectReference Include="..\Hikkaba.Web\Hikkaba.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="nlog.config" />
+      <Content Include="nlog.config">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 
 </Project>

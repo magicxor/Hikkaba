@@ -10,6 +10,7 @@
     <PackageReference Include="Blake3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+    <PackageReference Include="Moq" />
     <PackageReference Include="Nito.AsyncEx.Coordination" />
     <PackageReference Include="NLog" />
     <PackageReference Include="NLog.Web.AspNetCore" />

@@ -43,7 +43,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeKicker.BbCode\CodeKicker.BbCode.csproj" />
+    <ProjectReference Include="..\BBCodeParser\BBCodeParser.csproj" />
     <ProjectReference Include="..\Hikkaba.Data\Hikkaba.Data.csproj" />
     <ProjectReference Include="..\Hikkaba.Repositories.Contracts\Hikkaba.Repositories.Contracts.csproj" />
     <ProjectReference Include="..\Hikkaba.Repositories.Implementations\Hikkaba.Repositories.Implementations.csproj" />

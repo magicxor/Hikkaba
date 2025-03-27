@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="HtmlAgilityPack" />
       <PackageReference Include="MaxMind.GeoIP2" />
       <PackageReference Include="SixLabors.ImageSharp" />
       <PackageReference Include="TwentyTwenty.Storage" />
