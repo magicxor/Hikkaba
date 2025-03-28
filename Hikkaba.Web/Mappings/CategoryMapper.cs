@@ -14,9 +14,9 @@ public static partial class CategoryMapper
 
     public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDashboardViewRm> models);
 
-    [MapperIgnoreSource(nameof(CategoryDto.CreatedBy))]
-    [MapperIgnoreSource(nameof(CategoryDto.ModifiedBy))]
-    public static partial CategoryDetailsViewModel ToViewModel(this CategoryDto model);
+    [MapperIgnoreSource(nameof(CategoryViewRm.CreatedBy))]
+    [MapperIgnoreSource(nameof(CategoryViewRm.ModifiedBy))]
+    public static partial CategoryDetailsViewModel ToViewModel(this CategoryViewRm model);
 
-    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDto> models);
+    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryViewRm> models);
 }

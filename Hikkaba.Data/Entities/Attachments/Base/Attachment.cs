@@ -11,6 +11,10 @@ public abstract class Attachment
     [Key]
     public long Id { get; set; }
 
+    [Required]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public required Guid BlobId { get; set; }
+
     public AttachmentType AttachmentType { get; set; }
 
     // FK id

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using MaxMind.Db;
+﻿using MaxMind.Db;
 using MaxMind.GeoIP2;
 
 namespace Hikkaba.Services.Implementations;

@@ -1,16 +1,17 @@
-using System;
-using System.IO;
-using Hikkaba.Infrastructure.Models;
+using Hikkaba.Infrastructure.Models.Attachments;
 using Hikkaba.Services.Contracts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 
 namespace Hikkaba.Services.Implementations;
 
 public class ThumbnailGenerator : IThumbnailGenerator
 {
-    public ThumbnailDto GenerateThumbnail(Image image, int maxWidth, int maxHeight)
+    public async Task<ThumbnailRm> GenerateThumbnailAsync(
+        Image image,
+        int maxWidth,
+        int maxHeight,
+        CancellationToken cancellationToken)
     {
         var ratioX = (double)maxWidth / image.Width;
         var ratioY = (double)maxHeight / image.Height;
@@ -21,12 +22,12 @@ public class ThumbnailGenerator : IThumbnailGenerator
 
         var thumbnail = image.Clone(img => img.Resize(newWidth, newHeight));
         var thumbnailStream = new MemoryStream();
-        thumbnail.Save(thumbnailStream, new JpegEncoder());
+        await thumbnail.SaveAsJpegAsync(thumbnailStream, cancellationToken: cancellationToken);
         thumbnailStream.Position = 0;
 
-        return new ThumbnailDto
+        return new ThumbnailRm
         {
-            Image = thumbnailStream,
+            ContentStream = thumbnailStream,
             Height = newHeight,
             Width = newWidth,
         };

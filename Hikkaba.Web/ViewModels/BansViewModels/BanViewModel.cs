@@ -1,8 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using Hikkaba.Web.ViewModels.CategoriesViewModels;
-using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Common.Constants;
 using Hikkaba.Common.Enums;
 

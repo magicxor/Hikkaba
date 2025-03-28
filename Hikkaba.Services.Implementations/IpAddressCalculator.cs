@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Net;
 using Hikkaba.Services.Contracts;
 using Microsoft.Extensions.Logging;
@@ -63,19 +62,37 @@ public class IpAddressCalculator : IIpAddressCalculator
         }
     }
 
-    public bool IsInRange(IPAddress networkAddress, short prefix, IPAddress ipAddress)
+    public bool IsInRange(IPAddress networkAddress, short networkPrefix, IPAddress ipAddress)
     {
-        return new IPNetwork(networkAddress, prefix).Contains(ipAddress);
+        return new IPNetwork(networkAddress, networkPrefix).Contains(ipAddress);
     }
 
     public bool IsInRange(string networkAddressStr, string ipAddressStr)
     {
-        var splitPrefix = networkAddressStr.Split('/');
+        var networkAddressSpan = networkAddressStr.AsSpan();
+        var slashIndex = networkAddressSpan.IndexOf('/');
 
-        var ipAddress = IPAddress.Parse(ipAddressStr);
-        var networkAddress = IPAddress.Parse(splitPrefix[0]);
-        var prefix = Convert.ToInt16(splitPrefix[1], CultureInfo.InvariantCulture);
+        if (slashIndex == -1)
+            throw new FormatException($"Invalid {nameof(networkAddressStr)} format: missing '/'.");
 
-        return IsInRange(networkAddress, prefix, ipAddress);
+        if (slashIndex == 0)
+            throw new FormatException($"Invalid {nameof(networkAddressStr)} format: missing network address.");
+
+        if (slashIndex == networkAddressSpan.Length - 1)
+            throw new FormatException($"Invalid {nameof(networkAddressStr)} format: missing network prefix.");
+
+        var networkAddressPart = networkAddressSpan[..slashIndex];
+        var networkPrefixPart = networkAddressSpan[(slashIndex + 1)..];
+
+        if (!IPAddress.TryParse(networkAddressPart, out var networkAddress))
+            throw new FormatException($"Invalid {nameof(networkAddressStr)} format: cannot parse IP address.");
+
+        if (!short.TryParse(networkPrefixPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out var networkPrefix))
+            throw new FormatException($"Invalid {nameof(networkAddressStr)} format: cannot parse prefix.");
+
+        if (!IPAddress.TryParse(ipAddressStr, out var ipAddress))
+            throw new FormatException($"Invalid {nameof(ipAddressStr)} format: cannot parse IP address.");
+
+        return IsInRange(networkAddress, networkPrefix, ipAddress);
     }
 }

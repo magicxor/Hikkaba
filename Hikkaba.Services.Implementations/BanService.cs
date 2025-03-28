@@ -26,12 +26,12 @@ public class BanService : IBanService
         return await _banRepository.FindActiveBan(threadId, categoryAlias, userIpAddress);
     }
 
-    public async Task<PagedResult<BanRm>> ListBansPaginatedAsync(BanPagingFilter banFilter)
+    public async Task<PagedResult<BanViewRm>> ListBansPaginatedAsync(BanPagingFilter banFilter)
     {
         return await _banRepository.ListBansPaginatedAsync(banFilter);
     }
 
-    public async Task<BanRm?> GetBanAsync(int banId)
+    public async Task<BanViewRm?> GetBanAsync(int banId)
     {
         return await _banRepository.GetBanAsync(banId);
     }

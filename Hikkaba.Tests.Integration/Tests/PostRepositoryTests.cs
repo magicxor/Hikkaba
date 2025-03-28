@@ -8,7 +8,7 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
-using Hikkaba.Repositories.Implementations;
+using Hikkaba.Repositories.Contracts;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Extensions;
 using Hikkaba.Tests.Integration.Services;
@@ -24,6 +24,8 @@ namespace Hikkaba.Tests.Integration.Tests;
 [Parallelizable(scope: ParallelScope.Fixtures)]
 public sealed class PostRepositoryTests
 {
+    private static readonly GuidGenerator GuidGenerator = new();
+
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;
 
     [OneTimeSetUp]
@@ -63,7 +65,8 @@ public sealed class PostRepositoryTests
         var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any()) {
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
+        {
             await dbContext.Database.MigrateAsync(cancellationToken);
         }
 
@@ -75,8 +78,8 @@ public sealed class PostRepositoryTests
             Email = "admin@example.com",
             NormalizedEmail = "ADMIN@EXAMPLE.COM",
             EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
+            SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+            ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
         };
         dbContext.Users.Add(admin);
@@ -117,6 +120,7 @@ public sealed class PostRepositoryTests
 
         var post1 = new Post
         {
+            BlobContainerId = new Guid("243D7DB4-4EE8-4285-8888-E7185A7CB1B2"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = "test post 1 abc",
@@ -127,6 +131,7 @@ public sealed class PostRepositoryTests
         };
         var post2 = new Post
         {
+            BlobContainerId = new Guid("D9AED982-37D6-4C5C-B235-E1AADC342236"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = "test post 2 def",
@@ -137,6 +142,7 @@ public sealed class PostRepositoryTests
         };
         var post3 = new Post
         {
+            BlobContainerId = new Guid("C8393E45-20AE-4214-A1EF-5F6AE0D93477"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsDeleted = true,
             IsSageEnabled = false,
@@ -146,11 +152,11 @@ public sealed class PostRepositoryTests
             UserAgent = "Chrome",
             Thread = thread,
         };
-        dbContext.AddRange(post1, post2);
+        dbContext.AddRange(post1, post2, post3);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var repository = new PostRepository(dbContext);
+        var repository = scope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act
         var result = await repository.SearchPostsPaginatedAsync(new SearchPostsPagingFilter

@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Models.Category;
+using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
@@ -56,9 +56,9 @@ public class CategoriesController : BaseMvcController
             PageNumber = page,
             PageSize = size,
             OrderBy = [
-                new OrderByItem { Field = nameof(ThreadPreviewSm.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewSm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewSm.Id), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewRm.IsPinned), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewRm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewRm.Id), Direction = OrderByDirection.Desc },
             ],
         };
         var threads = await _threadService.ListThreadPreviewsPaginatedAsync(filter, cancellationToken);

@@ -11,8 +11,13 @@ public class ThreadLocalUserHashGenerator: IThreadLocalUserHashGenerator
         _hmacService = hmacService;
     }
 
-    public string Generate(string threadId, string userIpAddress)
+    public string Generate(string threadId, string? userIpAddress)
     {
+        if (userIpAddress == null)
+        {
+            return string.Empty;
+        }
+
         return _hmacService.HashHmacHex(threadId, userIpAddress);
     }
 }

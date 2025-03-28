@@ -1,7 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using Hikkaba.Web.ViewModels.CategoriesViewModels;
-using Hikkaba.Web.ViewModels.PostsViewModels;
 using Hikkaba.Common.Constants;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;

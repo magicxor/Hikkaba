@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Hikkaba.Services.Contracts;
 
@@ -7,11 +6,6 @@ namespace Hikkaba.Services.Implementations;
 
 public class HmacService : IHmacService
 {
-    private static string HashEncode(byte[] hash)
-    {
-        return Convert.ToHexStringLower(hash);
-    }
-
     private static byte[] HashHmac(byte[] key, byte[] message)
     {
         var hash = new HMACSHA3_512(key);
@@ -21,6 +15,6 @@ public class HmacService : IHmacService
     public string HashHmacHex(string key, string message)
     {
         var hash = HashHmac(Encoding.Unicode.GetBytes(key), Encoding.Unicode.GetBytes(message));
-        return HashEncode(hash);
+        return Convert.ToHexStringLower(hash);
     }
 }

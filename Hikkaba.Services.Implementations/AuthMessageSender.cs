@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Hikkaba.Services.Contracts;
+﻿using Hikkaba.Services.Contracts;
 
 namespace Hikkaba.Services.Implementations;
 

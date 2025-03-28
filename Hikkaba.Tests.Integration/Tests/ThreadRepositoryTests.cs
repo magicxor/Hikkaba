@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Blake3;
 using Hikkaba.Common.Constants;
-using Hikkaba.Common.Enums;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Entities.Attachments.Base;
-using Hikkaba.Infrastructure.Models.Category;
+using Hikkaba.Infrastructure.Models.Post;
+using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Repositories.Contracts;
-using Hikkaba.Repositories.Implementations;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Extensions;
 using Hikkaba.Tests.Integration.Services;
@@ -32,6 +30,8 @@ namespace Hikkaba.Tests.Integration.Tests;
 [Parallelizable(scope: ParallelScope.Fixtures)]
 public sealed class ThreadRepositoryTests
 {
+    private static readonly GuidGenerator GuidGenerator = new();
+
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;
 
     [OneTimeSetUp]
@@ -77,8 +77,8 @@ public sealed class ThreadRepositoryTests
             Email = "admin@example.com",
             NormalizedEmail = "ADMIN@EXAMPLE.COM",
             EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
+            SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+            ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
         };
         dbContext.Users.Add(admin);
@@ -119,6 +119,7 @@ public sealed class ThreadRepositoryTests
 
         var post0 = new Post
         {
+            BlobContainerId = new Guid("545917CA-374F-4C34-80B9-7D8DF0842D72"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(1),
             IsSageEnabled = false,
             MessageText = "test post 0",
@@ -129,6 +130,7 @@ public sealed class ThreadRepositoryTests
         };
         var post1 = new Post
         {
+            BlobContainerId = new Guid("502FACD5-C207-4684-960B-274949E6D043"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(2),
             IsSageEnabled = false,
             MessageText = "test post 1",
@@ -136,11 +138,12 @@ public sealed class ThreadRepositoryTests
             UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
             UserAgent = "Chrome",
             Thread = thread,
-            Attachments = new List<Attachment>
+            Audios = new List<Audio>
             {
                 new Audio
                 {
-                    FileName = "Extended electric guitar solo",
+                    BlobId = new Guid("6D3CD116-6336-47BC-BBE7-5DB289AC6C51"),
+                    FileNameWithoutExtension = "Extended electric guitar solo",
                     FileExtension = "mp3",
                     FileSize = 3671469,
                     FileHash = Hasher.Hash("f61d4fbb-4cbd-4d4e-8df1-6c22c58de9cf"u8).AsSpan().ToArray(),
@@ -149,6 +152,7 @@ public sealed class ThreadRepositoryTests
         };
         var post2 = new Post
         {
+            BlobContainerId = new Guid("91F9A825-FFC0-45FA-B8CF-EA0435F414BC"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(3),
             IsSageEnabled = false,
             MessageText = "test post 2",
@@ -156,11 +160,12 @@ public sealed class ThreadRepositoryTests
             UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
             UserAgent = "Chrome",
             Thread = thread,
-            Attachments = new List<Attachment>
+            Pictures = new List<Picture>
             {
                 new Picture
                 {
-                    FileName = "photo_2024-10-31_16-20-39",
+                    BlobId = new Guid("668B2737-0540-4DDD-A23E-58FA031A933F"),
+                    FileNameWithoutExtension = "photo_2024-10-31_16-20-39",
                     FileExtension = "jpg",
                     FileSize = 204316,
                     FileHash = Hasher.Hash("6e84e6b4-5370-44c6-a319-a03a027f3905"u8).AsSpan().ToArray(),
@@ -171,6 +176,7 @@ public sealed class ThreadRepositoryTests
         };
         var post3 = new Post
         {
+            BlobContainerId = new Guid("BD852887-CBE3-4BAB-9FAC-F501EC3DA439"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(4),
             IsSageEnabled = false,
             MessageText = "test post 3",
@@ -181,6 +187,7 @@ public sealed class ThreadRepositoryTests
         };
         var post4 = new Post
         {
+            BlobContainerId = new Guid("2FA199CC-CD14-402D-8209-0A1B8353E463"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(5),
             IsSageEnabled = false,
             MessageText = "test post 4",
@@ -191,6 +198,7 @@ public sealed class ThreadRepositoryTests
         };
         var post5 = new Post
         {
+            BlobContainerId = new Guid("1F657883-6C50-48FE-982C-5E1B552918D3"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(6),
             IsSageEnabled = false,
             MessageText = "test post 5",
@@ -204,7 +212,7 @@ public sealed class ThreadRepositoryTests
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var repository = new ThreadRepository(dbContext);
+        var repository = scope.ServiceProvider.GetRequiredService<IThreadRepository>();
 
         // Act
         var result = await repository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewsFilter
@@ -212,9 +220,9 @@ public sealed class ThreadRepositoryTests
             PageNumber = 1,
             PageSize = 10,
             OrderBy = [
-                new OrderByItem { Field = nameof(ThreadPreviewSm.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewSm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewSm.Id), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewRm.IsPinned), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewRm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewRm.Id), Direction = OrderByDirection.Desc },
             ],
             CategoryAlias = category.Alias,
         }, cancellationToken);
@@ -288,8 +296,8 @@ public sealed class ThreadRepositoryTests
                 Email = "admin@example.com",
                 NormalizedEmail = "ADMIN@EXAMPLE.COM",
                 EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+                ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
             };
             seedDbContext.Users.Add(admin);
@@ -341,6 +349,7 @@ public sealed class ThreadRepositoryTests
                 CreatedBy = null,
                 Posts = [new Post
                 {
+                    BlobContainerId = new Guid("CC8B3B30-A82B-4634-BE98-17E6FE646E1A"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
                     IsDeleted = false,
@@ -363,6 +372,7 @@ public sealed class ThreadRepositoryTests
                 CreatedBy = null,
                 Posts = [new Post
                 {
+                    BlobContainerId = new Guid("8B6789E0-9086-456F-94AA-AC070DF868B5"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
                     IsDeleted = false,
@@ -395,6 +405,7 @@ public sealed class ThreadRepositoryTests
                     .Range(0, totalPostCountPerThread)
                     .Select(i => new Post
                     {
+                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
                         IsSageEnabled = i % 2 == 0,
                         IsDeleted = false,
@@ -406,6 +417,7 @@ public sealed class ThreadRepositoryTests
                     })
                     .Union([new Post
                     {
+                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
                         IsSageEnabled = false,
                         IsDeleted = true,
@@ -431,9 +443,9 @@ public sealed class ThreadRepositoryTests
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 OrderBy = [
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.Id), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.IsPinned), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
                 IncludeDeleted = false,
@@ -454,20 +466,20 @@ public sealed class ThreadRepositoryTests
             Assert.That(actualThreadPreviews.SkippedItemCount, Is.EqualTo((pageNumber - 1) * pageSize));
 
             // check that category is correct
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.CategoryAlias == "b"));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.CategoryAlias == "b"));
 
             // check that there are no deleted threads
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.IsDeleted == false));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.IsDeleted == false));
 
             // check that there are no deleted posts
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.Posts.All(p => p.IsDeleted == false)));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.Posts.All(p => p.IsDeleted == false)));
 
             // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
             Assert.That(actualThreadPreviews.Data, Is.Ordered
-                .By(nameof(ThreadPreviewSm.IsPinned))
+                .By(nameof(ThreadPreviewRm.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewSm.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewRm.LastPostCreatedAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -479,7 +491,7 @@ public sealed class ThreadRepositoryTests
                 Assert.That(thread.Posts, Has.Count.EqualTo(Defaults.LatestPostsCountInThreadPreview + 1));
 
                 // check that posts are sorted by date ascending
-                Assert.That(thread.Posts, Is.Ordered.By(nameof(PostPreviewDto.CreatedAt)).Ascending);
+                Assert.That(thread.Posts, Is.Ordered.By(nameof(PostViewRm.CreatedAt)).Ascending);
             }
         }
     }
@@ -520,8 +532,8 @@ public sealed class ThreadRepositoryTests
                 Email = "admin@example.com",
                 NormalizedEmail = "ADMIN@EXAMPLE.COM",
                 EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+                ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
             };
             seedDbContext.Users.Add(admin);
@@ -573,6 +585,7 @@ public sealed class ThreadRepositoryTests
                 CreatedBy = null,
                 Posts = [new Post
                 {
+                    BlobContainerId = new Guid("4C708859-478D-451F-9EFD-315EAC9ABCAF"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
                     IsDeleted = false,
@@ -595,6 +608,7 @@ public sealed class ThreadRepositoryTests
                 CreatedBy = null,
                 Posts = [new Post
                 {
+                    BlobContainerId = new Guid("B4041A4C-10CD-4332-AFA2-7D04A9D130DD"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
                     IsDeleted = false,
@@ -627,6 +641,7 @@ public sealed class ThreadRepositoryTests
                     .Range(0, totalPostCountPerThread)
                     .Select(i => new Post
                     {
+                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
                         IsSageEnabled = i % 2 == 0,
                         IsDeleted = false,
@@ -638,6 +653,7 @@ public sealed class ThreadRepositoryTests
                     })
                     .Union([new Post
                     {
+                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
                         IsSageEnabled = false,
                         IsDeleted = true,
@@ -663,9 +679,9 @@ public sealed class ThreadRepositoryTests
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 OrderBy = [
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.Id), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.IsPinned), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
                 IncludeDeleted = false,
@@ -691,20 +707,20 @@ public sealed class ThreadRepositoryTests
             }
 
             // check that category is correct
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.CategoryAlias == "b"));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.CategoryAlias == "b"));
 
             // check that there are no deleted threads
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.IsDeleted == false));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.IsDeleted == false));
 
             // check that there are no deleted posts
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.Posts.All(p => p.IsDeleted == false)));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.Posts.All(p => p.IsDeleted == false)));
 
             // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
             Assert.That(actualThreadPreviews.Data, Is.Ordered
-                .By(nameof(ThreadPreviewSm.IsPinned))
+                .By(nameof(ThreadPreviewRm.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewSm.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewRm.LastPostCreatedAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -716,7 +732,7 @@ public sealed class ThreadRepositoryTests
                 Assert.That(thread.Posts, Has.Count.EqualTo(Defaults.LatestPostsCountInThreadPreview + 1));
 
                 // check that posts are sorted by date ascending
-                Assert.That(thread.Posts, Is.Ordered.By(nameof(PostPreviewDto.CreatedAt)).Ascending);
+                Assert.That(thread.Posts, Is.Ordered.By(nameof(PostViewRm.CreatedAt)).Ascending);
             }
         }
     }
@@ -760,8 +776,8 @@ public sealed class ThreadRepositoryTests
                 Email = "admin@example.com",
                 NormalizedEmail = "ADMIN@EXAMPLE.COM",
                 EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+                ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
             };
             seedDbContext.Users.Add(admin);
@@ -813,6 +829,7 @@ public sealed class ThreadRepositoryTests
                 CreatedBy = null,
                 Posts = [new Post
                 {
+                    BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
                     IsDeleted = false,
@@ -835,6 +852,7 @@ public sealed class ThreadRepositoryTests
                 CreatedBy = null,
                 Posts = [new Post
                 {
+                    BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
                     IsDeleted = false,
@@ -865,6 +883,7 @@ public sealed class ThreadRepositoryTests
 
             var postWithoutSage = new Post
             {
+                BlobContainerId = new Guid("9BE82B5A-0C4C-475C-9A3B-29F498E079E5"),
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.Subtract(TimeSpan.FromDays(20)),
                 IsDeleted = false,
                 IsSageEnabled = false,
@@ -892,6 +911,7 @@ public sealed class ThreadRepositoryTests
                     .Range(0, totalPostCountPerThread)
                     .Select(i => new Post
                     {
+                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
                         IsSageEnabled = true,
                         IsDeleted = false,
@@ -903,6 +923,7 @@ public sealed class ThreadRepositoryTests
                     })
                     .Union([new Post
                     {
+                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
                         IsSageEnabled = false,
                         IsDeleted = true,
@@ -928,9 +949,9 @@ public sealed class ThreadRepositoryTests
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 OrderBy = [
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewSm.Id), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.IsPinned), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewRm.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
                 IncludeDeleted = false,
@@ -945,26 +966,26 @@ public sealed class ThreadRepositoryTests
             }
 
             // check that category is correct
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.CategoryAlias == "b"));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.CategoryAlias == "b"));
 
             // check that there are no deleted threads
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.IsDeleted == false));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.IsDeleted == false));
 
             // check that there are no deleted posts
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewSm>(x => x.Posts.All(p => p.IsDeleted == false)));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewRm>(x => x.Posts.All(p => p.IsDeleted == false)));
 
             // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
             Assert.That(actualThreadPreviews.Data, Is.Ordered
-                .By(nameof(ThreadPreviewSm.IsPinned))
+                .By(nameof(ThreadPreviewRm.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewSm.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewRm.LastPostCreatedAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
             {
                 // check that posts are sorted by date ascending
-                Assert.That(thread.Posts, Is.Ordered.By(nameof(PostPreviewDto.CreatedAt)).Ascending);
+                Assert.That(thread.Posts, Is.Ordered.By(nameof(PostViewRm.CreatedAt)).Ascending);
             }
         }
     }

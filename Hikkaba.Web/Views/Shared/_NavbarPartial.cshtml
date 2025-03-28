@@ -17,10 +17,14 @@
                 [
                 @{
                     var categories = await CategoryService.ListAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] });
-                    foreach (var category in categories)
+                    for (var index = 0; index < categories.Count; index++)
                     {
+                      var category = categories[index];
+                      @if (index > 0)
+                      {
                         @("/")
-                        <a href="@Url.Action("Details", "Categories", new {categoryAlias = category.Alias})">@category.Alias</a>
+                      }
+                      <a href="@Url.Action("Details", "Categories", new { categoryAlias = category.Alias })">@category.Alias</a>
                     }
                 }
                 ]

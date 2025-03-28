@@ -36,6 +36,8 @@ public class AdministrationRepository : IAdministrationRepository
     public async Task<DashboardRm> GetDashboardAsync()
     {
         var dashboardItems = await _context.Categories
+            .Include(category => category.CreatedBy)
+            .Include(category => category.ModifiedBy)
             .OrderBy(category => category.Alias)
             .Select(
                 category =>
@@ -129,7 +131,11 @@ public class AdministrationRepository : IAdministrationRepository
         var seedSettings = scope.ServiceProvider.GetRequiredService<IOptions<SeedConfiguration>>();
         var seedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
 
-        await _context.Database.MigrateAsync();
+        if ((await applicationDbContext.Database.GetPendingMigrationsAsync()).Any())
+        {
+            await applicationDbContext.Database.MigrateAsync();
+        }
+
         await seedManager.SeedAsync(applicationDbContext, userMgr, roleMgr, seedSettings);
     }
 }

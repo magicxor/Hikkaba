@@ -1,7 +1,4 @@
-﻿using Hikkaba.Infrastructure.Models.ApplicationUser;
-using Hikkaba.Infrastructure.Models.Thread;
-
-namespace Hikkaba.Infrastructure.Models.Category;
+﻿namespace Hikkaba.Infrastructure.Models.Category;
 
 public class CategoryEditRequestRm
 {

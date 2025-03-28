@@ -49,4 +49,11 @@ public class HikkabaConfiguration
     [Required]
     [MinLength(8)]
     public required string AuthCertificatePassword { get; set; }
+
+    [Required]
+    [Range(1, 10)]
+    public int MaxPostsFromIpWithin5Minutes { get; set; } = Defaults.MaxPostsFromIpWithin5Minutes;
+
+    [MinLength(1)]
+    public string KeysetDirectoryPath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "hikkaba", "keys");
 }

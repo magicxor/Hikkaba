@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
 using Hikkaba.Common.Constants;
+using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Data.Entities.Attachments.Base;
 
 namespace Hikkaba.Data.Entities;
@@ -13,6 +13,10 @@ public class Post
 {
     [Key]
     public long Id { get; set; }
+
+    [Required]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public required Guid BlobContainerId { get; set; }
 
     [Required]
     public bool IsDeleted { get; set; }
@@ -31,10 +35,9 @@ public class Post
     [MaxLength(Defaults.MaxMessageHtmlLength)]
     public required string MessageHtml { get; set; }
 
-    [Required]
     [Column(TypeName = "varbinary(16)")]
     [MaxLength(Defaults.MaxIpAddressBytesLength)]
-    public required byte[] UserIpAddress { get; set; }
+    public required byte[]? UserIpAddress { get; set; }
 
     [Required]
     [MaxLength(Defaults.MaxUserAgentLength)]
@@ -66,7 +69,15 @@ public class Post
     public virtual ApplicationUser? ModifiedBy { get; set; }
 
     // Relations
-    public virtual ICollection<Attachment> Attachments { get; set; } = new List<Attachment>();
+    public virtual ICollection<Audio> Audios { get; set; } = new List<Audio>();
+
+    public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
+
+    public virtual ICollection<Notice> Notices { get; set; } = new List<Notice>();
+
+    public virtual ICollection<Picture> Pictures { get; set; } = new List<Picture>();
+
+    public virtual ICollection<Video> Videos { get; set; } = new List<Video>();
 
     [InverseProperty(nameof(PostToReply.Post))]
     public virtual ICollection<PostToReply> ParentPosts { get; set; } = new List<PostToReply>();

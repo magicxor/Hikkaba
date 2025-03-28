@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Hikkaba.Infrastructure.Models.ApplicationUser;
-using Hikkaba.Paging.Models;
+﻿using Hikkaba.Infrastructure.Models.ApplicationUser;
 
 namespace Hikkaba.Services.Contracts;
 
 public interface IApplicationUserService
 {
-    Task<ApplicationUserDto> GetAsync(int id);
+    Task<ApplicationUserViewRm> GetAsync(int id);
 
-    Task<IReadOnlyList<ApplicationUserDto>> ListAsync(ApplicationUserFilter filter);
+    Task<IReadOnlyList<ApplicationUserViewRm>> ListAsync(ApplicationUserFilter filter);
 
-    Task<int> CreateAsync(ApplicationUserDto dto);
+    Task<int> CreateAsync(ApplicationUserViewRm viewRm);
 
-    Task EditAsync(ApplicationUserDto dto);
+    Task EditAsync(ApplicationUserViewRm viewRm);
 
     Task SetIsDeletedAsync(int id, bool newValue);
 }

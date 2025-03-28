@@ -2,10 +2,8 @@
 @using Hikkaba.Common.Services.Contracts
 @using Hikkaba.Services.Contracts
 @using Hikkaba.Web.Extensions
-@using Hikkaba.Web.Services.Contracts
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
-@inject IMessagePostProcessor MessagePostProcessor
 @inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator
 @inject IUserContext UserContext
 
@@ -16,7 +14,7 @@
                 <h3 class="panel-title post-title">
                     @if (Model.ThreadShowThreadLocalUserHash)
                     {
-                        @(ThreadLocalUserHashGenerator.Generate(Model.ThreadId.ToString(), Model.UserIpAddress.ToString()))
+                        @(ThreadLocalUserHashGenerator.Generate(Model.ThreadId.ToString(), Model.UserIpAddress?.ToString()))
                     }
                     else
                     {
@@ -85,7 +83,7 @@
                         @Html.DisplayFor(model => model.Video)
                     </ul>
                 }
-                <span class="visible-line-breaks">@Html.Raw(MessagePostProcessor.MessageToSafeHtml(Model.CategoryAlias, Model.ThreadId, Model.MessageHtml))</span>
+                <span class="visible-line-breaks">@Html.Raw(Model.MessageHtml)</span>
             </div>
             @if (Model.Replies.Any())
             {

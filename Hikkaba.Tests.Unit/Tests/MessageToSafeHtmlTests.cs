@@ -82,7 +82,6 @@ public class MessageToSafeHtmlTests
         Assert.That(actualOutput, Is.EqualTo(expectedOutput));
     }
 
-    [TestCase(">>abc", $"""<a href="{FakeActionPath}#abc">&gt;&gt;abc</a>""")]
     [TestCase(">>0", $"""<a href="{FakeActionPath}#0">&gt;&gt;0</a>""")]
     [TestCase(">>999", $"""<a href="{FakeActionPath}#999">&gt;&gt;999</a>""")]
     public void MessageToSafeHtml_WhenCalledWithReplyLinks_ShouldReturnHtmlLinks(string input, string expectedOutput)

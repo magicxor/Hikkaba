@@ -3,7 +3,6 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Hikkaba.Common.Extensions;
 using Hikkaba.Data.Entities.Attachments.Base;
 using Hikkaba.Data.Extensions;
 using Hikkaba.Data.Utils;
@@ -70,9 +69,29 @@ public sealed class ApplicationDbContext
             .WithMany(e => e.Posts)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<Attachment>()
+        builder.Entity<Audio>()
             .HasOne(e => e.Post)
-            .WithMany(e => e.Attachments)
+            .WithMany(e => e.Audios)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Document>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Documents)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Notice>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Notices)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Picture>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Pictures)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Video>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Videos)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<PostToReply>()
@@ -88,6 +107,21 @@ public sealed class ApplicationDbContext
         // indices
         builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
         builder.Entity<Category>().HasIndex(e => e.Name).IsUnique();
+
+        builder.Entity<Thread>().HasIndex(e => e.CreatedAt);
+        builder.Entity<Thread>().HasIndex(e => e.IsPinned);
+
+        builder.Entity<Post>().HasIndex(e => e.BlobContainerId).IsUnique();
+        builder.Entity<Post>().HasIndex(e => e.CreatedAt);
+        builder.Entity<Post>().HasIndex(e => e.IsSageEnabled);
+
+        builder.Entity<Attachment>().HasIndex(e => e.BlobId).IsUnique();
+
+        builder.Entity<Ban>().HasIndex(e => e.EndsAt);
+        builder.Entity<Ban>().HasIndex(e => e.BannedIpAddress);
+        builder.Entity<Ban>().HasIndex(e => e.BannedCidrLowerIpAddress);
+        builder.Entity<Ban>().HasIndex(e => e.BannedCidrUpperIpAddress);
+        builder.Entity<Ban>().HasIndex(e => e.CountryIsoCode);
     }
 
     public DbSet<Ban> Bans { get; set; } = null!;
@@ -95,10 +129,11 @@ public sealed class ApplicationDbContext
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<CategoryToModerator> CategoriesToModerators { get; set; } = null!;
     public DbSet<Post> Posts { get; set; } = null!;
+    public DbSet<PostToReply> PostsToReplies { get; set; } = null!;
     public DbSet<Thread> Threads { get; set; } = null!;
-    public DbSet<Audio> Audio { get; set; } = null!;
+    public DbSet<Audio> Audios { get; set; } = null!;
     public DbSet<Document> Documents { get; set; } = null!;
     public DbSet<Notice> Notices { get; set; } = null!;
     public DbSet<Picture> Pictures { get; set; } = null!;
-    public DbSet<Video> Video { get; set; } = null!;
+    public DbSet<Video> Videos { get; set; } = null!;
 }

@@ -3,26 +3,26 @@
 public enum EventIdentifiers
 {
     // Http
-    HttpNotFound       = 404,
-    HttpInternalError  = 500,
+    HttpNotFound       = Defaults.HikkabaStartEventId + 404,
+    HttpInternalError  = Defaults.HikkabaStartEventId + 500,
 
     // System
-    SystemAccessDenied     = 10_403_0,
-    SystemBanned           = 10_403_1,
-    SystemEntityNotFound   = 10_404_0,
-    SystemTooManyRequests  = 10_429_0,
-    SystemFailedDependency = 10_424_0,
-    SystemUnavailableForLegalReasons = 10_451_0,
-    SystemNotImplemented = 10_501_0,
-    SystemMaintenance    = 10_503_0,
+    SystemAccessDenied     = Defaults.HikkabaStartEventId + 1001,
+    SystemBanned           = Defaults.HikkabaStartEventId + 1002,
+    SystemEntityNotFound   = Defaults.HikkabaStartEventId + 1003,
+    SystemTooManyRequests  = Defaults.HikkabaStartEventId + 1004,
+    SystemFailedDependency = Defaults.HikkabaStartEventId + 1005,
+    SystemUnavailableForLegalReasons = Defaults.HikkabaStartEventId + 1006,
+    SystemNotImplemented = Defaults.HikkabaStartEventId + 1007,
+    SystemMaintenance    = Defaults.HikkabaStartEventId + 1008,
 
     // Thread
-    ThreadCreateError = 11_000_1,
-    ThreadEditError = 11_000_2,
-    ThreadDeleteError = 11_000_3,
+    ThreadCreateError = Defaults.HikkabaStartEventId + 1101,
+    ThreadEditError = Defaults.HikkabaStartEventId + 1102,
+    ThreadDeleteError = Defaults.HikkabaStartEventId + 1103,
 
     // Post
-    PostCreateError = 12_000_1,
-    PostEditError = 12_000_2,
-    PostDeleteError = 12_000_3,
+    PostCreateError = Defaults.HikkabaStartEventId + 1201,
+    PostEditError = Defaults.HikkabaStartEventId + 1202,
+    PostDeleteError = Defaults.HikkabaStartEventId + 1203,
 }

@@ -12,7 +12,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
 {
     private readonly IUrlHelper _urlHelper;
 
-    private readonly BbParser _bbParser = new BbParser([
+    private readonly BbParser _bbParser = new([
         new Tag("b", "<b>", "</b>"),
         new Tag("i", "<i>", "</i>"),
         new Tag("u", "<u>", "</u>"),
@@ -27,42 +27,26 @@ public partial class MessagePostProcessor : IMessagePostProcessor
     ], BbParser.SecuritySubstitutions, new Dictionary<string, string>());
 
     [GeneratedRegex("""(\b(?<protocol>https?|ftp)://(?<domain>[-\p{L}\p{M}\p{N}.]+)(?<port>:[0-9]+)?(?<file>/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(?<parameters>\?[-A-Z0-9+&@#/%=~_|!:,.;]*)?)""", RegexOptions.Compiled | RegexOptions.IgnoreCase, 500)]
-    public static partial Regex UriRegexClass();
-
-    [GeneratedRegex(@">>([a-z0-9\-]+)", RegexOptions.Compiled, 500)]
-    private static partial Regex CrossLinkRegexClass();
+    public static partial Regex GetUriRegex();
 
     [GeneratedRegex(@"\u000D\u000A|\u000A|\u000B|\u000C|\u000D|\u0085|\u2028|\u2029", RegexOptions.Compiled, 500)]
-    private static partial Regex ReplaceLineTerminatorsRegexClass();
+    private static partial Regex GetReplaceLineTerminatorsRegex();
 
     [GeneratedRegex(@"(\u000D\u000A){3,}", RegexOptions.Compiled, 500)]
-    private static partial Regex LimitLineTerminatorCountRegexClass();
+    private static partial Regex GetLimitLineTerminatorCountRegex();
 
-    private static readonly Regex UriRegex = UriRegexClass();
-    private static readonly Regex CrossLinkRegex = CrossLinkRegexClass();
-    private static readonly Regex ReplaceLineTerminatorsRegex = ReplaceLineTerminatorsRegexClass();
-    private static readonly Regex LimitLineTerminatorCountRegex = LimitLineTerminatorCountRegexClass();
+    [GeneratedRegex(@">>([0-9]+)", RegexOptions.Compiled, 500)]
+    private static partial Regex GetPostLinkRegex();
+
+    private static readonly Regex UriRegex = GetUriRegex();
+    private static readonly Regex PostLinkRegex = GetPostLinkRegex();
+    private static readonly Regex ReplaceLineTerminatorsRegex = GetReplaceLineTerminatorsRegex();
+    private static readonly Regex LimitLineTerminatorCountRegex = GetLimitLineTerminatorCountRegex();
 
     public MessagePostProcessor(
         IUrlHelperFactoryWrapper urlHelperFactoryWrapper)
     {
         _urlHelper = urlHelperFactoryWrapper.GetUrlHelper();
-    }
-
-    private static string ReplaceUrisWithHtmlLinks(string text)
-    {
-        return UriRegex.Replace(text, """<a href="$1" rel="nofollow noopener noreferrer external">$1</a>""");
-    }
-
-    private string ReplaceCrossLinksWithHtmlLinks(string categoryAlias, long threadId, string text)
-    {
-        var threadUri = _urlHelper.Action("Details", "Threads",
-            new
-            {
-                categoryAlias = categoryAlias,
-                threadId = threadId,
-            });
-        return CrossLinkRegex.Replace(text, $"""<a href="{threadUri}#$1">&gt;&gt;$1</a>""");
     }
 
     private static string ReplaceUrisWithBbCodeUrl(string text)
@@ -78,7 +62,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
                 categoryAlias = categoryAlias,
                 threadId = threadId,
             });
-        return CrossLinkRegex.Replace(text, $"""[relurl="{threadUri}#$1"]>>$1[/relurl]""");
+        return PostLinkRegex.Replace(text, $"""[relurl="{threadUri}#$1"]>>$1[/relurl]""");
     }
 
     private static string NormalizeLineBreaks(string text)
@@ -91,12 +75,14 @@ public partial class MessagePostProcessor : IMessagePostProcessor
         return LimitLineTerminatorCountRegex.Replace(text, "\r\n\r\n");
     }
 
-    public string MessageToSafeHtml(string categoryAlias, long threadId, string text)
+    public string MessageToSafeHtml(string categoryAlias, long? threadId, string text)
     {
         var normalizedLineBreaks = NormalizeLineBreaks(text);
         var limitedLineBreaksCount = LimitLineBreaksCount(normalizedLineBreaks);
         var linksProcessed = ReplaceUrisWithBbCodeUrl(limitedLineBreaksCount);
-        var crossLinksProcessed = ReplaceCrossLinksWithBbCodeUrl(categoryAlias, threadId, linksProcessed);
+        var crossLinksProcessed = threadId == null
+            ? linksProcessed
+            : ReplaceCrossLinksWithBbCodeUrl(categoryAlias, threadId.Value, linksProcessed);
         var convertedToHtml = _bbParser.Parse(crossLinksProcessed).ToHtml();
         return convertedToHtml;
     }
@@ -108,5 +94,20 @@ public partial class MessagePostProcessor : IMessagePostProcessor
         var normalizedLineBreaks = NormalizeLineBreaks(extractedPlainText);
         var limitedLineBreaksCount = LimitLineBreaksCount(normalizedLineBreaks);
         return limitedLineBreaksCount;
+    }
+
+    public IReadOnlyList<long> GetMentionedPosts(string text)
+    {
+        var mentionedPosts = new List<long>();
+        var matches = PostLinkRegex.Matches(text);
+        foreach (Match match in matches)
+        {
+            if (long.TryParse(match.Groups[1].Value, out var postId))
+            {
+                mentionedPosts.Add(postId);
+            }
+        }
+
+        return mentionedPosts;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Models;
 
 

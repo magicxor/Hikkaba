@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Hikkaba.Web.Services.Implementations;
 
 namespace Hikkaba.Tests.Unit.Tests;
@@ -91,7 +90,7 @@ public class SimplifiedUrlRegexTests
     [TestCaseSource(nameof(UriTestCases))]
     public void Regex_ShouldMatchOnlyValidUrls(string input, bool wholeInputMatchesRegex)
     {
-        var simplifiedUrlRegex = MessagePostProcessor.UriRegexClass();
+        var simplifiedUrlRegex = MessagePostProcessor.GetUriRegex();
         var match = simplifiedUrlRegex.Match(input);
         if (match.Success)
         {

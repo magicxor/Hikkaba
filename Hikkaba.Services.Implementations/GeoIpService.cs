@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using Hikkaba.Infrastructure.Models;
 using Hikkaba.Services.Contracts;
 using Microsoft.Extensions.Logging;
@@ -22,9 +21,9 @@ public class GeoIpService : IGeoIpService
         _geoIpReaderCountry = geoIpReaderCountry;
     }
 
-    public IpAddressInfo GetIpAddressInfo(IPAddress ipAddress)
+    public IpAddressInfoSm GetIpAddressInfo(IPAddress ipAddress)
     {
-        var result = new IpAddressInfo();
+        var result = new IpAddressInfoSm();
 
         try
         {

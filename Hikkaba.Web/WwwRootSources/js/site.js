@@ -39,9 +39,9 @@ window.writeLineToInput = function writeLineToInput(inputId, text) {
 window.wrapText = function wrapText(inputId, openTag, closeTag) {
     const textArea = document.getElementById(inputId);
     if (typeof (textArea.selectionStart) !== "undefined") {
-        const begin = textArea.value.substr(0, textArea.selectionStart);
-        const selection = textArea.value.substr(textArea.selectionStart, textArea.selectionEnd - textArea.selectionStart);
-        const end = textArea.value.substr(textArea.selectionEnd);
+        const begin = textArea.value.substring(0, textArea.selectionStart);
+        const selection = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd);
+        const end = textArea.value.substring(textArea.selectionEnd);
         textArea.value = begin + openTag + selection + closeTag + end;
     }
 };
@@ -67,7 +67,7 @@ window.insertTag = function insertTag(inputId, markupButtonId) {
             wrapText(inputId, "[spoiler]", "[/spoiler]");
             break;
         case "m-code":
-            wrapText(inputId, "[pre]", "[/pre]");
+            wrapText(inputId, "[code]", "[/code]");
             break;
         case "m-subscript":
             wrapText(inputId, "[sub]", "[/sub]");
@@ -90,8 +90,9 @@ $(function () {
     // if js is enabled and post form exists, prevent href=... and insert >>post id to form
     const inputId = "Message";
     if ($("#" + inputId).length) {
-        $(".post-id-link").attr("onclick", "return false;");
-        $(".post-id-link").click(function () {
+        const postIdLink = $(".post-id-link");
+        postIdLink.attr("onclick", "return false;");
+        postIdLink.click(function () {
             const thisElement = $(this);
             writeLineToInput(inputId, ">>" + thisElement.text(), "");
             writeSelectionLineToInput(inputId);

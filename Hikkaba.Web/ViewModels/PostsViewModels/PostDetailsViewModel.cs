@@ -29,7 +29,7 @@ public class PostDetailsViewModel
     public required string MessageHtml { get; set; }
 
     [Display(Name = @"IP")]
-    public required IPAddress UserIpAddress { get; set; }
+    public required IPAddress? UserIpAddress { get; set; }
 
     [Display(Name = @"User-agent")]
     public required string UserAgent { get; set; }

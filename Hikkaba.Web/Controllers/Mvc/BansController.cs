@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
 using Hikkaba.Data.Entities;
@@ -12,7 +11,6 @@ using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Hikkaba.Web.Utils;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 // todo: add ban for specific category (select category from list)

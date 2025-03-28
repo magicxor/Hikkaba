@@ -2,5 +2,5 @@
 
 public interface IThreadLocalUserHashGenerator
 {
-    string Generate(string threadId, string userIpAddress);
+    string Generate(string threadId, string? userIpAddress);
 }

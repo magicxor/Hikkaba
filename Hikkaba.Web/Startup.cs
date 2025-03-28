@@ -113,13 +113,18 @@ public class Startup
         var hikkabaConfiguration = _configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
         if (hikkabaConfiguration != null)
         {
+            if (!Directory.Exists(hikkabaConfiguration.KeysetDirectoryPath))
+            {
+                Directory.CreateDirectory(hikkabaConfiguration.KeysetDirectoryPath);
+            }
+
             services.AddDataProtection(options =>
                 {
                     options.ApplicationDiscriminator = "4036e12c07fa7f8fb6f58a70c90ee85b52c15be531acf7bd0d480d1ca7f9ea5d";
                 })
                 .SetApplicationName("Hikkaba")
                 .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(hikkabaConfiguration))
-                .PersistKeysToFileSystem(new DirectoryInfo("/home/hikkaba/keys"));
+                .PersistKeysToFileSystem(new DirectoryInfo(hikkabaConfiguration.KeysetDirectoryPath));
 
             // Captcha
             services.AddDNTCaptcha(options => options
@@ -140,20 +145,20 @@ public class Startup
         services.AddScoped<ISmsSender, AuthMessageSender>();
         services.AddScoped<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
         services.AddScoped<IAdministrationService, AdministrationService>();
-        //services.AddScoped<IApplicationUserService, ApplicationUserService>();
         services.AddScoped<IAttachmentCategorizer, AttachmentCategorizer>();
         services.AddScoped<IBanService, BanService>();
         services.AddScoped<IBoardService, BoardService>();
         services.AddScoped<ICategoryService, CategoryService>();
-        //services.AddScoped<ICryptoService, CryptoService>();
         services.AddScoped<IGeoIpService, GeoIpService>();
         services.AddScoped<IHmacService, HmacService>();
+        services.AddScoped<IHashService, HashService>();
         services.AddScoped<IIpAddressCalculator, IpAddressCalculator>();
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<ISystemInfoService, SystemInfoService>();
         services.AddScoped<IThreadLocalUserHashGenerator, ThreadLocalUserHashGenerator>();
         services.AddScoped<IThreadService, ThreadService>();
         services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
+        services.AddScoped<IAttachmentService, AttachmentService>();
 
         // add repositories
         services.AddScoped<IAdministrationRepository, AdministrationRepository>();
@@ -164,6 +169,7 @@ public class Startup
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<ISeedManager, SeedManager>();
         services.AddScoped<IThreadRepository, ThreadRepository>();
+        services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 
         // File storage
         services.AddScoped<FileExtensionContentTypeProvider>();

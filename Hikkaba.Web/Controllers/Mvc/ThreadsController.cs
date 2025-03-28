@@ -1,12 +1,19 @@
-using System.Net;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Common.Exceptions;
+using DNTCaptcha.Core;
+using Hikkaba.Common.Constants;
+using Hikkaba.Common.Extensions;
 using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Services.Contracts;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
+using Hikkaba.Web.Services.Contracts;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,38 +24,57 @@ namespace Hikkaba.Web.Controllers.Mvc;
 public class ThreadsController : BaseMvcController
 {
     private readonly ILogger<ThreadsController> _logger;
+    private readonly IMessagePostProcessor _messagePostProcessor;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
+    private readonly IPostService _postService;
 
     public ThreadsController(
-        UserManager<ApplicationUser> userManager,
         ILogger<ThreadsController> logger,
+        UserManager<ApplicationUser> userManager,
+        IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
-        IThreadService threadService) : base(userManager)
+        IThreadService threadService,
+        IPostService postService) : base(userManager)
     {
         _logger = logger;
+        _messagePostProcessor = messagePostProcessor;
         _categoryService = categoryService;
         _threadService = threadService;
+        _postService = postService;
     }
 
-    [Route("{categoryAlias}/Threads/{threadId}")]
+    [Route("{categoryAlias}/Threads/{threadId:long}")]
     [AllowAnonymous]
-    public async Task<IActionResult> Details(string categoryAlias, long threadId)
+    public async Task<IActionResult> Details(string categoryAlias, long threadId, CancellationToken cancellationToken)
     {
-        var threadPosts = await _threadService.GetThreadDetailsAsync(threadId);
+        var threadPosts = await _threadService.GetThreadDetailsAsync(threadId, cancellationToken);
+
+        if (threadPosts is null)
+        {
+            return NotFound();
+        }
+
         var threadDetailsViewModel = threadPosts.ToViewModel();
 
         return View(threadDetailsViewModel);
     }
 
-    /*
     [Route("{categoryAlias}/Threads/Create")]
     [AllowAnonymous]
     public async Task<IActionResult> Create(string categoryAlias)
     {
-        var category = await _categoryService.GetAsync(categoryAlias);
+        var category = await _categoryService.GetAsync(categoryAlias, false);
+        if (category is null)
+        {
+            return NotFound();
+        }
+
         var threadAnonymousCreateViewModel = new ThreadAnonymousCreateViewModel
         {
+            Title = string.Empty,
+            Message = string.Empty,
+            Attachments = new FormFileCollection(),
             CategoryAlias = category.Alias,
             CategoryName = category.Name,
         };
@@ -60,38 +86,53 @@ public class ThreadsController : BaseMvcController
     [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number")]
     [ValidateAntiForgeryToken]
     [AllowAnonymous]
-    public async Task<IActionResult> Create(ThreadAnonymousCreateViewModel viewModel)
+    public async Task<IActionResult> Create(string categoryAlias, ThreadAnonymousCreateViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
             try
             {
-                var categoryDto = await _categoryService.GetAsync(viewModel.CategoryAlias);
-
-                var threadDto = _mapper.Map<ThreadEditSm>(viewModel);
-                threadDto.BumpLimit = categoryDto.DefaultBumpLimit;
-                threadDto.ShowThreadLocalUserHash = categoryDto.DefaultShowThreadLocalUserHash;
-                threadDto.CategoryId = categoryDto.Id;
-
-                var postDto = _mapper.Map<PostDto>(viewModel);
-                postDto.UserIpAddress = UserIpAddress.ToString();
-                postDto.UserAgent = UserAgent;
-
-                var threadCreateDto = new ThreadPostCreateSm
+                var category = await _categoryService.GetAsync(categoryAlias, false);
+                if (category is null)
                 {
-                    Category = categoryDto,
-                    Thread = threadDto,
-                    Post = postDto,
+                    return NotFound();
+                }
+
+                var threadCreateRm = new ThreadCreateRm
+                {
+                    CategoryAlias = category.Alias,
+                    ThreadTitle = viewModel.Title,
+                    BlobContainerId = Guid.NewGuid(),
+                    IsSageEnabled = false,
+                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, null, viewModel.Message),
+                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
+                    UserIpAddress = UserIpAddressBytes,
+                    UserAgent = UserAgent,
                 };
 
-                var createResultDto = await _threadService.CreateThreadPostAsync(viewModel.Attachments, threadCreateDto, true);
-                return RedirectToAction("Details", "Threads", new { categoryAlias = viewModel.CategoryAlias, threadId = createResultDto.ThreadId });
+                var createThreadResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
+
+                return RedirectToAction(
+                    "Details",
+                    "Threads",
+                    new
+                    {
+                        categoryAlias = category.Alias,
+                        threadId = createThreadResult.ThreadId,
+                    });
             }
             catch (Exception ex)
             {
-                _logger.LogError(EventIdentifiers.ThreadCreateError.ToEventId(), ex, $"Can't create new thread due to exception");
+                _logger.LogError(
+                    EventIdentifiers.ThreadCreateError.ToEventId(),
+                    ex,
+                    "Error creating thread in category '{CategoryAlias}'. Title: '{Title}', Message length: {MessageLength}, Attachments count: {AttachmentsCount}",
+                    categoryAlias,
+                    viewModel.Title,
+                    viewModel.Message.Length,
+                    viewModel.AttachmentsCount);
 
-                ViewBag.ErrorMessage = "Can't create new thread";
+                ViewBag.ErrorMessage = "Error occurred while creating a thread. Please try again.";
                 return View(viewModel);
             }
         }
@@ -101,7 +142,6 @@ public class ThreadsController : BaseMvcController
             return View(viewModel);
         }
     }
-    */
 
     /*
     [Route("{categoryAlias}/Threads/{threadId}/Edit")]

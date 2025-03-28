@@ -66,8 +66,12 @@ public sealed class SeedManager : ISeedManager
                 UserName = Defaults.AdministratorUserName,
                 Email = seedConfiguration.AdministratorEmail,
                 EmailConfirmed = true,
+                PhoneNumber = "88005553535",
+                PhoneNumberConfirmed = true,
                 SecurityStamp = Guid.NewGuid().ToString("D", CultureInfo.InvariantCulture),
                 CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+                LockoutEnabled = false,
+                TwoFactorEnabled = false,
             };
             var userCreateResult = await userMgr.CreateAsync(adminUser, seedConfiguration.AdministratorPassword);
             if (!userCreateResult.Succeeded)

@@ -19,12 +19,12 @@ public class PostAnonymousCreateViewModel
 
     [DataType(DataType.Upload)]
     [Display(Name = @"Attachments")]
-    public required IFormFileCollection Attachments { get; set; }
+    public IFormFileCollection Attachments { get; set; } = new FormFileCollection();
 
     [Required]
     public required long ThreadId { get; set; }
     public required string CategoryAlias { get; set; }
-    public required string CategoryName { get; set; }
+    public string? CategoryName { get; set; }
 
     [Range(minimum: 0, maximum: Defaults.MaxAttachmentsCount, ErrorMessage = "Maximum {2} attachments allowed")]
     public int AttachmentsCount => Attachments?.Count ?? 0;

@@ -29,7 +29,11 @@ public class BaseMvcController: Controller
         }
     }
 
-    protected string? UserAgent => Request.Headers.UserAgent;
+    protected string UserAgent => Request.Headers.UserAgent.ToString();
+
+    protected string? UserIpAddressStr => Request.HttpContext.Connection.RemoteIpAddress?.ToString();
+
+    protected byte[]? UserIpAddressBytes => Request.HttpContext.Connection.RemoteIpAddress?.GetAddressBytes();
 
     protected IPAddress? UserIpAddress => Request.HttpContext.Connection.RemoteIpAddress;
 }

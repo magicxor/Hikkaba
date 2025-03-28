@@ -1,11 +1,5 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Hikkaba.Common.Constants;
-using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Models.ApplicationUser;
 using Hikkaba.Services.Contracts;
-using Hikkaba.Web.Utils;
-using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -106,7 +100,7 @@ public class UsersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        await _applicationUserService.SetIsDeletedAsync(id, true);;
+        await _applicationUserService.SetIsDeletedAsync(id, true);
         return RedirectToAction("Index");
     }
     */

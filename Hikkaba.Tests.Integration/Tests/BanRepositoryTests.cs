@@ -4,13 +4,12 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Common.Enums;
-using Hikkaba.Common.Services.Implementations;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
-using Hikkaba.Repositories.Implementations;
+using Hikkaba.Repositories.Contracts;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Extensions;
 using Hikkaba.Tests.Integration.Services;
@@ -26,6 +25,8 @@ namespace Hikkaba.Tests.Integration.Tests;
 [Parallelizable(scope: ParallelScope.Fixtures)]
 public sealed class BanRepositoryTests
 {
+    private static readonly GuidGenerator GuidGenerator = new();
+
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;
 
     [OneTimeSetUp]
@@ -63,7 +64,8 @@ public sealed class BanRepositoryTests
         var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any()) {
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
+        {
             await dbContext.Database.MigrateAsync(cancellationToken);
         }
 
@@ -75,8 +77,8 @@ public sealed class BanRepositoryTests
             Email = "admin@example.com",
             NormalizedEmail = "ADMIN@EXAMPLE.COM",
             EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
+            SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+            ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
         };
         dbContext.Users.Add(admin);
@@ -117,6 +119,7 @@ public sealed class BanRepositoryTests
 
         var post1 = new Post
         {
+            BlobContainerId = new Guid("05E219F7-35F2-495B-A0D3-D7EF7018C674"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = "test post 1 abc",
@@ -127,6 +130,7 @@ public sealed class BanRepositoryTests
         };
         var post2 = new Post
         {
+            BlobContainerId = new Guid("EADF6C08-1C14-432E-A9EB-0DDF67D55FC7"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = "test post 2 def",
@@ -159,7 +163,7 @@ public sealed class BanRepositoryTests
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var repository = new BanRepository(dbContext, timeProvider, new UserContext());
+        var repository = scope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.ListBansPaginatedAsync(new BanPagingFilter
@@ -191,7 +195,8 @@ public sealed class BanRepositoryTests
         var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any()) {
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
+        {
             await dbContext.Database.MigrateAsync(cancellationToken);
         }
 
@@ -203,8 +208,8 @@ public sealed class BanRepositoryTests
             Email = "admin@example.com",
             NormalizedEmail = "ADMIN@EXAMPLE.COM",
             EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
+            SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+            ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
         };
         dbContext.Users.Add(admin);
@@ -245,6 +250,7 @@ public sealed class BanRepositoryTests
 
         var post1 = new Post
         {
+            BlobContainerId = new Guid("64596344-BC44-489A-9D6E-1AA2BB5A27BF"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = "test post 1 abc",
@@ -255,6 +261,7 @@ public sealed class BanRepositoryTests
         };
         var post2 = new Post
         {
+            BlobContainerId = new Guid("9BC6094D-DD51-4C59-8EAB-444446DEEF62"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = "test post 2 def",
@@ -291,7 +298,7 @@ public sealed class BanRepositoryTests
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var repository = new BanRepository(dbContext, timeProvider, new UserContext());
+        var repository = scope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.ListBansPaginatedAsync(new BanPagingFilter

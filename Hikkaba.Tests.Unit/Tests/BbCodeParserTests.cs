@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BBCodeParser;
@@ -11,9 +11,7 @@ namespace Hikkaba.Tests.Unit.Tests;
 [TestFixture]
 public class BbCodeParserTests
 {
-    private BbParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")],
-        new Dictionary<string, string>(),
-        new Dictionary<string, string>());
+    private BbParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")], [], []);
     private const string CodeClassName = "code";
     private const string PreClassName = "pref";
     private const string SpoilerHeadClassName = "spoiler-head";
@@ -386,7 +384,7 @@ public class BbCodeParserTests
         const string input = "[i]Hello[/i] [code][b]world[/b][/code]";
         var actual = _bbCodeParser.Parse(input);
 
-        bool Filter(Node n) => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
+        static bool Filter(Node n) => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
         ClassicAssert.AreEqual("[i]Hello[/i] [code][b]world[/b][/code]", actual.ToBb(Filter));
         ClassicAssert.AreEqual("Hello [b]world[/b]", actual.ToText(Filter));
     }

@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Hikkaba.Services.Contracts;
+﻿namespace Hikkaba.Services.Contracts;
 
 public interface ISmsSender
 {

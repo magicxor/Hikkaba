@@ -1,9 +1,9 @@
-﻿using Hikkaba.Infrastructure.Models;
+﻿using Hikkaba.Infrastructure.Models.Attachments;
 using SixLabors.ImageSharp;
 
 namespace Hikkaba.Services.Contracts;
 
 public interface IThumbnailGenerator
 {
-    ThumbnailDto GenerateThumbnail(Image image, int maxWidth, int maxHeight);
+    Task<ThumbnailRm> GenerateThumbnailAsync(Image image, int maxWidth, int maxHeight, CancellationToken cancellationToken);
 }

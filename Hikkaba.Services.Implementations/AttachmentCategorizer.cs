@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Hikkaba.Infrastructure.Models.Attachments;
+﻿using Hikkaba.Common.Enums;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Services.Contracts;
 using Microsoft.Extensions.Options;
@@ -10,7 +8,7 @@ namespace Hikkaba.Services.Implementations;
 public class AttachmentCategorizer : IAttachmentCategorizer
 {
     private readonly HikkabaConfiguration _hikkabaConfiguration;
-    private readonly string[] _supportedPictureExtensions = ["jpg", "jpeg", "png", "gif", "webp", "avif"];
+    private readonly string[] _supportedPictureExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
 
     public AttachmentCategorizer(IOptions<HikkabaConfiguration> settings)
     {
@@ -22,23 +20,23 @@ public class AttachmentCategorizer : IAttachmentCategorizer
         return _supportedPictureExtensions.Any(ext => ext.Equals(extension, System.StringComparison.OrdinalIgnoreCase));
     }
 
-    public Type GetAttachmentType(string fileName)
+    public AttachmentType GetAttachmentType(string extension)
     {
-        if (_hikkabaConfiguration.AudioExtensions.Any(fileName.EndsWith))
+        if (_hikkabaConfiguration.AudioExtensions.Any(x => x == extension))
         {
-            return typeof(AudioDto);
+            return AttachmentType.Audio;
         }
-        else if (_hikkabaConfiguration.PictureExtensions.Any(fileName.EndsWith))
+        else if (_hikkabaConfiguration.PictureExtensions.Any(x => x == extension))
         {
-            return typeof(PictureDto);
+            return AttachmentType.Picture;
         }
-        else if (_hikkabaConfiguration.VideoExtensions.Any(fileName.EndsWith))
+        else if (_hikkabaConfiguration.VideoExtensions.Any(x => x == extension))
         {
-            return typeof(VideoDto);
+            return AttachmentType.Video;
         }
         else
         {
-            return typeof(DocumentDto);
+            return AttachmentType.Document;
         }
     }
 }

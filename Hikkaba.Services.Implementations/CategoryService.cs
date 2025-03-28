@@ -14,7 +14,7 @@ public class CategoryService : ICategoryService
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<IReadOnlyList<CategoryDto>> ListAsync(CategoryFilter filter)
+    public async Task<IReadOnlyList<CategoryViewRm>> ListAsync(CategoryFilter filter)
     {
         return await _categoryRepository.ListCategoriesAsync(filter);
     }
@@ -25,12 +25,7 @@ public class CategoryService : ICategoryService
         throw new NotImplementedException();
     }
 
-    public async Task<CategoryDto> GetAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<CategoryDto?> GetAsync(string alias, bool includeDeleted)
+    public async Task<CategoryViewRm?> GetAsync(string alias, bool includeDeleted)
     {
         return await _categoryRepository.GetCategoryAsync(alias, includeDeleted);
     }

@@ -1,11 +1,11 @@
 ﻿using Hikkaba.Data.Context;
-using Hikkaba.Data.Entities.Attachments;
+using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Attachments;
 using Hikkaba.Infrastructure.Models.Post;
-using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Hikkaba.Repositories.Contracts;
+using Hikkaba.Repositories.Implementations.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Repositories.Implementations;
@@ -13,119 +13,52 @@ namespace Hikkaba.Repositories.Implementations;
 public class PostRepository : IPostRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
+    private readonly TimeProvider _timeProvider;
+    private readonly IAttachmentRepository _attachmentRepository;
 
-    public PostRepository(ApplicationDbContext applicationDbContext)
+    public PostRepository(
+        ApplicationDbContext applicationDbContext,
+        TimeProvider timeProvider,
+        IAttachmentRepository attachmentRepository)
     {
         _applicationDbContext = applicationDbContext;
+        _timeProvider = timeProvider;
+        _attachmentRepository = attachmentRepository;
     }
 
-    public async Task<IReadOnlyList<PostInfoRm>> ListThreadPostsAsync(
+    public async Task<IReadOnlyList<PostViewRm>> ListThreadPostsAsync(
         ThreadPostsFilter filter,
         CancellationToken cancellationToken)
     {
-        var query = _applicationDbContext.Posts
+        return await _applicationDbContext.Posts
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
-            .Include(post => post.Attachments)
+            .Include(post => post.Audios)
+            .Include(post => post.Documents)
+            .Include(post => post.Notices)
+            .Include(post => post.Pictures)
+            .Include(post => post.Videos)
             .Include(post => post.Replies)
-            .Where(p => p.ThreadId == filter.ThreadId)
-            .AsQueryable();
-
-        query = filter.IncludeDeleted
-            ? query.IgnoreQueryFilters()
-            : query.Where(p => !p.IsDeleted && !p.Thread.IsDeleted && !p.Thread.Category.IsDeleted);
-
-        return await query
+            .Where(p => p.ThreadId == filter.ThreadId
+                && (filter.IncludeDeleted || (!p.IsDeleted && !p.Thread.IsDeleted && !p.Thread.Category.IsDeleted)))
+            .AsQueryable()
+            .GetViewRm()
             .ApplyOrderBy(filter, post => post.CreatedAt)
-            .Select(post => new PostInfoRm
-            {
-                Index = 0,
-                Id = post.Id,
-                IsDeleted = post.IsDeleted,
-                CreatedAt = post.CreatedAt,
-                ModifiedAt = post.ModifiedAt,
-                IsSageEnabled = post.IsSageEnabled,
-                MessageHtml = post.MessageHtml,
-                UserIpAddress = post.UserIpAddress,
-                UserAgent = post.UserAgent,
-                Audio = post.Attachments.OfType<Audio>()
-                    .Select(a => new AudioDto
-                    {
-                        Id = a.Id,
-                        PostId = a.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = a.FileName,
-                        FileExtension = a.FileExtension,
-                        FileSize = a.FileSize,
-                        FileHash = a.FileHash,
-                    })
-                    .ToList(),
-                Documents = post.Attachments.OfType<Document>()
-                    .Select(d => new DocumentDto
-                    {
-                        Id = d.Id,
-                        PostId = d.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = d.FileName,
-                        FileExtension = d.FileExtension,
-                        FileSize = d.FileSize,
-                        FileHash = d.FileHash,
-                    })
-                    .ToList(),
-                Notices = post.Attachments.OfType<Notice>()
-                    .Select(n => new NoticeDto
-                    {
-                        Id = n.Id,
-                        PostId = n.PostId,
-                        ThreadId = post.ThreadId,
-                        Text = n.Text,
-                    })
-                    .ToList(),
-                Pictures = post.Attachments.OfType<Picture>()
-                    .Select(p => new PictureDto
-                    {
-                        Id = p.Id,
-                        PostId = p.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = p.FileName,
-                        FileExtension = p.FileExtension,
-                        FileSize = p.FileSize,
-                        FileHash = p.FileHash,
-                        Width = p.Width,
-                        Height = p.Height,
-                    })
-                    .ToList(),
-                Video = post.Attachments.OfType<Video>()
-                    .Select(v => new VideoDto
-                    {
-                        Id = v.Id,
-                        PostId = v.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = v.FileName,
-                        FileExtension = v.FileExtension,
-                        FileSize = v.FileSize,
-                        FileHash = v.FileHash,
-                    })
-                    .ToList(),
-                ThreadId = post.ThreadId,
-                ThreadShowThreadLocalUserHash = post.Thread.ShowThreadLocalUserHash,
-                CategoryAlias = post.Thread.Category.Alias,
-                CategoryId = post.Thread.CategoryId,
-                Replies = post.Replies
-                    .Select(r => r.ReplyId)
-                    .ToList(),
-            })
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PagedResult<PostInfoRm>> SearchPostsPaginatedAsync(
+    public async Task<PagedResult<PostViewRm>> SearchPostsPaginatedAsync(
         SearchPostsPagingFilter filter,
         CancellationToken cancellationToken)
     {
         var query = _applicationDbContext.Posts
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
-            .Include(post => post.Attachments)
+            .Include(post => post.Audios)
+            .Include(post => post.Documents)
+            .Include(post => post.Notices)
+            .Include(post => post.Pictures)
+            .Include(post => post.Videos)
             .Include(post => post.Replies)
             .Where(post => !post.IsDeleted
                 && !post.Thread.IsDeleted
@@ -133,84 +66,7 @@ public class PostRepository : IPostRepository
                 && (post.MessageText.Contains(filter.SearchQuery)
                     || (post.Thread.Title.Contains(filter.SearchQuery)
                         && post == post.Thread.Posts.OrderBy(tp => tp.CreatedAt).FirstOrDefault())))
-            .Select(post => new PostInfoRm
-            {
-                Index = 0,
-                Id = post.Id,
-                IsDeleted = post.IsDeleted,
-                CreatedAt = post.CreatedAt,
-                ModifiedAt = post.ModifiedAt,
-                IsSageEnabled = post.IsSageEnabled,
-                MessageHtml = post.MessageHtml,
-                UserIpAddress = post.UserIpAddress,
-                UserAgent = post.UserAgent,
-                Audio = post.Attachments.OfType<Audio>()
-                    .Select(a => new AudioDto
-                    {
-                        Id = a.Id,
-                        PostId = a.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = a.FileName,
-                        FileExtension = a.FileExtension,
-                        FileSize = a.FileSize,
-                        FileHash = a.FileHash,
-                    })
-                    .ToList(),
-                Documents = post.Attachments.OfType<Document>()
-                    .Select(d => new DocumentDto
-                    {
-                        Id = d.Id,
-                        PostId = d.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = d.FileName,
-                        FileExtension = d.FileExtension,
-                        FileSize = d.FileSize,
-                        FileHash = d.FileHash,
-                    })
-                    .ToList(),
-                Notices = post.Attachments.OfType<Notice>()
-                    .Select(n => new NoticeDto
-                    {
-                        Id = n.Id,
-                        PostId = n.PostId,
-                        ThreadId = post.ThreadId,
-                        Text = n.Text,
-                    })
-                    .ToList(),
-                Pictures = post.Attachments.OfType<Picture>()
-                    .Select(p => new PictureDto
-                    {
-                        Id = p.Id,
-                        PostId = p.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = p.FileName,
-                        FileExtension = p.FileExtension,
-                        FileSize = p.FileSize,
-                        FileHash = p.FileHash,
-                        Width = p.Width,
-                        Height = p.Height,
-                    })
-                    .ToList(),
-                Video = post.Attachments.OfType<Video>()
-                    .Select(v => new VideoDto
-                    {
-                        Id = v.Id,
-                        PostId = v.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = v.FileName,
-                        FileExtension = v.FileExtension,
-                        FileSize = v.FileSize,
-                        FileHash = v.FileHash,
-                    })
-                    .ToList(),
-                ThreadId = post.ThreadId,
-                ThreadShowThreadLocalUserHash = post.Thread.ShowThreadLocalUserHash,
-                CategoryAlias = post.Thread.Category.Alias,
-                CategoryId = post.Thread.CategoryId,
-                Replies = post.Replies
-                    .Select(r => r.ReplyId)
-                    .ToList(),
-            });
+            .GetViewRm();
 
         var totalThreadCount = await query.CountAsync(cancellationToken);
 
@@ -218,99 +74,26 @@ public class PostRepository : IPostRepository
             .ApplyOrderByAndPaging(filter, x => x.CreatedAt)
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<PostInfoRm>(data, filter, totalThreadCount);
+        return new PagedResult<PostViewRm>(data, filter, totalThreadCount);
     }
 
-    public async Task<PagedResult<PostInfoRm>> ListPostsPaginatedAsync(
+    public async Task<PagedResult<PostViewRm>> ListPostsPaginatedAsync(
         PostPagingFilter filter,
         CancellationToken cancellationToken)
     {
         var query = _applicationDbContext.Posts
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
-            .Include(post => post.Attachments)
+            .Include(post => post.Audios)
+            .Include(post => post.Documents)
+            .Include(post => post.Notices)
+            .Include(post => post.Pictures)
+            .Include(post => post.Videos)
             .Include(post => post.Replies)
             .Where(post => !post.IsDeleted
                 && !post.Thread.IsDeleted
                 && !post.Thread.Category.IsDeleted)
-            .Select(post => new PostInfoRm
-            {
-                Index = 0,
-                Id = post.Id,
-                IsDeleted = post.IsDeleted,
-                CreatedAt = post.CreatedAt,
-                ModifiedAt = post.ModifiedAt,
-                IsSageEnabled = post.IsSageEnabled,
-                MessageHtml = post.MessageHtml,
-                UserIpAddress = post.UserIpAddress,
-                UserAgent = post.UserAgent,
-                Audio = post.Attachments.OfType<Audio>()
-                    .Select(a => new AudioDto
-                    {
-                        Id = a.Id,
-                        PostId = a.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = a.FileName,
-                        FileExtension = a.FileExtension,
-                        FileSize = a.FileSize,
-                        FileHash = a.FileHash,
-                    })
-                    .ToList(),
-                Documents = post.Attachments.OfType<Document>()
-                    .Select(d => new DocumentDto
-                    {
-                        Id = d.Id,
-                        PostId = d.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = d.FileName,
-                        FileExtension = d.FileExtension,
-                        FileSize = d.FileSize,
-                        FileHash = d.FileHash,
-                    })
-                    .ToList(),
-                Notices = post.Attachments.OfType<Notice>()
-                    .Select(n => new NoticeDto
-                    {
-                        Id = n.Id,
-                        PostId = n.PostId,
-                        ThreadId = post.ThreadId,
-                        Text = n.Text,
-                    })
-                    .ToList(),
-                Pictures = post.Attachments.OfType<Picture>()
-                    .Select(p => new PictureDto
-                    {
-                        Id = p.Id,
-                        PostId = p.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = p.FileName,
-                        FileExtension = p.FileExtension,
-                        FileSize = p.FileSize,
-                        FileHash = p.FileHash,
-                        Width = p.Width,
-                        Height = p.Height,
-                    })
-                    .ToList(),
-                Video = post.Attachments.OfType<Video>()
-                    .Select(v => new VideoDto
-                    {
-                        Id = v.Id,
-                        PostId = v.PostId,
-                        ThreadId = post.ThreadId,
-                        FileName = v.FileName,
-                        FileExtension = v.FileExtension,
-                        FileSize = v.FileSize,
-                        FileHash = v.FileHash,
-                    })
-                    .ToList(),
-                ThreadId = post.ThreadId,
-                ThreadShowThreadLocalUserHash = post.Thread.ShowThreadLocalUserHash,
-                CategoryAlias = post.Thread.Category.Alias,
-                CategoryId = post.Thread.CategoryId,
-                Replies = post.Replies
-                    .Select(r => r.ReplyId)
-                    .ToList(),
-            });
+            .GetViewRm();
 
         var totalThreadCount = await query.CountAsync(cancellationToken);
 
@@ -318,6 +101,46 @@ public class PostRepository : IPostRepository
             .ApplyOrderByAndPaging(filter, x => x.CreatedAt)
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<PostInfoRm>(data, filter, totalThreadCount);
+        return new PagedResult<PostViewRm>(data, filter, totalThreadCount);
+    }
+
+    public async Task<long> CreatePostAsync(
+        PostCreateRm createRm,
+        FileAttachmentCollection inputFiles,
+        CancellationToken cancellationToken)
+    {
+        var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
+
+        var post = new Post
+        {
+            BlobContainerId = createRm.BlobContainerId,
+            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            IsSageEnabled = createRm.IsSageEnabled,
+            MessageText = createRm.MessageText,
+            MessageHtml = createRm.MessageHtml,
+            UserIpAddress = createRm.UserIpAddress,
+            UserAgent = createRm.UserAgent,
+            ThreadId = createRm.ThreadId,
+            Audios = attachments.Audios,
+            Documents = attachments.Documents,
+            Pictures = attachments.Pictures,
+            Videos = attachments.Videos,
+        };
+
+        var postsToReply = await _applicationDbContext.Posts
+            .Where(p => p.ThreadId == createRm.ThreadId && createRm.MentionedPosts.Contains(p.Id))
+            .Select(p => new PostToReply
+            {
+                Post = p,
+                Reply = post,
+            })
+            .ToListAsync(cancellationToken);
+
+        _applicationDbContext.Posts.Add(post);
+        _applicationDbContext.PostsToReplies.AddRange(postsToReply);
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+
+        return post.Id;
     }
 }

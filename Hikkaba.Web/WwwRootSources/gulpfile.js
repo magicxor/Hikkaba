@@ -1,13 +1,13 @@
 'use strict';
 
-var gulp = require('gulp');
-var rename = require('gulp-rename');
-var $ = require('gulp-load-plugins')({
+const gulp = require('gulp');
+const rename = require('gulp-rename');
+const $ = require('gulp-load-plugins')({
     pattern: ['gulp-*']
 });
 
-var errorHandler = function(title) {
-    return function(err) {
+const errorHandler = function (title) {
+    return function (err) {
         $.util.log($.util.colors.red('[' + title + ']'), err.toString());
         this.emit('end');
     };

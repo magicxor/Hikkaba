@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Hikkaba.Services.Contracts;
 using Hikkaba.Web.Mappings;
-using Hikkaba.Web.Utils;
-using Hikkaba.Web.ViewModels.BoardViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 

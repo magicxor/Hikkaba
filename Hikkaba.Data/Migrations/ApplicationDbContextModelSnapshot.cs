@@ -140,12 +140,16 @@ namespace Hikkaba.Data.Migrations
                     b.Property<int>("AttachmentType")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("BlobId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<long>("PostId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("BlobId")
+                        .IsUnique();
 
                     b.ToTable("Attachments");
 
@@ -220,9 +224,19 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BannedCidrLowerIpAddress");
+
+                    b.HasIndex("BannedCidrUpperIpAddress");
+
+                    b.HasIndex("BannedIpAddress");
+
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CountryIsoCode");
+
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("EndsAt");
 
                     b.HasIndex("ModifiedById");
 
@@ -342,6 +356,9 @@ namespace Hikkaba.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<Guid>("BlobContainerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -379,13 +396,19 @@ namespace Hikkaba.Data.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<byte[]>("UserIpAddress")
-                        .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varbinary(16)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BlobContainerId")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("IsSageEnabled");
 
                     b.HasIndex("ModifiedById");
 
@@ -464,7 +487,11 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("IsPinned");
 
                     b.HasIndex("ModifiedById");
 
@@ -578,6 +605,325 @@ namespace Hikkaba.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateOnly>", b =>
+                {
+                    b.Property<DateOnly>("Column1")
+                        .HasColumnType("date");
+
+                    b.ToTable("#TempTable<DateOnly>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateOnly?>", b =>
+                {
+                    b.Property<DateOnly?>("Column1")
+                        .HasColumnType("date");
+
+                    b.ToTable("#TempTable<DateOnly?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTime>", b =>
+                {
+                    b.Property<DateTime>("Column1")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("#TempTable<DateTime>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTime?>", b =>
+                {
+                    b.Property<DateTime?>("Column1")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("#TempTable<DateTime?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTimeOffset>", b =>
+                {
+                    b.Property<DateTimeOffset>("Column1")
+                        .HasColumnType("datetimeoffset");
+
+                    b.ToTable("#TempTable<DateTimeOffset>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTimeOffset?>", b =>
+                {
+                    b.Property<DateTimeOffset?>("Column1")
+                        .HasColumnType("datetimeoffset");
+
+                    b.ToTable("#TempTable<DateTimeOffset?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<Guid>", b =>
+                {
+                    b.Property<Guid>("Column1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.ToTable("#TempTable<Guid>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<Guid?>", b =>
+                {
+                    b.Property<Guid?>("Column1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.ToTable("#TempTable<Guid?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeOnly>", b =>
+                {
+                    b.Property<TimeOnly>("Column1")
+                        .HasColumnType("time");
+
+                    b.ToTable("#TempTable<TimeOnly>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeOnly?>", b =>
+                {
+                    b.Property<TimeOnly?>("Column1")
+                        .HasColumnType("time");
+
+                    b.ToTable("#TempTable<TimeOnly?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeSpan>", b =>
+                {
+                    b.Property<TimeSpan>("Column1")
+                        .HasColumnType("time");
+
+                    b.ToTable("#TempTable<TimeSpan>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeSpan?>", b =>
+                {
+                    b.Property<TimeSpan?>("Column1")
+                        .HasColumnType("time");
+
+                    b.ToTable("#TempTable<TimeSpan?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<bool>", b =>
+                {
+                    b.Property<bool>("Column1")
+                        .HasColumnType("bit");
+
+                    b.ToTable("#TempTable<bool>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<bool?>", b =>
+                {
+                    b.Property<bool?>("Column1")
+                        .HasColumnType("bit");
+
+                    b.ToTable("#TempTable<bool?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<byte>", b =>
+                {
+                    b.Property<byte>("Column1")
+                        .HasColumnType("tinyint");
+
+                    b.ToTable("#TempTable<byte>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<byte?>", b =>
+                {
+                    b.Property<byte?>("Column1")
+                        .HasColumnType("tinyint");
+
+                    b.ToTable("#TempTable<byte?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<decimal>", b =>
+                {
+                    b.Property<decimal>("Column1")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable("#TempTable<decimal>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<decimal?>", b =>
+                {
+                    b.Property<decimal?>("Column1")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable("#TempTable<decimal?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<double>", b =>
+                {
+                    b.Property<double>("Column1")
+                        .HasColumnType("float");
+
+                    b.ToTable("#TempTable<double>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<double?>", b =>
+                {
+                    b.Property<double?>("Column1")
+                        .HasColumnType("float");
+
+                    b.ToTable("#TempTable<double?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<float>", b =>
+                {
+                    b.Property<float>("Column1")
+                        .HasColumnType("real");
+
+                    b.ToTable("#TempTable<float>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<float?>", b =>
+                {
+                    b.Property<float?>("Column1")
+                        .HasColumnType("real");
+
+                    b.ToTable("#TempTable<float?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<int>", b =>
+                {
+                    b.Property<int>("Column1")
+                        .HasColumnType("int");
+
+                    b.ToTable("#TempTable<int>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<int?>", b =>
+                {
+                    b.Property<int?>("Column1")
+                        .HasColumnType("int");
+
+                    b.ToTable("#TempTable<int?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<long>", b =>
+                {
+                    b.Property<long>("Column1")
+                        .HasColumnType("bigint");
+
+                    b.ToTable("#TempTable<long>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<long?>", b =>
+                {
+                    b.Property<long?>("Column1")
+                        .HasColumnType("bigint");
+
+                    b.ToTable("#TempTable<long?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<short>", b =>
+                {
+                    b.Property<short>("Column1")
+                        .HasColumnType("smallint");
+
+                    b.ToTable("#TempTable<short>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<short?>", b =>
+                {
+                    b.Property<short?>("Column1")
+                        .HasColumnType("smallint");
+
+                    b.ToTable("#TempTable<short?>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<string>", b =>
+                {
+                    b.Property<string>("Column1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("#TempTable<string>", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
             modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Audio", b =>
                 {
                     b.HasBaseType("Hikkaba.Data.Entities.Attachments.Base.Attachment");
@@ -594,7 +940,7 @@ namespace Hikkaba.Data.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("binary(32)");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("FileNameWithoutExtension")
                         .IsRequired()
                         .ValueGeneratedOnUpdateSometimes()
                         .HasMaxLength(100)
@@ -603,6 +949,8 @@ namespace Hikkaba.Data.Migrations
                     b.Property<long>("FileSize")
                         .ValueGeneratedOnUpdateSometimes()
                         .HasColumnType("bigint");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("Attachments");
 
@@ -625,7 +973,7 @@ namespace Hikkaba.Data.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("binary(32)");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("FileNameWithoutExtension")
                         .IsRequired()
                         .ValueGeneratedOnUpdateSometimes()
                         .HasMaxLength(100)
@@ -634,6 +982,8 @@ namespace Hikkaba.Data.Migrations
                     b.Property<long>("FileSize")
                         .ValueGeneratedOnUpdateSometimes()
                         .HasColumnType("bigint");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("Attachments");
 
@@ -657,6 +1007,8 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("PostId");
+
                     b.ToTable("Attachments");
 
                     b.HasDiscriminator().HasValue(3);
@@ -678,7 +1030,7 @@ namespace Hikkaba.Data.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("binary(32)");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("FileNameWithoutExtension")
                         .IsRequired()
                         .ValueGeneratedOnUpdateSometimes()
                         .HasMaxLength(100)
@@ -693,6 +1045,8 @@ namespace Hikkaba.Data.Migrations
 
                     b.Property<int>("Width")
                         .HasColumnType("int");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("Attachments");
 
@@ -715,7 +1069,7 @@ namespace Hikkaba.Data.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("binary(32)");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("FileNameWithoutExtension")
                         .IsRequired()
                         .ValueGeneratedOnUpdateSometimes()
                         .HasMaxLength(100)
@@ -725,20 +1079,11 @@ namespace Hikkaba.Data.Migrations
                         .ValueGeneratedOnUpdateSometimes()
                         .HasColumnType("bigint");
 
+                    b.HasIndex("PostId");
+
                     b.ToTable("Attachments");
 
                     b.HasDiscriminator().HasValue(5);
-                });
-
-            modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Base.Attachment", b =>
-                {
-                    b.HasOne("Hikkaba.Data.Entities.Post", "Post")
-                        .WithMany("Attachments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Ban", b =>
@@ -930,6 +1275,28 @@ namespace Hikkaba.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Audio", b =>
+                {
+                    b.HasOne("Hikkaba.Data.Entities.Post", "Post")
+                        .WithMany("Audios")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Document", b =>
+                {
+                    b.HasOne("Hikkaba.Data.Entities.Post", "Post")
+                        .WithMany("Documents")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Notice", b =>
                 {
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "CreatedBy")
@@ -938,7 +1305,37 @@ namespace Hikkaba.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Hikkaba.Data.Entities.Post", "Post")
+                        .WithMany("Notices")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Picture", b =>
+                {
+                    b.HasOne("Hikkaba.Data.Entities.Post", "Post")
+                        .WithMany("Pictures")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Video", b =>
+                {
+                    b.HasOne("Hikkaba.Data.Entities.Post", "Post")
+                        .WithMany("Videos")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.ApplicationUser", b =>
@@ -974,11 +1371,19 @@ namespace Hikkaba.Data.Migrations
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Post", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.Navigation("Audios");
+
+                    b.Navigation("Documents");
+
+                    b.Navigation("Notices");
 
                     b.Navigation("ParentPosts");
 
+                    b.Navigation("Pictures");
+
                     b.Navigation("Replies");
+
+                    b.Navigation("Videos");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Thread", b =>

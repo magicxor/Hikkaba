@@ -20,13 +20,13 @@ public class PostPreviewRm
 
     public required bool IsSageEnabled { get; set; }
     public required string MessageHtml { get; set; }
-    public required string UserIpAddress { get; set; }
+    public required string? UserIpAddress { get; set; }
     public required string UserAgent { get; set; }
-    public required IReadOnlyList<AudioDto> Audio { get; set; }
-    public required IReadOnlyList<DocumentDto> Documents { get; set; }
-    public required IReadOnlyList<NoticeDto> Notices { get; set; }
-    public required IReadOnlyList<PictureDto> Pictures { get; set; }
-    public required IReadOnlyList<VideoDto> Video { get; set; }
+    public required IReadOnlyList<AudioViewRm> Audio { get; set; }
+    public required IReadOnlyList<DocumentViewRm> Documents { get; set; }
+    public required IReadOnlyList<NoticeViewRm> Notices { get; set; }
+    public required IReadOnlyList<PictureViewRm> Pictures { get; set; }
+    public required IReadOnlyList<VideoViewRm> Video { get; set; }
 
     public required long ThreadId { get; set; }
     public required bool ThreadShowThreadLocalUserHash { get; set; }

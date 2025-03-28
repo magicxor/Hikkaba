@@ -1,9 +1,18 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Hikkaba.Data.Context;
+using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Models.Configuration;
+using Hikkaba.Repositories.Contracts;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Web;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -22,7 +31,32 @@ public class Program
 
         try
         {
-            await CreateHostBuilder(args).Build().RunAsync();
+            var host = CreateHostBuilder(args).Build();
+
+            using var scope = host.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var seedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
+            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+            var seedConfiguration = scope.ServiceProvider.GetRequiredService<IOptions<SeedConfiguration>>();
+
+            try
+            {
+                if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
+                {
+                    await dbContext.Database.MigrateAsync();
+                }
+
+                await seedManager.SeedAsync(dbContext, userMgr, roleMgr, seedConfiguration);
+            }
+            catch (Exception ex)
+            {
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the DB");
+                throw;
+            }
+
+            await host.RunAsync();
         }
         catch (Exception ex)
         {
@@ -39,22 +73,17 @@ public class Program
 
     private static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, config) =>
-            {
-                config.AddEnvironmentVariables(EnvPrefix);
-            })
+            .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables(EnvPrefix))
             .ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
                 logging.SetMinimumLevel(LogLevel.Trace);
             })
             .UseNLog()
-            .UseDefaultServiceProvider((context, options) => {
+            .UseDefaultServiceProvider((_, options) =>
+            {
                 options.ValidateScopes = true;
                 options.ValidateOnBuild = true;
             })
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
 }

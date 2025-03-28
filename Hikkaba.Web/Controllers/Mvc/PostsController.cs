@@ -1,7 +1,11 @@
-using System.Net;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Common.Exceptions;
+using DNTCaptcha.Core;
+using Hikkaba.Common.Constants;
+using Hikkaba.Common.Extensions;
 using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -10,80 +14,111 @@ using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
 using Hikkaba.Services.Contracts;
 using Hikkaba.Web.Services.Contracts;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
 public class PostsController : BaseMvcController
 {
+    private readonly ILogger<PostsController> _logger;
     private readonly IMessagePostProcessor _messagePostProcessor;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
     private readonly IPostService _postService;
 
     public PostsController(
+        ILogger<PostsController> logger,
         UserManager<ApplicationUser> userManager,
         IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
         IThreadService threadService,
         IPostService postService) : base(userManager)
     {
+        _logger = logger;
         _messagePostProcessor = messagePostProcessor;
         _categoryService = categoryService;
         _threadService = threadService;
         _postService = postService;
     }
 
-    /*
-    [Route("{categoryAlias}/Threads/{threadId}/Posts/Create")]
+    [Route("{categoryAlias}/Threads/{threadId:long}/Posts/Create")]
     [AllowAnonymous]
     public async Task<IActionResult> Create(string categoryAlias, long threadId)
     {
-        var category = await _categoryService.GetAsync(categoryAlias);
-        var thread = await _threadService.GetAsync(threadId);
+        var category = await _categoryService.GetAsync(categoryAlias, false);
+        if (category is null)
+        {
+            return NotFound();
+        }
+
+        var thread = await _threadService.GetThreadAsync(threadId);
         var postAnonymousCreateViewModel = new PostAnonymousCreateViewModel
         {
+            IsSageEnabled = false,
+            Message = string.Empty,
+            Attachments = new FormFileCollection(),
             CategoryAlias = category.Alias,
+            CategoryName = category.Name,
             ThreadId = thread.Id,
         };
         return View(postAnonymousCreateViewModel);
     }
 
-    [Route("{categoryAlias}/Threads/{threadId}/Posts/Create")]
+    [Route("{categoryAlias}/Threads/{threadId:long}/Posts/Create")]
     [HttpPost]
     [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number")]
     [ValidateAntiForgeryToken]
     [AllowAnonymous]
-    public async Task<IActionResult> Create(PostAnonymousCreateViewModel viewModel)
+    public async Task<IActionResult> Create(string categoryAlias, long threadId, PostAnonymousCreateViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
-            var categoryDto = await _categoryService.GetAsync(viewModel.CategoryAlias);
-            var threadDto = await _threadService.GetAsync(viewModel.ThreadId);
-            if (!threadDto.IsClosed)
+            try
             {
-                var postDto = _mapper.Map<PostDto>(viewModel);
-                postDto.UserIpAddress = UserIpAddress.ToString();
-                postDto.UserAgent = UserAgent;
-
-                var threadPostCreateDto = new ThreadPostCreateSm
+                var category = await _categoryService.GetAsync(viewModel.CategoryAlias, false);
+                if (category is null)
                 {
-                    Category = categoryDto,
-                    Thread = threadDto,
-                    Post = postDto,
+                    return NotFound();
+                }
+
+                var postCreateRm = new PostCreateRm
+                {
+                    BlobContainerId = Guid.NewGuid(),
+                    IsSageEnabled = viewModel.IsSageEnabled,
+                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, viewModel.ThreadId, viewModel.Message),
+                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
+                    UserIpAddress = UserIpAddressBytes,
+                    UserAgent = UserAgent,
+                    ThreadId = viewModel.ThreadId,
+                    MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
                 };
 
-                var createResultDto = await _threadService.CreateThreadPostAsync(viewModel.Attachments, threadPostCreateDto, false);
-                return Redirect(Url.Action("Details", "Threads",
-                    new
-                    {
-                        categoryAlias = viewModel.CategoryAlias,
-                        threadId = createResultDto.ThreadId,
-                    }) + "#" + createResultDto.PostId);
+                var postId = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments, cancellationToken);
+
+                return Redirect(
+                    Url.Action("Details",
+                        "Threads",
+                        new
+                        {
+                            categoryAlias = viewModel.CategoryAlias,
+                            threadId = viewModel.ThreadId,
+                        }) + "#" + postId);
             }
-            else
+            catch (Exception e)
             {
-                throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Thread {threadDto.Id} is closed.");
+                _logger.LogError(
+                    EventIdentifiers.PostCreateError.ToEventId(),
+                    e,
+                    "Error creating post in category '{CategoryAlias}'. ThreadId: {ThreadId}, Message length: {MessageLength}, AttachmentsCount: {AttachmentsCount}",
+                    categoryAlias,
+                    viewModel.ThreadId,
+                    viewModel.Message.Length,
+                    viewModel.AttachmentsCount);
+
+                ViewBag.ErrorMessage = "Error occurred while creating a post. Please try again.";
+                return View(viewModel);
             }
         }
         else
@@ -93,6 +128,7 @@ public class PostsController : BaseMvcController
         }
     }
 
+    /*
     [Route("Search")]
     [AllowAnonymous]
     public async Task<IActionResult> Search(SearchRequestViewModel request, int page = 1, int size = 10)
@@ -114,7 +150,7 @@ public class PostsController : BaseMvcController
             var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.Data);
             foreach (var latestPostDetailsViewModel in latestPostDetailsViewModels)
             {
-                var threadDto = await _threadService.GetAsync(latestPostDetailsViewModel.ThreadId);
+                var threadDto = await _threadService.GetThreadAsync(latestPostDetailsViewModel.ThreadId);
                 var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
                 latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
                 latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
@@ -134,7 +170,7 @@ public class PostsController : BaseMvcController
         }
     }
 
-
+/*
     [Route("{categoryAlias}/Threads/{threadId}/Posts/{postId}/Edit")]
     public async Task<IActionResult> Edit(string categoryAlias, long threadId, long postId)
     {

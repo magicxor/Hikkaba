@@ -28,7 +28,7 @@ public class UsersRepository
         _userContext = userContext;
     }
 
-    public async Task<IReadOnlyList<ApplicationUserDto>> ListUsersAsync(bool includeDeleted)
+    public async Task<IReadOnlyList<ApplicationUserViewRm>> ListUsersAsync(bool includeDeleted)
     {
         Expression<Func<ApplicationUser, bool>> filterDeleted = includeDeleted
             ? x => true
@@ -36,7 +36,7 @@ public class UsersRepository
 
         return await _userMgr.Users
             .Where(filterDeleted)
-            .Select(x => new ApplicationUserDto
+            .Select(x => new ApplicationUserViewRm
             {
                 Id = x.Id,
                 IsDeleted = x.IsDeleted,

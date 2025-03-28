@@ -5,6 +5,7 @@
     <!-- Code analysis -->
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>9-Recommended</AnalysisLevel>
+    <Nullable>enable</Nullable>
 
     <!-- Warnings and errors -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

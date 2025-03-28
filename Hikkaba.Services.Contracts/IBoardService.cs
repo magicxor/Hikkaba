@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Hikkaba.Infrastructure.Models.Board;
+﻿using Hikkaba.Infrastructure.Models.Board;
 
 namespace Hikkaba.Services.Contracts;
 

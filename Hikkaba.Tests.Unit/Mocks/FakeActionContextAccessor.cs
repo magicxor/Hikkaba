@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using HttpContextMoq;
+﻿using HttpContextMoq;
 using HttpContextMoq.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;

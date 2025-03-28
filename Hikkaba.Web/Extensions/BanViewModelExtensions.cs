@@ -1,5 +1,4 @@
 using Hikkaba.Web.ViewModels.BansViewModels;
-using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Extensions;

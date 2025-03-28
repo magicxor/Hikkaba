@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Hikkaba.Infrastructure.Models.Category;
-using Hikkaba.Infrastructure.Models.Thread;
+﻿using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Paging.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -12,15 +6,17 @@ namespace Hikkaba.Services.Contracts;
 
 public interface IThreadService
 {
-    Task<ThreadEditSm> GetAsync(long threadId);
+    Task<ThreadEditRm> GetThreadAsync(long threadId);
 
-    Task<ThreadAggregationSm> GetThreadDetailsAsync(long threadId);
+    Task<ThreadDetailsRm?> GetThreadDetailsAsync(long threadId, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<long>> ListAllThreadIdsAsync(CancellationToken cancellationToken);
 
-    Task<PagedResult<ThreadPreviewSm>> ListThreadPreviewsPaginatedAsync(ThreadPreviewsFilter filter, CancellationToken cancellationToken);
+    Task<PagedResult<ThreadPreviewRm>> ListThreadPreviewsPaginatedAsync(ThreadPreviewsFilter filter, CancellationToken cancellationToken);
 
-    Task EditAsync(ThreadEditSm editSm);
+    Task<ThreadPostCreateResultRm> CreateThreadAsync(ThreadCreateRm createRm, IFormFileCollection attachments, CancellationToken cancellationToken);
+
+    Task EditThreadAsync(ThreadEditRm editRm);
 
     Task SetIsPinnedAsync(long threadId, bool isPinned);
 

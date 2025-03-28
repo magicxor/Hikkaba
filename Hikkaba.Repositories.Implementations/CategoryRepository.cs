@@ -1,11 +1,10 @@
-﻿using Hikkaba.Common.Services;
-using Hikkaba.Common.Services.Contracts;
+﻿using Hikkaba.Common.Services.Contracts;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Models.ApplicationUser;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Repositories.Contracts;
+using Hikkaba.Repositories.Implementations.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Repositories.Implementations;
@@ -26,7 +25,7 @@ public sealed class CategoryRepository : ICategoryRepository
         _timeProvider = timeProvider;
     }
 
-    public async Task<IReadOnlyList<CategoryDto>> ListCategoriesAsync(CategoryFilter categoryFilter)
+    public async Task<IReadOnlyList<CategoryViewRm>> ListCategoriesAsync(CategoryFilter categoryFilter)
     {
         var query = _applicationDbContext.Categories
             .Include(category => category.CreatedBy)
@@ -43,70 +42,18 @@ public sealed class CategoryRepository : ICategoryRepository
             : query.Where(category => !category.IsDeleted);
 
         var result = await query
-            .Select(x => new CategoryDto
-            {
-                Id = x.Id,
-                IsDeleted = x.IsDeleted,
-                CreatedBy = new ApplicationUserPreviewRm
-                {
-                    Id = x.CreatedBy.Id,
-                    UserName = x.CreatedBy.UserName ?? string.Empty,
-                    Email = x.CreatedBy.Email ?? string.Empty,
-                    LastLoginAt = x.CreatedBy.LastLoginAt,
-                },
-                ModifiedBy = x.ModifiedBy == null ? null : new ApplicationUserPreviewRm
-                {
-                    Id = x.ModifiedBy.Id,
-                    UserName = x.ModifiedBy.UserName ?? string.Empty,
-                    Email = x.ModifiedBy.Email ?? string.Empty,
-                    LastLoginAt = x.ModifiedBy.LastLoginAt,
-                },
-                CreatedAt = x.CreatedAt,
-                ModifiedAt = x.ModifiedAt,
-                Alias = x.Alias,
-                Name = x.Name,
-                IsHidden = x.IsHidden,
-                DefaultBumpLimit = x.DefaultBumpLimit,
-                DefaultShowThreadLocalUserHash = x.DefaultShowThreadLocalUserHash,
-                BoardId = x.BoardId,
-            })
+            .GetViewRm()
             .ApplyOrderBy(categoryFilter, x => x.Name)
             .ToListAsync();
 
         return result.AsReadOnly();
     }
 
-    public async Task<CategoryDto?> GetCategoryAsync(string categoryAlias, bool includeDeleted)
+    public async Task<CategoryViewRm?> GetCategoryAsync(string categoryAlias, bool includeDeleted)
     {
         return await _applicationDbContext.Categories
             .Where(c => c.Alias == categoryAlias && (includeDeleted || !c.IsDeleted))
-            .Select(x => new CategoryDto
-            {
-                Id = x.Id,
-                IsDeleted = x.IsDeleted,
-                CreatedBy = new ApplicationUserPreviewRm
-                {
-                    Id = x.CreatedBy.Id,
-                    UserName = x.CreatedBy.UserName ?? string.Empty,
-                    Email = x.CreatedBy.Email ?? string.Empty,
-                    LastLoginAt = x.CreatedBy.LastLoginAt,
-                },
-                ModifiedBy = x.ModifiedBy == null ? null : new ApplicationUserPreviewRm
-                {
-                    Id = x.ModifiedBy.Id,
-                    UserName = x.ModifiedBy.UserName ?? string.Empty,
-                    Email = x.ModifiedBy.Email ?? string.Empty,
-                    LastLoginAt = x.ModifiedBy.LastLoginAt,
-                },
-                CreatedAt = x.CreatedAt,
-                ModifiedAt = x.ModifiedAt,
-                Alias = x.Alias,
-                Name = x.Name,
-                IsHidden = x.IsHidden,
-                DefaultBumpLimit = x.DefaultBumpLimit,
-                DefaultShowThreadLocalUserHash = x.DefaultShowThreadLocalUserHash,
-                BoardId = x.BoardId,
-            })
+            .GetViewRm()
             .FirstOrDefaultAsync();
     }
 

@@ -6,7 +6,7 @@ namespace Hikkaba.Common.Constants;
 public static class Defaults
 {
     public const string AttachmentsStorageDirectoryName = "AttachmentsStorage";
-    public const string ThumbnailPostfix = "_thumbnails";
+    public const string ThumbnailPostfix = "_thumbnail";
 
     public const string BoardName = "Hikkaba";
 
@@ -45,16 +45,21 @@ public static class Defaults
     public const int MaxAttachmentsCountPerPost = 10;
     public const int MaxAttachmentsBytesPerPost = 20000000;
     public const int LatestPostsCountInThreadPreview = 3;
+    public const int MaxPostsFromIpWithin5Minutes = 2;
 
     public const string DefaultMimeType = "application/octet-stream";
     public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
     public const int DefaultAttachmentsCacheDuration = 31536000; // ~ 1 year
     public const int CacheCategoriesExpirationSeconds = 3600;
+    public static readonly int CacheMaxAgeSeconds = Convert.ToInt32(TimeSpan.FromDays(365).TotalSeconds);
     public const int ThumbnailsMaxWidth = 200;
     public const int ThumbnailsMaxHeight = 200;
     public const int UserIdleTimeoutMinutes = 60;
+
+    public const int HikkabaStartEventId = 735060000;
+
     public static IReadOnlyCollection<string> AudioExtensions { get; set; } = new List<string> { "mp3", "ogg", "aac", "m4a", "opus" }.AsReadOnly();
-    public static IReadOnlyCollection<string> PictureExtensions { get; set; } = new List<string> { "jpg", "jpeg", "png", "gif", "svg", "webp", "avif" }.AsReadOnly();
+    public static IReadOnlyCollection<string> PictureExtensions { get; set; } = new List<string> { "jpg", "jpeg", "png", "gif", "svg", "webp" }.AsReadOnly();
     public static IReadOnlyCollection<string> VideoExtensions { get; set; } = new List<string> { "webm", "mp4" }.AsReadOnly();
     public const string AspNetEnvIntegrationTesting = "IntegrationTesting";
     /// <summary>

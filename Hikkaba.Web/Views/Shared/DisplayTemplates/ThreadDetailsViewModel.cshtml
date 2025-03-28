@@ -1,5 +1,4 @@
 @using Hikkaba.Common.Services.Contracts
-@using Hikkaba.Services.Contracts
 @using Hikkaba.Web.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadDetailsViewModel
@@ -66,12 +65,10 @@
                     @for (int i = 0; i < Model.Posts.Count; i++)
                     {
                         @Html.DisplayFor(m => m.Posts[i])
-                        @if (i == 0 && Model.Posts.Count > 1 && Model.Posts[i + 1].Index > 1)
+                        @if (i == 0 && Model.PostCount > Model.Posts.Count)
                         {
-                            var nextPostIndex = Model.Posts[i + 1].Index;
-
                             <div class="alert alert-info" role="alert">
-                                @(nextPostIndex - 1) replies omitted. Click <a href="@Model.GetUri(Url)">here</a> to view.
+                                @(Model.PostCount - Model.Posts.Count) replies omitted. Click <a href="@Model.GetUri(Url)">here</a> to view.
                             </div>
                         }
                     }

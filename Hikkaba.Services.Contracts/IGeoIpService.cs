@@ -5,5 +5,5 @@ namespace Hikkaba.Services.Contracts;
 
 public interface IGeoIpService
 {
-    IpAddressInfo GetIpAddressInfo(IPAddress ipAddress);
+    IpAddressInfoSm GetIpAddressInfo(IPAddress ipAddress);
 }

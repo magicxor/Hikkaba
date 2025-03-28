@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Hikkaba.Services.Contracts;
+﻿namespace Hikkaba.Services.Contracts;
 
 public interface ICryptoService
 {

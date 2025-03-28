@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Hikkaba.Infrastructure.Models.ApplicationUser;
-using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 
 namespace Hikkaba.Web.ViewModels.AdministrationViewModels;

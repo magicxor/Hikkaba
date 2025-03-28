@@ -84,14 +84,7 @@ public class IpAddressCalculatorTests
     {
         var ipAddressCalculator = new IpAddressCalculator(NullLogger);
         var actualResult = ipAddressCalculator.IsInRange(lowerInclusive, upperInclusive, address);
-        if (expectedResult)
-        {
-            Assert.That(actualResult, Is.True);
-        }
-        else
-        {
-            Assert.That(actualResult, Is.False);
-        }
+        Assert.That(actualResult, Is.EqualTo(expectedResult));
     }
 
     [TestCase("1.0.0.0/24", "1.0.0.1", true)]
@@ -110,13 +103,6 @@ public class IpAddressCalculatorTests
     {
         var ipAddressCalculator = new IpAddressCalculator(NullLogger);
         var actualResult = ipAddressCalculator.IsInRange(networkAddress, ipAddress);
-        if (expectedResult)
-        {
-            Assert.That(actualResult, Is.True);
-        }
-        else
-        {
-            Assert.That(actualResult, Is.False);
-        }
+        Assert.That(actualResult, Is.EqualTo(expectedResult));
     }
 }

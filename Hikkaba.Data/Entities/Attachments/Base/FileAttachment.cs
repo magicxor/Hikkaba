@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Hikkaba.Data.Entities.Attachments.Base;
 
-public abstract class FileAttachment: Attachment
+public abstract class FileAttachment : Attachment
 {
     [Required]
     [MaxLength(Defaults.MaxFileNameLength)]
-    public required string FileName { get; set; }
+    public required string FileNameWithoutExtension { get; set; }
 
     [Required]
     [MaxLength(Defaults.MaxFileExtensionLength)]

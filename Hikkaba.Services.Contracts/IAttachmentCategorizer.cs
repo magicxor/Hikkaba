@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Hikkaba.Common.Enums;
 
 namespace Hikkaba.Services.Contracts;
 
 public interface IAttachmentCategorizer
 {
     bool IsPictureExtensionSupported(string extension);
-    Type GetAttachmentType(string fileName);
+    AttachmentType GetAttachmentType(string extension);
 }
