@@ -59,7 +59,7 @@ public class BbCodeParserTests
     [Test]
     public void TestParseSimple()
     {
-        var input = "[b]hello[/b]";
+        const string input = "[b]hello[/b]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<strong>hello</strong>", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -92,7 +92,7 @@ public class BbCodeParserTests
         var actual1 = _bbCodeParser.Parse("[b]hello [i]world[/b][/i]");
         var actual2 = _bbCodeParser.Parse("[b]hello [i]world[/i][/i]");
         var actual3 = _bbCodeParser.Parse("[b]hello [i]world[/b][/b]");
-        var expected = "<strong>hello <em>world</em></strong>";
+        const string expected = "<strong>hello <em>world</em></strong>";
         ClassicAssert.AreEqual(expected, actual1.ToHtml());
         ClassicAssert.AreEqual(expected, actual2.ToHtml());
         ClassicAssert.AreEqual(expected, actual3.ToHtml());
@@ -101,7 +101,7 @@ public class BbCodeParserTests
     [Test]
     public void TestLink()
     {
-        var input = "[link=\"hello\"]linktext[/link]";
+        const string input = "[link=\"hello\"]linktext[/link]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<a href=\"hello\">linktext</a>", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -110,7 +110,7 @@ public class BbCodeParserTests
     [Test]
     public void TestImage()
     {
-        var input = "[img=\"hello\"]";
+        const string input = "[img=\"hello\"]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<a href=\"hello\" target=\"_blank\"><img src=\"hello\" class=\"image\" /></a>",
             actual.ToHtml());
@@ -120,7 +120,7 @@ public class BbCodeParserTests
     [Test]
     public void TestTab()
     {
-        var input = "hello[tab]bye";
+        const string input = "hello[tab]bye";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("hello&nbsp;&nbsp;&nbsp;bye", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -129,7 +129,7 @@ public class BbCodeParserTests
     [Test]
     public void TestFail()
     {
-        var input = "[[b]aaa[/b]]";
+        const string input = "[[b]aaa[/b]]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("[<strong>aaa</strong>]", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -138,7 +138,7 @@ public class BbCodeParserTests
     [Test]
     public void TestSpoiler()
     {
-        var input = "[link=\"http://yandex.ru\"]Яндекс[/link][spoiler]hehehe[/spoiler]";
+        const string input = "[link=\"http://yandex.ru\"]Яндекс[/link][spoiler]hehehe[/spoiler]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual(
             "<a href=\"http://yandex.ru\">Яндекс</a><a href=\"javascript:void(0)\" class=\"spoiler-head\" data-swaptext=\"Скрыть содержимое\">Показать содержимое</a><div class=\"spoiler\">hehehe</div>",
@@ -149,13 +149,13 @@ public class BbCodeParserTests
     [Test]
     public void TestOptionalAttribute()
     {
-        var input1 = "[quote=\"Author\"]test[/quote]";
+        const string input1 = "[quote=\"Author\"]test[/quote]";
         var actual1 = _bbCodeParser.Parse(input1);
         ClassicAssert.AreEqual("<div class=\"quote\"><div class=\"quote-author\">Author</div>test</div>",
             actual1.ToHtml());
         ClassicAssert.AreEqual(input1, actual1.ToBb());
 
-        var input2 = "[quote]test[/quote]";
+        const string input2 = "[quote]test[/quote]";
         var actual2 = _bbCodeParser.Parse(input2);
         ClassicAssert.AreEqual("<div class=\"quote\"><div class=\"quote-author\"></div>test</div>", actual2.ToHtml());
         ClassicAssert.AreEqual(input2, actual2.ToBb());
@@ -164,7 +164,7 @@ public class BbCodeParserTests
     [Test]
     public void TestWithAttribute()
     {
-        var input = "[spoiler][img=\"https://imgurl.jpg\"][/spoiler]";
+        const string input = "[spoiler][img=\"https://imgurl.jpg\"][/spoiler]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual(
             "<a href=\"javascript:void(0)\" class=\"spoiler-head\" data-swaptext=\"Скрыть содержимое\">Показать содержимое</a><div class=\"spoiler\"><a href=\"https://imgurl.jpg\" target=\"_blank\"><img src=\"https://imgurl.jpg\" class=\"image\" /></a></div>",
@@ -175,8 +175,7 @@ public class BbCodeParserTests
     [Test]
     public void TestCode()
     {
-        var input =
-            "[b]Not inside the code[/b]... [i]not yet[/i]. [code]And [b]this one is[/b]<script></script>[/code]";
+        const string input = "[b]Not inside the code[/b]... [i]not yet[/i]. [code]And [b]this one is[/b]<script></script>[/code]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual(
             "<strong>Not inside the code</strong>... <em>not yet</em>. <pre class=\"code\">And [b]this one is[/b]&lt;script&gt;&lt;/script&gt;</pre>",
@@ -187,7 +186,7 @@ public class BbCodeParserTests
     [Test]
     public void TestJsInjection()
     {
-        var input = "[link=\"http://yandex.ru\' onload='alert\"]coolhack[/link]\"";
+        const string input = "[link=\"http://yandex.ru\' onload='alert\"]coolhack[/link]\"";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<a href=\"http://yandex.ruonload=alert\">coolhack</a>\"", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -196,7 +195,7 @@ public class BbCodeParserTests
     [Test]
     public void TestHtmlInjection()
     {
-        var input = "[b]<script>console.log('hi');</script>&nbsp;[/b]";
+        const string input = "[b]<script>console.log('hi');</script>&nbsp;[/b]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<strong>&lt;script&gt;console.log('hi');&lt;/script&gt;&amp;nbsp;</strong>",
             actual.ToHtml());
@@ -206,7 +205,7 @@ public class BbCodeParserTests
     [Test]
     public void TestBugWithTextAfterEndingTag()
     {
-        var input = "test![b]Test [link=\"url\"]link[/link]text[/b]";
+        const string input = "test![b]Test [link=\"url\"]link[/link]text[/b]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("test!<strong>Test <a href=\"url\">link</a>text</strong>", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -215,7 +214,7 @@ public class BbCodeParserTests
     [Test]
     public void TestJsInjectionWithExecuting()
     {
-        var input = "[link=\"Javascript:alert(`XSS`)\"]alert[/link]";
+        const string input = "[link=\"Javascript:alert(`XSS`)\"]alert[/link]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<a href=\"_xss_alert(XSS)\">alert</a>", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -224,7 +223,7 @@ public class BbCodeParserTests
     [Test]
     public void TestBugWithInvalidTree()
     {
-        var input = "test![b]Test[i]1[/b]test";
+        const string input = "test![b]Test[i]1[/b]test";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("test!<strong>Test<em>1</em></strong>test", actual.ToHtml());
         ClassicAssert.AreEqual("test![b]Test[i]1[/i][/b]test", actual.ToBb());
@@ -244,7 +243,7 @@ public class BbCodeParserTests
     [Test]
     public void TestXss1()
     {
-        var input = "[link=\"javascript&'#058;alert(/xss/)\"]ddd[/link]";
+        const string input = "[link=\"javascript&'#058;alert(/xss/)\"]ddd[/link]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<a href=\"javascriptalert(/xss/)\">ddd</a>", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -253,7 +252,7 @@ public class BbCodeParserTests
     [Test]
     public void TestXss2()
     {
-        var input = "[link=\"Javas&'#x09;cript:alert(/xss/)\"]123[/link]";
+        const string input = "[link=\"Javas&'#x09;cript:alert(/xss/)\"]123[/link]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual("<a href=\"_xss_alert(/xss/)\">123</a>", actual.ToHtml());
         ClassicAssert.AreEqual(input, actual.ToBb());
@@ -283,7 +282,7 @@ public class BbCodeParserTests
     [Test]
     public void TestCodeResolvingInnerBbIssues()
     {
-        var input = "[code][i]test[/code]";
+        const string input = "[code][i]test[/code]";
         var actual = _bbCodeParser.Parse(input);
 
         ClassicAssert.AreEqual("<pre class=\"code\">[i]test</pre>", actual.ToHtml());
@@ -293,7 +292,7 @@ public class BbCodeParserTests
     [Test]
     public void TestNonTaggedInputsBug()
     {
-        var input = "[notaspoi...\"\r\ntest [s]test[/s]";
+        const string input = "[notaspoi...\"\r\ntest [s]test[/s]";
         var actual = _bbCodeParser.Parse(input);
 
         ClassicAssert.AreEqual("[notaspoi...\"<br />test <s>test</s>", actual.ToHtml());
@@ -303,8 +302,7 @@ public class BbCodeParserTests
     [Test]
     public void TestNullReferenceFallbackBug1()
     {
-        var input =
-            @"Порядок тегов имеет значение при использовании тега head (проверял в [link=""http://dungeonmaster.ru.trioptimum.ru/profile/Hatchet""]своем профиле[/link])\r\n\r\n1. [code][head][b]Lorem Ipsum[/b][/head][/code] - на выходе получаем полужирный заголовок\r\n2. [code][b][head]Lorem Ipsum[/head][/b][/code] - на выходе получаем просто заголовок\r\nВ то же время для остальных тегов - b, i, s, u - порядок вложения значения не имеет.\r\n\r\nОжидание: оба варианта выше должны работать одинаково.\r\n\r\nP.S. А в [link=""http://dungeonmaster.ru.trioptimum.ru/parsertest""]тесте парсера[/link] тег head вообще не работает";
+        const string input = @"Порядок тегов имеет значение при использовании тега head (проверял в [link=""http://dungeonmaster.ru.trioptimum.ru/profile/Hatchet""]своем профиле[/link])\r\n\r\n1. [code][head][b]Lorem Ipsum[/b][/head][/code] - на выходе получаем полужирный заголовок\r\n2. [code][b][head]Lorem Ipsum[/head][/b][/code] - на выходе получаем просто заголовок\r\nВ то же время для остальных тегов - b, i, s, u - порядок вложения значения не имеет.\r\n\r\nОжидание: оба варианта выше должны работать одинаково.\r\n\r\nP.S. А в [link=""http://dungeonmaster.ru.trioptimum.ru/parsertest""]тесте парсера[/link] тег head вообще не работает";
         NodeTree? actual = null;
         Assert.DoesNotThrow(delegate { actual = _bbCodeParser.Parse(input); });
         Assert.DoesNotThrow(delegate { actual?.ToHtml(); });
@@ -315,8 +313,7 @@ public class BbCodeParserTests
     [Test]
     public void TestNullReferenceFallbackBug2()
     {
-        var input =
-            "[spoiler][img=\"http://s05.radikal.ru/i178/1609/96/a9db8fef8310.png\"][/spoiler][spoiler][img=\"http://s019.radikal.ru/i614/1609/e0/0cf83e802ef7.png\"][/spoiler]\r\nКогда ставятся теги спойлера и цитаты, они отображаются на тексте с лишней пустой строкой, если писать текст начинать не сразу же после тега, а в другой строке.\r\n[code][spoiler]Спойлер[/spoiler]текст сразу после тега[/code] преобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\nТо же самое с цитатой. \r\n\r\nНо если сделать:\r\n[code][spoiler]Спойлер[/spoiler]\r\nТекст в другой строке после тега[/code]\r\nоно преобразится в \r\n\"показать содержимое\r\n\r\nТекст в другой строке после тега\"\r\nТ.е., появится пустая строка. Это очень неудобно при форматировании текста, приходится постоянно учитывать этот момент, что появится пустая строка. А если хочешь сделать цепочку без разрывов:\r\n\"текст\r\nспойлер\r\nтекст\r\nспойлер и тд\"\r\nТо её нужно записать сплошным текстом:  \"текст[спойлер]текст[спойлер]текст[спо...\", что опять же неудобно.\r\n\r\n[i]Предложение[/i]: не вставлять эту пустую строку у тегов спойлер и цитата, если текст после тега начинается в другой/других строке/строках.\r\n\r\nТ.е.\r\n\"[code][spoiler]Спойлер[/spoiler]текст сразу после тега[/code] \"\r\nпреобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\n\"[code][spoiler]Спойлер[/spoiler]\r\nтекст в другой строке после тега[/code] \"\r\nпреобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\n\"[code][spoiler]Спойлер[/spoiler]\r\n\r\nтекст во второй строке после тега[/code] \"\r\nпреобразится в\r\n\"скрыть содержимое\r\n\r\nтекст во второй строке после тега\"\r\n\r\nUPD: почему-то не хочет \"предложение\" выделяться курсивом. Делаю его [code][i]Предложение[/i]:[/code], а сохраняется \"[code][_i]Предложение: ([_/i] вот это тут само вставляется в конце, если убрать подчёркивание и оставить один [_i])[/code]\"";
+        const string input = "[spoiler][img=\"http://s05.radikal.ru/i178/1609/96/a9db8fef8310.png\"][/spoiler][spoiler][img=\"http://s019.radikal.ru/i614/1609/e0/0cf83e802ef7.png\"][/spoiler]\r\nКогда ставятся теги спойлера и цитаты, они отображаются на тексте с лишней пустой строкой, если писать текст начинать не сразу же после тега, а в другой строке.\r\n[code][spoiler]Спойлер[/spoiler]текст сразу после тега[/code] преобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\nТо же самое с цитатой. \r\n\r\nНо если сделать:\r\n[code][spoiler]Спойлер[/spoiler]\r\nТекст в другой строке после тега[/code]\r\nоно преобразится в \r\n\"показать содержимое\r\n\r\nТекст в другой строке после тега\"\r\nТ.е., появится пустая строка. Это очень неудобно при форматировании текста, приходится постоянно учитывать этот момент, что появится пустая строка. А если хочешь сделать цепочку без разрывов:\r\n\"текст\r\nспойлер\r\nтекст\r\nспойлер и тд\"\r\nТо её нужно записать сплошным текстом:  \"текст[спойлер]текст[спойлер]текст[спо...\", что опять же неудобно.\r\n\r\n[i]Предложение[/i]: не вставлять эту пустую строку у тегов спойлер и цитата, если текст после тега начинается в другой/других строке/строках.\r\n\r\nТ.е.\r\n\"[code][spoiler]Спойлер[/spoiler]текст сразу после тега[/code] \"\r\nпреобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\n\"[code][spoiler]Спойлер[/spoiler]\r\nтекст в другой строке после тега[/code] \"\r\nпреобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\n\"[code][spoiler]Спойлер[/spoiler]\r\n\r\nтекст во второй строке после тега[/code] \"\r\nпреобразится в\r\n\"скрыть содержимое\r\n\r\nтекст во второй строке после тега\"\r\n\r\nUPD: почему-то не хочет \"предложение\" выделяться курсивом. Делаю его [code][i]Предложение[/i]:[/code], а сохраняется \"[code][_i]Предложение: ([_/i] вот это тут само вставляется в конце, если убрать подчёркивание и оставить один [_i])[/code]\"";
         NodeTree? actual = null;
         Assert.DoesNotThrow(delegate { actual = _bbCodeParser.Parse(input); });
         Assert.DoesNotThrow(delegate { actual?.ToHtml(); });
@@ -327,7 +324,7 @@ public class BbCodeParserTests
     [Test]
     public void TestBugWithDoublePrivate()
     {
-        var input = "[code][private=\"Test\"]Test[/private][/code]";
+        const string input = "[code][private=\"Test\"]Test[/private][/code]";
         var actual = _bbCodeParser.Parse(input);
         ClassicAssert.AreEqual(input, actual.ToBb());
     }
@@ -335,9 +332,9 @@ public class BbCodeParserTests
     [Test]
     public void TestFilter()
     {
-        var input1 = "[private=\"Test1, Test2\"]Hi[/private]";
-        var input2 = "[private=\"Test1, Test3\"]Hi[/private]";
-        var input3 = "[private=\"Test1, Test2, Test3\"]Hi[/private]";
+        const string input1 = "[private=\"Test1, Test2\"]Hi[/private]";
+        const string input2 = "[private=\"Test1, Test3\"]Hi[/private]";
+        const string input3 = "[private=\"Test1, Test2, Test3\"]Hi[/private]";
         var actual1 = _bbCodeParser.Parse(input1);
         var actual2 = _bbCodeParser.Parse(input2);
         var actual3 = _bbCodeParser.Parse(input3);
@@ -359,8 +356,8 @@ public class BbCodeParserTests
     [Test]
     public void TestAliasSubstitutions()
     {
-        var input1 = "Hello< --[code] [b]&world --->[/code]";
-        var input2 = "Hello< --[pre] [b]&world --->[/pre]";
+        const string input1 = "Hello< --[code] [b]&world --->[/code]";
+        const string input2 = "Hello< --[pre] [b]&world --->[/pre]";
         var actual1 = _bbCodeParser.Parse(input1);
         var actual2 = _bbCodeParser.Parse(input2);
 
@@ -375,7 +372,7 @@ public class BbCodeParserTests
     [Test]
     public void TestToBbAndTextFilters()
     {
-        var input = "[i]Hello[/i] [b]world[/b]";
+        const string input = "[i]Hello[/i] [b]world[/b]";
         var actual = _bbCodeParser.Parse(input);
 
         Func<Node, bool> filter = n => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
@@ -386,7 +383,7 @@ public class BbCodeParserTests
     [Test]
     public void TestToBbAndTextFiltersWithCode()
     {
-        var input = "[i]Hello[/i] [code][b]world[/b][/code]";
+        const string input = "[i]Hello[/i] [code][b]world[/b][/code]";
         var actual = _bbCodeParser.Parse(input);
 
         bool Filter(Node n) => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
@@ -397,7 +394,7 @@ public class BbCodeParserTests
     [Test]
     public void TestListCode()
     {
-        var input = @"[ul]
+        const string input = @"[ul]
 [li]test1[/li]
 [li]test2[/li][/ul]";
         var actual = _bbCodeParser.Parse(input);
@@ -409,7 +406,7 @@ public class BbCodeParserTests
     [Test]
     public void TestListCode2()
     {
-        var input = @"[ul][li]чи шо[/li]
+        const string input = @"[ul][li]чи шо[/li]
 asdfas
 [li][/li][/ul]";
         var actual = _bbCodeParser.Parse(input);
@@ -421,7 +418,7 @@ asdfas
     [Test]
     public void TestRecursiveXss()
     {
-        var input = "[link=\"jav&#&#90;90;ascript:\"]test[/link]";
+        const string input = "[link=\"jav&#&#90;90;ascript:\"]test[/link]";
         var actual = _bbCodeParser.Parse(input);
 
         ClassicAssert.AreEqual("<a href=\"_xss_\">test</a>", actual.ToHtml());
@@ -430,7 +427,7 @@ asdfas
     [Test]
     public void TestHtmlXssInAttributes()
     {
-        var input = "[quote=\"<script>alert('xss');</script>\"]test[/quote]";
+        const string input = "[quote=\"<script>alert('xss');</script>\"]test[/quote]";
         var actual = _bbCodeParser.Parse(input);
 
         ClassicAssert.AreEqual("<div class=\"quote\"><div class=\"quote-author\">&lt;script&gt;alert('xss');&lt;/script&gt;</div>test</div>", actual.ToHtml());
