@@ -2,7 +2,7 @@
 
 public class CodeTag : Tag
 {
-    public CodeTag(string name, string openTag, string closeTag) : base(name, openTag, closeTag, false, AttributeEscapeMode.Html)
+    public CodeTag(string name, string openTag, string closeTag) : base(name, openTag, closeTag, true, AttributeEscapeMode.JsXss)
     {
     }
 }

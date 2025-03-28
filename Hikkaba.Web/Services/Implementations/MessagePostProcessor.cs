@@ -17,7 +17,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
         new Tag("i", "<i>", "</i>"),
         new Tag("u", "<u>", "</u>"),
         new Tag("s", "<s>", "</s>"),
-        new PreformattedTag("pre", "<pre>", "</pre>"),
+        new CodeTag("code", """<pre class="code" data-syntax="{value}">""", "</pre>"),
         new Tag("sub", "<sub>", "</sub>"),
         new Tag("sup", "<sup>", "</sup>"),
         new Tag("spoiler", """<span class="censored">""", "</span>"),

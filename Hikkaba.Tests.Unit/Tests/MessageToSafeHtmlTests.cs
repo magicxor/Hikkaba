@@ -46,7 +46,7 @@ public class MessageToSafeHtmlTests
     [TestCase("[i]italic[/i]", "<i>italic</i>")]
     [TestCase("[u]underline[/u]", "<u>underline</u>")]
     [TestCase("[s]strikethrough[/s]", "<s>strikethrough</s>")]
-    [TestCase("[pre]preformatted[/pre]", "<pre>preformatted</pre>")]
+    [TestCase("[code]preformatted[/code]", "<pre class=\"code\" data-syntax=\"\">preformatted</pre>")]
     [TestCase("[sub]subscript[/sub]", "<sub>subscript</sub>")]
     [TestCase("[sup]superscript[/sup]", "<sup>superscript</sup>")]
     [TestCase("[spoiler]spoiler[/spoiler]", """<span class="censored">spoiler</span>""")]
@@ -140,6 +140,28 @@ public class MessageToSafeHtmlTests
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
         var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 987654321, input);
+        Assert.That(actualOutput, Is.EqualTo(expectedOutput));
+    }
+
+    [TestCase("[code]text[/code]", "<pre class=\"code\" data-syntax=\"\">text</pre>")]
+    [TestCase("[code]text\ntext[/code]", "<pre class=\"code\" data-syntax=\"\">text\r\ntext</pre>")]
+    [TestCase("[code]text\r\ntext[/code]", "<pre class=\"code\" data-syntax=\"\">text\r\ntext</pre>")]
+    [TestCase("[code]<a>text</a>[/code]", "<pre class=\"code\" data-syntax=\"\">&lt;a&gt;text&lt;/a&gt;</pre>")]
+    [TestCase("[code]<a href=\"javascript:alert('XSS')\">Click me</a>[/code]", "<pre class=\"code\" data-syntax=\"\">&lt;a href=\"javascript:alert('XSS')\"&gt;Click me&lt;/a&gt;</pre>")]
+    [TestCase("[code]<script>alert('XSS')</script>[/code]", "<pre class=\"code\" data-syntax=\"\">&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>")]
+    [TestCase("[code]<img src=x onerror=alert('XSS')>[/code]", "<pre class=\"code\" data-syntax=\"\">&lt;img src=x onerror=alert('XSS')&gt;</pre>")]
+    [TestCase("[code][b]bold[/b][/code]", "<pre class=\"code\" data-syntax=\"\">[b]bold[/b]</pre>")]
+    [TestCase("[code][i]italic[/i][/code]", "<pre class=\"code\" data-syntax=\"\">[i]italic[/i]</pre>")]
+    [TestCase("""[code="csharp"]text[/code]""", "<pre class=\"code\" data-syntax=\"csharp\">text</pre>")]
+    [TestCase("""[code="javascript"]text[/code]""", "<pre class=\"code\" data-syntax=\"javascript\">text</pre>")]
+    [TestCase("""[code="javascript:alert('XSS')"]text[/code]""", "<pre class=\"code\" data-syntax=\"_xss_alert(XSS)\">text</pre>")]
+    public void MessageToSafeHtml_WhenCalledWithPreformattedTag_ShouldReturnHtml(string input, string expectedOutput)
+    {
+        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
+
+        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 345345345, input);
         Assert.That(actualOutput, Is.EqualTo(expectedOutput));
     }
 }
