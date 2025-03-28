@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using BBCodeParser.Tags;
 
 namespace BBCodeParser;
@@ -20,7 +19,7 @@ public partial class Reader
         _match = _bbPattern.Match(this._input);
     }
 
-    public bool TryRead(out BBCodeParser.Tags.TagResult result)
+    public bool TryRead(out BBCodeParser.Tags.TagResult? result)
     {
         if (_position == _input.Length)
         {
@@ -28,7 +27,6 @@ public partial class Reader
             return false;
         }
 
-        result = new BBCodeParser.Tags.TagResult();
         if (_match.Success)
         {
             var tagName = _match.Groups["tag"].Value;
@@ -36,16 +34,22 @@ public partial class Reader
 
             if (matchingTag == null)
             {
-                result.Text = _input.Substring(_position, _match.Index + _match.Length - _position);
-                result.TagType = BBCodeParser.Tags.TagType.NoResult;
+                result = new BBCodeParser.Tags.TagResult
+                {
+                    Text = _input.Substring(_position, _match.Index + _match.Length - _position),
+                    TagType = BBCodeParser.Tags.TagType.NoResult,
+                };
             }
             else
             {
-                result.Match = _match.Value;
-                result.Text = _input.Substring(_position, _match.Index - _position);
-                result.Tag = matchingTag;
-                result.AttributeValue = _match.Groups["value"].Value;
-                result.TagType = _match.Groups["closing"].Success ? BBCodeParser.Tags.TagType.Close : BBCodeParser.Tags.TagType.Open;
+                result = new BBCodeParser.Tags.TagResult
+                {
+                    Match = _match.Value,
+                    Text = _input.Substring(_position, _match.Index - _position),
+                    Tag = matchingTag,
+                    AttributeValue = _match.Groups["value"].Value,
+                    TagType = _match.Groups["closing"].Success ? BBCodeParser.Tags.TagType.Close : BBCodeParser.Tags.TagType.Open,
+                };
             }
 
             _position = _match.Index + _match.Length;
@@ -53,9 +57,15 @@ public partial class Reader
             return true;
         }
 
-        result.Text = _input.Substring(_position);
+        var inputSubstringPos = _input.Substring(_position);
         _position = _input.Length;
-        result.TagType = BBCodeParser.Tags.TagType.NoResult;
+
+        result = new BBCodeParser.Tags.TagResult
+        {
+            Text = inputSubstringPos,
+            TagType = BBCodeParser.Tags.TagType.NoResult,
+        };
+
         return true;
     }
 

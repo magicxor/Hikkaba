@@ -9,7 +9,7 @@ public class MatchingTag
         TagType = TagType.NoResult;
     }
 
-    public Match Match { get; set; }
-    public BBTag Tag { get; set; }
+    public Match? Match { get; set; }
+    public BBTag? Tag { get; set; }
     public TagType TagType { get; set; }
 }

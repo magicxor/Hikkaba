@@ -1,5 +1,3 @@
-using System;
-
 namespace BBCodeParser;
 
 public class BbParserException : Exception

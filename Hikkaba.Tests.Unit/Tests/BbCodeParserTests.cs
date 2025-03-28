@@ -342,10 +342,10 @@ public class BbCodeParserTests
         var actual2 = _bbCodeParser.Parse(input2);
         var actual3 = _bbCodeParser.Parse(input3);
 
-        Func<Node, bool> filter = n => !(n is TagNode) || ((TagNode) n).AttributeValue.Split(',')
+        Func<Node, bool> filter = n => n is not TagNode || (((TagNode?)n)?.AttributeValue ?? string.Empty).Split(',')
             .Select(v => v.Trim()).Any(v =>
                 v.Equals("Test3", StringComparison.OrdinalIgnoreCase));
-        Func<Node, string, string> filterAttributeValue = (v, n) => "Test3";
+        Func<Node, string?, string> filterAttributeValue = (v, n) => "Test3";
 
         ClassicAssert.IsEmpty(actual1.ToHtml(filter, filterAttributeValue));
 
@@ -378,7 +378,7 @@ public class BbCodeParserTests
         var input = "[i]Hello[/i] [b]world[/b]";
         var actual = _bbCodeParser.Parse(input);
 
-        Func<Node, bool> filter = n => !(n is TagNode) || ((TagNode) n).Tag.Name != "b";
+        Func<Node, bool> filter = n => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
         ClassicAssert.AreEqual("[i]Hello[/i] ", actual.ToBb(filter));
         ClassicAssert.AreEqual("Hello ", actual.ToText(filter));
     }
@@ -389,7 +389,7 @@ public class BbCodeParserTests
         var input = "[i]Hello[/i] [code][b]world[/b][/code]";
         var actual = _bbCodeParser.Parse(input);
 
-        bool Filter(Node n) => !(n is TagNode) || ((TagNode) n).Tag.Name != "b";
+        bool Filter(Node n) => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
         ClassicAssert.AreEqual("[i]Hello[/i] [code][b]world[/b][/code]", actual.ToBb(Filter));
         ClassicAssert.AreEqual("Hello [b]world[/b]", actual.ToText(Filter));
     }

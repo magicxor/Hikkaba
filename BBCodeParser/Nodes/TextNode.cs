@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace BBCodeParser.Nodes;
+﻿namespace BBCodeParser.Nodes;
 
 public class TextNode : Node
 {
-    private readonly string text;
+    private readonly string _text;
 
     public TextNode(string text)
     {
-        this.text = text;
+        this._text = text;
     }
 
-    private static string SubstituteText(string text, Dictionary<string, string> substitutions)
+    private static string SubstituteText(string text, Dictionary<string, string>? substitutions)
     {
         return substitutions == null
             ? text
@@ -22,34 +18,34 @@ public class TextNode : Node
     }
 
     public override string ToHtml(
-        Dictionary<string, string> securitySubstitutions,
-        Dictionary<string, string> aliasSubstitutions,
-        Func<Node, bool> filter = null,
-        Func<Node, string, string> filterAttributeValue = null)
+        Dictionary<string, string>? securitySubstitutions,
+        Dictionary<string, string>? aliasSubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null)
     {
-        return SubstituteText(SubstituteText(text, securitySubstitutions), aliasSubstitutions);
+        return SubstituteText(SubstituteText(_text, securitySubstitutions), aliasSubstitutions);
     }
 
     public override string ToText(
-        Dictionary<string, string> securitySubstitutions,
-        Dictionary<string, string> aliasSubstitutions,
-        Func<Node, bool> filter = null,
-        Func<Node, string, string> filterAttributeValue = null
+        Dictionary<string, string>? securitySubstitutions,
+        Dictionary<string, string>? aliasSubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null
     )
     {
-        return SubstituteText(SubstituteText(text, securitySubstitutions), aliasSubstitutions);
+        return SubstituteText(SubstituteText(_text, securitySubstitutions), aliasSubstitutions);
     }
 
     public override string ToBb(
-        Dictionary<string, string> securitySubstitutions,
-        Func<Node, bool> filter = null,
-        Func<Node, string, string> filterAttributeValue = null)
+        Dictionary<string, string>? securitySubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null)
     {
-        return SubstituteText(text, securitySubstitutions);
+        return SubstituteText(_text, securitySubstitutions);
     }
 
     public override void AddChild(Node node)
     {
-        throw new NotImplementedException();
+        throw new InvalidOperationException($"Cannot add a child to a {nameof(TextNode)}.");
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text;
 using BBCodeParser.Tags;
 
@@ -9,28 +6,28 @@ namespace BBCodeParser.Nodes;
 
 public class TagNode : Node
 {
-    public string AttributeValue { get; }
-    public Tag Tag { get; }
+    public string? AttributeValue { get; }
+    public Tag? Tag { get; }
 
-    public TagNode(Tag tag, Node parent, string attributeValue)
+    public TagNode(Tag? tag, Node? parent, string? attributeValue)
     {
         Tag = tag;
         AttributeValue = attributeValue;
-        ChildNodes = new List<Node>();
+        ChildNodes = [];
         ParentNode = parent;
     }
 
     public override string ToHtml(
-        Dictionary<string, string> securitySubstitutions,
-        Dictionary<string, string> aliasSubstitutions,
-        Func<Node, bool> filter = null,
-        Func<Node, string, string> filterAttributeValue = null)
+        Dictionary<string, string>? securitySubstitutions,
+        Dictionary<string, string>? aliasSubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null)
     {
         var attributeValue = filterAttributeValue == null
             ? AttributeValue
             : filterAttributeValue(this, AttributeValue);
-        var result = new StringBuilder(Tag.GetOpenHtml(attributeValue), ChildNodes.Count + 2);
-        foreach (var childNode in ChildNodes.Where(n => filter == null || filter(n)))
+        var result = new StringBuilder(Tag?.GetOpenHtml(attributeValue ?? string.Empty), (ChildNodes?.Count ?? 0) + 2);
+        foreach (var childNode in ChildNodes?.Where(n => filter == null || filter(n)) ?? [])
         {
             if (Tag is CodeTag)
             {
@@ -40,29 +37,29 @@ public class TagNode : Node
             {
                 result.Append(childNode.ToHtml(securitySubstitutions, null, filter));
             }
-            else if (!(Tag is ListTag) || !(childNode is TextNode))
+            else if (Tag is not ListTag || childNode is not TextNode)
             {
                 result.Append(childNode.ToHtml(securitySubstitutions, aliasSubstitutions, filter));
             }
         }
 
-        if (Tag.RequiresClosing)
+        if (Tag?.RequiresClosing == true)
         {
-            result.Append(Tag.GetCloseHtml(attributeValue));
+            result.Append(Tag.GetCloseHtml(attributeValue ?? string.Empty));
         }
 
         return result.ToString();
     }
 
     public override string ToText(
-        Dictionary<string, string> securitySubstitutions,
-        Dictionary<string, string> aliasSubstitutions,
-        Func<Node, bool> filter = null,
-        Func<Node, string, string> filterAttributeValue = null
+        Dictionary<string, string>? securitySubstitutions,
+        Dictionary<string, string>? aliasSubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null
     )
     {
-        var result = new StringBuilder(ChildNodes.Count);
-        foreach (var childNode in ChildNodes.Where(n => filter == null || filter(n)))
+        var result = new StringBuilder(ChildNodes?.Count ?? 0);
+        foreach (var childNode in ChildNodes?.Where(n => filter == null || filter(n)) ?? [])
         {
             if (Tag is CodeTag)
             {
@@ -74,8 +71,7 @@ public class TagNode : Node
             }
             else
             {
-                result.Append(childNode.ToText(securitySubstitutions, aliasSubstitutions, filter,
-                    filterAttributeValue));
+                result.Append(childNode.ToText(securitySubstitutions, aliasSubstitutions, filter, filterAttributeValue));
             }
         }
 
@@ -83,24 +79,24 @@ public class TagNode : Node
     }
 
     public override string ToBb(
-        Dictionary<string, string> securitySubstitutions,
-        Func<Node, bool> filter = null,
-        Func<Node, string, string> filterAttributeValue = null)
+        Dictionary<string, string>? securitySubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null)
     {
         var attributeValue = filterAttributeValue == null
             ? AttributeValue
             : filterAttributeValue(this, AttributeValue);
-        var result = new StringBuilder(Tag.WithAttribute && !string.IsNullOrEmpty(attributeValue)
-            ? $@"[{Tag.Name}=""{attributeValue}""]"
-            : $@"[{Tag.Name}]", ChildNodes.Count + 2);
-        foreach (var childNode in ChildNodes.Where(n => filter == null || filter(n)))
+        var result = new StringBuilder((Tag?.WithAttribute == true) && !string.IsNullOrEmpty(attributeValue)
+            ? $"""[{Tag.Name}="{attributeValue}"]"""
+            : $"[{Tag?.Name}]", (ChildNodes?.Count ?? 0) + 2);
+        foreach (var childNode in ChildNodes?.Where(n => filter == null || filter(n)) ?? [])
         {
             result.Append(childNode.ToBb(securitySubstitutions, filter, filterAttributeValue));
         }
 
-        if (Tag.RequiresClosing)
+        if (Tag?.RequiresClosing == true)
         {
-            result.Append(CultureInfo.InvariantCulture, $@"[/{Tag.Name}]");
+            result.Append(CultureInfo.InvariantCulture, $"[/{Tag.Name}]");
         }
 
         return result.ToString();

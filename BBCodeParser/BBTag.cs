@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace BBCodeParser;
@@ -8,7 +6,7 @@ namespace BBCodeParser;
 public class BBTag
 {
     public BBTag(string bbTag, string openingHtmlTag, string closingHtmlTag,
-        Dictionary<string, string> attributes = null, bool selfAttributed = false)
+        Dictionary<string, string>? attributes = null, bool selfAttributed = false)
     {
         BbTag = bbTag;
         OpeningHtmlTag = openingHtmlTag;
@@ -19,7 +17,7 @@ public class BBTag
     }
 
     public BBTag(string bbTag, string openingHtmlTag,
-        Dictionary<string, string> attributes = null, bool selfAttributed = false)
+        Dictionary<string, string>? attributes = null, bool selfAttributed = false)
     {
         BbTag = bbTag;
         OpeningHtmlTag = openingHtmlTag;
@@ -31,10 +29,10 @@ public class BBTag
     public string BbTag { get; set; }
     public bool RequiresClosingTag { get; set; }
 
-    private Dictionary<string, string> Attributes { get; set; }
+    private Dictionary<string, string>? Attributes { get; set; }
     private bool SelfAttributed { get; set; }
     private string OpeningHtmlTag { get; set; }
-    private string ClosingHtmlTag { get; set; }
+    private string? ClosingHtmlTag { get; set; }
 
     public string GetOpenBbTagPattern(DirectionMode directionMode)
     {
@@ -93,7 +91,7 @@ public class BBTag
         return result;
     }
 
-    public string GetCloseHtmlTagPattern()
+    public string? GetCloseHtmlTagPattern()
     {
         return ClosingHtmlTag;
     }

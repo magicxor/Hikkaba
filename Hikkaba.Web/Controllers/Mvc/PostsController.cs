@@ -9,22 +9,26 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
 using Hikkaba.Services.Contracts;
+using Hikkaba.Web.Services.Contracts;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
 public class PostsController : BaseMvcController
 {
+    private readonly IMessagePostProcessor _messagePostProcessor;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
     private readonly IPostService _postService;
 
     public PostsController(
         UserManager<ApplicationUser> userManager,
+        IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
         IThreadService threadService,
         IPostService postService) : base(userManager)
     {
+        _messagePostProcessor = messagePostProcessor;
         _categoryService = categoryService;
         _threadService = threadService;
         _postService = postService;

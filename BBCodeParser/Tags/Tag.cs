@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Web;
 
 namespace BBCodeParser.Tags;
@@ -16,7 +14,7 @@ public partial class Tag
     };
 
     private string OpenTag { get; }
-    private string CloseTag { get; }
+    private string? CloseTag { get; }
     public bool WithAttribute { get; }
     public bool RequiresClosing { get; }
     private AttributeEscapeMode AttributeEscape { get; }
@@ -52,14 +50,18 @@ public partial class Tag
         return GetHtmlPart(CloseTag, attributeValue);
     }
 
-    private string GetHtmlPart(string tagPart, string attributeValue)
+    private string GetHtmlPart(string? tagPart, string attributeValue)
     {
+        var tagPartNullSafe = tagPart ?? string.Empty;
+
         if (attributeValue.Contains('"'))
         {
             attributeValue = attributeValue.Replace("\"", "&quot;", StringComparison.Ordinal);
         }
 
-        return WithAttribute ? tagPart.Replace("{value}", GetAttributeValueForHtml(attributeValue)) : tagPart;
+        return WithAttribute ?
+            tagPartNullSafe.Replace("{value}", GetAttributeValueForHtml(attributeValue))
+            : tagPartNullSafe;
     }
 
     private string GetAttributeValueForHtml(string attributeValue)

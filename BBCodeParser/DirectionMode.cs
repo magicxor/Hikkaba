@@ -3,5 +3,5 @@
 public enum DirectionMode
 {
     BBToHtml,
-    HtmlToBB
+    HtmlToBB,
 }

@@ -1,21 +1,20 @@
-﻿using System.Collections.Generic;
-using BBCodeParser.Nodes;
+﻿using BBCodeParser.Nodes;
 using BBCodeParser.Tags;
 
 namespace BBCodeParser;
 
 public class BbParser : IBbParser
 {
-    private readonly Tag[] tags;
-    private readonly Dictionary<string, string> securitySubstitutions;
-    private readonly Dictionary<string, string> aliasSubstitutions;
+    private readonly Tag[] _tags;
+    private readonly Dictionary<string, string> _securitySubstitutions;
+    private readonly Dictionary<string, string> _aliasSubstitutions;
     private const int TreeMaxDepth = 6000;
 
-    public static readonly Dictionary<string, string> SecuritySubstitutions = new Dictionary<string, string>
+    public static readonly Dictionary<string, string> SecuritySubstitutions = new()
     {
         {"&", "&amp;"},
         {"<", "&lt;"},
-        {">", "&gt;"}
+        {">", "&gt;"},
     };
 
     public BbParser(
@@ -23,14 +22,14 @@ public class BbParser : IBbParser
         Dictionary<string, string> securitySubstitutions,
         Dictionary<string, string> aliasSubstitutions)
     {
-        this.tags = tags;
-        this.securitySubstitutions = securitySubstitutions;
-        this.aliasSubstitutions = aliasSubstitutions;
+        this._tags = tags;
+        this._securitySubstitutions = securitySubstitutions;
+        this._aliasSubstitutions = aliasSubstitutions;
     }
 
     public NodeTree Parse(string input)
     {
-        var nodeTree = new NodeTree(securitySubstitutions, aliasSubstitutions);
+        var nodeTree = new NodeTree(_securitySubstitutions, _aliasSubstitutions);
         var treeDepth = 0;
         if (string.IsNullOrWhiteSpace(input))
         {
@@ -38,7 +37,7 @@ public class BbParser : IBbParser
             return nodeTree;
         }
 
-        var reader = new Reader(input, tags);
+        var reader = new Reader(input, _tags);
         var current = (Node) nodeTree;
         if (!reader.TryRead(out var tagResult))
         {
@@ -48,30 +47,30 @@ public class BbParser : IBbParser
         {
             do
             {
-                if (!string.IsNullOrEmpty(tagResult.Text))
+                if (!string.IsNullOrEmpty(tagResult?.Text))
                 {
-                    current.AddChild(new TextNode(tagResult.Text));
+                    current?.AddChild(new TextNode(tagResult.Text));
                 }
 
                 // no parsing inside CodeTag
                 var isInsideCodeTag = (current as TagNode)?.Tag is CodeTag;
-                var resultIsClosingCodeTag = tagResult.Tag is CodeTag && tagResult.TagType == BBCodeParser.Tags.TagType.Close;
-                if (isInsideCodeTag && !resultIsClosingCodeTag && !string.IsNullOrEmpty(tagResult.Match) &&
+                var resultIsClosingCodeTag = tagResult?.Tag is CodeTag && tagResult.TagType == BBCodeParser.Tags.TagType.Close;
+                if (isInsideCodeTag && !resultIsClosingCodeTag && !string.IsNullOrEmpty(tagResult?.Match) &&
                     tagResult.Tag != null)
                 {
-                    current.AddChild(new TextNode(tagResult.Match));
+                    current?.AddChild(new TextNode(tagResult.Match));
                     continue;
                 }
 
-                switch (tagResult.TagType)
+                switch (tagResult?.TagType)
                 {
                     case BBCodeParser.Tags.TagType.NoResult:
                         continue;
                     case BBCodeParser.Tags.TagType.Open:
                         var tagNode = new TagNode(tagResult.Tag, current, tagResult.AttributeValue);
-                        current.AddChild(tagNode);
+                        current?.AddChild(tagNode);
 
-                        if (!tagResult.Tag.RequiresClosing) continue;
+                        if (tagResult.Tag?.RequiresClosing != true) continue;
 
                         current = tagNode;
                         treeDepth++;
@@ -82,20 +81,20 @@ public class BbParser : IBbParser
 
                         break;
                     default:
-                        if (tagResult.TagType == BBCodeParser.Tags.TagType.Close && current != nodeTree)
+                        if (tagResult?.TagType == BBCodeParser.Tags.TagType.Close && current != nodeTree)
                         {
-                            var currentTagNode = (TagNode) current;
-                            if (currentTagNode.Tag.Name != tagResult.Tag.Name)
+                            var currentTagNode = (TagNode?) current;
+                            if (currentTagNode?.Tag?.Name != tagResult.Tag?.Name)
                             {
                                 do
                                 {
-                                    current = current.ParentNode;
+                                    current = current?.ParentNode;
                                     treeDepth--;
-                                } while (current != nodeTree && currentTagNode.Tag.Name != tagResult.Tag.Name);
+                                } while (current != nodeTree && currentTagNode?.Tag?.Name != tagResult?.Tag?.Name);
                             }
                             else
                             {
-                                current = current.ParentNode;
+                                current = current?.ParentNode;
                                 treeDepth--;
                             }
                         }
@@ -110,6 +109,6 @@ public class BbParser : IBbParser
 
     public Tag[] GetTags()
     {
-        return tags;
+        return _tags;
     }
 }
