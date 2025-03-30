@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Hikkaba.Common.Enums;
+using Hikkaba.Shared.Enums;
 
 namespace Hikkaba.Data.Entities.Attachments.Base;
 

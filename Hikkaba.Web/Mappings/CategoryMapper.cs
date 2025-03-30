@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Hikkaba.Infrastructure.Models.Administration;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Riok.Mapperly.Abstractions;
@@ -8,15 +9,15 @@ namespace Hikkaba.Web.Mappings;
 [Mapper]
 public static partial class CategoryMapper
 {
-    [MapperIgnoreSource(nameof(CategoryDashboardViewRm.CreatedBy))]
-    [MapperIgnoreSource(nameof(CategoryDashboardViewRm.ModifiedBy))]
-    public static partial CategoryDetailsViewModel ToViewModel(this CategoryDashboardViewRm model);
+    [MapperIgnoreSource(nameof(CategoryDashboardModel.CreatedBy))]
+    [MapperIgnoreSource(nameof(CategoryDashboardModel.ModifiedBy))]
+    public static partial CategoryDetailsViewModel ToViewModel(this CategoryDashboardModel model);
 
-    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDashboardViewRm> models);
+    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDashboardModel> models);
 
-    [MapperIgnoreSource(nameof(CategoryViewRm.CreatedBy))]
-    [MapperIgnoreSource(nameof(CategoryViewRm.ModifiedBy))]
-    public static partial CategoryDetailsViewModel ToViewModel(this CategoryViewRm model);
+    [MapperIgnoreSource(nameof(CategoryDetailsModel.CreatedBy))]
+    [MapperIgnoreSource(nameof(CategoryDetailsModel.ModifiedBy))]
+    public static partial CategoryDetailsViewModel ToViewModel(this CategoryDetailsModel model);
 
-    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryViewRm> models);
+    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDetailsModel> models);
 }

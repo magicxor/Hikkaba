@@ -1,8 +1,7 @@
 using System.Net;
-using Hikkaba.Common.Constants;
-using Hikkaba.Common.Enums;
-using Hikkaba.Common.Exceptions;
-using Hikkaba.Common.Extensions;
+using Hikkaba.Shared.Enums;
+using Hikkaba.Shared.Exceptions;
+using Hikkaba.Shared.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

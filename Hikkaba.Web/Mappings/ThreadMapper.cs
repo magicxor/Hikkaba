@@ -11,14 +11,10 @@ namespace Hikkaba.Web.Mappings;
 [UseStaticMapper(typeof(PostMapper))]
 public static partial class ThreadMapper
 {
-    public static partial ThreadAggregationViewModel ToViewModel(this ThreadAggregationRm model);
+    public static partial ThreadDetailsViewModel ToViewModel(this ThreadDetailsRequestModel model);
 
-    public static partial ThreadDetailsViewModel ToViewModel(this ThreadDetailsRm model);
+    [MapperIgnoreSource(nameof(ThreadPreviewModel.LastPostCreatedAt))]
+    public static partial ThreadDetailsViewModel ToViewModel(this ThreadPreviewModel model);
 
-    public static partial IReadOnlyList<ThreadAggregationViewModel> ToViewModels(this IReadOnlyList<ThreadAggregationRm> models);
-
-    [MapperIgnoreSource(nameof(ThreadPreviewRm.LastPostCreatedAt))]
-    public static partial ThreadDetailsViewModel ToViewModel(this ThreadPreviewRm model);
-
-    public static partial IReadOnlyList<ThreadDetailsViewModel> ToViewModels(this IReadOnlyList<ThreadPreviewRm> models);
+    public static partial IReadOnlyList<ThreadDetailsViewModel> ToViewModels(this IReadOnlyList<ThreadPreviewModel> models);
 }

@@ -1,0 +1,10 @@
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+name: run tests
+
+jobs:
+  call_reusable_run_tests:
+    name: run tests
+    uses: ./.github/workflows/reusable_run_tests.yml

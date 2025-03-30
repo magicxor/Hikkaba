@@ -9,7 +9,7 @@ namespace Hikkaba.Web.Binding.Binders;
 
 public class DateTimeKindSensitiveBinder : IModelBinder
 {
-    private SimpleTypeModelBinder _baseBinder;
+    private readonly SimpleTypeModelBinder _baseBinder;
 
     public DateTimeKindSensitiveBinder(Type type, ILoggerFactory loggerFactory)
     {
@@ -27,8 +27,7 @@ public class DateTimeKindSensitiveBinder : IModelBinder
         {
             bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
 
-            DateTime model;
-            if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out model))
+            if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out var model))
             {
                 bindingContext.Result = ModelBindingResult.Success(model);
                 return Task.CompletedTask;

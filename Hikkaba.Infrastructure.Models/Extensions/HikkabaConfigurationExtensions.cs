@@ -1,4 +1,4 @@
-﻿using Hikkaba.Common.Constants;
+﻿using Hikkaba.Shared.Constants;
 using Hikkaba.Infrastructure.Models.Configuration;
 
 namespace Hikkaba.Infrastructure.Models.Extensions;

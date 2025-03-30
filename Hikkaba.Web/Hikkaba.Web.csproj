@@ -15,7 +15,6 @@
   <ItemGroup>
     <PackageReference Include="DNTCaptcha.Core" />
     <PackageReference Include="Humanizer.Core" />
-    <PackageReference Include="MailKit" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
@@ -32,8 +31,6 @@
     <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="Sakura.AspNetCore.Mvc.PagedList" />
     <PackageReference Include="Sakura.AspNetCore.PagedList.Async" />
-    <PackageReference Include="Scrutor" />
-    <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="System.Net.Http" />
     <PackageReference Include="System.Text.RegularExpressions" />
     <PackageReference Include="TwentyTwenty.Storage" />
@@ -45,10 +42,8 @@
     <ProjectReference Include="..\BBCodeParser\BBCodeParser.csproj" />
     <ProjectReference Include="..\Hikkaba.Data\Hikkaba.Data.csproj" />
     <ProjectReference Include="..\Hikkaba.Infrastructure.Models\Hikkaba.Infrastructure.Models.csproj" />
-    <ProjectReference Include="..\Hikkaba.Repositories.Contracts\Hikkaba.Repositories.Contracts.csproj" />
-    <ProjectReference Include="..\Hikkaba.Repositories.Implementations\Hikkaba.Repositories.Implementations.csproj" />
-    <ProjectReference Include="..\Hikkaba.Services.Contracts\Hikkaba.Services.Contracts.csproj" />
-    <ProjectReference Include="..\Hikkaba.Services.Implementations\Hikkaba.Services.Implementations.csproj" />
+    <ProjectReference Include="..\Hikkaba.Infrastructure.Repositories\Hikkaba.Infrastructure.Repositories.csproj" />
+    <ProjectReference Include="..\Hikkaba.Application\Hikkaba.Application.csproj" />
   </ItemGroup>
 
 

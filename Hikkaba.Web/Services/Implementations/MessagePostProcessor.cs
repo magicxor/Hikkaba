@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using BBCodeParser;
 using BBCodeParser.Tags;
-using Hikkaba.Services.Implementations;
+using Hikkaba.Application.Implementations;
 using Hikkaba.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 

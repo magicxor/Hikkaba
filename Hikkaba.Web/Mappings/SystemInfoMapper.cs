@@ -7,5 +7,5 @@ namespace Hikkaba.Web.Mappings;
 [Mapper]
 public static partial class SystemInfoMapper
 {
-    public static partial SystemInfoViewModel ToViewModel(this SystemInfoSm model);
+    public static partial SystemInfoViewModel ToViewModel(this SystemInfoModel model);
 }

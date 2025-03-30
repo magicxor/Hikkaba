@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using System.Net;
-using Hikkaba.Common.Exceptions;
+using Hikkaba.Shared.Exceptions;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

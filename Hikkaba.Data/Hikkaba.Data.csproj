@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hikkaba.Common\Hikkaba.Common.csproj" />
+    <ProjectReference Include="..\Hikkaba.Shared\Hikkaba.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

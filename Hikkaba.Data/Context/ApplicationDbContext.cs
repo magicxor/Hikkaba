@@ -1,4 +1,4 @@
-﻿using Hikkaba.Common.Enums;
+﻿using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

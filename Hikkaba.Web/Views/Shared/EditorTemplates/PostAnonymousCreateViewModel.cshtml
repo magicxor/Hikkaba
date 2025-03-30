@@ -1,4 +1,4 @@
-@using Hikkaba.Common.Constants
+@using Hikkaba.Shared.Constants
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostAnonymousCreateViewModel
 
 <form asp-controller="Posts" asp-action="Create" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.ThreadId" method="post" class="form-horizontal" enctype="multipart/form-data" id="@Defaults.HtmlNewPostFormId">
@@ -6,7 +6,7 @@
     <hr />
     <div asp-validation-summary="All" class="text-danger"></div>
     <input asp-for="ThreadId" type="hidden" />
-    
+
     <div class="form-group">
         <label asp-for="IsSageEnabled" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -14,7 +14,7 @@
             <span asp-validation-for="IsSageEnabled" class="text-danger"></span>
         </div>
     </div>
-    
+
     <div class="form-group">
         <div class="col-md-2"></div>
         <div class="col-md-10">
@@ -29,7 +29,7 @@
             <span asp-validation-for="Message" class="text-danger"></span>
         </div>
     </div>
-    
+
     <div class="form-group">
         <label asp-for="Attachments" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -37,7 +37,7 @@
             <span asp-validation-for="Attachments" class="text-danger"></span>
         </div>
     </div>
-    
+
     <div class="form-group">
         <label class="col col-md-2 control-label">
             Security code

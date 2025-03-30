@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Entities.Attachments;
-using Hikkaba.Data.Entities.Attachments.Base;
 
 namespace Hikkaba.Data.Entities;
 

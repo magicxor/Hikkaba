@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 

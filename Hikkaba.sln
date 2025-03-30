@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Web", "Hikkaba.Web\
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BCFAD6BD-B992-44F8-979B-6DD31C543629}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Common", "Hikkaba.Common\Hikkaba.Common.csproj", "{791245C8-F0FA-4E41-A54C-240B81094D07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Shared", "Hikkaba.Shared\Hikkaba.Shared.csproj", "{791245C8-F0FA-4E41-A54C-240B81094D07}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikkaba.Data", "Hikkaba.Data\Hikkaba.Data.csproj", "{EDC2A036-324A-488A-A4FF-EB11BD2F9A36}"
 EndProject
@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 Shared", "1 Shared", "{F5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 Database", "2 Database", "{F9E34862-3397-4C81-87FE-F190DB6E9D82}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 Domain", "4 Domain", "{62BE4495-85E0-46E2-B4AC-B91EC51FD677}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 Application Services", "4 Application Services", "{62BE4495-85E0-46E2-B4AC-B91EC51FD677}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 Presentation", "5 Presentation", "{DFF9AF34-9B47-4EE9-BA8C-27888BDF2AD0}"
 EndProject
@@ -43,17 +43,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Paging", "Hikkaba.P
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Infrastructure", "3 Infrastructure", "{B00A0AB2-7ED5-45BB-A6E3-EC0ECB4843DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Repositories.Implementations", "Hikkaba.Repositories.Implementations\Hikkaba.Repositories.Implementations.csproj", "{D0F4A898-7B07-4515-B627-466E4E19BAE0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Repositories.Contracts", "Hikkaba.Repositories.Contracts\Hikkaba.Repositories.Contracts.csproj", "{435ECA6D-1F8F-4368-9F7C-1084396C6072}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Infrastructure.Repositories", "Hikkaba.Infrastructure.Repositories\Hikkaba.Infrastructure.Repositories.csproj", "{435ECA6D-1F8F-4368-9F7C-1084396C6072}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Infrastructure.Models", "Hikkaba.Infrastructure.Models\Hikkaba.Infrastructure.Models.csproj", "{BD26DBAC-1122-42A2-A888-75B22C2DED54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Repositories.Mappings", "Hikkaba.Repositories.Mappings\Hikkaba.Repositories.Mappings.csproj", "{4E1E544A-1CBB-4546-B684-A662994EFBB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Infrastructure.Mappings", "Hikkaba.Infrastructure.Mappings\Hikkaba.Infrastructure.Mappings.csproj", "{4E1E544A-1CBB-4546-B684-A662994EFBB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Services.Contracts", "Hikkaba.Services.Contracts\Hikkaba.Services.Contracts.csproj", "{2499FD10-CDA3-4277-9717-B70A1B393296}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Services.Implementations", "Hikkaba.Services.Implementations\Hikkaba.Services.Implementations.csproj", "{FCEF6D81-B7E0-4A0A-9F63-A2BDC328D389}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Application", "Hikkaba.Application\Hikkaba.Application.csproj", "{2499FD10-CDA3-4277-9717-B70A1B393296}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BBCodeParser", "BBCodeParser\BBCodeParser.csproj", "{BB98684B-B0DE-44DE-909B-165749BA722E}"
 EndProject
@@ -91,10 +87,6 @@ Global
 		{C0C2BDB9-BE25-427C-93A1-2AE764D38B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0C2BDB9-BE25-427C-93A1-2AE764D38B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0C2BDB9-BE25-427C-93A1-2AE764D38B01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0F4A898-7B07-4515-B627-466E4E19BAE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0F4A898-7B07-4515-B627-466E4E19BAE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0F4A898-7B07-4515-B627-466E4E19BAE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0F4A898-7B07-4515-B627-466E4E19BAE0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{435ECA6D-1F8F-4368-9F7C-1084396C6072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{435ECA6D-1F8F-4368-9F7C-1084396C6072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{435ECA6D-1F8F-4368-9F7C-1084396C6072}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -111,10 +103,6 @@ Global
 		{2499FD10-CDA3-4277-9717-B70A1B393296}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2499FD10-CDA3-4277-9717-B70A1B393296}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2499FD10-CDA3-4277-9717-B70A1B393296}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCEF6D81-B7E0-4A0A-9F63-A2BDC328D389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCEF6D81-B7E0-4A0A-9F63-A2BDC328D389}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCEF6D81-B7E0-4A0A-9F63-A2BDC328D389}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCEF6D81-B7E0-4A0A-9F63-A2BDC328D389}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB98684B-B0DE-44DE-909B-165749BA722E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB98684B-B0DE-44DE-909B-165749BA722E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB98684B-B0DE-44DE-909B-165749BA722E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -130,12 +118,10 @@ Global
 		{EDC2A036-324A-488A-A4FF-EB11BD2F9A36} = {F9E34862-3397-4C81-87FE-F190DB6E9D82}
 		{5C3BA1EA-F284-430D-B36D-885C915331E4} = {DFF9AF34-9B47-4EE9-BA8C-27888BDF2AD0}
 		{C0C2BDB9-BE25-427C-93A1-2AE764D38B01} = {D8301AAA-D72E-4CF7-8261-A86C856896D4}
-		{D0F4A898-7B07-4515-B627-466E4E19BAE0} = {B00A0AB2-7ED5-45BB-A6E3-EC0ECB4843DA}
 		{435ECA6D-1F8F-4368-9F7C-1084396C6072} = {B00A0AB2-7ED5-45BB-A6E3-EC0ECB4843DA}
 		{BD26DBAC-1122-42A2-A888-75B22C2DED54} = {B00A0AB2-7ED5-45BB-A6E3-EC0ECB4843DA}
 		{4E1E544A-1CBB-4546-B684-A662994EFBB5} = {B00A0AB2-7ED5-45BB-A6E3-EC0ECB4843DA}
 		{2499FD10-CDA3-4277-9717-B70A1B393296} = {62BE4495-85E0-46E2-B4AC-B91EC51FD677}
-		{FCEF6D81-B7E0-4A0A-9F63-A2BDC328D389} = {62BE4495-85E0-46E2-B4AC-B91EC51FD677}
 		{BB98684B-B0DE-44DE-909B-165749BA722E} = {D8301AAA-D72E-4CF7-8261-A86C856896D4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

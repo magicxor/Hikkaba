@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels;

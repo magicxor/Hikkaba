@@ -2,12 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
-using Hikkaba.Common.Constants;
-using Hikkaba.Common.Enums;
-using Hikkaba.Common.Extensions;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
-using Hikkaba.Services.Contracts;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Services.Contracts;
@@ -99,7 +97,7 @@ public class ThreadsController : BaseMvcController
                     return NotFound();
                 }
 
-                var threadCreateRm = new ThreadCreateRm
+                var threadCreateRm = new ThreadCreateRequestModel
                 {
                     CategoryAlias = category.Alias,
                     ThreadTitle = viewModel.Title,

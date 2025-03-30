@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Paging.Enums;
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Paging.Models;
-using Hikkaba.Services.Contracts;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Mappings;
 
 namespace Hikkaba.Web.Controllers.Mvc;
@@ -50,15 +50,15 @@ public class CategoriesController : BaseMvcController
             return NotFound();
         }
 
-        var filter = new ThreadPreviewsFilter
+        var filter = new ThreadPreviewFilter
         {
             CategoryAlias = categoryAlias,
             PageNumber = page,
             PageSize = size,
             OrderBy = [
-                new OrderByItem { Field = nameof(ThreadPreviewRm.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewRm.LastPostCreatedAt), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewRm.Id), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
             ],
         };
         var threads = await _threadService.ListThreadPreviewsPaginatedAsync(filter, cancellationToken);

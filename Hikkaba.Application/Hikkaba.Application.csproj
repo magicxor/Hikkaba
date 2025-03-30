@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Blake3" />
+    <PackageReference Include="HtmlAgilityPack" />
+    <PackageReference Include="MaxMind.GeoIP2" />
+    <PackageReference Include="SixLabors.ImageSharp" />
+    <PackageReference Include="TwentyTwenty.Storage" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hikkaba.Infrastructure.Models\Hikkaba.Infrastructure.Models.csproj" />
+    <ProjectReference Include="..\Hikkaba.Infrastructure.Repositories\Hikkaba.Infrastructure.Repositories.csproj" />
+  </ItemGroup>
+
+</Project>

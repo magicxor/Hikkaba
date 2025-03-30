@@ -2,9 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
-using Hikkaba.Common.Constants;
-using Hikkaba.Common.Enums;
-using Hikkaba.Common.Extensions;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Web.Controllers.Mvc.Base;
@@ -13,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
-using Hikkaba.Services.Contracts;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Services.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -84,7 +82,7 @@ public class PostsController : BaseMvcController
                     return NotFound();
                 }
 
-                var postCreateRm = new PostCreateRm
+                var postCreateRm = new PostCreateRequestModel
                 {
                     BlobContainerId = Guid.NewGuid(),
                     IsSageEnabled = viewModel.IsSageEnabled,

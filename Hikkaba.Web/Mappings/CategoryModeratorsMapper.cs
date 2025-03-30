@@ -10,8 +10,8 @@ namespace Hikkaba.Web.Mappings;
 [UseStaticMapper(typeof(CategoryMapper))]
 public static partial class CategoryModeratorsMapper
 {
-    public static partial CategoryModeratorsViewModel ToViewModel(this CategoryModeratorsRm model);
+    public static partial CategoryModeratorsViewModel ToViewModel(this CategoryModeratorsModel model);
 
-    public static partial IReadOnlyList<CategoryModeratorsViewModel> ToViewModels(this IReadOnlyList<CategoryModeratorsRm> models);
+    public static partial IReadOnlyList<CategoryModeratorsViewModel> ToViewModels(this IReadOnlyList<CategoryModeratorsModel> models);
 }
 

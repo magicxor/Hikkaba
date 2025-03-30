@@ -31,7 +31,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hikkaba.Repositories.Implementations\Hikkaba.Repositories.Implementations.csproj" />
     <ProjectReference Include="..\Hikkaba.Web\Hikkaba.Web.csproj" />
   </ItemGroup>
 

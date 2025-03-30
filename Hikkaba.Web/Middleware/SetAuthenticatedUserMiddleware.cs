@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Hikkaba.Common.Models;
-using Hikkaba.Common.Services.Contracts;
+using Hikkaba.Shared.Models;
+using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Http;

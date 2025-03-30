@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Models;
-using Hikkaba.Services.Contracts;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.BansViewModels;

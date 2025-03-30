@@ -1,6 +1,6 @@
 using System.IO;
 using DNTCaptcha.Core;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Web.Binding.Providers;
@@ -21,17 +21,17 @@ using TwentyTwenty.Storage.Local;
 using TwentyTwenty.Storage;
 using Microsoft.AspNetCore.DataProtection;
 using System;
-using Hikkaba.Common.Enums;
-using Hikkaba.Common.Exceptions;
-using Hikkaba.Common.Services.Contracts;
-using Hikkaba.Common.Services.Implementations;
+using Hikkaba.Shared.Enums;
+using Hikkaba.Shared.Exceptions;
+using Hikkaba.Shared.Services.Contracts;
+using Hikkaba.Shared.Services.Implementations;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Models.Extensions;
-using Hikkaba.Repositories.Contracts;
-using Hikkaba.Repositories.Implementations;
-using Hikkaba.Services.Contracts;
-using Hikkaba.Services.Implementations;
+using Hikkaba.Application.Contracts;
+using Hikkaba.Application.Implementations;
+using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Infrastructure.Repositories.Implementations;
 using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.Services.Implementations;
@@ -96,8 +96,8 @@ public class Startup
 
         services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
         services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
-        services.AddSingleton<GeoIpReaderAsn>(x => new GeoIpReaderAsn("./GeoIp/GeoLite2-ASN.mmdb"));
-        services.AddSingleton<GeoIpReaderCountry>(x => new GeoIpReaderCountry("./GeoIp/GeoLite2-Country.mmdb"));
+        services.AddSingleton<GeoIpAsnReader>(x => new GeoIpAsnReader("./GeoIp/GeoLite2-ASN.mmdb"));
+        services.AddSingleton<GeoIpCountryReader>(x => new GeoIpCountryReader("./GeoIp/GeoLite2-Country.mmdb"));
         services.AddSingleton<IGeoIpService, GeoIpService>();
 
         services.AddHealthChecks();

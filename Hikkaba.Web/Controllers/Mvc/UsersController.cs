@@ -1,5 +1,5 @@
-using Hikkaba.Common.Constants;
-using Hikkaba.Services.Contracts;
+using Hikkaba.Shared.Constants;
+using Hikkaba.Application.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

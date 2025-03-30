@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Entities;
-using Hikkaba.Services.Contracts;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;

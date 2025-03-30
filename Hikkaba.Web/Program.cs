@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Configuration;
-using Hikkaba.Repositories.Contracts;
+using Hikkaba.Infrastructure.Repositories.Contracts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

@@ -5,7 +5,7 @@ using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
-using Hikkaba.Services.Contracts;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.HomeViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;

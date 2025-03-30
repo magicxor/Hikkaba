@@ -2,7 +2,6 @@
 
 [*]
 indent_style = space
-indent_size = 4
 end_of_line = crlf
 charset = utf-8
 trim_trailing_whitespace = true
@@ -328,5 +327,5 @@ roslynator_binary_operator_new_line = before
 roslynator_conditional_operator_new_line = before
 roslynator_null_conditional_operator_new_line = before
 
-[*.{json,env,yml,yaml,xml,xsd,html,cshtml,props,sln,resx}]
+[*.{json,env,yml,yaml,xml,xsd,html,cshtml,csproj,props,sln,resx}]
 indent_size = 2

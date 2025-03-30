@@ -17,17 +17,12 @@ public class DateTimeKindSensitiveBinderProvider : IModelBinderProvider
     /// <inheritdoc />
     public IModelBinder? GetBinder(ModelBinderProviderContext context)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-        else if ((!context.Metadata.IsComplexType) && (context.Metadata.ModelType == typeof(DateTime) || context.Metadata.ModelType == typeof(DateTime?)))
+        if (!context.Metadata.IsComplexType
+            && (context.Metadata.ModelType == typeof(DateTime) || context.Metadata.ModelType == typeof(DateTime?)))
         {
             return new DateTimeKindSensitiveBinder(context.Metadata.ModelType, _loggerFactory);
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 }

@@ -7,14 +7,14 @@ namespace Hikkaba.Web.Mappings;
 
 [Mapper]
 [UseStaticMapper(typeof(AttachmentMapper))]
-[UseStaticMapper(typeof(Repositories.Mappings.IpAddressMapper))]
+[UseStaticMapper(typeof(Hikkaba.Infrastructure.Mappings.IpAddressMapper))]
 public static partial class PostMapper
 {
-    public static partial PostDetailsViewModel ToViewModel(this PostViewRm model);
+    public static partial PostDetailsViewModel ToViewModel(this PostDetailsModel model);
 
-    [MapperIgnoreSource(nameof(PostPreviewRm.CreatedBy))]
-    [MapperIgnoreSource(nameof(PostPreviewRm.ModifiedBy))]
-    public static partial PostDetailsViewModel ToViewModel(this PostPreviewRm model);
+    [MapperIgnoreSource(nameof(PostPreviewModel.CreatedBy))]
+    [MapperIgnoreSource(nameof(PostPreviewModel.ModifiedBy))]
+    public static partial PostDetailsViewModel ToViewModel(this PostPreviewModel model);
 
-    public static partial IReadOnlyList<PostDetailsViewModel> ToViewModels(this IReadOnlyList<PostViewRm> models);
+    public static partial IReadOnlyList<PostDetailsViewModel> ToViewModels(this IReadOnlyList<PostDetailsModel> models);
 }

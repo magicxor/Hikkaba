@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;

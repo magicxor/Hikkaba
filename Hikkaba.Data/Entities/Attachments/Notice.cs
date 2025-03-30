@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Entities.Attachments.Base;
-using AttachmentType = Hikkaba.Common.Enums.AttachmentType;
+using AttachmentType = Hikkaba.Shared.Enums.AttachmentType;
 
 namespace Hikkaba.Data.Entities.Attachments;
 

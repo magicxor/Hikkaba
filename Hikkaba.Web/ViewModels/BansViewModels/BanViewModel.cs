@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using Hikkaba.Common.Constants;
-using Hikkaba.Common.Enums;
+using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Enums;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 
@@ -32,11 +32,11 @@ public class BanViewModel
 
     [Display(Name = @"Lower IP address")]
     [MaxLength(Defaults.MaxIpAddressStringLength)]
-    public required IPAddress BannedCidrLowerIpAddress { get; set; }
+    public required IPAddress? BannedCidrLowerIpAddress { get; set; }
 
     [Display(Name = @"Upper IP address")]
     [MaxLength(Defaults.MaxIpAddressStringLength)]
-    public required IPAddress BannedCidrUpperIpAddress { get; set; }
+    public required IPAddress? BannedCidrUpperIpAddress { get; set; }
 
     [Display(Name = @"Country")]
     public string? CountryIsoCode { get; set; }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Hikkaba.Common.Constants;
-using Hikkaba.Common.Enums;
+using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Enums;
 
 namespace Hikkaba.Data.Entities;
 

@@ -2,19 +2,20 @@
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Riok.Mapperly.Abstractions;
+using BanPreviewModel = Hikkaba.Infrastructure.Models.Ban.BanPreviewModel;
 
 namespace Hikkaba.Web.Mappings;
 
 [Mapper]
-[UseStaticMapper(typeof(Repositories.Mappings.IpAddressMapper))]
+[UseStaticMapper(typeof(Hikkaba.Infrastructure.Mappings.IpAddressMapper))]
 public static partial class BanMapper
 {
-    public static partial BanPreviewModel ToViewModel(this BanPreviewRm model);
+    public static partial ViewModels.BansViewModels.BanPreviewModel ToViewModel(this BanPreviewModel model);
 
-    [MapperIgnoreSource(nameof(BanViewRm.CategoryId))]
-    [MapperIgnoreSource(nameof(BanViewRm.CreatedById))]
-    [MapperIgnoreSource(nameof(BanViewRm.ModifiedById))]
-    public static partial BanViewModel ToViewModel(this BanViewRm model);
+    [MapperIgnoreSource(nameof(BanDetailsModel.CategoryId))]
+    [MapperIgnoreSource(nameof(BanDetailsModel.CreatedById))]
+    [MapperIgnoreSource(nameof(BanDetailsModel.ModifiedById))]
+    public static partial BanViewModel ToViewModel(this BanDetailsModel model);
 
-    public static partial IReadOnlyList<BanViewModel> ToViewModels(this IReadOnlyList<BanViewRm> models);
+    public static partial IReadOnlyList<BanViewModel> ToViewModels(this IReadOnlyList<BanDetailsModel> models);
 }
