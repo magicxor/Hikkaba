@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Hikkaba.Data.Entities.Attachments.Base;
 using Hikkaba.Data.Extensions;
 using Hikkaba.Data.Utils;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Data.Context;
 
 public sealed class ApplicationDbContext
-    : IdentityDbContext<ApplicationUser, ApplicationRole, int>
+    : IdentityDbContext<ApplicationUser, ApplicationRole, int>, IDataProtectionKeyContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -136,4 +137,5 @@ public sealed class ApplicationDbContext
     public DbSet<Notice> Notices { get; set; } = null!;
     public DbSet<Picture> Pictures { get; set; } = null!;
     public DbSet<Video> Videos { get; set; } = null!;
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 }

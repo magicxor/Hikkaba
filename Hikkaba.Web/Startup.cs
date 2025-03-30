@@ -124,7 +124,7 @@ public class Startup
                 })
                 .SetApplicationName("Hikkaba")
                 .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(hikkabaConfiguration))
-                .PersistKeysToFileSystem(new DirectoryInfo(hikkabaConfiguration.KeysetDirectoryPath));
+                .PersistKeysToDbContext<ApplicationDbContext>();
 
             // Captcha
             services.AddDNTCaptcha(options => options
