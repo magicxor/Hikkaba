@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
 using Hikkaba.Common.Constants;
+using Hikkaba.Common.Enums;
 using Hikkaba.Common.Extensions;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Post;
@@ -97,6 +98,8 @@ public class PostsController : BaseMvcController
 
                 var postId = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments, cancellationToken);
 
+                _logger.LogDebug(LogEventIds.PostCreated, "Post created. PostId: {PostId}, ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", postId, viewModel.ThreadId, viewModel.CategoryAlias);
+
                 return Redirect(
                     Url.Action("Details",
                         "Threads",
@@ -109,7 +112,7 @@ public class PostsController : BaseMvcController
             catch (Exception e)
             {
                 _logger.LogError(
-                    EventIdentifiers.PostCreateError.ToEventId(),
+                    LogEventIds.PostCreateError,
                     e,
                     "Error creating post in category '{CategoryAlias}'. ThreadId: {ThreadId}, Message length: {MessageLength}, AttachmentsCount: {AttachmentsCount}",
                     categoryAlias,

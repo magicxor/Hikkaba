@@ -1,5 +1,6 @@
 using System.Net;
 using Hikkaba.Common.Constants;
+using Hikkaba.Common.Enums;
 using Hikkaba.Common.Exceptions;
 using Hikkaba.Common.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
@@ -22,8 +23,6 @@ public class ErrorController : Controller
 
     public IActionResult PageNotFound()
     {
-        _logger.LogDebug(EventIdentifiers.HttpNotFound.ToEventId(), "Page not found");
-
         return Details(PageNotFoundMessage, HttpStatusCode.NotFound);
     }
 
@@ -32,7 +31,7 @@ public class ErrorController : Controller
         var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
         var exception = feature?.Error;
         var statusCode = HttpContext.Response.StatusCode;
-        var eventId = statusCode == HttpStatusCode.OK.ToInt() ? EventIdentifiers.HttpInternalError.ToEventId() : new EventId(statusCode);
+        var eventId = statusCode == HttpStatusCode.OK.ToInt() ? LogEventIds.InternalError : new EventId(statusCode);
 
         if (exception != null)
         {

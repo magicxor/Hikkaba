@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
 using Hikkaba.Common.Constants;
+using Hikkaba.Common.Enums;
 using Hikkaba.Common.Extensions;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
@@ -112,6 +113,8 @@ public class ThreadsController : BaseMvcController
 
                 var createThreadResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
 
+                _logger.LogDebug(LogEventIds.ThreadCreated, "Thread created. ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", createThreadResult.ThreadId, category.Alias);
+
                 return RedirectToAction(
                     "Details",
                     "Threads",
@@ -124,7 +127,7 @@ public class ThreadsController : BaseMvcController
             catch (Exception ex)
             {
                 _logger.LogError(
-                    EventIdentifiers.ThreadCreateError.ToEventId(),
+                    LogEventIds.ThreadCreateError,
                     ex,
                     "Error creating thread in category '{CategoryAlias}'. Title: '{Title}', Message length: {MessageLength}, Attachments count: {AttachmentsCount}",
                     categoryAlias,
