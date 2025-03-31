@@ -123,23 +123,35 @@ public class ThreadRepository : IThreadRepository
             : threadQuery.Where(thread => !thread.IsDeleted && !thread.Category.IsDeleted);
 
         var resultQuery = threadQuery
+            .Select(thread => new
+            {
+                Thread = thread,
+                Category = thread.Category,
+                BumpLimit = thread.BumpLimit > 0 ? thread.BumpLimit : thread.Category.DefaultBumpLimit,
+                PostCount = thread.Posts.Count(post => filter.IncludeDeleted || !post.IsDeleted),
+            })
             .Select(x => new
             {
-                Thread = x,
+                Thread = x.Thread,
                 Category = x.Category,
-                LastPostCreatedAt = x.Posts.Where(p => !p.IsSageEnabled && !p.IsDeleted).Max(p => p.CreatedAt),
-                Posts = x.Posts
+                LastPostCreatedAt = x.Thread.Posts
+                    .OrderBy(p => p.CreatedAt)
+                    .ThenBy(p => p.Id)
+                    .Take(x.BumpLimit)
+                    .Where(p => !p.IsSageEnabled && !p.IsDeleted)
+                    .Max(p => p.CreatedAt),
+                Posts = x.Thread.Posts
                     .Where(p => filter.IncludeDeleted || !p.IsDeleted)
                     .OrderBy(p => p.CreatedAt)
                     /* take the OP-post (the first post) */
                     .Take(1)
-                    .Union(x.Posts
+                    .Union(x.Thread.Posts
                         .Where(p => filter.IncludeDeleted || !p.IsDeleted)
                         .OrderByDescending(p => p.CreatedAt)
                         /* take the 3 last posts */
                         .Take(Defaults.LatestPostsCountInThreadPreview))
                     .ToList(),
-                PostCount = x.Posts.Count(p => filter.IncludeDeleted || !p.IsDeleted),
+                PostCount = x.PostCount,
             })
             .Where(thread => filter.IncludeDeleted || thread.PostCount > 0)
             .Select(g => new ThreadPreviewModel

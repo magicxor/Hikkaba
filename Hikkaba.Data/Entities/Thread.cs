@@ -32,6 +32,10 @@ public class Thread
     public bool IsClosed { get; set; }
 
     [Required]
+    public bool IsCyclic { get; set; }
+
+    [Required]
+    [Range(1, int.MaxValue)]
     public int BumpLimit { get; set; }
 
     [Required]

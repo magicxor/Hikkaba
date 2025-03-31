@@ -34,6 +34,7 @@ public class Category
     public bool IsHidden { get; set; }
 
     [Required]
+    [Range(1, int.MaxValue)]
     public int DefaultBumpLimit { get; set; }
 
     [Required]

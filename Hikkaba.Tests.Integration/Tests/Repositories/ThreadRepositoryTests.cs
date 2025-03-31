@@ -218,7 +218,8 @@ public sealed class ThreadRepositoryTests
         {
             PageNumber = 1,
             PageSize = 10,
-            OrderBy = [
+            OrderBy =
+            [
                 new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
@@ -346,17 +347,20 @@ public sealed class ThreadRepositoryTests
                 ShowThreadLocalUserHash = false,
                 Category = category1,
                 CreatedBy = null,
-                Posts = [new Post
-                {
-                    BlobContainerId = new Guid("CC8B3B30-A82B-4634-BE98-17E6FE646E1A"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                }],
+                Posts =
+                [
+                    new Post
+                    {
+                        BlobContainerId = new Guid("CC8B3B30-A82B-4634-BE98-17E6FE646E1A"),
+                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                    }
+                ],
             };
             var anotherCategoryThread = new Thread
             {
@@ -369,17 +373,20 @@ public sealed class ThreadRepositoryTests
                 ShowThreadLocalUserHash = false,
                 Category = category2,
                 CreatedBy = null,
-                Posts = [new Post
-                {
-                    BlobContainerId = new Guid("8B6789E0-9086-456F-94AA-AC070DF868B5"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                }],
+                Posts =
+                [
+                    new Post
+                    {
+                        BlobContainerId = new Guid("8B6789E0-9086-456F-94AA-AC070DF868B5"),
+                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                    }
+                ],
             };
 
             var threads = Enumerable
@@ -414,18 +421,20 @@ public sealed class ThreadRepositoryTests
                         UserAgent = "Firefox",
                         Thread = t,
                     })
-                    .Union([new Post
-                    {
-                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
-                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
-                        IsSageEnabled = false,
-                        IsDeleted = true,
-                        MessageText = $"deleted post",
-                        MessageHtml = $"deleted post",
-                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                        UserAgent = "Firefox",
-                        Thread = t,
-                    }])
+                    .Union([
+                        new Post
+                        {
+                            BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+                            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
+                            IsSageEnabled = false,
+                            IsDeleted = true,
+                            MessageText = $"deleted post",
+                            MessageHtml = $"deleted post",
+                            UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                            UserAgent = "Firefox",
+                            Thread = t,
+                        }
+                    ])
                     .ToList())
                 .ToList();
             seedDbContext.Posts.AddRange(posts);
@@ -441,7 +450,8 @@ public sealed class ThreadRepositoryTests
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                OrderBy = [
+                OrderBy =
+                [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
@@ -582,17 +592,20 @@ public sealed class ThreadRepositoryTests
                 ShowThreadLocalUserHash = false,
                 Category = category1,
                 CreatedBy = null,
-                Posts = [new Post
-                {
-                    BlobContainerId = new Guid("4C708859-478D-451F-9EFD-315EAC9ABCAF"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                }],
+                Posts =
+                [
+                    new Post
+                    {
+                        BlobContainerId = new Guid("4C708859-478D-451F-9EFD-315EAC9ABCAF"),
+                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                    }
+                ],
             };
             var anotherCategoryThread = new Thread
             {
@@ -605,17 +618,20 @@ public sealed class ThreadRepositoryTests
                 ShowThreadLocalUserHash = false,
                 Category = category2,
                 CreatedBy = null,
-                Posts = [new Post
-                {
-                    BlobContainerId = new Guid("B4041A4C-10CD-4332-AFA2-7D04A9D130DD"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                }],
+                Posts =
+                [
+                    new Post
+                    {
+                        BlobContainerId = new Guid("B4041A4C-10CD-4332-AFA2-7D04A9D130DD"),
+                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                    }
+                ],
             };
 
             var threads = Enumerable
@@ -650,18 +666,20 @@ public sealed class ThreadRepositoryTests
                         UserAgent = "Firefox",
                         Thread = t,
                     })
-                    .Union([new Post
-                    {
-                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
-                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
-                        IsSageEnabled = false,
-                        IsDeleted = true,
-                        MessageText = $"deleted post",
-                        MessageHtml = $"deleted post",
-                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                        UserAgent = "Firefox",
-                        Thread = t,
-                    }])
+                    .Union([
+                        new Post
+                        {
+                            BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+                            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
+                            IsSageEnabled = false,
+                            IsDeleted = true,
+                            MessageText = $"deleted post",
+                            MessageHtml = $"deleted post",
+                            UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                            UserAgent = "Firefox",
+                            Thread = t,
+                        }
+                    ])
                     .ToList())
                 .ToList();
             seedDbContext.Posts.AddRange(posts);
@@ -677,7 +695,8 @@ public sealed class ThreadRepositoryTests
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                OrderBy = [
+                OrderBy =
+                [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
@@ -826,17 +845,20 @@ public sealed class ThreadRepositoryTests
                 ShowThreadLocalUserHash = false,
                 Category = category1,
                 CreatedBy = null,
-                Posts = [new Post
-                {
-                    BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                }],
+                Posts =
+                [
+                    new Post
+                    {
+                        BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
+                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                    }
+                ],
             };
             var anotherCategoryThread = new Thread
             {
@@ -849,17 +871,20 @@ public sealed class ThreadRepositoryTests
                 ShowThreadLocalUserHash = false,
                 Category = category2,
                 CreatedBy = null,
-                Posts = [new Post
-                {
-                    BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                }],
+                Posts =
+                [
+                    new Post
+                    {
+                        BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
+                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                    }
+                ],
             };
 
             var threads = Enumerable
@@ -920,18 +945,20 @@ public sealed class ThreadRepositoryTests
                         UserAgent = "Firefox",
                         Thread = t,
                     })
-                    .Union([new Post
-                    {
-                        BlobContainerId = GuidGenerator.GenerateSeededGuid(),
-                        CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
-                        IsSageEnabled = false,
-                        IsDeleted = true,
-                        MessageText = $"deleted post",
-                        MessageHtml = $"deleted post",
-                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                        UserAgent = "Firefox",
-                        Thread = t,
-                    }])
+                    .Union([
+                        new Post
+                        {
+                            BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+                            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
+                            IsSageEnabled = false,
+                            IsDeleted = true,
+                            MessageText = $"deleted post",
+                            MessageHtml = $"deleted post",
+                            UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                            UserAgent = "Firefox",
+                            Thread = t,
+                        }
+                    ])
                     .ToList())
                 .ToList();
             seedDbContext.Posts.AddRange(posts);
@@ -947,7 +974,8 @@ public sealed class ThreadRepositoryTests
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                OrderBy = [
+                OrderBy =
+                [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
@@ -986,6 +1014,249 @@ public sealed class ThreadRepositoryTests
                 // check that posts are sorted by date ascending
                 Assert.That(thread.Posts, Is.Ordered.By(nameof(PostDetailsModel.CreatedAt)).Ascending);
             }
+        }
+    }
+
+    [CancelAfter(TestDefaults.TestTimeout)]
+    [Test]
+    public async Task ListThreadPreviewsPaginatedAsync_WhenBumpLimitReached_ReturnsCorrectResult(CancellationToken cancellationToken)
+    {
+        void AddPosts(Thread thread, DateTime startingAt, int count, bool isSageEnabled, bool isDeleted)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                thread.Posts.Add(new Post
+                {
+                    BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+                    CreatedAt = startingAt.AddSeconds(i),
+                    IsSageEnabled = isSageEnabled,
+                    IsDeleted = isDeleted,
+                    MessageText = $"test post {i} in thread {thread.Title}",
+                    MessageHtml = $"test post {i} in thread {thread.Title}",
+                    UserIpAddress = IPAddress.Parse($"127.0.0.{i}").GetAddressBytes(),
+                    UserAgent = "Firefox",
+                });
+            }
+        }
+
+        const int bumpLimit = 5;
+        const int pageNumber = 1;
+        const int pageSize = 10;
+
+        // Arrange
+        await using var customAppFactory = await CreateAppFactoryAsync();
+        using var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var seedTimeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+        var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
+        {
+            await seedDbContext.Database.MigrateAsync(cancellationToken);
+        }
+
+        // Seed
+        var admin = new ApplicationUser
+        {
+            UserName = "admin",
+            NormalizedUserName = "ADMIN",
+            Email = "admin@example.com",
+            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+            EmailConfirmed = true,
+            SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+            ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+        };
+        seedDbContext.Users.Add(admin);
+
+        var board = new Board
+        {
+            Name = "Test Board Fizz",
+        };
+        seedDbContext.Boards.Add(board);
+
+        var category1 = new Category
+        {
+            IsDeleted = false,
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            ModifiedAt = null,
+            Alias = "b",
+            Name = "Random Foo",
+            IsHidden = false,
+            DefaultBumpLimit = 500,
+            DefaultShowThreadLocalUserHash = false,
+            Board = board,
+            CreatedBy = admin,
+        };
+        var category2 = new Category
+        {
+            IsDeleted = false,
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            ModifiedAt = null,
+            Alias = "a",
+            Name = "Random Bar",
+            IsHidden = false,
+            DefaultBumpLimit = 500,
+            DefaultShowThreadLocalUserHash = false,
+            Board = board,
+            CreatedBy = admin,
+        };
+        seedDbContext.Categories.AddRange(category1, category2);
+
+        var deletedThread = new Thread
+        {
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            Title = "deleted thread",
+            IsPinned = true,
+            IsClosed = true,
+            IsDeleted = true,
+            BumpLimit = 500,
+            ShowThreadLocalUserHash = false,
+            Category = category1,
+            CreatedBy = null,
+            Posts =
+            [
+                new Post
+                {
+                    BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
+                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                    IsSageEnabled = false,
+                    IsDeleted = false,
+                    MessageText = $"test post in deleted thread",
+                    MessageHtml = $"test post in deleted thread",
+                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                    UserAgent = "Firefox",
+                }
+            ],
+        };
+        var anotherCategoryThread = new Thread
+        {
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            Title = "another category thread",
+            IsPinned = false,
+            IsClosed = false,
+            IsDeleted = false,
+            BumpLimit = 500,
+            ShowThreadLocalUserHash = false,
+            Category = category2,
+            CreatedBy = null,
+            Posts =
+            [
+                new Post
+                {
+                    BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
+                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                    IsSageEnabled = false,
+                    IsDeleted = false,
+                    MessageText = $"test post in deleted thread",
+                    MessageHtml = $"test post in deleted thread",
+                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                    UserAgent = "Firefox",
+                }
+            ],
+        };
+        var thread1 = new Thread
+        {
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(1),
+            Title = "thread with bump limit 1",
+            BumpLimit = bumpLimit,
+            Category = category1,
+        };
+        var thread2 = new Thread
+        {
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(2),
+            Title = "thread with bump limit 2",
+            BumpLimit = bumpLimit,
+            Category = category1,
+        };
+        var thread3 = new Thread
+        {
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(3),
+            Title = "thread with bump limit 3",
+            BumpLimit = bumpLimit,
+            Category = category1,
+        };
+        var thread4 = new Thread
+        {
+            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(4),
+            Title = "thread with bump limit 4",
+            BumpLimit = bumpLimit,
+            Category = category1,
+        };
+        List<Thread> allThreads = [deletedThread, anotherCategoryThread, thread1, thread2, thread3, thread4];
+        seedDbContext.Threads.AddRange(allThreads);
+
+        // these threads contain the newest posts, but they aren't included in our query
+        AddPosts(deletedThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false);
+        AddPosts(anotherCategoryThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false);
+
+        // thread1 contains several old posts before bump limit and several new posts after bump limit, which shouldn't affect the result
+        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(-1), bumpLimit, false, false);
+        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1), 2, false, false);
+
+        // thread2 contains several new posts
+        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(1), 1, true, false);
+        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(2), 1, false, true);
+        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1), bumpLimit, false, false);
+
+        // thread3 contains even newer posts
+        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(3), 1, true, false);
+        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(4), 1, false, true);
+        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddSeconds(1), bumpLimit, false, false);
+
+        // thread4 contains a lot of posts
+        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime, bumpLimit + 10, false, false);
+        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(5), bumpLimit + 10, false, false);
+
+        await seedDbContext.SaveChangesAsync(cancellationToken);
+
+        // Act
+        using var actScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var threadRepository = actScope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var actualThreadPreviews = await threadRepository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewFilter
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            OrderBy =
+            [
+                new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
+            ],
+            CategoryAlias = "b",
+            IncludeDeleted = false,
+        }, cancellationToken);
+
+        // Assert
+        Assert.That(actualThreadPreviews, Is.Not.Null);
+
+        Assert.That(actualThreadPreviews.Data, Has.Count.EqualTo(4));
+
+        Assert.That(actualThreadPreviews.Data[0].Title, Is.EqualTo(thread3.Title));
+        Assert.That(actualThreadPreviews.Data[1].Title, Is.EqualTo(thread2.Title));
+        Assert.That(actualThreadPreviews.Data[2].Title, Is.EqualTo(thread4.Title));
+        Assert.That(actualThreadPreviews.Data[3].Title, Is.EqualTo(thread1.Title));
+
+        // check that category is correct
+        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
+
+        // check that there are no deleted threads
+        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.IsDeleted == false));
+
+        // check that there are no deleted posts
+        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => p.IsDeleted == false)));
+
+        // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
+        Assert.That(actualThreadPreviews.Data, Is.Ordered
+            .By(nameof(ThreadPreviewModel.IsPinned))
+            .Descending
+            .Then
+            .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+            .Descending);
+
+        foreach (var thread in actualThreadPreviews.Data)
+        {
+            // check that posts are sorted by date ascending
+            Assert.That(thread.Posts, Is.Ordered.By(nameof(PostDetailsModel.CreatedAt)).Ascending);
         }
     }
 }
