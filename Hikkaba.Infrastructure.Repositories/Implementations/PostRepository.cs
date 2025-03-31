@@ -31,6 +31,7 @@ public class PostRepository : IPostRepository
         CancellationToken cancellationToken)
     {
         return await _applicationDbContext.Posts
+            .TagWithCallSite()
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
             .Include(post => post.Audios)
@@ -52,6 +53,7 @@ public class PostRepository : IPostRepository
         CancellationToken cancellationToken)
     {
         var query = _applicationDbContext.Posts
+            .TagWithCallSite()
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
             .Include(post => post.Audios)
@@ -82,6 +84,7 @@ public class PostRepository : IPostRepository
         CancellationToken cancellationToken)
     {
         var query = _applicationDbContext.Posts
+            .TagWithCallSite()
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
             .Include(post => post.Audios)
@@ -128,6 +131,7 @@ public class PostRepository : IPostRepository
         };
 
         var postsToReply = await _applicationDbContext.Posts
+            .TagWithCallSite()
             .Where(p => p.ThreadId == createRequestModel.ThreadId && createRequestModel.MentionedPosts.Contains(p.Id))
             .Select(p => new PostToReply
             {

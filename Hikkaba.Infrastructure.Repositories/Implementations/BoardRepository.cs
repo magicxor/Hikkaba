@@ -17,6 +17,7 @@ public sealed class BoardRepository : IBoardRepository
     public async Task<BoardDetailsModel> GetBoardAsync()
     {
         return await _applicationDbContext.Boards
+            .TagWithCallSite()
             .Select(b => new BoardDetailsModel
             {
                 Id = b.Id,
@@ -29,6 +30,7 @@ public sealed class BoardRepository : IBoardRepository
     public async Task EditBoardAsync(string boardName)
     {
         await _applicationDbContext.Boards
+            .TagWithCallSite()
             .ExecuteUpdateAsync(setProp => setProp
                 .SetProperty(board => board.Name, boardName));
     }

@@ -37,6 +37,7 @@ public class ThreadRepository : IThreadRepository
     public async Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, bool includeDeleted, CancellationToken cancellationToken)
     {
         var posts = await _applicationDbContext.Posts
+            .TagWithCallSite()
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
             .Include(post => post.Audios)
@@ -53,6 +54,7 @@ public class ThreadRepository : IThreadRepository
             .ToListAsync(cancellationToken);
 
         var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
             .Include(thread => thread.Category)
             .Where(thread => thread.Id == threadId
                              && (includeDeleted || (!thread.IsDeleted && !thread.Category.IsDeleted)))
@@ -84,6 +86,7 @@ public class ThreadRepository : IThreadRepository
     public async Task<IReadOnlyList<long>> ListAllThreadIdsAsync(CancellationToken cancellationToken)
     {
         return await _applicationDbContext.Threads
+            .TagWithCallSite()
             .OrderByDescending(thread => thread.Id)
             .Select(thread => thread.Id)
             .ToListAsync(cancellationToken);
@@ -94,6 +97,7 @@ public class ThreadRepository : IThreadRepository
         CancellationToken cancellationToken)
     {
         var threadQuery = _applicationDbContext.Threads
+            .TagWithCallSite()
             .Include(thread => thread.Category)
             .Include(thread => thread.Posts)
             .ThenInclude(post => post.Audios)
@@ -273,6 +277,7 @@ public class ThreadRepository : IThreadRepository
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
         var category = await _applicationDbContext.Categories
+            .TagWithCallSite()
             .OrderBy(x => x.Id)
             .FirstOrDefaultAsync(x => x.Alias == createRequestModel.CategoryAlias && !x.IsDeleted, cancellationToken);
 

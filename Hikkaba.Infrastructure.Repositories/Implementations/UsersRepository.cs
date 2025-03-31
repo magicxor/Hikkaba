@@ -76,6 +76,7 @@ public class UsersRepository
     public async Task SetUserDeletedAsync(int userId, bool isDeleted)
     {
         await _applicationDbContext.Users
+            .TagWithCallSite()
             .Where(user => user.Id == userId)
             .ExecuteUpdateAsync(setProp =>
                 setProp.SetProperty(user => user.IsDeleted, isDeleted));

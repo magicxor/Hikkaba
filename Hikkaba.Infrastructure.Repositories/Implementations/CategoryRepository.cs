@@ -28,6 +28,7 @@ public sealed class CategoryRepository : ICategoryRepository
     public async Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(CategoryFilter categoryFilter)
     {
         var query = _applicationDbContext.Categories
+            .TagWithCallSite()
             .Include(category => category.CreatedBy)
             .Include(category => category.ModifiedBy)
             .AsQueryable();
@@ -52,6 +53,7 @@ public sealed class CategoryRepository : ICategoryRepository
     public async Task<CategoryDetailsModel?> GetCategoryAsync(string categoryAlias, bool includeDeleted)
     {
         return await _applicationDbContext.Categories
+            .TagWithCallSite()
             .Where(c => c.Alias == categoryAlias && (includeDeleted || !c.IsDeleted))
             .OrderBy(c => c.Id)
             .GetDetailsModel()
@@ -63,6 +65,7 @@ public sealed class CategoryRepository : ICategoryRepository
         var user = _userContext.GetRequiredUser();
         var utcNow = DateTime.UtcNow;
         var boardId = await _applicationDbContext.Boards
+            .TagWithCallSite()
             .Select(x => x.Id)
             .OrderBy(x => x)
             .FirstAsync();
@@ -90,6 +93,7 @@ public sealed class CategoryRepository : ICategoryRepository
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 
         await _applicationDbContext.Categories
+            .TagWithCallSite()
             .Where(c => c.Id == categoryEditRequest.Id)
             .ExecuteUpdateAsync(setProp => setProp
                 .SetProperty(c => c.Alias, categoryEditRequest.Alias)
@@ -107,6 +111,7 @@ public sealed class CategoryRepository : ICategoryRepository
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 
         await _applicationDbContext.Categories
+            .TagWithCallSite()
             .Where(category => category.Id == categoryId)
             .ExecuteUpdateAsync(setProp =>
                 setProp

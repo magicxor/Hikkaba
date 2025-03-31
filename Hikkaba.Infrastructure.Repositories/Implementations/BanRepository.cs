@@ -50,6 +50,7 @@ public sealed class BanRepository : IBanRepository
         var userIp = userIpAddress;
 
         var activeBan = await _applicationDbContext.Bans
+            .TagWithCallSite()
             .Where(
                 ban =>
                     (ban.Category == null
@@ -88,9 +89,10 @@ public sealed class BanRepository : IBanRepository
         if (!string.IsNullOrEmpty(restrictionsRequestModel.CategoryAlias))
         {
             var category = await _applicationDbContext.Categories
-                    .Where(c => !c.IsDeleted && c.Alias == restrictionsRequestModel.CategoryAlias)
-                    .OrderBy(c => c.Id)
-                    .FirstOrDefaultAsync();
+                .TagWithCallSite()
+                .Where(c => !c.IsDeleted && c.Alias == restrictionsRequestModel.CategoryAlias)
+                .OrderBy(c => c.Id)
+                .FirstOrDefaultAsync();
             if (category is null)
             {
                 return new PostingRestrictionsResponseModel
@@ -103,9 +105,10 @@ public sealed class BanRepository : IBanRepository
         if (restrictionsRequestModel.ThreadId.HasValue)
         {
             var thread = await _applicationDbContext.Threads
-                    .Where(t => !t.Category.IsDeleted && !t.IsDeleted && t.Id == restrictionsRequestModel.ThreadId)
-                    .OrderBy(t => t.Id)
-                    .FirstOrDefaultAsync();
+                .TagWithCallSite()
+                .Where(t => !t.Category.IsDeleted && !t.IsDeleted && t.Id == restrictionsRequestModel.ThreadId)
+                .OrderBy(t => t.Id)
+                .FirstOrDefaultAsync();
             if (thread is null)
             {
                 return new PostingRestrictionsResponseModel
@@ -126,6 +129,7 @@ public sealed class BanRepository : IBanRepository
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
         var utcFiveMinutesAgo = utcNow.AddMinutes(-5);
         var postsFromIpWithin5MinutesCount = await _applicationDbContext.Posts
+            .TagWithCallSite()
             .IgnoreQueryFilters()
             .Where(p => p.UserIpAddress == userIp && p.CreatedAt >= utcFiveMinutesAgo)
             .CountAsync();
@@ -157,6 +161,7 @@ public sealed class BanRepository : IBanRepository
     public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter)
     {
         var query = _applicationDbContext.Bans
+            .TagWithCallSite()
             .AsQueryable();
 
         query = banFilter.IncludeDeleted
@@ -251,6 +256,7 @@ public sealed class BanRepository : IBanRepository
     public async Task<BanDetailsModel?> GetBanAsync(int banId)
     {
         var ban = await _applicationDbContext.Bans
+            .TagWithCallSite()
             .Where(ban => ban.Id == banId)
             .Select(ban => new BanDetailsModel
             {
@@ -288,6 +294,7 @@ public sealed class BanRepository : IBanRepository
         if (relatedPostId != null)
         {
             var banExists = await _applicationDbContext.Bans
+                .TagWithCallSite()
                 .AnyAsync(ban => !ban.IsDeleted && ban.RelatedPostId == relatedPostId);
             if (banExists)
             {
@@ -324,6 +331,7 @@ public sealed class BanRepository : IBanRepository
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 
         await _applicationDbContext.Bans
+            .TagWithCallSite()
             .Where(ban => ban.Id == banId)
             .ExecuteUpdateAsync(setProp =>
                 setProp
