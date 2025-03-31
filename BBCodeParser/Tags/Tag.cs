@@ -5,12 +5,12 @@ namespace BBCodeParser.Tags;
 
 public partial class Tag
 {
-    private static readonly Regex JsXssSecureRegex = JsXssSecureRegexClass();
+    private static readonly Regex JsXssSecureRegex = GetJsXssSecureRegex();
 
     private static readonly Regex[] EscapeRegexes =
     {
-        EscapeRegex1(),
-        EscapeRegex2(),
+        GetEscapeRegex1(),
+        GetEscapeRegex2(),
     };
 
     private string OpenTag { get; }
@@ -104,11 +104,11 @@ public partial class Tag
     }
 
     [GeneratedRegex("(javascript|data):", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, 500)]
-    private static partial Regex JsXssSecureRegexClass();
+    private static partial Regex GetJsXssSecureRegex();
 
     [GeneratedRegex(@"""|'|`|\n|\s|\t|\r|\<|\>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, 500)]
-    private static partial Regex EscapeRegex1();
+    private static partial Regex GetEscapeRegex1();
 
     [GeneratedRegex(@"&#[\d\w]+;?", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking, 500)]
-    private static partial Regex EscapeRegex2();
+    private static partial Regex GetEscapeRegex2();
 }
