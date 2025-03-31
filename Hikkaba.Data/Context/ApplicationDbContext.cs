@@ -95,15 +95,12 @@ public sealed class ApplicationDbContext
             .WithMany(e => e.Videos)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<PostToReply>()
-            .HasOne(e => e.Post)
-            .WithMany(e => e.Replies)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<PostToReply>()
-            .HasOne(e => e.Reply)
-            .WithMany(e => e.ParentPosts)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Post>()
+            .HasMany(e => e.Replies)
+            .WithMany(e => e.MentionedPosts)
+            .UsingEntity<PostToReply>(
+                l => l.HasOne<Post>(nameof(PostToReply.Post)).WithMany(x => x.RepliesToThisMentionedPost).OnDelete(DeleteBehavior.Cascade),
+                r => r.HasOne<Post>(nameof(PostToReply.Reply)).WithMany(x => x.MentionedPostsToThisReply).OnDelete(DeleteBehavior.Restrict));
 
         // indices
         builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();

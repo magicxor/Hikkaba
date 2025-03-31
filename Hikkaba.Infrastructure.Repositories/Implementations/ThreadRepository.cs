@@ -45,7 +45,7 @@ public class ThreadRepository : IThreadRepository
             .Include(post => post.Notices)
             .Include(post => post.Pictures)
             .Include(post => post.Videos)
-            .Include(post => post.Replies)
+            .Include(post => post.RepliesToThisMentionedPost)
             .Where(p => p.ThreadId == threadId
                         && (includeDeleted || (!p.IsDeleted && !p.Thread.IsDeleted && !p.Thread.Category.IsDeleted)))
             .OrderBy(post => post.CreatedAt)
@@ -240,7 +240,7 @@ public class ThreadRepository : IThreadRepository
                     ThreadShowThreadLocalUserHash = g.Thread.ShowThreadLocalUserHash,
                     CategoryAlias = g.Category.Alias,
                     CategoryId = g.Category.Id,
-                    Replies = post.Replies
+                    Replies = post.RepliesToThisMentionedPost
                         .Select(r => r.ReplyId)
                         .ToList(),
                 })

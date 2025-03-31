@@ -11,6 +11,5 @@ public static class ContextConfiguration
         => sql
             .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
             .AddWindowFunctionsSupport()
-            .AddBulkOperationSupport()
             .AddTableHintSupport();
 }

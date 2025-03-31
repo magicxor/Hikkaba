@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hikkaba.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250330031106_Init")]
+    [Migration("20250331091510_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -501,6 +501,25 @@ namespace Hikkaba.Data.Migrations
                     b.ToTable("Threads");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Xml")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DataProtectionKeys");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -606,325 +625,6 @@ namespace Hikkaba.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateOnly>", b =>
-                {
-                    b.Property<DateOnly>("Column1")
-                        .HasColumnType("date");
-
-                    b.ToTable("#TempTable<DateOnly>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateOnly?>", b =>
-                {
-                    b.Property<DateOnly?>("Column1")
-                        .HasColumnType("date");
-
-                    b.ToTable("#TempTable<DateOnly?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTime>", b =>
-                {
-                    b.Property<DateTime>("Column1")
-                        .HasColumnType("datetime2");
-
-                    b.ToTable("#TempTable<DateTime>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTime?>", b =>
-                {
-                    b.Property<DateTime?>("Column1")
-                        .HasColumnType("datetime2");
-
-                    b.ToTable("#TempTable<DateTime?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTimeOffset>", b =>
-                {
-                    b.Property<DateTimeOffset>("Column1")
-                        .HasColumnType("datetimeoffset");
-
-                    b.ToTable("#TempTable<DateTimeOffset>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<DateTimeOffset?>", b =>
-                {
-                    b.Property<DateTimeOffset?>("Column1")
-                        .HasColumnType("datetimeoffset");
-
-                    b.ToTable("#TempTable<DateTimeOffset?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<Guid>", b =>
-                {
-                    b.Property<Guid>("Column1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.ToTable("#TempTable<Guid>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<Guid?>", b =>
-                {
-                    b.Property<Guid?>("Column1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.ToTable("#TempTable<Guid?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeOnly>", b =>
-                {
-                    b.Property<TimeOnly>("Column1")
-                        .HasColumnType("time");
-
-                    b.ToTable("#TempTable<TimeOnly>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeOnly?>", b =>
-                {
-                    b.Property<TimeOnly?>("Column1")
-                        .HasColumnType("time");
-
-                    b.ToTable("#TempTable<TimeOnly?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeSpan>", b =>
-                {
-                    b.Property<TimeSpan>("Column1")
-                        .HasColumnType("time");
-
-                    b.ToTable("#TempTable<TimeSpan>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<TimeSpan?>", b =>
-                {
-                    b.Property<TimeSpan?>("Column1")
-                        .HasColumnType("time");
-
-                    b.ToTable("#TempTable<TimeSpan?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<bool>", b =>
-                {
-                    b.Property<bool>("Column1")
-                        .HasColumnType("bit");
-
-                    b.ToTable("#TempTable<bool>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<bool?>", b =>
-                {
-                    b.Property<bool?>("Column1")
-                        .HasColumnType("bit");
-
-                    b.ToTable("#TempTable<bool?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<byte>", b =>
-                {
-                    b.Property<byte>("Column1")
-                        .HasColumnType("tinyint");
-
-                    b.ToTable("#TempTable<byte>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<byte?>", b =>
-                {
-                    b.Property<byte?>("Column1")
-                        .HasColumnType("tinyint");
-
-                    b.ToTable("#TempTable<byte?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<decimal>", b =>
-                {
-                    b.Property<decimal>("Column1")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.ToTable("#TempTable<decimal>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<decimal?>", b =>
-                {
-                    b.Property<decimal?>("Column1")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.ToTable("#TempTable<decimal?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<double>", b =>
-                {
-                    b.Property<double>("Column1")
-                        .HasColumnType("float");
-
-                    b.ToTable("#TempTable<double>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<double?>", b =>
-                {
-                    b.Property<double?>("Column1")
-                        .HasColumnType("float");
-
-                    b.ToTable("#TempTable<double?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<float>", b =>
-                {
-                    b.Property<float>("Column1")
-                        .HasColumnType("real");
-
-                    b.ToTable("#TempTable<float>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<float?>", b =>
-                {
-                    b.Property<float?>("Column1")
-                        .HasColumnType("real");
-
-                    b.ToTable("#TempTable<float?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<int>", b =>
-                {
-                    b.Property<int>("Column1")
-                        .HasColumnType("int");
-
-                    b.ToTable("#TempTable<int>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<int?>", b =>
-                {
-                    b.Property<int?>("Column1")
-                        .HasColumnType("int");
-
-                    b.ToTable("#TempTable<int?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<long>", b =>
-                {
-                    b.Property<long>("Column1")
-                        .HasColumnType("bigint");
-
-                    b.ToTable("#TempTable<long>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<long?>", b =>
-                {
-                    b.Property<long?>("Column1")
-                        .HasColumnType("bigint");
-
-                    b.ToTable("#TempTable<long?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<short>", b =>
-                {
-                    b.Property<short>("Column1")
-                        .HasColumnType("smallint");
-
-                    b.ToTable("#TempTable<short>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<short?>", b =>
-                {
-                    b.Property<short?>("Column1")
-                        .HasColumnType("smallint");
-
-                    b.ToTable("#TempTable<short?>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("Thinktecture:TempTable:Thinktecture.EntityFrameworkCore.TempTables.TempTable<string>", b =>
-                {
-                    b.Property<string>("Column1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("#TempTable<string>", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Audio", b =>
@@ -1188,13 +888,13 @@ namespace Hikkaba.Data.Migrations
             modelBuilder.Entity("Hikkaba.Data.Entities.PostToReply", b =>
                 {
                     b.HasOne("Hikkaba.Data.Entities.Post", "Post")
-                        .WithMany("Replies")
+                        .WithMany("RepliesToThisMentionedPost")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Hikkaba.Data.Entities.Post", "Reply")
-                        .WithMany("ParentPosts")
+                        .WithMany("MentionedPostsToThisReply")
                         .HasForeignKey("ReplyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1378,13 +1078,13 @@ namespace Hikkaba.Data.Migrations
 
                     b.Navigation("Documents");
 
-                    b.Navigation("Notices");
+                    b.Navigation("MentionedPostsToThisReply");
 
-                    b.Navigation("ParentPosts");
+                    b.Navigation("Notices");
 
                     b.Navigation("Pictures");
 
-                    b.Navigation("Replies");
+                    b.Navigation("RepliesToThisMentionedPost");
 
                     b.Navigation("Videos");
                 });

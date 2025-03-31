@@ -39,7 +39,7 @@ public class PostRepository : IPostRepository
             .Include(post => post.Notices)
             .Include(post => post.Pictures)
             .Include(post => post.Videos)
-            .Include(post => post.Replies)
+            .Include(post => post.RepliesToThisMentionedPost)
             .Where(p => p.ThreadId == filter.ThreadId
                 && (filter.IncludeDeleted || (!p.IsDeleted && !p.Thread.IsDeleted && !p.Thread.Category.IsDeleted)))
             .AsQueryable()
@@ -61,7 +61,7 @@ public class PostRepository : IPostRepository
             .Include(post => post.Notices)
             .Include(post => post.Pictures)
             .Include(post => post.Videos)
-            .Include(post => post.Replies)
+            .Include(post => post.RepliesToThisMentionedPost)
             .Where(post => !post.IsDeleted
                 && !post.Thread.IsDeleted
                 && !post.Thread.Category.IsDeleted
@@ -92,7 +92,7 @@ public class PostRepository : IPostRepository
             .Include(post => post.Notices)
             .Include(post => post.Pictures)
             .Include(post => post.Videos)
-            .Include(post => post.Replies)
+            .Include(post => post.RepliesToThisMentionedPost)
             .Where(post => !post.IsDeleted
                 && !post.Thread.IsDeleted
                 && !post.Thread.Category.IsDeleted)

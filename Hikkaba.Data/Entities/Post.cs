@@ -78,9 +78,13 @@ public class Post
 
     public virtual ICollection<Video> Videos { get; set; } = new List<Video>();
 
+    public virtual ICollection<Post> MentionedPosts { get; set; } = new List<Post>();
+
+    public virtual ICollection<Post> Replies { get; set; } = new List<Post>();
+
     [InverseProperty(nameof(PostToReply.Post))]
-    public virtual ICollection<PostToReply> ParentPosts { get; set; } = new List<PostToReply>();
+    public virtual ICollection<PostToReply> RepliesToThisMentionedPost { get; set; } = new List<PostToReply>();
 
     [InverseProperty(nameof(PostToReply.Reply))]
-    public virtual ICollection<PostToReply> Replies { get; set; } = new List<PostToReply>();
+    public virtual ICollection<PostToReply> MentionedPostsToThisReply { get; set; } = new List<PostToReply>();
 }
