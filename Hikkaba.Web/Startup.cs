@@ -49,9 +49,6 @@ public class Startup
     private readonly IConfiguration _configuration;
     private readonly IWebHostEnvironment _webHostEnvironment;
 
-    private static readonly Action<ILogger, string, Exception?> LogMessage =
-        LoggerMessage.Define<string>(LogLevel.Debug, LogEventIds.DbQuery, "DB query: {Message}");
-
     public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         _configuration = configuration;
@@ -78,8 +75,7 @@ public class Startup
             }
 
             options
-                .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"), ContextConfiguration.SqlServerOptionsAction)
-                .LogTo(msg => LogMessage(logger, msg, null));
+                .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"), ContextConfiguration.SqlServerOptionsAction);
         });
 
         services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
