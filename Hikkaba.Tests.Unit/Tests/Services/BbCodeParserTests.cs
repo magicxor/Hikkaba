@@ -59,29 +59,29 @@ public class BbCodeParserTests
     {
         const string input = "[b]hello[/b]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<strong>hello</strong>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<strong>hello</strong>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
     public void TestParseWithMoreClosingTags()
     {
         var actual = _bbCodeParser.Parse("[b]hello[/b][/b][/b]");
-        ClassicAssert.AreEqual("<strong>hello</strong>", actual.ToHtml());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<strong>hello</strong>"));
     }
 
     [Test]
     public void TestParseSimpleLinear()
     {
         var actual = _bbCodeParser.Parse("[b]hello[/b] [i]world[/i]");
-        ClassicAssert.AreEqual("<strong>hello</strong> <em>world</em>", actual.ToHtml());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<strong>hello</strong> <em>world</em>"));
     }
 
     [Test]
     public void TestParseSimpleTree()
     {
         var actual = _bbCodeParser.Parse("[b]hello [i]world[/i][/b]");
-        ClassicAssert.AreEqual("<strong>hello <em>world</em></strong>", actual.ToHtml());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<strong>hello <em>world</em></strong>"));
     }
 
     [Test]
@@ -91,9 +91,9 @@ public class BbCodeParserTests
         var actual2 = _bbCodeParser.Parse("[b]hello [i]world[/i][/i]");
         var actual3 = _bbCodeParser.Parse("[b]hello [i]world[/b][/b]");
         const string expected = "<strong>hello <em>world</em></strong>";
-        ClassicAssert.AreEqual(expected, actual1.ToHtml());
-        ClassicAssert.AreEqual(expected, actual2.ToHtml());
-        ClassicAssert.AreEqual(expected, actual3.ToHtml());
+        Assert.That(actual1.ToHtml(), Is.EqualTo(expected));
+        Assert.That(actual2.ToHtml(), Is.EqualTo(expected));
+        Assert.That(actual3.ToHtml(), Is.EqualTo(expected));
     }
 
     [Test]
@@ -101,8 +101,8 @@ public class BbCodeParserTests
     {
         const string input = "[link=\"hello\"]linktext[/link]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"hello\">linktext</a>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"hello\">linktext</a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -110,9 +110,9 @@ public class BbCodeParserTests
     {
         const string input = "[img=\"hello\"]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"hello\" target=\"_blank\"><img src=\"hello\" class=\"image\" /></a>",
-            actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(),
+            Is.EqualTo("<a href=\"hello\" target=\"_blank\"><img src=\"hello\" class=\"image\" /></a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -120,8 +120,8 @@ public class BbCodeParserTests
     {
         const string input = "hello[tab]bye";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("hello&nbsp;&nbsp;&nbsp;bye", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("hello&nbsp;&nbsp;&nbsp;bye"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -129,8 +129,8 @@ public class BbCodeParserTests
     {
         const string input = "[[b]aaa[/b]]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("[<strong>aaa</strong>]", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("[<strong>aaa</strong>]"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -138,10 +138,10 @@ public class BbCodeParserTests
     {
         const string input = "[link=\"http://yandex.ru\"]Яндекс[/link][spoiler]hehehe[/spoiler]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual(
-            "<a href=\"http://yandex.ru\">Яндекс</a><a href=\"javascript:void(0)\" class=\"spoiler-head\" data-swaptext=\"Скрыть содержимое\">Показать содержимое</a><div class=\"spoiler\">hehehe</div>",
-            actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(
+            actual.ToHtml(),
+            Is.EqualTo("<a href=\"http://yandex.ru\">Яндекс</a><a href=\"javascript:void(0)\" class=\"spoiler-head\" data-swaptext=\"Скрыть содержимое\">Показать содержимое</a><div class=\"spoiler\">hehehe</div>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -149,14 +149,14 @@ public class BbCodeParserTests
     {
         const string input1 = "[quote=\"Author\"]test[/quote]";
         var actual1 = _bbCodeParser.Parse(input1);
-        ClassicAssert.AreEqual("<div class=\"quote\"><div class=\"quote-author\">Author</div>test</div>",
-            actual1.ToHtml());
-        ClassicAssert.AreEqual(input1, actual1.ToBb());
+        Assert.That(actual1.ToHtml(),
+            Is.EqualTo("<div class=\"quote\"><div class=\"quote-author\">Author</div>test</div>"));
+        Assert.That(actual1.ToBb(), Is.EqualTo(input1));
 
         const string input2 = "[quote]test[/quote]";
         var actual2 = _bbCodeParser.Parse(input2);
-        ClassicAssert.AreEqual("<div class=\"quote\"><div class=\"quote-author\"></div>test</div>", actual2.ToHtml());
-        ClassicAssert.AreEqual(input2, actual2.ToBb());
+        Assert.That(actual2.ToHtml(), Is.EqualTo("<div class=\"quote\"><div class=\"quote-author\"></div>test</div>"));
+        Assert.That(actual2.ToBb(), Is.EqualTo(input2));
     }
 
     [Test]
@@ -164,10 +164,10 @@ public class BbCodeParserTests
     {
         const string input = "[spoiler][img=\"https://imgurl.jpg\"][/spoiler]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual(
-            "<a href=\"javascript:void(0)\" class=\"spoiler-head\" data-swaptext=\"Скрыть содержимое\">Показать содержимое</a><div class=\"spoiler\"><a href=\"https://imgurl.jpg\" target=\"_blank\"><img src=\"https://imgurl.jpg\" class=\"image\" /></a></div>",
-            actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(
+            actual.ToHtml(),
+            Is.EqualTo("<a href=\"javascript:void(0)\" class=\"spoiler-head\" data-swaptext=\"Скрыть содержимое\">Показать содержимое</a><div class=\"spoiler\"><a href=\"https://imgurl.jpg\" target=\"_blank\"><img src=\"https://imgurl.jpg\" class=\"image\" /></a></div>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -175,10 +175,10 @@ public class BbCodeParserTests
     {
         const string input = "[b]Not inside the code[/b]... [i]not yet[/i]. [code]And [b]this one is[/b]<script></script>[/code]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual(
-            "<strong>Not inside the code</strong>... <em>not yet</em>. <pre class=\"code\">And [b]this one is[/b]&lt;script&gt;&lt;/script&gt;</pre>",
-            actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(
+            actual.ToHtml(),
+            Is.EqualTo("<strong>Not inside the code</strong>... <em>not yet</em>. <pre class=\"code\">And [b]this one is[/b]&lt;script&gt;&lt;/script&gt;</pre>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -186,8 +186,8 @@ public class BbCodeParserTests
     {
         const string input = "[link=\"http://yandex.ru\' onload='alert\"]coolhack[/link]\"";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"http://yandex.ruonload=alert\">coolhack</a>\"", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"http://yandex.ruonload=alert\">coolhack</a>\""));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -195,9 +195,9 @@ public class BbCodeParserTests
     {
         const string input = "[b]<script>console.log('hi');</script>&nbsp;[/b]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<strong>&lt;script&gt;console.log('hi');&lt;/script&gt;&amp;nbsp;</strong>",
-            actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(),
+            Is.EqualTo("<strong>&lt;script&gt;console.log('hi');&lt;/script&gt;&amp;nbsp;</strong>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -205,8 +205,8 @@ public class BbCodeParserTests
     {
         const string input = "test![b]Test [link=\"url\"]link[/link]text[/b]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("test!<strong>Test <a href=\"url\">link</a>text</strong>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("test!<strong>Test <a href=\"url\">link</a>text</strong>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -214,8 +214,8 @@ public class BbCodeParserTests
     {
         const string input = "[link=\"Javascript:alert(`XSS`)\"]alert[/link]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"_xss_alert(XSS)\">alert</a>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"_xss_alert(XSS)\">alert</a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -223,8 +223,8 @@ public class BbCodeParserTests
     {
         const string input = "test![b]Test[i]1[/b]test";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("test!<strong>Test<em>1</em></strong>test", actual.ToHtml());
-        ClassicAssert.AreEqual("test![b]Test[i]1[/i][/b]test", actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("test!<strong>Test<em>1</em></strong>test"));
+        Assert.That(actual.ToBb(), Is.EqualTo("test![b]Test[i]1[/i][/b]test"));
     }
 
     /*
@@ -243,8 +243,8 @@ public class BbCodeParserTests
     {
         const string input = "[link=\"javascript&'#058;alert(/xss/)\"]ddd[/link]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"javascriptalert(/xss/)\">ddd</a>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"javascriptalert(/xss/)\">ddd</a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -252,8 +252,8 @@ public class BbCodeParserTests
     {
         const string input = "[link=\"Javas&'#x09;cript:alert(/xss/)\"]123[/link]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"_xss_alert(/xss/)\">123</a>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"_xss_alert(/xss/)\">123</a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     /*
@@ -283,8 +283,8 @@ public class BbCodeParserTests
         const string input = "[code][i]test[/code]";
         var actual = _bbCodeParser.Parse(input);
 
-        ClassicAssert.AreEqual("<pre class=\"code\">[i]test</pre>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<pre class=\"code\">[i]test</pre>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -293,8 +293,8 @@ public class BbCodeParserTests
         const string input = "[notaspoi...\"\r\ntest [s]test[/s]";
         var actual = _bbCodeParser.Parse(input);
 
-        ClassicAssert.AreEqual("[notaspoi...\"<br />test <s>test</s>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("[notaspoi...\"<br />test <s>test</s>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -324,7 +324,7 @@ public class BbCodeParserTests
     {
         const string input = "[code][private=\"Test\"]Test[/private][/code]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -344,11 +344,11 @@ public class BbCodeParserTests
 
         ClassicAssert.IsEmpty(actual1.ToHtml(filter, filterAttributeValue));
 
-        ClassicAssert.AreEqual("Test3Hi", actual2.ToHtml(filter, filterAttributeValue));
-        ClassicAssert.AreEqual("Test1, Test3Hi", actual2.ToHtml(filter));
+        Assert.That(actual2.ToHtml(filter, filterAttributeValue), Is.EqualTo("Test3Hi"));
+        Assert.That(actual2.ToHtml(filter), Is.EqualTo("Test1, Test3Hi"));
 
-        ClassicAssert.AreEqual("Test3Hi", actual3.ToHtml(filter, filterAttributeValue));
-        ClassicAssert.AreEqual("Test1, Test2, Test3Hi", actual3.ToHtml(filter));
+        Assert.That(actual3.ToHtml(filter, filterAttributeValue), Is.EqualTo("Test3Hi"));
+        Assert.That(actual3.ToHtml(filter), Is.EqualTo("Test1, Test2, Test3Hi"));
     }
 
     [Test]
@@ -359,12 +359,12 @@ public class BbCodeParserTests
         var actual1 = _bbCodeParser.Parse(input1);
         var actual2 = _bbCodeParser.Parse(input2);
 
-        ClassicAssert.AreEqual("Hello&lt; &ndash;<pre class=\"code\"> [b]&amp;world ---&gt;</pre>", actual1.ToHtml());
-        ClassicAssert.AreEqual(input1, actual1.ToBb());
+        Assert.That(actual1.ToHtml(), Is.EqualTo("Hello&lt; &ndash;<pre class=\"code\"> [b]&amp;world ---&gt;</pre>"));
+        Assert.That(actual1.ToBb(), Is.EqualTo(input1));
 
-        ClassicAssert.AreEqual("Hello&lt; &ndash;<pre class=\"pref\"> <strong>&amp;world ---&gt;</strong></pre>",
-            actual2.ToHtml());
-        ClassicAssert.AreEqual("Hello< --[pre] [b]&world --->[/b][/pre]", actual2.ToBb());
+        Assert.That(actual2.ToHtml(),
+            Is.EqualTo("Hello&lt; &ndash;<pre class=\"pref\"> <strong>&amp;world ---&gt;</strong></pre>"));
+        Assert.That(actual2.ToBb(), Is.EqualTo("Hello< --[pre] [b]&world --->[/b][/pre]"));
     }
 
     [Test]
@@ -374,8 +374,8 @@ public class BbCodeParserTests
         var actual = _bbCodeParser.Parse(input);
 
         Func<Node, bool> filter = n => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
-        ClassicAssert.AreEqual("[i]Hello[/i] ", actual.ToBb(filter));
-        ClassicAssert.AreEqual("Hello ", actual.ToText(filter));
+        Assert.That(actual.ToBb(filter), Is.EqualTo("[i]Hello[/i] "));
+        Assert.That(actual.ToText(filter), Is.EqualTo("Hello "));
     }
 
     [Test]
@@ -385,8 +385,8 @@ public class BbCodeParserTests
         var actual = _bbCodeParser.Parse(input);
 
         static bool Filter(Node n) => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
-        ClassicAssert.AreEqual("[i]Hello[/i] [code][b]world[/b][/code]", actual.ToBb(Filter));
-        ClassicAssert.AreEqual("Hello [b]world[/b]", actual.ToText(Filter));
+        Assert.That(actual.ToBb(Filter), Is.EqualTo("[i]Hello[/i] [code][b]world[/b][/code]"));
+        Assert.That(actual.ToText(Filter), Is.EqualTo("Hello [b]world[/b]"));
     }
 
     [Test]
@@ -397,8 +397,8 @@ public class BbCodeParserTests
 [li]test2[/li][/ul]";
         var actual = _bbCodeParser.Parse(input);
 
-        ClassicAssert.AreEqual("<ul><li>test1</li><li>test2</li></ul>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<ul><li>test1</li><li>test2</li></ul>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -409,8 +409,8 @@ asdfas
 [li][/li][/ul]";
         var actual = _bbCodeParser.Parse(input);
 
-        ClassicAssert.AreEqual("<ul><li>чи шо</li><li></li></ul>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<ul><li>чи шо</li><li></li></ul>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
@@ -419,7 +419,7 @@ asdfas
         const string input = "[link=\"jav&#&#90;90;ascript:\"]test[/link]";
         var actual = _bbCodeParser.Parse(input);
 
-        ClassicAssert.AreEqual("<a href=\"_xss_\">test</a>", actual.ToHtml());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"_xss_\">test</a>"));
     }
 
     [Test]
@@ -428,6 +428,6 @@ asdfas
         const string input = "[quote=\"<script>alert('xss');</script>\"]test[/quote]";
         var actual = _bbCodeParser.Parse(input);
 
-        ClassicAssert.AreEqual("<div class=\"quote\"><div class=\"quote-author\">&lt;script&gt;alert('xss');&lt;/script&gt;</div>test</div>", actual.ToHtml());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<div class=\"quote\"><div class=\"quote-author\">&lt;script&gt;alert('xss');&lt;/script&gt;</div>test</div>"));
     }
 }
