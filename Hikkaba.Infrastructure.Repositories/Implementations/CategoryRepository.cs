@@ -53,6 +53,7 @@ public sealed class CategoryRepository : ICategoryRepository
     {
         return await _applicationDbContext.Categories
             .Where(c => c.Alias == categoryAlias && (includeDeleted || !c.IsDeleted))
+            .OrderBy(c => c.Id)
             .GetDetailsModel()
             .FirstOrDefaultAsync();
     }
@@ -61,7 +62,10 @@ public sealed class CategoryRepository : ICategoryRepository
     {
         var user = _userContext.GetRequiredUser();
         var utcNow = DateTime.UtcNow;
-        var boardId = await _applicationDbContext.Boards.Select(x => x.Id).FirstAsync();
+        var boardId = await _applicationDbContext.Boards
+            .Select(x => x.Id)
+            .OrderBy(x => x)
+            .FirstAsync();
 
         var category = new Category
         {

@@ -126,7 +126,7 @@ public sealed class SeedManager : ISeedManager
         }
         else
         {
-            board = await context.Boards.FirstAsync();
+            board = await context.Boards.OrderBy(x => x.Id).FirstAsync();
         }
 
         if (!context.Categories.Any())

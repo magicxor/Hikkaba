@@ -22,6 +22,7 @@ public sealed class BoardRepository : IBoardRepository
                 Id = b.Id,
                 Name = b.Name,
             })
+            .OrderBy(b => b.Id)
             .FirstAsync();
     }
 

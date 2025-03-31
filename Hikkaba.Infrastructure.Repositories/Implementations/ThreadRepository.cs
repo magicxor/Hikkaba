@@ -56,6 +56,7 @@ public class ThreadRepository : IThreadRepository
             .Include(thread => thread.Category)
             .Where(thread => thread.Id == threadId
                              && (includeDeleted || (!thread.IsDeleted && !thread.Category.IsDeleted)))
+            .OrderBy(x => x.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (thread is null || posts.Count == 0)
@@ -272,6 +273,7 @@ public class ThreadRepository : IThreadRepository
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
         var category = await _applicationDbContext.Categories
+            .OrderBy(x => x.Id)
             .FirstOrDefaultAsync(x => x.Alias == createRequestModel.CategoryAlias && !x.IsDeleted, cancellationToken);
 
         if (category is null)

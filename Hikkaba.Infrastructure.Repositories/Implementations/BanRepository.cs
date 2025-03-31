@@ -89,6 +89,7 @@ public sealed class BanRepository : IBanRepository
         {
             var category = await _applicationDbContext.Categories
                     .Where(c => !c.IsDeleted && c.Alias == restrictionsRequestModel.CategoryAlias)
+                    .OrderBy(c => c.Id)
                     .FirstOrDefaultAsync();
             if (category is null)
             {
@@ -103,6 +104,7 @@ public sealed class BanRepository : IBanRepository
         {
             var thread = await _applicationDbContext.Threads
                     .Where(t => !t.Category.IsDeleted && !t.IsDeleted && t.Id == restrictionsRequestModel.ThreadId)
+                    .OrderBy(t => t.Id)
                     .FirstOrDefaultAsync();
             if (thread is null)
             {
@@ -270,6 +272,7 @@ public sealed class BanRepository : IBanRepository
                 CreatedById = ban.CreatedById,
                 ModifiedById = ban.ModifiedById,
             })
+            .OrderBy(ban => ban.Id)
             .FirstOrDefaultAsync();
 
         return ban;

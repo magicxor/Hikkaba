@@ -11,6 +11,6 @@ public static class CertificateUtils
         var certBase64 = configuration.AuthCertificateBase64;
         var certPass = configuration.AuthCertificatePassword;
         var certBytes = Convert.FromBase64String(certBase64);
-        return X509CertificateLoader.LoadPkcs12(certBytes, certPass, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
+        return X509CertificateLoader.LoadPkcs12(certBytes, certPass, X509KeyStorageFlags.EphemeralKeySet);
     }
 }
