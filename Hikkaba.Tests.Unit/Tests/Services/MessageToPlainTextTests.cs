@@ -22,6 +22,13 @@ public class MessageToPlainTextTests
               Line 2
               Line 3
               """)]
+    [TestCase("""
+              Line 1
+
+              Line 2
+
+              Line 3
+              """)]
     public void MessageToPlainText_WhenCalledWithText_ShouldReturnTheSameText(string input)
     {
         using var customAppFactory = new CustomAppFactory(FakeActionPath);
