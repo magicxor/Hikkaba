@@ -8,20 +8,33 @@ public static partial class UriUtility
     {
         // uri = ""
         if (string.IsNullOrWhiteSpace(uriStr))
+        {
             return false;
+        }
 
         // uri = "/"
         if (uriKind == UriKind.Relative && uriStr == "/")
+        {
             return true;
+        }
 
         // uri = "#anchor"
         if (uriKind == UriKind.Relative && ValidUriFragmentRegex().IsMatch(uriStr))
+        {
             return true;
+        }
 
         // other cases
         var successfullyCreated = Uri.TryCreate(uriStr, uriKind, out var uri);
         if (!successfullyCreated)
+        {
             return false;
+        }
+
+        if (uri is null || uri.ToString().StartsWith("file://", StringComparison.Ordinal))
+        {
+            return false;
+        }
 
         // uri = "//example.com"
         if (uriKind == UriKind.Relative
