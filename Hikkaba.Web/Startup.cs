@@ -21,6 +21,7 @@ using TwentyTwenty.Storage.Local;
 using TwentyTwenty.Storage;
 using Microsoft.AspNetCore.DataProtection;
 using System;
+using System.Diagnostics;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Shared.Exceptions;
 using Hikkaba.Shared.Services.Contracts;
@@ -32,6 +33,7 @@ using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.Implementations;
+using Hikkaba.Web.Metrics;
 using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.Services.Implementations;
@@ -185,6 +187,11 @@ public class Startup
         services.AddScoped<IUserContext, UserContext>();
 
         services.AddResponseCompression();
+
+        if (_webHostEnvironment.IsDevelopment())
+        {
+            DiagnosticListener.AllListeners.Subscribe(new DiagnosticObserver());
+        }
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
