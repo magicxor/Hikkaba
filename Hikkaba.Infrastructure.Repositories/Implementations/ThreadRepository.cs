@@ -261,7 +261,7 @@ public class ThreadRepository : IThreadRepository
                 .ToList(),
             });
 
-        var totalThreadCount = await resultQuery.CountAsync(cancellationToken);
+        var totalCount = await resultQuery.CountAsync(cancellationToken);
 
         var data = await resultQuery
             .ApplyOrderByAndPaging(filter, x => x.LastPostCreatedAt, OrderByDirection.Desc)
@@ -278,7 +278,7 @@ public class ThreadRepository : IThreadRepository
             }
         }
 
-        return new PagedResult<ThreadPreviewModel>(data, filter, totalThreadCount);
+        return new PagedResult<ThreadPreviewModel>(data, filter, totalCount);
     }
 
     public async Task<ThreadPostCreateResultModel> CreateThreadAsync(

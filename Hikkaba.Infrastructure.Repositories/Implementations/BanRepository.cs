@@ -226,7 +226,7 @@ public sealed class BanRepository : IBanRepository
 
         query = query.ApplyOrderByAndPaging(banFilter, x => x.CreatedAt);
 
-        var total = await query.CountAsync();
+        var totalCount = await query.CountAsync();
 
         var data = await query.Select(ban => new BanDetailsModel
             {
@@ -250,7 +250,7 @@ public sealed class BanRepository : IBanRepository
             })
             .ToListAsync();
 
-        return new PagedResult<BanDetailsModel>(data, banFilter, total);
+        return new PagedResult<BanDetailsModel>(data, banFilter, totalCount);
     }
 
     public async Task<BanDetailsModel?> GetBanAsync(int banId)

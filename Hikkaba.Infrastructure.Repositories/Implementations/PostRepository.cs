@@ -41,7 +41,7 @@ public class PostRepository : IPostRepository
             .Include(post => post.Videos)
             .Include(post => post.RepliesToThisMentionedPost)
             .Where(p => p.ThreadId == filter.ThreadId
-                && (filter.IncludeDeleted || (!p.IsDeleted && !p.Thread.IsDeleted && !p.Thread.Category.IsDeleted)))
+                        && (filter.IncludeDeleted || (!p.IsDeleted && !p.Thread.IsDeleted && !p.Thread.Category.IsDeleted)))
             .AsQueryable()
             .GetDetailsModel()
             .ApplyOrderBy(filter, post => post.CreatedAt)
@@ -63,20 +63,20 @@ public class PostRepository : IPostRepository
             .Include(post => post.Videos)
             .Include(post => post.RepliesToThisMentionedPost)
             .Where(post => !post.IsDeleted
-                && !post.Thread.IsDeleted
-                && !post.Thread.Category.IsDeleted
-                && (post.MessageText.Contains(filter.SearchQuery)
-                    || (post.Thread.Title.Contains(filter.SearchQuery)
-                        && post == post.Thread.Posts.OrderBy(tp => tp.CreatedAt).FirstOrDefault())))
+                           && !post.Thread.IsDeleted
+                           && !post.Thread.Category.IsDeleted
+                           && (post.MessageText.Contains(filter.SearchQuery)
+                               || (post.Thread.Title.Contains(filter.SearchQuery)
+                                   && post == post.Thread.Posts.OrderBy(tp => tp.CreatedAt).FirstOrDefault())))
             .GetDetailsModel();
 
-        var totalThreadCount = await query.CountAsync(cancellationToken);
+        var totalCount = await query.CountAsync(cancellationToken);
 
         var data = await query
             .ApplyOrderByAndPaging(filter, x => x.CreatedAt)
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<PostDetailsModel>(data, filter, totalThreadCount);
+        return new PagedResult<PostDetailsModel>(data, filter, totalCount);
     }
 
     public async Task<PagedResult<PostDetailsModel>> ListPostsPaginatedAsync(
@@ -93,18 +93,20 @@ public class PostRepository : IPostRepository
             .Include(post => post.Pictures)
             .Include(post => post.Videos)
             .Include(post => post.RepliesToThisMentionedPost)
-            .Where(post => !post.IsDeleted
-                && !post.Thread.IsDeleted
-                && !post.Thread.Category.IsDeleted)
+            .Where(post => filter.IncludeDeleted
+                           || (!post.IsDeleted
+                               && !post.Thread.IsDeleted
+                               && !post.Thread.Category.IsDeleted))
+            .Where(post => filter.IncludeHidden || !post.Thread.Category.IsHidden)
             .GetDetailsModel();
 
-        var totalThreadCount = await query.CountAsync(cancellationToken);
+        int? totalCount = filter.IncludeTotalCount ? await query.CountAsync(cancellationToken) : null;
 
         var data = await query
             .ApplyOrderByAndPaging(filter, x => x.CreatedAt)
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<PostDetailsModel>(data, filter, totalThreadCount);
+        return new PagedResult<PostDetailsModel>(data, filter, totalCount);
     }
 
     public async Task<long> CreatePostAsync(
