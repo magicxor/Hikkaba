@@ -30,8 +30,8 @@ public class HomeController : Controller
     {
         var postPagingFilter = new PostPagingFilter
         {
-            PageSize = 1,
-            PageNumber = 10,
+            PageSize = 10,
+            PageNumber = 1,
             OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
         };
         var posts = await _postService.ListPostsPaginatedAsync(postPagingFilter, cancellationToken);
