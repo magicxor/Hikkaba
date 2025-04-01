@@ -1,5 +1,6 @@
 ﻿using Hikkaba.Application.Contracts;
 using Hikkaba.Infrastructure.Models.Configuration;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 using Microsoft.Extensions.Options;
 
@@ -8,7 +9,6 @@ namespace Hikkaba.Application.Implementations;
 public class AttachmentCategorizer : IAttachmentCategorizer
 {
     private readonly HikkabaConfiguration _hikkabaConfiguration;
-    private readonly string[] _supportedPictureExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
 
     public AttachmentCategorizer(IOptions<HikkabaConfiguration> settings)
     {
@@ -17,20 +17,20 @@ public class AttachmentCategorizer : IAttachmentCategorizer
 
     public bool IsPictureExtensionSupported(string extension)
     {
-        return _supportedPictureExtensions.Any(ext => ext.Equals(extension, System.StringComparison.OrdinalIgnoreCase));
+        return Defaults.SupportedPictureExtensions.Any(ext => ext.Equals(extension, System.StringComparison.OrdinalIgnoreCase));
     }
 
     public AttachmentType GetAttachmentType(string extension)
     {
-        if (_hikkabaConfiguration.AudioExtensions.Any(x => x == extension))
+        if (Defaults.SupportedAudioExtensions.Any(x => x == extension))
         {
             return AttachmentType.Audio;
         }
-        else if (_hikkabaConfiguration.PictureExtensions.Any(x => x == extension))
+        else if (Defaults.SupportedPictureExtensions.Any(x => x == extension))
         {
             return AttachmentType.Picture;
         }
-        else if (_hikkabaConfiguration.VideoExtensions.Any(x => x == extension))
+        else if (Defaults.SupportedVideoExtensions.Any(x => x == extension))
         {
             return AttachmentType.Video;
         }

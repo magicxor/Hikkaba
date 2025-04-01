@@ -22,18 +22,6 @@ public class HikkabaConfiguration
     public int ThumbnailsMaxHeight { get; set; } = Defaults.ThumbnailsMaxHeight;
 
     [Required]
-    [MinLength(1)]
-    public IReadOnlyCollection<string> AudioExtensions { get; set; } = Defaults.AudioExtensions;
-
-    [Required]
-    [MinLength(1)]
-    public IReadOnlyCollection<string> PictureExtensions { get; set; } = Defaults.PictureExtensions;
-
-    [Required]
-    [MinLength(1)]
-    public IReadOnlyCollection<string> VideoExtensions { get; set; } = Defaults.VideoExtensions;
-
-    [Required]
     [Range(1, 100)]
     public int MaxAttachmentsCountPerPost { get; set; } = Defaults.MaxAttachmentsCountPerPost;
 

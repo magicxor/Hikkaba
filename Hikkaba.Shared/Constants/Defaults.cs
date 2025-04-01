@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Hikkaba.Shared.Constants;
 
@@ -58,9 +59,20 @@ public static class Defaults
 
     public const int HikkabaStartEventId = 735060000;
 
-    public static IReadOnlyCollection<string> AudioExtensions { get; set; } = new List<string> { "mp3", "ogg", "aac", "m4a", "opus" }.AsReadOnly();
-    public static IReadOnlyCollection<string> PictureExtensions { get; set; } = new List<string> { "jpg", "jpeg", "png", "gif", "svg", "webp" }.AsReadOnly();
-    public static IReadOnlyCollection<string> VideoExtensions { get; set; } = new List<string> { "webm", "mp4" }.AsReadOnly();
+    public const string AudioExtensions = "mp3,ogg,aac,m4a,opus";
+    public const string PictureExtensions = "jpg,jpeg,png,gif,webp";
+    public const string VideoExtensions = "webm,mp4";
+    public const string AllAllowedExtensions = AudioExtensions + "," + PictureExtensions + "," + VideoExtensions;
+
+    public static readonly string[] SupportedAudioExtensions = AudioExtensions.Split(',');
+    public static readonly string[] SupportedPictureExtensions = PictureExtensions.Split(',');
+    public static readonly string[] SupportedVideoExtensions = VideoExtensions.Split(',');
+    public static readonly string AllSupportedExtensionsWithDot = string.Join(",",
+        SupportedAudioExtensions
+        .Concat(SupportedPictureExtensions)
+        .Concat(SupportedVideoExtensions)
+        .Select(x => "." + x));
+
     public const string AspNetEnvIntegrationTesting = "IntegrationTesting";
     /// <summary>
     /// <para><a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/datatypes.html#common.data.datetime-def">Date and time</a> (RFC 3339, ISO 8601).</para>

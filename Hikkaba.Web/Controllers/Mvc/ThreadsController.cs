@@ -131,7 +131,7 @@ public class ThreadsController : BaseMvcController
                     categoryAlias,
                     viewModel.Title,
                     viewModel.Message.Length,
-                    viewModel.AttachmentsCount);
+                    viewModel.Attachments.Count);
 
                 ViewBag.ErrorMessage = "Error occurred while creating a thread. Please try again.";
                 return View(viewModel);

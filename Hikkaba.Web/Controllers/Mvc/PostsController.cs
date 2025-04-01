@@ -94,7 +94,7 @@ public class PostsController : BaseMvcController
                     MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
                 };
 
-                var postId = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments, cancellationToken);
+                var postId = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments ?? new FormFileCollection(), cancellationToken);
 
                 _logger.LogDebug(LogEventIds.PostCreated, "Post created. PostId: {PostId}, ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", postId, viewModel.ThreadId, viewModel.CategoryAlias);
 
@@ -116,7 +116,7 @@ public class PostsController : BaseMvcController
                     categoryAlias,
                     viewModel.ThreadId,
                     viewModel.Message.Length,
-                    viewModel.AttachmentsCount);
+                    viewModel.Attachments?.Count);
 
                 ViewBag.ErrorMessage = "Error occurred while creating a post. Please try again.";
                 return View(viewModel);

@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Web.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels;
@@ -17,15 +19,15 @@ public class PostAnonymousCreateViewModel
     [Display(Name = @"Message")]
     public required string Message { get; set; }
 
-    [DataType(DataType.Upload)]
     [Display(Name = @"Attachments")]
-    public IFormFileCollection Attachments { get; set; } = new FormFileCollection();
+    [AllowedExtensions(Defaults.AllAllowedExtensions)]
+    [FileSizeMax(Defaults.MaxAttachmentSize)]
+    [FileCollectionSizeMax(Defaults.MaxAttachmentsTotalSize)]
+    [FileMaxCount(Defaults.MaxAttachmentsCount)]
+    public IFormFileCollection? Attachments { get; set; } = new FormFileCollection();
 
     [Required]
     public required long ThreadId { get; set; }
     public required string CategoryAlias { get; set; }
     public string? CategoryName { get; set; }
-
-    [Range(minimum: 0, maximum: Defaults.MaxAttachmentsCount, ErrorMessage = "Maximum {2} attachments allowed")]
-    public int AttachmentsCount => Attachments?.Count ?? 0;
 }

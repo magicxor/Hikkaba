@@ -33,7 +33,7 @@
     <div class="form-group">
         <label asp-for="Attachments" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Attachments" class="form-control" />
+            <input asp-for="Attachments" type="file" accept="@(Defaults.AllSupportedExtensionsWithDot)" class="form-control" />
             <span asp-validation-for="Attachments" class="text-danger"></span>
         </div>
     </div>
