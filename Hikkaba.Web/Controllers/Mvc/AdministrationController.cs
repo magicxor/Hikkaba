@@ -47,18 +47,4 @@ public class AdministrationController : Controller
 
         return View(dashboardViewModel);
     }
-
-    public IActionResult DeleteAllContent()
-    {
-        return View();
-    }
-
-    [HttpPost, ActionName("DeleteAllContent")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteAllContentConfirmed(CancellationToken cancellationToken)
-    {
-        await _signInManager.SignOutAsync();
-        await _administrationService.DeleteAllContentAsync(cancellationToken);
-        return RedirectToAction("Index", "Home");
-    }
 }

@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using BBCodeParser;
+using BBCodeParser.Enums;
 using BBCodeParser.Tags;
 using Hikkaba.Application.Implementations;
 using Hikkaba.Web.Services.Contracts;
+using Hikkaba.Web.Telemetry;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Services.Implementations;
@@ -51,11 +53,13 @@ public partial class MessagePostProcessor : IMessagePostProcessor
 
     private static string ReplaceUrisWithBbCodeUrl(string text)
     {
+        using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
         return UriRegex.Replace(text, """[url="$1"]$1[/url]""");
     }
 
     private string ReplacePostLinksWithBbCodeUrl(string categoryAlias, long threadId, string text)
     {
+        using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
         var threadUri = _urlHelper.Action("Details", "Threads",
             new
             {
@@ -67,16 +71,19 @@ public partial class MessagePostProcessor : IMessagePostProcessor
 
     private static string NormalizeLineBreaks(string text)
     {
+        using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
         return ReplaceLineTerminatorsRegex.Replace(text, "\r\n");
     }
 
     private static string LimitLineBreaksCount(string text)
     {
+        using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
         return LimitLineTerminatorCountRegex.Replace(text, "\r\n\r\n");
     }
 
     public string MessageToSafeHtml(string categoryAlias, long? threadId, string text)
     {
+        using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
         var normalizedLineBreaks = NormalizeLineBreaks(text);
         var limitedLineBreaksCount = LimitLineBreaksCount(normalizedLineBreaks);
         var linksProcessed = ReplaceUrisWithBbCodeUrl(limitedLineBreaksCount);
@@ -89,6 +96,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
 
     public string MessageToPlainText(string text)
     {
+        using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
         var convertedBbToHtml = _bbParser.Parse(text).ToHtml();
         var extractedPlainText = HtmlUtilities.ConvertToPlainText(convertedBbToHtml);
         var normalizedLineBreaks = NormalizeLineBreaks(extractedPlainText);
@@ -98,6 +106,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
 
     public IReadOnlyList<long> GetMentionedPosts(string text)
     {
+        using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
         var mentionedPosts = new List<long>();
         var matches = PostLinkRegex.Matches(text);
         foreach (Match match in matches)

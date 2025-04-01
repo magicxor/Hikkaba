@@ -4,6 +4,7 @@ using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
+using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,8 @@ public class PostRepository : IPostRepository
         ThreadPostsFilter filter,
         CancellationToken cancellationToken)
     {
+        using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+
         return await _applicationDbContext.Posts
             .TagWithCallSite()
             .Include(post => post.Thread)
@@ -52,6 +55,8 @@ public class PostRepository : IPostRepository
         SearchPostsPagingFilter filter,
         CancellationToken cancellationToken)
     {
+        using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+
         var query = _applicationDbContext.Posts
             .TagWithCallSite()
             .Include(post => post.Thread)
@@ -83,6 +88,8 @@ public class PostRepository : IPostRepository
         PostPagingFilter filter,
         CancellationToken cancellationToken)
     {
+        using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+
         var query = _applicationDbContext.Posts
             .TagWithCallSite()
             .Include(post => post.Thread)
@@ -114,6 +121,8 @@ public class PostRepository : IPostRepository
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
     {
+        using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
         var post = new Post

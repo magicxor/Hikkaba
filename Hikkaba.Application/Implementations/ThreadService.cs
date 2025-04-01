@@ -40,11 +40,6 @@ public class ThreadService : IThreadService
         return await _threadRepository.GetThreadDetailsAsync(threadId, false, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<long>> ListAllThreadIdsAsync(CancellationToken cancellationToken)
-    {
-        return await _threadRepository.ListAllThreadIdsAsync(cancellationToken);
-    }
-
     public async Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken)
     {
         return await _threadRepository.ListThreadPreviewsPaginatedAsync(filter, cancellationToken);

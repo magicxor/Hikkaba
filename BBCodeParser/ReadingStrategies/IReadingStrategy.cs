@@ -1,4 +1,4 @@
-﻿namespace BBCodeParser;
+﻿namespace BBCodeParser.ReadingStrategies;
 
 public interface IReadingStrategy
 {

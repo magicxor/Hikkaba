@@ -3,6 +3,7 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
+using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Shared.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,8 @@ public sealed class CategoryRepository : ICategoryRepository
 
     public async Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(CategoryFilter categoryFilter)
     {
+        using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
+
         var query = _applicationDbContext.Categories
             .TagWithCallSite()
             .Include(category => category.CreatedBy)
@@ -52,6 +55,8 @@ public sealed class CategoryRepository : ICategoryRepository
 
     public async Task<CategoryDetailsModel?> GetCategoryAsync(string categoryAlias, bool includeDeleted)
     {
+        using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
+
         return await _applicationDbContext.Categories
             .TagWithCallSite()
             .Where(c => c.Alias == categoryAlias && (includeDeleted || !c.IsDeleted))
@@ -62,6 +67,8 @@ public sealed class CategoryRepository : ICategoryRepository
 
     public async Task<int> CreateCategoryAsync(CategoryCreateRequestModel categoryCreateRequest)
     {
+        using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
+
         var user = _userContext.GetRequiredUser();
         var utcNow = DateTime.UtcNow;
         var boardId = await _applicationDbContext.Boards
@@ -89,6 +96,8 @@ public sealed class CategoryRepository : ICategoryRepository
 
     public async Task EditCategoryAsync(CategoryEditRequestModel categoryEditRequest)
     {
+        using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
+
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 
@@ -107,6 +116,8 @@ public sealed class CategoryRepository : ICategoryRepository
 
     public async Task SetCategoryDeletedAsync(int categoryId, bool isDeleted)
     {
+        using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
+
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 

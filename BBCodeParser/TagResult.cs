@@ -1,4 +1,6 @@
-﻿namespace BBCodeParser;
+﻿using BBCodeParser.Enums;
+
+namespace BBCodeParser;
 
 public class TagResult
 {

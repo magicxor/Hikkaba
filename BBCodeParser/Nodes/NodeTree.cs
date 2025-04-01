@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using BBCodeParser.Telemetry;
 
 namespace BBCodeParser.Nodes;
 
@@ -22,6 +23,7 @@ public class NodeTree : Node
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {
+        using var activity = BBCodeParserTelemetry.RendererSource.StartActivity();
         return ToHtml(_securitySubstitutions, _aliasSubstitutions, filter, filterAttributeValue);
     }
 
@@ -29,6 +31,7 @@ public class NodeTree : Node
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {
+        using var activity = BBCodeParserTelemetry.RendererSource.StartActivity();
         return ToText(_securitySubstitutions, _aliasSubstitutions, filter, filterAttributeValue);
     }
 
@@ -36,6 +39,7 @@ public class NodeTree : Node
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {
+        using var activity = BBCodeParserTelemetry.RendererSource.StartActivity();
         return ToBb(null, filter, filterAttributeValue);
     }
 

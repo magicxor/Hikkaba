@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using Hikkaba.Application.Telemetry;
+using HtmlAgilityPack;
 
 namespace Hikkaba.Application.Implementations;
 
@@ -13,6 +14,8 @@ public static class HtmlUtilities
     /// <returns></returns>
     public static string ConvertToPlainText(string html)
     {
+        using var activity = ApplicationTelemetry.HtmlUtilitiesSource.StartActivity();
+
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
 

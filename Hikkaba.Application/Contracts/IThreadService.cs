@@ -10,8 +10,6 @@ public interface IThreadService
 
     Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<long>> ListAllThreadIdsAsync(CancellationToken cancellationToken);
-
     Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken);
 
     Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel createRequestModel, IFormFileCollection attachments, CancellationToken cancellationToken);

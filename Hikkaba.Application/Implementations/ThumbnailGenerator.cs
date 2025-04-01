@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Application.Telemetry;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using JetBrains.Annotations;
 using SixLabors.ImageSharp;
@@ -15,6 +17,8 @@ public class ThumbnailGenerator : IThumbnailGenerator
         int maxHeight,
         CancellationToken cancellationToken)
     {
+        using var activity = ApplicationTelemetry.ThumbnailGeneratorSource.StartActivity();
+
         var ratioX = (double)maxWidth / image.Width;
         var ratioY = (double)maxHeight / image.Height;
         var ratio = Math.Min(ratioX, ratioY);

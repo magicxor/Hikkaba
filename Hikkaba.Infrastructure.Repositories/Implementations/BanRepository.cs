@@ -4,6 +4,7 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Enums;
@@ -40,12 +41,16 @@ public sealed class BanRepository : IBanRepository
 
     public async Task<BanPreviewModel?> FindActiveBan(long? threadId, string? categoryAlias, string userIpAddress)
     {
+        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+
         var userIp = IPAddress.Parse(userIpAddress).GetAddressBytes();
         return await FindActiveBan(threadId, categoryAlias, userIp);
     }
 
     public async Task<BanPreviewModel?> FindActiveBan(long? threadId, string? categoryAlias, byte[] userIpAddress)
     {
+        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
         var userIp = userIpAddress;
 
@@ -77,6 +82,8 @@ public sealed class BanRepository : IBanRepository
 
     public async Task<PostingRestrictionsResponseModel> GetPostingRestrictionStatusAsync(PostingRestrictionsRequestModel restrictionsRequestModel)
     {
+        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+
         var userIp = restrictionsRequestModel.UserIpAddress;
         if (userIp is null)
         {
@@ -160,6 +167,8 @@ public sealed class BanRepository : IBanRepository
 
     public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter)
     {
+        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+
         var query = _applicationDbContext.Bans
             .TagWithCallSite()
             .AsQueryable();
@@ -255,6 +264,8 @@ public sealed class BanRepository : IBanRepository
 
     public async Task<BanDetailsModel?> GetBanAsync(int banId)
     {
+        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+
         var ban = await _applicationDbContext.Bans
             .TagWithCallSite()
             .Where(ban => ban.Id == banId)
@@ -286,6 +297,8 @@ public sealed class BanRepository : IBanRepository
 
     public async Task<int> CreateBanAsync(BanCreateRequestModel banCreateRequest)
     {
+        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
         var relatedPostId = banCreateRequest.RelatedPostId;
@@ -327,6 +340,8 @@ public sealed class BanRepository : IBanRepository
 
     public async Task SetBanDeletedAsync(int banId, bool isDeleted)
     {
+        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 

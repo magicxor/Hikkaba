@@ -1,4 +1,4 @@
-namespace BBCodeParser;
+namespace BBCodeParser.Exceptions;
 
 public class BBParserException : Exception
 {

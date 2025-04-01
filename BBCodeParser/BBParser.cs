@@ -1,5 +1,7 @@
-﻿using BBCodeParser.Nodes;
+﻿using BBCodeParser.Exceptions;
+using BBCodeParser.Nodes;
 using BBCodeParser.Tags;
+using BBCodeParser.Telemetry;
 
 namespace BBCodeParser;
 
@@ -29,6 +31,8 @@ public class BBParser : IBBParser
 
     public NodeTree Parse(string input)
     {
+        using var activity = BBCodeParserTelemetry.ParserSource.StartActivity();
+
         var nodeTree = new NodeTree(_securitySubstitutions, _aliasSubstitutions);
         var treeDepth = 0;
         if (string.IsNullOrWhiteSpace(input))

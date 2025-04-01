@@ -1,4 +1,6 @@
-﻿using Hikkaba.Application.Contracts;
+﻿using System.Diagnostics;
+using Hikkaba.Application.Contracts;
+using Hikkaba.Application.Telemetry;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Shared.Constants;
@@ -33,13 +35,23 @@ public class AttachmentService : IAttachmentService
         _thumbnailGenerator = thumbnailGenerator;
     }
 
+    [MustDisposeResource]
     private async Task<FileAttachmentStreamContainer> ConvertToFileAttachmentSmAsync(
         IFormFile formFile,
         CancellationToken cancellationToken)
     {
         var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         var tempFileStream = new FileStream(tempFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, 4096, FileOptions.DeleteOnClose);
-        await formFile.OpenReadStream().CopyToAsync(tempFileStream, cancellationToken);
+
+        using (var activity = ApplicationTelemetry.AttachmentServiceSource.StartActivity(
+                   "CopyFormFileOnDisk",
+                   ActivityKind.Internal,
+                   null,
+                   tags: [new("fileSize", formFile.Length), new("fileExt", Path.GetExtension(formFile.FileName))]))
+        {
+            await formFile.OpenReadStream().CopyToAsync(tempFileStream, cancellationToken);
+        }
+
         tempFileStream.Position = 0;
 
         var blobId = Guid.NewGuid();

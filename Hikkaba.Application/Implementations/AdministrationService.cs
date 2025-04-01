@@ -31,46 +31,4 @@ public class AdministrationService : IAdministrationService
     {
         return await _administrationRepository.GetDashboardAsync();
     }
-
-    public async Task DeleteAllContentAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Wiping all database tables and media files...");
-        var threadIdList = await _threadRepository.ListAllThreadIdsAsync(cancellationToken);
-
-        _logger.LogDebug("Deleting content files (media) from {Count} threads", threadIdList.Count);
-        foreach (var threadId in threadIdList)
-        {
-            var threadIdStr = threadId.ToString(CultureInfo.InvariantCulture);
-
-            _logger.LogDebug("Deleting {ThreadId}...", threadIdStr);
-            try
-            {
-                await _storageProvider.DeleteContainerAsync(threadIdStr);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(DeleteAllContentAsync)} error");
-            }
-            _logger.LogDebug("OK");
-
-            _logger.LogDebug("Deleting {ThumbnailPostfix}...", threadIdStr + Defaults.ThumbnailPostfix);
-            try
-            {
-                await _storageProvider.DeleteContainerAsync(threadIdStr + Defaults.ThumbnailPostfix);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(DeleteAllContentAsync)} error");
-            }
-            _logger.LogDebug("OK");
-        }
-
-        _logger.LogDebug("Wiping database tables...");
-        await _administrationRepository.WipeDatabaseAsync();
-        _logger.LogDebug("OK");
-
-        _logger.LogDebug("Running migrations and seed...");
-        await _administrationRepository.RunSeedInNewScopeAsync();
-        _logger.LogDebug("OK");
-    }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Web;
+using BBCodeParser.Enums;
 
 namespace BBCodeParser.Tags;
 

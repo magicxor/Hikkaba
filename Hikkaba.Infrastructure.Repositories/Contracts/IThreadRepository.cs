@@ -8,8 +8,6 @@ public interface IThreadRepository
 {
     Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, bool includeDeleted, CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<long>> ListAllThreadIdsAsync(CancellationToken cancellationToken);
-
     Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken);
 
     Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel createRequestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);

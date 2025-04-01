@@ -1,12 +1,13 @@
 using System.Text.RegularExpressions;
+using BBCodeParser.Enums;
 
-namespace BBCodeParser;
+namespace BBCodeParser.ReadingStrategies;
 
-public class HtmlToBBReadingStrategy : IReadingStrategy
+public class BBToHtmlReadingStrategy : IReadingStrategy
 {
     private readonly IEnumerable<BBTag> _tags;
 
-    public HtmlToBBReadingStrategy(IEnumerable<BBTag> tags)
+    public BBToHtmlReadingStrategy(IEnumerable<BBTag> tags)
     {
         this._tags = tags;
     }
@@ -16,14 +17,14 @@ public class HtmlToBBReadingStrategy : IReadingStrategy
         var firstMatchingTag = GetFirstMatchingTag(input);
         if (firstMatchingTag.TagType == TagType.Open)
         {
-            var value = firstMatchingTag.Match?.Result(firstMatchingTag.Tag?.GetOpenBbTagPattern(DirectionMode.HtmlToBB) ?? string.Empty);
+            var value = firstMatchingTag.Match?.Result(firstMatchingTag.Tag?.GetOpenHtmlTagPattern(DirectionMode.BBToHtml) ?? string.Empty);
             var remainingInput = input.Substring((firstMatchingTag.Match?.Value.Length ?? 0) + (firstMatchingTag.Match?.Index ?? 0));
             var text = input.Substring(0, firstMatchingTag.Match?.Index ?? 0);
             return new TagResult
             {
                 Text = text,
-                OpeningTagValue = value,
-                ClosingTagValue = firstMatchingTag.Tag?.RequiresClosingTag == true ? firstMatchingTag.Tag.GetCloseBbTagPattern(DirectionMode.HtmlToBB) : null,
+                OpeningTagValue = value ?? string.Empty,
+                ClosingTagValue = firstMatchingTag.Tag?.RequiresClosingTag == true ? firstMatchingTag.Tag.GetCloseHtmlTagPattern() : null,
                 RemainingInput = remainingInput,
                 Tag = firstMatchingTag.Tag,
                 TagType = TagType.Open,
@@ -48,14 +49,13 @@ public class HtmlToBBReadingStrategy : IReadingStrategy
         };
     }
 
-
     private MatchingTag GetFirstMatchingTag(string input)
     {
         var minIndex = input.Length;
         var result = new MatchingTag();
         foreach (var bbTag in _tags)
         {
-            var openTagRegex = new Regex(bbTag.GetOpenHtmlTagPattern(DirectionMode.HtmlToBB));
+            var openTagRegex = new Regex(bbTag.GetOpenBbTagPattern(DirectionMode.BBToHtml));
             var openTagMatch = openTagRegex.Match(input);
             if (openTagMatch.Success && openTagMatch.Index < minIndex)
             {
@@ -67,7 +67,7 @@ public class HtmlToBBReadingStrategy : IReadingStrategy
 
             if (!bbTag.RequiresClosingTag) continue;
 
-            var closeTagRegex = new Regex(bbTag.GetCloseHtmlTagPattern() ?? string.Empty);
+            var closeTagRegex = new Regex(bbTag.GetCloseBbTagPattern(DirectionMode.BBToHtml));
             var closeTagMatch = closeTagRegex.Match(input);
             if (closeTagMatch.Success && closeTagMatch.Index < minIndex)
             {

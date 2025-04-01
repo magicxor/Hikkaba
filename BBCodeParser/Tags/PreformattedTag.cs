@@ -1,4 +1,6 @@
-﻿namespace BBCodeParser.Tags;
+﻿using BBCodeParser.Enums;
+
+namespace BBCodeParser.Tags;
 
 public class PreformattedTag : Tag
 {

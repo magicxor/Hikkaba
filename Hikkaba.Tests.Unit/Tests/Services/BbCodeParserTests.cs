@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BBCodeParser;
+using BBCodeParser.Enums;
 using BBCodeParser.Nodes;
 using BBCodeParser.Tags;
 using NUnit.Framework.Legacy;

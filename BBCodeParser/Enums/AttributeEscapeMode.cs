@@ -1,4 +1,4 @@
-﻿namespace BBCodeParser;
+﻿namespace BBCodeParser.Enums;
 
 public enum AttributeEscapeMode
 {

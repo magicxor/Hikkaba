@@ -1,6 +1,7 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using Hikkaba.Application.Contracts;
-using Hikkaba.Infrastructure.Models;
+using Hikkaba.Application.Telemetry;
 using Hikkaba.Infrastructure.Models.Ban;
 using Microsoft.Extensions.Logging;
 
@@ -24,10 +25,17 @@ public class GeoIpService : IGeoIpService
 
     public IpAddressInfoModel GetIpAddressInfo(IPAddress ipAddress)
     {
+        using var getIpAddressInfoActivity = ApplicationTelemetry.GeoIpServiceSource.StartActivity();
         var result = new IpAddressInfoModel();
 
         try
         {
+            using var getAsnActivity = ApplicationTelemetry.GeoIpServiceSource.StartActivity(
+                "GetAsn",
+                ActivityKind.Internal,
+                null,
+                tags: [new("AddressFamily", Enum.GetName(ipAddress.AddressFamily))]);
+
             if (_geoIpAsnReader.TryAsn(ipAddress, out var asnResponse))
             {
                 result.AutonomousSystemOrganization = asnResponse?.AutonomousSystemOrganization;
@@ -50,9 +58,17 @@ public class GeoIpService : IGeoIpService
 
         try
         {
+            using var getCountryActivity = ApplicationTelemetry.GeoIpServiceSource.StartActivity(
+                "GetCountry",
+                ActivityKind.Internal,
+                null,
+                tags: [new("AddressFamily", Enum.GetName(ipAddress.AddressFamily))]);
+
             if (_geoIpCountryReader.TryCountry(ipAddress, out var countryResponse))
             {
                 result.CountryIsoCode = countryResponse?.Country.IsoCode;
+
+                getCountryActivity?.SetTag("CountryIsoCode", result.CountryIsoCode);
             }
         }
         catch (Exception e)

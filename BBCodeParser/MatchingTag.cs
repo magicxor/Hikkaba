@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using BBCodeParser.Enums;
 
 namespace BBCodeParser;
 

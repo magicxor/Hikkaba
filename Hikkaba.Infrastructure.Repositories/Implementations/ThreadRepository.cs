@@ -7,6 +7,7 @@ using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
+using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
@@ -36,6 +37,8 @@ public class ThreadRepository : IThreadRepository
 
     public async Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, bool includeDeleted, CancellationToken cancellationToken)
     {
+        using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
+
         var posts = await _applicationDbContext.Posts
             .TagWithCallSite()
             .Include(post => post.Thread)
@@ -83,19 +86,12 @@ public class ThreadRepository : IThreadRepository
         };
     }
 
-    public async Task<IReadOnlyList<long>> ListAllThreadIdsAsync(CancellationToken cancellationToken)
-    {
-        return await _applicationDbContext.Threads
-            .TagWithCallSite()
-            .OrderByDescending(thread => thread.Id)
-            .Select(thread => thread.Id)
-            .ToListAsync(cancellationToken);
-    }
-
     public async Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(
         ThreadPreviewFilter filter,
         CancellationToken cancellationToken)
     {
+        using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
+
         var threadQuery = _applicationDbContext.Threads
             .TagWithCallSite()
             .Include(thread => thread.Category)
@@ -286,6 +282,8 @@ public class ThreadRepository : IThreadRepository
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
     {
+        using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
+
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
         var category = await _applicationDbContext.Categories
