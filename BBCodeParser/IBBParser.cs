@@ -3,7 +3,7 @@ using BBCodeParser.Tags;
 
 namespace BBCodeParser;
 
-public interface IBbParser
+public interface IBBParser
 {
     NodeTree Parse(string input);
     Tag[] GetTags();

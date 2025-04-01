@@ -12,7 +12,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
 {
     private readonly IUrlHelper _urlHelper;
 
-    private readonly BbParser _bbParser = new([
+    private readonly BBParser _bbParser = new([
         new Tag("b", "<b>", "</b>"),
         new Tag("i", "<i>", "</i>"),
         new Tag("u", "<u>", "</u>"),
@@ -24,7 +24,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
         new Tag("quote", """<span class="text-success">&gt; """, "</span>"),
         new Tag("url", """<a href="{value}" rel="nofollow noopener noreferrer external">""", "</a>", withAttribute: true, attributeEscape: AttributeEscapeMode.AbsoluteUri),
         new Tag("relurl", """<a href="{value}">""", "</a>", withAttribute: true, attributeEscape: AttributeEscapeMode.RelativeUri),
-    ], BbParser.SecuritySubstitutions, new Dictionary<string, string>());
+    ], BBParser.SecuritySubstitutions, new Dictionary<string, string>());
 
     [GeneratedRegex("""(\b(?<protocol>https?|ftp)://(?<domain>[-\p{L}\p{M}\p{N}.]+)(?<port>:[0-9]+)?(?<file>/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(?<parameters>\?[-A-Z0-9+&@#/%=~_|!:,.;]*)?)""", RegexOptions.Compiled | RegexOptions.IgnoreCase, 500)]
     public static partial Regex GetUriRegex();

@@ -142,7 +142,7 @@ public class ArchitectureTests
     public void Libraries_ShouldNotDepend_OnAnyOtherAssembly()
     {
         var result = Types
-            .InAssemblies([typeof(BbParser).Assembly, typeof(OrderByDirection).Assembly])
+            .InAssemblies([typeof(BBParser).Assembly, typeof(OrderByDirection).Assembly])
             .Should()
             .NotHaveDependencyOnAny(GetAllAssemblyNames())
             .GetResult();

@@ -11,7 +11,7 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 [TestFixture]
 public class BbCodeParserTests
 {
-    private BbParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")], [], []);
+    private BBParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")], [], []);
     private const string CodeClassName = "code";
     private const string PreClassName = "pref";
     private const string SpoilerHeadClassName = "spoiler-head";
@@ -23,7 +23,7 @@ public class BbCodeParserTests
     [SetUp]
     public void SetUp()
     {
-        _bbCodeParser = new BbParser([
+        _bbCodeParser = new BBParser([
                 new Tag("b", "<strong>", "</strong>"),
                 new Tag("i", "<em>", "</em>"),
                 new Tag("u", "<u>", "</u>"),
@@ -45,7 +45,7 @@ public class BbCodeParserTests
                 new ListTag("ul", "<ul>", "</ul>"),
                 new Tag("li", "<li>", "</li>"),
             ],
-            BbParser.SecuritySubstitutions,
+            BBParser.SecuritySubstitutions,
             new Dictionary<string, string>
             {
                 {"---", "&mdash;"},

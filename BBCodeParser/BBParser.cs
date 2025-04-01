@@ -3,7 +3,7 @@ using BBCodeParser.Tags;
 
 namespace BBCodeParser;
 
-public class BbParser : IBbParser
+public class BBParser : IBBParser
 {
     private readonly Tag[] _tags;
     private readonly Dictionary<string, string> _securitySubstitutions;
@@ -17,7 +17,7 @@ public class BbParser : IBbParser
         {">", "&gt;"},
     };
 
-    public BbParser(
+    public BBParser(
         Tag[] tags,
         Dictionary<string, string> securitySubstitutions,
         Dictionary<string, string> aliasSubstitutions)
@@ -76,7 +76,7 @@ public class BbParser : IBbParser
                         treeDepth++;
                         if (treeDepth > TreeMaxDepth)
                         {
-                            throw new BbParserException();
+                            throw new BBParserException();
                         }
 
                         break;
