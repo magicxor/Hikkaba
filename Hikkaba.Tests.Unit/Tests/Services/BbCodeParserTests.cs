@@ -182,6 +182,17 @@ public class BbCodeParserTests
     }
 
     [Test]
+    public void TestAliasInCode()
+    {
+        const string input = "--- [b]Not inside the code[/b]... [i]not yet[/i]. [code]And --- [b]this --- one is[/b]<script>---</script>[/code]";
+        var actual = _bbCodeParser.Parse(input);
+        Assert.That(
+            actual.ToHtml(),
+            Is.EqualTo("&mdash; <strong>Not inside the code</strong>... <em>not yet</em>. <pre class=\"code\">And --- [b]this --- one is[/b]&lt;script&gt;---&lt;/script&gt;</pre>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
+    }
+
+    [Test]
     public void TestJsInjection()
     {
         const string input = "[link=\"http://yandex.ru\' onload='alert\"]coolhack[/link]\"";
@@ -227,16 +238,15 @@ public class BbCodeParserTests
         Assert.That(actual.ToBb(), Is.EqualTo("test![b]Test[i]1[/i][/b]test"));
     }
 
-    /*
     [Test]
+    [Ignore("Not sure why this is considered dangerous; this [link] is not converted to <a> at all")]
     public void TestBugWithHiddenXss()
     {
         var input = "[link=\"JaVas\"C'ript:alert(document.cookie)\"]aaa[/link]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"_xss_alert(document.cookie)\">aaa</a>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"_xss_alert(document.cookie)\">aaa</a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
-    */
 
     [Test]
     public void TestXss1()
@@ -256,26 +266,26 @@ public class BbCodeParserTests
         Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
-    /*
     [Test]
+    [Ignore("Not sure why this is considered dangerous; this [link] is not converted to <a> at all")]
     public void TestXss3()
     {
         var input =
             "[link=\"javascriptJa vA s\"'\"'    \"'''\"\"\"\"   cript::alert(\"/Preved, admincheg/\")\"]Preved[/link]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"javascript_xss_:alert(/Preved,admincheg/)\">Preved</a>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"javascript_xss_:alert(/Preved,admincheg/)\">Preved</a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
 
     [Test]
+    [Ignore("Not sure why this is considered dangerous; this [link] is not converted to <a> at all")]
     public void TestXss4()
     {
         var input = "[link=\"javasc&\"#0000009ript:alert(/xss/)\"]ddd[/link]";
         var actual = _bbCodeParser.Parse(input);
-        ClassicAssert.AreEqual("<a href=\"javasc:alert(/xss/)\">ddd</a>", actual.ToHtml());
-        ClassicAssert.AreEqual(input, actual.ToBb());
+        Assert.That(actual.ToHtml(), Is.EqualTo("<a href=\"javasc:alert(/xss/)\">ddd</a>"));
+        Assert.That(actual.ToBb(), Is.EqualTo(input));
     }
-    */
 
     [Test]
     public void TestCodeResolvingInnerBbIssues()
