@@ -8,10 +8,10 @@ public partial class Tag
     private static readonly Regex JsXssSecureRegex = GetJsXssSecureRegex();
 
     private static readonly Regex[] EscapeRegexes =
-    {
+    [
         GetEscapeRegex1(),
         GetEscapeRegex2(),
-    };
+    ];
 
     private string OpenTag { get; }
     private string? CloseTag { get; }
