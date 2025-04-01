@@ -137,7 +137,6 @@ public class UrlUtilityTests
         yield return new TestCaseData("http://user@example.com", UriKind.Absolute).Returns(true).SetDescription("User info without password");
         yield return new TestCaseData("http://user:password@example.com", UriKind.Absolute).Returns(true).SetDescription("User and password");
         yield return new TestCaseData("http://user:password@example.com:8080/test/path", UriKind.Absolute).Returns(true).SetDescription("User info, domain, port, path");
-        yield return new TestCaseData("mailto:user@example.com", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
         yield return new TestCaseData("http://example.com:abc", UriKind.Absolute).Returns(false).SetDescription("Invalid port format");
         yield return new TestCaseData("https://user@example.com", UriKind.Absolute).Returns(true).SetDescription("URI with userinfo (username only; no password)");
         yield return new TestCaseData("https://user:pass@example.com", UriKind.Absolute).Returns(true).SetDescription("URI with userinfo (username and password)");
@@ -147,6 +146,38 @@ public class UrlUtilityTests
         yield return new TestCaseData("sftp://user:pass@sftp.example.com/home", UriKind.Absolute).Returns(true).SetDescription("URI with the sftp scheme and userinfo");
         yield return new TestCaseData("http://us er:pass@example.com", UriKind.Absolute).Returns(false).SetDescription("Space in username is invalid");
         yield return new TestCaseData("http://user:pa ss@example.com", UriKind.Absolute).Returns(false).SetDescription("Space in password is invalid");
+
+        // Valid mailto URIs
+        yield return new TestCaseData("mailto:addr1@an.example?to=addr2@an.example", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+        yield return new TestCaseData("mailto:chris@example.com", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+        yield return new TestCaseData("mailto:infobot@example.com?subject=current-issue", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+        yield return new TestCaseData("mailto:infobot@example.com?body=send%20current-issue", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+        yield return new TestCaseData("mailto:infobot@example.com?body=send%20current-issue%0D%0Asend%20index", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+        yield return new TestCaseData("mailto:list@example.org?In-Reply-To=%3C3469A91.D10AF4C@example.com%3E", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+        yield return new TestCaseData("mailto:majordomo@example.com?body=subscribe%20bamboo-l", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+        yield return new TestCaseData("mailto:joe@example.com?cc=bob@example.com&body=hello", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
+
+        // Valid mailto URIs that are not supported yet
+        yield return new TestCaseData("mailto:?to=user@example.com;user2@example.com;user3@example.com&subject=Message Title&body=Message Content", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme with multiple recipients, subject, and body").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:用户@例子.广告", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Chinese, Unicode)").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:ಬೆಂಬಲ@ಡೇಟಾಮೇಲ್.ಭಾರತ", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Kannada, Unicode)").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:अजय@डाटा.भारत", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Hindi, Unicode)").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:квіточка@пошта.укр", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Ukrainian, Unicode)").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:χρήστης@παράδειγμα.ελ", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Greek, Unicode)").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:Dörte@Sörensen.example.com", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (German, Unicode)").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:коля@пример.рф", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Russian, Unicode)").Ignore("TODO: Fix this test case");
+        yield return new TestCaseData("mailto:مثال@موقع.عر", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Arabic, Unicode)").Ignore("TODO: Fix this test case");
+
+        // Valid tel URIs
+        yield return new TestCaseData("tel:+1-201-555-0123", UriKind.Absolute).Returns(true).SetDescription("Tel scheme");
+        yield return new TestCaseData("tel:7042;phone-context=example.com", UriKind.Absolute).Returns(true).SetDescription("Tel scheme with phone-context");
+        yield return new TestCaseData("tel:863-1234;phone-context=+1-914-555", UriKind.Absolute).Returns(true).SetDescription("Tel scheme with phone-context");
+
+        // Valid telegram URIs
+        yield return new TestCaseData("tg:path?query", UriKind.Absolute).Returns(true).SetDescription("Telegram scheme");
+        yield return new TestCaseData("tg://path?query", UriKind.Absolute).Returns(true).SetDescription("Telegram scheme");
+        yield return new TestCaseData("tonsite://somesite.domain/path?query#hash", UriKind.Absolute).Returns(true).SetDescription("Tonsite scheme");
+        yield return new TestCaseData("tg://resolve?domain=something&text=sometext&profile", UriKind.Absolute).Returns(true).SetDescription("Telegram scheme with query parameters");
     }
 
     [TestCaseSource(nameof(UriTestCases))]
