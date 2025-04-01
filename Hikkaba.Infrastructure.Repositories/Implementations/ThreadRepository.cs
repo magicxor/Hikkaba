@@ -188,6 +188,7 @@ public class ThreadRepository : IThreadRepository
                             FileName = attachment.FileNameWithoutExtension,
                             FileExtension = attachment.FileExtension,
                             FileSize = attachment.FileSize,
+                            FileContentType = attachment.FileContentType,
                             FileHash = attachment.FileHash,
                         })
                         .ToList(),
@@ -202,6 +203,7 @@ public class ThreadRepository : IThreadRepository
                             FileName = attachment.FileNameWithoutExtension,
                             FileExtension = attachment.FileExtension,
                             FileSize = attachment.FileSize,
+                            FileContentType = attachment.FileContentType,
                             FileHash = attachment.FileHash,
                         })
                         .ToList(),
@@ -225,6 +227,7 @@ public class ThreadRepository : IThreadRepository
                             FileName = attachment.FileNameWithoutExtension,
                             FileExtension = attachment.FileExtension,
                             FileSize = attachment.FileSize,
+                            FileContentType = attachment.FileContentType,
                             FileHash = attachment.FileHash,
                             Width = attachment.Width,
                             Height = attachment.Height,
@@ -241,6 +244,7 @@ public class ThreadRepository : IThreadRepository
                             FileName = attachment.FileNameWithoutExtension,
                             FileExtension = attachment.FileExtension,
                             FileSize = attachment.FileSize,
+                            FileContentType = attachment.FileContentType,
                             FileHash = attachment.FileHash,
                         })
                         .ToList(),

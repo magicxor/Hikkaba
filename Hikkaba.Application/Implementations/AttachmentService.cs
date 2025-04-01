@@ -59,9 +59,9 @@ public class AttachmentService : IAttachmentService
         var fileExtension = Path.GetExtension(formFile.FileName).ToLowerInvariant().TrimStart('.');
         var fileNameWithExtension = fileNameWithoutExtension + "." + fileExtension;
         var fileSize = formFile.Length;
+        var fileContentType = formFile.ContentType;
         var attachmentType = _attachmentCategorizer.GetAttachmentType(fileExtension);
         var fileHash = _hashService.GetHashBytes(formFile.OpenReadStream());
-        var contentType = formFile.ContentType;
 
         if (attachmentType != AttachmentType.Picture)
         {
@@ -73,7 +73,7 @@ public class AttachmentService : IAttachmentService
                 FileExtension = fileExtension,
                 FileNameWithExtension = fileNameWithExtension,
                 FileSize = fileSize,
-                ContentType = contentType,
+                FileContentType = fileContentType,
                 FileStream = tempFileStream,
                 FileHash = fileHash,
             };
@@ -89,7 +89,7 @@ public class AttachmentService : IAttachmentService
                 FileExtension = fileExtension,
                 FileNameWithExtension = fileNameWithExtension,
                 FileSize = fileSize,
-                ContentType = contentType,
+                FileContentType = fileContentType,
                 FileStream = tempFileStream,
                 FileHash = fileHash,
                 Width = 0,
@@ -119,7 +119,7 @@ public class AttachmentService : IAttachmentService
             FileExtension = fileExtension,
             FileNameWithExtension = fileNameWithExtension,
             FileSize = fileSize,
-            ContentType = contentType,
+            FileContentType = fileContentType,
             FileStream = tempFileStream,
             FileHash = fileHash,
             Width = width,

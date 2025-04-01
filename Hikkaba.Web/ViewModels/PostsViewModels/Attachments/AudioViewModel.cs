@@ -13,5 +13,6 @@ public class AudioViewModel
     public required string FileName { get; set; }
     public required string FileExtension { get; set; }
     public required long FileSize { get; set; }
+    public required string FileContentType { get; set; }
     public required string FileHash { get; set; }
 }

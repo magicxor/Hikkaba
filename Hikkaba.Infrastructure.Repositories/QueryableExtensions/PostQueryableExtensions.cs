@@ -32,6 +32,7 @@ public static class PostQueryableExtensions
                     FileName = a.FileNameWithoutExtension,
                     FileExtension = a.FileExtension,
                     FileSize = a.FileSize,
+                    FileContentType = a.FileContentType,
                     FileHash = a.FileHash,
                 })
                 .ToList(),
@@ -46,6 +47,7 @@ public static class PostQueryableExtensions
                     FileName = d.FileNameWithoutExtension,
                     FileExtension = d.FileExtension,
                     FileSize = d.FileSize,
+                    FileContentType = d.FileContentType,
                     FileHash = d.FileHash,
                 })
                 .ToList(),
@@ -69,6 +71,7 @@ public static class PostQueryableExtensions
                     FileName = p.FileNameWithoutExtension,
                     FileExtension = p.FileExtension,
                     FileSize = p.FileSize,
+                    FileContentType = p.FileContentType,
                     FileHash = p.FileHash,
                     Width = p.Width,
                     Height = p.Height,
@@ -85,6 +88,7 @@ public static class PostQueryableExtensions
                     FileName = v.FileNameWithoutExtension,
                     FileExtension = v.FileExtension,
                     FileSize = v.FileSize,
+                    FileContentType = v.FileContentType,
                     FileHash = v.FileHash,
                 })
                 .ToList(),

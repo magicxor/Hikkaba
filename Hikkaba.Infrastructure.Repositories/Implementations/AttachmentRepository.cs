@@ -20,6 +20,7 @@ public class AttachmentRepository : IAttachmentRepository
                     FileNameWithoutExtension = f.FileNameWithoutExtension,
                     FileExtension = f.FileExtension,
                     FileSize = f.FileSize,
+                    FileContentType = f.FileContentType,
                     FileHash = f.FileHash,
                 })
                 .ToList(),
@@ -31,6 +32,7 @@ public class AttachmentRepository : IAttachmentRepository
                     FileNameWithoutExtension = f.FileNameWithoutExtension,
                     FileExtension = f.FileExtension,
                     FileSize = f.FileSize,
+                    FileContentType = f.FileContentType,
                     FileHash = f.FileHash,
                 })
                 .ToList(),
@@ -43,6 +45,7 @@ public class AttachmentRepository : IAttachmentRepository
                     FileNameWithoutExtension = f.FileNameWithoutExtension,
                     FileExtension = f.FileExtension,
                     FileSize = f.FileSize,
+                    FileContentType = f.FileContentType,
                     FileHash = f.FileHash,
                     Width = f.Width,
                     Height = f.Height,
@@ -56,6 +59,7 @@ public class AttachmentRepository : IAttachmentRepository
                     FileNameWithoutExtension = f.FileNameWithoutExtension,
                     FileExtension = f.FileExtension,
                     FileSize = f.FileSize,
+                    FileContentType = f.FileContentType,
                     FileHash = f.FileHash,
                 })
                 .ToList(),

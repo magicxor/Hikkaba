@@ -19,6 +19,10 @@ public abstract class FileAttachment : Attachment
     public required long FileSize { get; set; }
 
     [Required]
+    [MaxLength(Defaults.MaxFileContentTypeLength)]
+    public required string FileContentType { get; set; }
+
+    [Required]
     [MinLength(Defaults.MaxFileHashBytesLength)]
     [MaxLength(Defaults.MaxFileHashBytesLength)]
     [Column(TypeName = "binary(32)")]

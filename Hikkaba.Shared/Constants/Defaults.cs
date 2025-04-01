@@ -28,6 +28,7 @@ public static class Defaults
     public const int MaxFileNameLength = 100;
     public const int MaxFileExtensionLength = 10;
     public const int MaxFileHashBytesLength = 32;
+    public const int MaxFileContentTypeLength = 255;
     public const int MinSearchTermLength = 3;
     public const int MaxSearchTermLength = 100;
     public const int MinCategoryAliasLength = 1;

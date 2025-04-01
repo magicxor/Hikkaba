@@ -16,7 +16,7 @@ public class FileAttachmentStreamContainer : IDisposable, IAsyncDisposable
 
     public required long FileSize { get; set; }
 
-    public required string ContentType { get; set; }
+    public required string FileContentType { get; set; }
 
     public required byte[] FileHash { get; set; }
 
