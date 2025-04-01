@@ -54,7 +54,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
         return UriRegex.Replace(text, """[url="$1"]$1[/url]""");
     }
 
-    private string ReplaceCrossLinksWithBbCodeUrl(string categoryAlias, long threadId, string text)
+    private string ReplacePostLinksWithBbCodeUrl(string categoryAlias, long threadId, string text)
     {
         var threadUri = _urlHelper.Action("Details", "Threads",
             new
@@ -82,7 +82,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
         var linksProcessed = ReplaceUrisWithBbCodeUrl(limitedLineBreaksCount);
         var crossLinksProcessed = threadId == null
             ? linksProcessed
-            : ReplaceCrossLinksWithBbCodeUrl(categoryAlias, threadId.Value, linksProcessed);
+            : ReplacePostLinksWithBbCodeUrl(categoryAlias, threadId.Value, linksProcessed);
         var convertedToHtml = _bbParser.Parse(crossLinksProcessed).ToHtml();
         return convertedToHtml;
     }
