@@ -67,6 +67,7 @@ public static class Defaults
     public static readonly string[] SupportedAudioExtensions = AudioExtensions.Split(',');
     public static readonly string[] SupportedPictureExtensions = PictureExtensions.Split(',');
     public static readonly string[] SupportedVideoExtensions = VideoExtensions.Split(',');
+
     public static readonly string AllSupportedExtensionsWithDot = string.Join(",",
         SupportedAudioExtensions
         .Concat(SupportedPictureExtensions)

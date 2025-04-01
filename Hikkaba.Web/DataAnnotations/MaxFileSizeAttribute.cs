@@ -8,7 +8,7 @@ namespace Hikkaba.Web.DataAnnotations;
 /// Validation attribute to check the maximum file size of a IFormFile object.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class FileSizeMaxAttribute : ValidationAttribute
+public class MaxFileSizeAttribute : ValidationAttribute
 {
     /// <summary>
     /// Maximum file size in bytes.
@@ -19,7 +19,7 @@ public class FileSizeMaxAttribute : ValidationAttribute
     /// Constructor.
     /// </summary>
     /// <param name="maxFileSize">Maximum file size in bytes.</param>
-    public FileSizeMaxAttribute(long maxFileSize)
+    public MaxFileSizeAttribute(long maxFileSize)
     {
         _maxFileSize = maxFileSize;
     }
@@ -28,7 +28,7 @@ public class FileSizeMaxAttribute : ValidationAttribute
     /// Validate that the file has a file size equal or smaller than the specified maximum (in bytes) or that it is null.
     /// </summary>
     /// <param name="value">Object to validate.</param>
-    /// <param name="validationContext"><see cref="ValidationContext"/></param>
+    /// <param name="validationContext">Context in which a validation check is performed.</param>
     /// <returns>True if the file size is equal or smaller than <see cref="_maxFileSize"/> bytes or if it is null.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {

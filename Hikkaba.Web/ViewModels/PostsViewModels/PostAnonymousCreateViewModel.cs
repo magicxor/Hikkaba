@@ -21,9 +21,9 @@ public class PostAnonymousCreateViewModel
 
     [Display(Name = @"Attachments")]
     [AllowedExtensions(Defaults.AllAllowedExtensions)]
-    [FileSizeMax(Defaults.MaxAttachmentSize)]
-    [FileCollectionSizeMax(Defaults.MaxAttachmentsTotalSize)]
-    [FileMaxCount(Defaults.MaxAttachmentsCount)]
+    [MaxFileSize(Defaults.MaxAttachmentSize)]
+    [MaxFileCollectionSize(Defaults.MaxAttachmentsTotalSize)]
+    [MaxFileCount(Defaults.MaxAttachmentsCount)]
     public IFormFileCollection? Attachments { get; set; } = new FormFileCollection();
 
     [Required]

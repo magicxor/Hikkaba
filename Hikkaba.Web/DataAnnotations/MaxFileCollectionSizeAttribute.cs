@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Http;
 namespace Hikkaba.Web.DataAnnotations;
 
 /// <summary>
-/// Validation attribute to check the maximum total size of a IFormFileCollection object.
+/// Validation attribute to check the maximum total size of a file collection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class FileCollectionSizeMaxAttribute : ValidationAttribute
+public class MaxFileCollectionSizeAttribute : ValidationAttribute
 {
     /// <summary>
     /// Maximum total size in bytes.
@@ -20,11 +20,17 @@ public class FileCollectionSizeMaxAttribute : ValidationAttribute
     /// Constructor.
     /// </summary>
     /// <param name="maxFileCollectionSize">Maximum total size in bytes.</param>
-    public FileCollectionSizeMaxAttribute(long maxFileCollectionSize)
+    public MaxFileCollectionSizeAttribute(long maxFileCollectionSize)
     {
         _maxFileCollectionSize = maxFileCollectionSize;
     }
 
+    /// <summary>
+    /// Validate that the total size of the files in the collection is equal or smaller than the specified maximum (in bytes) or that it is null.
+    /// </summary>
+    /// <param name="value">Object to validate.</param>
+    /// <param name="validationContext">Context in which a validation check is performed.</param>
+    /// <returns>True if the total size is equal or smaller than <see cref="_maxFileCollectionSize"/> bytes or if it is null.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)
@@ -32,6 +38,9 @@ public class FileCollectionSizeMaxAttribute : ValidationAttribute
 
         if (value is IFormFileCollection formFileCollection)
         {
+            if (!formFileCollection.Any())
+                return ValidationResult.Success;
+
             var totalSize = formFileCollection.Sum(formFile => formFile.Length);
 
             if (totalSize > _maxFileCollectionSize)

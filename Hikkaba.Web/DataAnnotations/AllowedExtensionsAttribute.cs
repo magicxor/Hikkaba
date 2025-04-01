@@ -26,6 +26,12 @@ public class AllowedExtensionsAttribute : ValidationAttribute
         _allowedExtensions = allowedExtensions.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
+    /// <summary>
+    /// Validate that the file has an allowed extension or that it is null.
+    /// </summary>
+    /// <param name="value">Object to validate.</param>
+    /// <param name="validationContext">Context in which a validation check is performed.</param>
+    /// <returns>True if the file has an allowed extension or if it is null.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)

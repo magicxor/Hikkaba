@@ -24,10 +24,10 @@ public class ThreadAnonymousCreateViewModel
     [Required]
     [Display(Name = @"Attachments")]
     [AllowedExtensions(Defaults.AllAllowedExtensions)]
-    [FileSizeMax(Defaults.MaxAttachmentSize)]
-    [FileCollectionSizeMax(Defaults.MaxAttachmentsTotalSize)]
-    [FileMinCount(1)]
-    [FileMaxCount(Defaults.MaxAttachmentsCount)]
+    [MaxFileSize(Defaults.MaxAttachmentSize)]
+    [MaxFileCollectionSize(Defaults.MaxAttachmentsTotalSize)]
+    [MinFileCount(1)]
+    [MaxFileCount(Defaults.MaxAttachmentsCount)]
     public required IFormFileCollection Attachments { get; set; }
 
     [Required]
