@@ -49,11 +49,17 @@ public class GeoIpService : IGeoIpService
                     result.LowerIpAddress = firstHost;
                     result.UpperIpAddress = lastHost;
                 }
+
+                getAsnActivity?.SetStatus(ActivityStatusCode.Ok);
+            }
+            else
+            {
+                getAsnActivity?.SetStatus(ActivityStatusCode.Error, "Can't get ASN information for IP address");
             }
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Can't get ASN information for IP address {IpAddress}", ipAddress);
+            _logger.LogError(e, "Error while getting ASN information for IP address {IpAddress}", ipAddress);
         }
 
         try
@@ -69,11 +75,16 @@ public class GeoIpService : IGeoIpService
                 result.CountryIsoCode = countryResponse?.Country.IsoCode;
 
                 getCountryActivity?.SetTag("CountryIsoCode", result.CountryIsoCode);
+                getCountryActivity?.SetStatus(ActivityStatusCode.Ok);
+            }
+            else
+            {
+                getCountryActivity?.SetStatus(ActivityStatusCode.Error, "Can't get country information for IP address");
             }
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Can't get country information for IP address {IpAddress}", ipAddress);
+            _logger.LogError(e, "Error while getting country information for IP address {IpAddress}", ipAddress);
         }
 
         return result;

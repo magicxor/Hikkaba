@@ -1,4 +1,5 @@
-﻿using Hikkaba.Application.Telemetry;
+﻿using System.Diagnostics;
+using Hikkaba.Application.Telemetry;
 using HtmlAgilityPack;
 
 namespace Hikkaba.Application.Implementations;
@@ -19,9 +20,13 @@ public static class HtmlUtilities
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
 
+        activity?.AddEvent(new ActivityEvent("HTML loaded"));
+
         using var sw = new StringWriter();
         ConvertTo(doc.DocumentNode, sw);
         sw.Flush();
+
+        activity?.AddEvent(new ActivityEvent("HTML converted to plain text"));
 
         return sw.ToString();
     }
