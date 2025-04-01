@@ -157,6 +157,15 @@ public class UrlUtilityTests
         yield return new TestCaseData("mailto:majordomo@example.com?body=subscribe%20bamboo-l", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
         yield return new TestCaseData("mailto:joe@example.com?cc=bob@example.com&body=hello", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme");
 
+        // Invalid mailto URIs
+        yield return new TestCaseData("mailto:chri>s@example.com", UriKind.Absolute).Returns(false).SetDescription("Mailto scheme with invalid character '>'");
+        yield return new TestCaseData("mailto:chris@exa[mple.com", UriKind.Absolute).Returns(false).SetDescription("Mailto scheme with invalid character '['");
+        yield return new TestCaseData("mailto:chris@example. com", UriKind.Absolute).Returns(false).SetDescription("Mailto scheme with invalid character ' '");
+        yield return new TestCaseData("mailto:chris@example .com", UriKind.Absolute).Returns(false).SetDescription("Mailto scheme with invalid character ' '");
+        yield return new TestCaseData("mailto:chris@example.co>m", UriKind.Absolute).Returns(false).SetDescription("Mailto scheme with invalid character '>'");
+        yield return new TestCaseData("mailto:infobot@example.com?body=sen<>d%20current-issue", UriKind.Absolute).Returns(false).SetDescription("Mailto scheme with invalid characters '<>'");
+        yield return new TestCaseData("mailto:infobot@example.com?body=тест%20current-issue", UriKind.Absolute).Returns(false).SetDescription("Mailto scheme with invalid characters (non-ASCII)");
+
         // Valid mailto URIs that are not supported yet
         yield return new TestCaseData("mailto:?to=user@example.com;user2@example.com;user3@example.com&subject=Message Title&body=Message Content", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme with multiple recipients, subject, and body").Ignore("TODO: Fix this test case");
         yield return new TestCaseData("mailto:用户@例子.广告", UriKind.Absolute).Returns(true).SetDescription("Mailto scheme (Chinese, Unicode)").Ignore("TODO: Fix this test case");
