@@ -49,14 +49,17 @@ public class ThreadService : IThreadService
         return await _threadRepository.ListThreadPreviewsPaginatedAsync(filter, cancellationToken);
     }
 
-    public async Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel createRequestModel, IFormFileCollection attachments, CancellationToken cancellationToken)
+    public async Task<ThreadPostCreateResultModel> CreateThreadAsync(
+        ThreadCreateRequestModel createRequestModel,
+        IFormFileCollection attachments,
+        CancellationToken cancellationToken)
     {
         var postingRestrictionStatus = await _banRepository.GetPostingRestrictionStatusAsync(new PostingRestrictionsRequestModel
         {
             CategoryAlias = createRequestModel.CategoryAlias,
             ThreadId = null,
             UserIpAddress = createRequestModel.UserIpAddress,
-        });
+        }, cancellationToken);
 
         if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
             || postingRestrictionStatus is not PostingRestrictionsResponseSuccessModel successModel)

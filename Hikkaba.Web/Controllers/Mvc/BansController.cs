@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Entities;
@@ -30,9 +31,9 @@ public class BansController : BaseMvcController
     }
 
     [Route("Bans/{id}")]
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
-        var ban = await _banService.GetBanAsync(id);
+        var ban = await _banService.GetBanAsync(id, cancellationToken);
         var viewModel = ban?.ToViewModel();
 
         if (viewModel is null)
@@ -46,13 +47,13 @@ public class BansController : BaseMvcController
     }
 
     [Route("Bans")]
-    public async Task<IActionResult> Index(int page = 1, int size = 10)
+    public async Task<IActionResult> Index(int page = 1, int size = 10, CancellationToken cancellationToken = default)
     {
         var filter = new BanPagingFilter
         {
             EndsNotBefore = DateTime.UtcNow,
         };
-        var bans = await _banService.ListBansPaginatedAsync(filter);
+        var bans = await _banService.ListBansPaginatedAsync(filter, cancellationToken);
 
         var viewModelList = new BanIndexViewModel
         {
@@ -115,9 +116,9 @@ public class BansController : BaseMvcController
     */
 
     [Route("Bans/{id}/Delete")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var ban = await _banService.GetBanAsync(id);
+        var ban = await _banService.GetBanAsync(id, cancellationToken);
         var viewModel = ban?.ToViewModel();
         return View(viewModel);
     }
@@ -125,9 +126,9 @@ public class BansController : BaseMvcController
     [Route("Bans/{id}/Delete")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
+    public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken cancellationToken)
     {
-        await _banService.SetBanDeletedAsync(id, true);
+        await _banService.SetBanDeletedAsync(id, true, cancellationToken);
         return RedirectToAction("Index");
     }
 }

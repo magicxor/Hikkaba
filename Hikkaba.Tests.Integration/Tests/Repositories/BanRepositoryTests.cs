@@ -180,7 +180,7 @@ public sealed class BanRepositoryTests
             PageSize = 10,
             OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
             IpAddress = IPAddress.Parse(ipAddress),
-        });
+        }, cancellationToken);
 
         // Assert
         var any = result.Data.Count != 0;
@@ -321,7 +321,7 @@ public sealed class BanRepositoryTests
             PageSize = 10,
             OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
             IpAddress = IPAddress.Parse(ipAddress),
-        });
+        }, cancellationToken);
 
         // Assert
         var any = result.Data.Count != 0;

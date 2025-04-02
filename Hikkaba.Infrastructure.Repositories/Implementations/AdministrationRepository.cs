@@ -33,7 +33,7 @@ public class AdministrationRepository : IAdministrationRepository
         _scopeFactory = scopeFactory;
     }
 
-    public async Task<DashboardModel> GetDashboardAsync()
+    public async Task<DashboardModel> GetDashboardAsync(CancellationToken cancellationToken)
     {
         var dashboardItems = await _context.Categories
             .Include(category => category.CreatedBy)
@@ -49,7 +49,7 @@ public class AdministrationRepository : IAdministrationRepository
                             .Select(categoryToModerator => categoryToModerator.Moderator)
                             .ToList(),
                     })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         var dashboardItemsDto = dashboardItems
             .Select(categoryModerators => new CategoryModeratorsModel
@@ -63,79 +63,5 @@ public class AdministrationRepository : IAdministrationRepository
         {
             CategoriesModerators = dashboardItemsDto,
         };
-    }
-
-    public async Task WipeDatabaseAsync()
-    {
-        if (SupportedDbProviders.Contains(_context.Database.ProviderName))
-        {
-            _logger.LogWarning("Wiping database...");
-
-            await _context.Database.ExecuteSqlRawAsync(
-                """
-                DECLARE @sql NVARCHAR(2000);
-
-                WHILE EXISTS ( SELECT 1
-                               FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-                               WHERE
-                                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
-                                 (TABLE_NAME IN (
-                                   SELECT TABLE_NAME
-                                   FROM INFORMATION_SCHEMA.TABLES
-                                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-                                 ))
-                             )
-                    BEGIN
-                        SELECT TOP 1 @sql = 'ALTER TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+'] DROP CONSTRAINT ['+CONSTRAINT_NAME+']'
-                        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-                               WHERE
-                                 (CONSTRAINT_TYPE = 'FOREIGN KEY') AND
-                                 (TABLE_NAME IN (
-                                   SELECT TABLE_NAME
-                                   FROM INFORMATION_SCHEMA.TABLES
-                                   WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-                                 ))
-                        EXEC (@sql);
-                    END;
-
-                WHILE EXISTS ( SELECT 1
-                               FROM INFORMATION_SCHEMA.TABLES
-                               WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%')
-                             )
-                    BEGIN
-                        SELECT TOP 1 @sql = 'DROP TABLE '+TABLE_SCHEMA+'.['+TABLE_NAME+']'
-                        FROM INFORMATION_SCHEMA.TABLES
-                        WHERE (TABLE_TYPE='BASE TABLE') AND (TABLE_NAME NOT LIKE 'sys.%');
-                        EXEC (@sql);
-                    END;
-                """);
-        }
-        else
-        {
-            _logger.LogWarning("Deleting database...");
-
-            await _context.Database.EnsureDeletedAsync();
-        }
-    }
-
-    public async Task RunSeedInNewScopeAsync()
-    {
-        _logger.LogInformation("Running seed...");
-
-        // new scope to reset EF cache
-        using var scope = _scopeFactory.CreateScope();
-
-        var applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-        var seedSettings = scope.ServiceProvider.GetRequiredService<IOptions<SeedConfiguration>>();
-        var seedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
-
-        if ((await applicationDbContext.Database.GetPendingMigrationsAsync()).Any())
-        {
-            await applicationDbContext.Database.MigrateAsync();
-        }
-
-        await seedManager.SeedAsync(applicationDbContext, userMgr, roleMgr, seedSettings);
     }
 }

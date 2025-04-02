@@ -40,35 +40,55 @@ public sealed class BanRepository : IBanRepository
         _userContext = userContext;
     }
 
-    public async Task<BanPreviewModel?> FindActiveBan(long? threadId, string? categoryAlias, string userIpAddress)
+    public async Task<BanPreviewModel?> FindActiveBanAsync(
+        ActiveBanFilter filter,
+        CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
-        var userIp = IPAddress.Parse(userIpAddress).GetAddressBytes();
-        return await FindActiveBan(threadId, categoryAlias, userIp);
-    }
-
-    public async Task<BanPreviewModel?> FindActiveBan(long? threadId, string? categoryAlias, byte[] userIpAddress)
-    {
-        using var activity = RepositoriesTelemetry.BanSource.StartActivity();
+        ArgumentNullException.ThrowIfNull(filter.UserIpAddress);
 
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
-        var userIp = userIpAddress;
+        var userIp = filter.UserIpAddress;
+        var categoryAlias = filter.CategoryAlias;
+        var threadId = filter.ThreadId;
 
-        var activeBan = await _applicationDbContext.Bans
-            .TagWithCallSite()
+        var query = _applicationDbContext.Bans.TagWithCallSite();
+
+        if (filter is { CategoryAlias: null, ThreadId: null })
+        {
+            /* search for system-wide bans */
+            query = query.Where(ban => ban.Category == null);
+        }
+        else if (filter is { CategoryAlias: not null, ThreadId: null })
+        {
+            /* search for system-wide bans AND category bans */
+            query = query.Where(ban => ban.Category == null
+                                       || ban.Category.Alias == categoryAlias);
+        }
+        else if (filter is { CategoryAlias: null, ThreadId: not null })
+        {
+            /* search for system-wide bans AND category bans (lookup category by thread) */
+            query = query.Where(ban => ban.Category == null
+                                       || ban.Category.Threads.Any(thread => thread.Id == threadId));
+        }
+        else if (filter is { CategoryAlias: not null, ThreadId: not null })
+        {
+            /* search for system-wide bans AND category bans (either directly or lookup category by thread) */
+            query = query.Where(ban => ban.Category == null
+                                       || ban.Category.Alias == categoryAlias
+                                       || ban.Category.Threads.Any(thread => thread.Id == threadId));
+        }
+
+        var activeBan = await query
             .Where(
-                ban =>
-                    (ban.Category == null
-                     || (!string.IsNullOrEmpty(categoryAlias) && ban.Category.Alias == categoryAlias)
-                     || (threadId != null && ban.Category.Threads.Any(thread => thread.Id == threadId)))
-                    && !ban.IsDeleted
-                    && ban.EndsAt >= utcNow
-                    && (ban.BannedIpAddress == userIp
-                        || (ban.BannedCidrLowerIpAddress != null
-                            && ban.BannedCidrUpperIpAddress != null
-                            && ban.BannedCidrLowerIpAddress.Compare(userIp) <= 0
-                            && ban.BannedCidrUpperIpAddress.Compare(userIp) >= 0)))
+                ban => !ban.IsDeleted
+                       && ban.EndsAt >= utcNow
+                       && (ban.BannedIpAddress == userIp
+                           || (ban.BannedCidrLowerIpAddress != null
+                               && ban.BannedCidrUpperIpAddress != null
+                               && ban.BannedCidrLowerIpAddress.Compare(userIp) <= 0
+                               && ban.BannedCidrUpperIpAddress.Compare(userIp) >= 0)))
             .OrderByDescending(ban => ban.EndsAt)
             .Select(ban => new BanPreviewModel
             {
@@ -76,12 +96,14 @@ public sealed class BanRepository : IBanRepository
                 EndsAt = ban.EndsAt,
                 Reason = ban.Reason,
             })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         return activeBan;
     }
 
-    public async Task<PostingRestrictionsResponseModel> GetPostingRestrictionStatusAsync(PostingRestrictionsRequestModel restrictionsRequestModel)
+    public async Task<PostingRestrictionsResponseModel> GetPostingRestrictionStatusAsync(
+        PostingRestrictionsRequestModel restrictionsRequestModel,
+        CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
@@ -99,7 +121,7 @@ public sealed class BanRepository : IBanRepository
             .Where(c => !c.IsDeleted && c.Alias == restrictionsRequestModel.CategoryAlias)
             .OrderBy(c => c.Id)
             .Select(c => new { c.Id, c.Alias })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
         if (category is null)
         {
             return new PostingRestrictionsResponseFailureModel
@@ -130,7 +152,7 @@ public sealed class BanRepository : IBanRepository
                     BumpLimit = t.BumpLimit > 0 ? t.BumpLimit : t.Category.DefaultBumpLimit,
                     PostCount = t.Posts.Count,
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
             if (thread is null)
             {
                 return new PostingRestrictionsResponseFailureModel
@@ -159,7 +181,7 @@ public sealed class BanRepository : IBanRepository
             .TagWithCallSite()
             .IgnoreQueryFilters()
             .Where(p => p.UserIpAddress == userIp && p.CreatedAt >= utcFiveMinutesAgo)
-            .CountAsync();
+            .CountAsync(cancellationToken);
         if (postsFromIpWithin5MinutesCount >= _settings.Value.MaxPostsFromIpWithin5Minutes)
         {
             return new PostingRestrictionsResponseFailureModel
@@ -168,7 +190,13 @@ public sealed class BanRepository : IBanRepository
             };
         }
 
-        var ban = await FindActiveBan(restrictionsRequestModel.ThreadId, restrictionsRequestModel.CategoryAlias, userIp);
+        var ban = await FindActiveBanAsync(new ActiveBanFilter
+        {
+            UserIpAddress = userIp,
+            CategoryAlias = restrictionsRequestModel.CategoryAlias,
+            ThreadId = restrictionsRequestModel.ThreadId,
+        }, cancellationToken);
+
         if (ban is not null)
         {
             return new PostingRestrictionsResponseBanModel
@@ -189,7 +217,9 @@ public sealed class BanRepository : IBanRepository
         };
     }
 
-    public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter)
+    public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(
+        BanPagingFilter banFilter,
+        CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
@@ -259,7 +289,7 @@ public sealed class BanRepository : IBanRepository
 
         query = query.ApplyOrderByAndPaging(banFilter, x => x.CreatedAt);
 
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync(cancellationToken);
 
         var data = await query.Select(ban => new BanDetailsModel
             {
@@ -281,12 +311,12 @@ public sealed class BanRepository : IBanRepository
                 CreatedById = ban.CreatedById,
                 ModifiedById = ban.ModifiedById,
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return new PagedResult<BanDetailsModel>(data, banFilter, totalCount);
     }
 
-    public async Task<BanDetailsModel?> GetBanAsync(int banId)
+    public async Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
@@ -314,12 +344,14 @@ public sealed class BanRepository : IBanRepository
                 ModifiedById = ban.ModifiedById,
             })
             .OrderBy(ban => ban.Id)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         return ban;
     }
 
-    public async Task<int> CreateBanAsync(BanCreateRequestModel banCreateRequest)
+    public async Task<int> CreateBanAsync(
+        BanCreateRequestModel banCreateRequest,
+        CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
@@ -332,7 +364,7 @@ public sealed class BanRepository : IBanRepository
         {
             var banExists = await _applicationDbContext.Bans
                 .TagWithCallSite()
-                .AnyAsync(ban => !ban.IsDeleted && ban.RelatedPostId == relatedPostId);
+                .AnyAsync(ban => !ban.IsDeleted && ban.RelatedPostId == relatedPostId, cancellationToken);
             if (banExists)
             {
                 throw new HikkabaDomainException("User was already banned for this post");
@@ -356,13 +388,13 @@ public sealed class BanRepository : IBanRepository
             CreatedById = user.Id,
         };
 
-        await _applicationDbContext.Bans.AddAsync(ban);
-        await _applicationDbContext.SaveChangesAsync();
+        await _applicationDbContext.Bans.AddAsync(ban, cancellationToken);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return ban.Id;
     }
 
-    public async Task SetBanDeletedAsync(int banId, bool isDeleted)
+    public async Task SetBanDeletedAsync(int banId, bool isDeleted, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
@@ -376,6 +408,6 @@ public sealed class BanRepository : IBanRepository
                 setProp
                     .SetProperty(ban => ban.IsDeleted, isDeleted)
                     .SetProperty(ban => ban.ModifiedAt, utcNow)
-                    .SetProperty(ban => ban.ModifiedById, user.Id));
+                    .SetProperty(ban => ban.ModifiedById, user.Id), cancellationToken);
     }
 }

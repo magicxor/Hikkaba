@@ -32,10 +32,10 @@ public class AdministrationController : Controller
     }
 
     [Route("Administration")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var board = await _boardService.GetBoardAsync();
-        var dashboard = await _administrationService.GetDashboardAsync();
+        var dashboard = await _administrationService.GetDashboardAsync(cancellationToken);
         var systemInfo = _systemInfoService.GetSystemInfo();
 
         var dashboardViewModel = new DashboardViewModel

@@ -21,22 +21,22 @@ public class BanService : IBanService
         _banRepository = banRepository;
     }
 
-    public async Task<BanPreviewModel?> FindActiveBan(long? threadId, string? categoryAlias, string userIpAddress)
+    public async Task<BanPreviewModel?> FindActiveBan(ActiveBanFilter filter, CancellationToken cancellationToken)
     {
-        return await _banRepository.FindActiveBan(threadId, categoryAlias, userIpAddress);
+        return await _banRepository.FindActiveBanAsync(filter, cancellationToken);
     }
 
-    public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter)
+    public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter, CancellationToken cancellationToken)
     {
-        return await _banRepository.ListBansPaginatedAsync(banFilter);
+        return await _banRepository.ListBansPaginatedAsync(banFilter, cancellationToken);
     }
 
-    public async Task<BanDetailsModel?> GetBanAsync(int banId)
+    public async Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken)
     {
-        return await _banRepository.GetBanAsync(banId);
+        return await _banRepository.GetBanAsync(banId, cancellationToken);
     }
 
-    public async Task<int> CreateBanAsync(BanCreateCommand banCreateCommand)
+    public async Task<int> CreateBanAsync(BanCreateCommand banCreateCommand, CancellationToken cancellationToken)
     {
         var bannedIpAddress = IPAddress.Parse(banCreateCommand.BannedIpAddress)
                               ?? throw new ArgumentException("Invalid IP address");
@@ -65,11 +65,11 @@ public class BanService : IBanService
             Reason = banCreateCommand.Reason,
             RelatedPostId = banCreateCommand.RelatedPostId,
             CategoryId = banCreateCommand.CategoryId,
-        });
+        }, cancellationToken);
     }
 
-    public async Task SetBanDeletedAsync(int banId, bool isDeleted)
+    public async Task SetBanDeletedAsync(int banId, bool isDeleted, CancellationToken cancellationToken)
     {
-        await _banRepository.SetBanDeletedAsync(banId, isDeleted);
+        await _banRepository.SetBanDeletedAsync(banId, isDeleted, cancellationToken);
     }
 }

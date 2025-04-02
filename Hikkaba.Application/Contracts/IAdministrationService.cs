@@ -4,5 +4,5 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IAdministrationService
 {
-    Task<DashboardModel> GetDashboardAsync();
+    Task<DashboardModel> GetDashboardAsync(CancellationToken cancellationToken);
 }

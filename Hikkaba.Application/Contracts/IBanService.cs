@@ -5,9 +5,9 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IBanService
 {
-    Task<BanPreviewModel?> FindActiveBan(long? threadId, string? categoryAlias, string userIpAddress);
-    Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter);
-    Task<BanDetailsModel?> GetBanAsync(int banId);
-    Task<int> CreateBanAsync(BanCreateCommand banCreateCommand);
-    Task SetBanDeletedAsync(int banId, bool isDeleted);
+    Task<BanPreviewModel?> FindActiveBan(ActiveBanFilter filter, CancellationToken cancellationToken);
+    Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter, CancellationToken cancellationToken);
+    Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken);
+    Task<int> CreateBanAsync(BanCreateCommand banCreateCommand, CancellationToken cancellationToken);
+    Task SetBanDeletedAsync(int banId, bool isDeleted, CancellationToken cancellationToken);
 }

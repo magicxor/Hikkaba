@@ -30,7 +30,7 @@ public class ThumbnailGenerator : IThumbnailGenerator
         activity?.AddEvent(new ActivityEvent("Thumbnail resized"));
 
         var thumbnailStream = new MemoryStream();
-        await thumbnail.SaveAsJpegAsync(thumbnailStream, cancellationToken: cancellationToken);
+        await thumbnail.SaveAsJpegAsync(thumbnailStream, cancellationToken);
         thumbnailStream.Position = 0;
         activity?.AddEvent(new ActivityEvent("Thumbnail saved to memory stream as JPEG"));
 

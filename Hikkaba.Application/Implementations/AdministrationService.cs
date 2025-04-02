@@ -27,8 +27,8 @@ public class AdministrationService : IAdministrationService
         _threadRepository = threadRepository;
     }
 
-    public async Task<DashboardModel> GetDashboardAsync()
+    public async Task<DashboardModel> GetDashboardAsync(CancellationToken cancellationToken)
     {
-        return await _administrationRepository.GetDashboardAsync();
+        return await _administrationRepository.GetDashboardAsync(cancellationToken);
     }
 }
