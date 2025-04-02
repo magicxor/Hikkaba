@@ -105,13 +105,16 @@ public sealed class ApplicationDbContext
         // indices
         builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
         builder.Entity<Category>().HasIndex(e => e.Name).IsUnique();
+        builder.Entity<Category>().HasIndex(e => e.IsDeleted);
 
         builder.Entity<Thread>().HasIndex(e => e.CreatedAt);
         builder.Entity<Thread>().HasIndex(e => e.IsPinned);
+        builder.Entity<Thread>().HasIndex(e => e.IsDeleted);
 
         builder.Entity<Post>().HasIndex(e => e.BlobContainerId).IsUnique();
         builder.Entity<Post>().HasIndex(e => e.CreatedAt);
         builder.Entity<Post>().HasIndex(e => e.IsSageEnabled);
+        builder.Entity<Post>().HasIndex(p => p.IsDeleted).IncludeProperties(p => p.ThreadId);
 
         builder.Entity<Attachment>().HasIndex(e => e.BlobId).IsUnique();
 
@@ -120,6 +123,7 @@ public sealed class ApplicationDbContext
         builder.Entity<Ban>().HasIndex(e => e.BannedCidrLowerIpAddress);
         builder.Entity<Ban>().HasIndex(e => e.BannedCidrUpperIpAddress);
         builder.Entity<Ban>().HasIndex(e => e.CountryIsoCode);
+        builder.Entity<Ban>().HasIndex(e => e.IsDeleted);
     }
 
     public DbSet<Ban> Bans { get; set; } = null!;
