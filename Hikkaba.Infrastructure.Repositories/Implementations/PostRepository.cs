@@ -117,8 +117,7 @@ public class PostRepository : IPostRepository
     }
 
     public async Task<long> CreatePostAsync(
-        PostCreateRequestModel createRequestModel,
-        byte[] threadLocalUserHash,
+        PostCreateExtendedRequestModel createRequestModel,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
     {
@@ -128,15 +127,15 @@ public class PostRepository : IPostRepository
 
         var post = new Post
         {
-            BlobContainerId = createRequestModel.BlobContainerId,
+            BlobContainerId = createRequestModel.BaseModel.BlobContainerId,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            IsSageEnabled = createRequestModel.IsSageEnabled,
-            MessageText = createRequestModel.MessageText,
-            MessageHtml = createRequestModel.MessageHtml,
-            UserIpAddress = createRequestModel.UserIpAddress,
-            UserAgent = createRequestModel.UserAgent,
-            ThreadLocalUserHash = threadLocalUserHash,
-            ThreadId = createRequestModel.ThreadId,
+            IsSageEnabled = createRequestModel.BaseModel.IsSageEnabled,
+            MessageText = createRequestModel.BaseModel.MessageText,
+            MessageHtml = createRequestModel.BaseModel.MessageHtml,
+            UserIpAddress = createRequestModel.BaseModel.UserIpAddress,
+            UserAgent = createRequestModel.BaseModel.UserAgent,
+            ThreadLocalUserHash = createRequestModel.ThreadLocalUserHash,
+            ThreadId = createRequestModel.BaseModel.ThreadId,
             Audios = attachments.Audios,
             Documents = attachments.Documents,
             Pictures = attachments.Pictures,
@@ -145,7 +144,8 @@ public class PostRepository : IPostRepository
 
         var postsToReply = await _applicationDbContext.Posts
             .TagWithCallSite()
-            .Where(p => p.ThreadId == createRequestModel.ThreadId && createRequestModel.MentionedPosts.Contains(p.Id))
+            .Where(p => p.ThreadId == createRequestModel.BaseModel.ThreadId
+                        && createRequestModel.BaseModel.MentionedPosts.Contains(p.Id))
             .Select(p => new PostToReply
             {
                 Post = p,

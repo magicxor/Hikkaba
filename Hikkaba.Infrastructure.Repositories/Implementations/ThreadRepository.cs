@@ -283,9 +283,7 @@ public class ThreadRepository : IThreadRepository
     }
 
     public async Task<ThreadPostCreateResultModel> CreateThreadAsync(
-        ThreadCreateRequestModel createRequestModel,
-        Guid threadSalt,
-        byte[] threadLocalUserHash,
+        ThreadCreateExtendedRequestModel createRequestModel,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
     {
@@ -296,23 +294,25 @@ public class ThreadRepository : IThreadRepository
         var category = await _applicationDbContext.Categories
             .TagWithCallSite()
             .OrderBy(x => x.Id)
-            .FirstOrDefaultAsync(x => x.Alias == createRequestModel.CategoryAlias && !x.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Alias == createRequestModel.BaseModel.CategoryAlias
+                                      && !x.IsDeleted,
+                cancellationToken);
 
         if (category is null)
         {
-            throw new HikkabaHttpResponseException(HttpStatusCode.NotFound, $"Category with alias {createRequestModel.CategoryAlias} not found");
+            throw new HikkabaHttpResponseException(HttpStatusCode.NotFound, $"Category with alias {createRequestModel.BaseModel.CategoryAlias} not found");
         }
 
         var post = new Post
         {
-            BlobContainerId = createRequestModel.BlobContainerId,
+            BlobContainerId = createRequestModel.BaseModel.BlobContainerId,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            IsSageEnabled = createRequestModel.IsSageEnabled,
-            MessageText = createRequestModel.MessageText,
-            MessageHtml = createRequestModel.MessageHtml,
-            UserIpAddress = createRequestModel.UserIpAddress,
-            UserAgent = createRequestModel.UserAgent,
-            ThreadLocalUserHash = threadLocalUserHash,
+            IsSageEnabled = createRequestModel.BaseModel.IsSageEnabled,
+            MessageText = createRequestModel.BaseModel.MessageText,
+            MessageHtml = createRequestModel.BaseModel.MessageHtml,
+            UserIpAddress = createRequestModel.BaseModel.UserIpAddress,
+            UserAgent = createRequestModel.BaseModel.UserAgent,
+            ThreadLocalUserHash = createRequestModel.ThreadLocalUserHash,
             Audios = attachments.Audios,
             Documents = attachments.Documents,
             Pictures = attachments.Pictures,
@@ -322,9 +322,9 @@ public class ThreadRepository : IThreadRepository
         var thread = new Thread
         {
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            Title = createRequestModel.ThreadTitle,
+            Title = createRequestModel.BaseModel.ThreadTitle,
             BumpLimit = category.DefaultBumpLimit > 0 ? category.DefaultBumpLimit : Defaults.DefaultBumpLimit,
-            Salt = threadSalt,
+            Salt = createRequestModel.ThreadSalt,
             CategoryId = category.Id,
             Posts = [post],
         };

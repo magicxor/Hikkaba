@@ -2,6 +2,7 @@
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
@@ -108,14 +109,27 @@ public sealed class BanRepository : IBanRepository
         }
 
         Guid? threadSalt = null;
+        var threadIsCyclic = false;
+        var threadBumpLimit = 0;
+        var threadPostCount = 0;
 
         if (restrictionsRequestModel.ThreadId is not null)
         {
             var thread = await _applicationDbContext.Threads
                 .TagWithCallSite()
+                .Include(t => t.Category)
+                .Include(t => t.Posts)
                 .Where(t => !t.Category.IsDeleted && !t.IsDeleted && t.Id == restrictionsRequestModel.ThreadId)
                 .OrderBy(t => t.Id)
-                .Select(t => new { t.Id, t.IsClosed, t.Salt })
+                .Select(t => new
+                {
+                    t.Id,
+                    t.IsClosed,
+                    t.Salt,
+                    t.IsCyclic,
+                    BumpLimit = t.BumpLimit > 0 ? t.BumpLimit : t.Category.DefaultBumpLimit,
+                    PostCount = t.Posts.Count(p => !p.IsDeleted),
+                })
                 .FirstOrDefaultAsync();
             if (thread is null)
             {
@@ -134,6 +148,9 @@ public sealed class BanRepository : IBanRepository
             }
 
             threadSalt = thread.Salt;
+            threadIsCyclic = thread.IsCyclic;
+            threadBumpLimit = thread.BumpLimit;
+            threadPostCount = thread.PostCount;
         }
 
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
@@ -166,6 +183,9 @@ public sealed class BanRepository : IBanRepository
         {
             RestrictionType = PostingRestrictionType.NoRestriction,
             ThreadSalt = threadSalt,
+            IsCyclic = threadIsCyclic,
+            BumpLimit = threadBumpLimit,
+            PostCount = threadPostCount,
         };
     }
 

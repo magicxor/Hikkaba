@@ -1,4 +1,5 @@
 ﻿using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Paging.Models;
 
 namespace Hikkaba.Infrastructure.Repositories.Contracts;

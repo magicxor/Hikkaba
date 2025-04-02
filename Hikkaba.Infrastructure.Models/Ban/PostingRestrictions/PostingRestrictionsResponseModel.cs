@@ -1,6 +1,6 @@
 ﻿using Hikkaba.Shared.Enums;
 
-namespace Hikkaba.Infrastructure.Models.Ban;
+namespace Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 
 public abstract class PostingRestrictionsResponseModel
 {

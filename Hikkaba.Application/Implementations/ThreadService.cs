@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Models;
@@ -66,12 +67,18 @@ public class ThreadService : IThreadService
         var threadSalt = Guid.NewGuid();
         var userIp = createRequestModel.UserIpAddress ?? [];
         var threadLocalUserHash = _hashService.GetHashBytes(threadSalt, userIp);
+        var repoRequestModel = new ThreadCreateExtendedRequestModel
+        {
+            BaseModel = createRequestModel,
+            ThreadSalt = threadSalt,
+            ThreadLocalUserHash = threadLocalUserHash,
+        };
 
         await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(createRequestModel.BlobContainerId, attachments, cancellationToken);
 
         try
         {
-            return await _threadRepository.CreateThreadAsync(createRequestModel, threadSalt, threadLocalUserHash, uploadedAttachments, cancellationToken);
+            return await _threadRepository.CreateThreadAsync(repoRequestModel, uploadedAttachments, cancellationToken);
         }
         catch (Exception e)
         {

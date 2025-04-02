@@ -1,4 +1,4 @@
-﻿namespace Hikkaba.Infrastructure.Models.Ban;
+﻿namespace Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 
 public class PostingRestrictionsResponseBanModel : PostingRestrictionsResponseModel
 {
