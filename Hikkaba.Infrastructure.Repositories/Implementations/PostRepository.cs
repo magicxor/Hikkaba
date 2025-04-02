@@ -116,7 +116,7 @@ public class PostRepository : IPostRepository
         return new PagedResult<PostDetailsModel>(data, filter, totalCount);
     }
 
-    public async Task<long> CreatePostAsync(
+    public async Task<PostCreateResultModel> CreatePostAsync(
         PostCreateExtendedRequestModel createRequestModel,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
@@ -124,6 +124,8 @@ public class PostRepository : IPostRepository
         using var activity = RepositoriesTelemetry.PostSource.StartActivity();
 
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
+
+        var deletedBlobContainerIds = new List<Guid>();
 
         if (createRequestModel is { IsCyclic: true, BumpLimit: > 0, PostCount: > 0 }
             && createRequestModel.PostCount >= createRequestModel.BumpLimit)
@@ -137,6 +139,7 @@ public class PostRepository : IPostRepository
                 .Take(1) /* delete the oldest post */
                 .ToListAsync(cancellationToken);
             _applicationDbContext.Posts.RemoveRange(postsToBeDeleted);
+            deletedBlobContainerIds = postsToBeDeleted.Select(p => p.BlobContainerId).ToList();
         }
 
         var post = new Post
@@ -172,6 +175,10 @@ public class PostRepository : IPostRepository
 
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-        return post.Id;
+        return new PostCreateResultModel
+        {
+            PostId = post.Id,
+            DeletedBlobContainerIds = deletedBlobContainerIds,
+        };
     }
 }

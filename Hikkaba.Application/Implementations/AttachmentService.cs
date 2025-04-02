@@ -164,7 +164,14 @@ public class AttachmentService : IAttachmentService
         return attachments;
     }
 
-    public async Task DeleteAttachmentsAsync(Guid blobContainerId)
+    public async Task DeleteAttachmentAsync(Guid blobContainerId, Guid blobId)
+    {
+        await _storageProvider.DeleteBlobAsync(
+            blobContainerId.ToString(),
+            blobId.ToString());
+    }
+
+    public async Task DeleteAttachmentsContainerAsync(Guid blobContainerId)
     {
         await _storageProvider.DeleteContainerAsync(blobContainerId.ToString());
     }

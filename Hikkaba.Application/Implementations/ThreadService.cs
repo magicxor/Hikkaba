@@ -83,7 +83,7 @@ public class ThreadService : IThreadService
         catch (Exception e)
         {
             _logger.LogWarning(e, "Failed to create post with attachments; deleting uploaded attachments");
-            await _attachmentService.DeleteAttachmentsAsync(createRequestModel.BlobContainerId);
+            await _attachmentService.DeleteAttachmentsContainerAsync(createRequestModel.BlobContainerId);
             throw;
         }
     }

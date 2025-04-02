@@ -10,5 +10,7 @@ public interface IAttachmentService
         IFormFileCollection formFileCollection,
         CancellationToken cancellationToken);
 
-    Task DeleteAttachmentsAsync(Guid blobContainerId);
+    Task DeleteAttachmentAsync(Guid blobContainerId, Guid blobId);
+
+    Task DeleteAttachmentsContainerAsync(Guid blobContainerId);
 }
