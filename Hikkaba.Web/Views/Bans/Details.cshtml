@@ -1,8 +1,9 @@
-﻿@using Humanizer
+﻿@using Hikkaba.Web.Extensions
+@using Humanizer
 @model Hikkaba.Web.ViewModels.BansViewModels.BanViewModel
 @inject TimeProvider TimeProvider
 @{
-    ViewData["Title"] = "Details";
+  ViewData["Title"] = "Details";
 }
 
 @{
@@ -12,31 +13,51 @@
     : null;
   var timeTillUnbanStr = !Model.EndsAt.HasValue
     ? "banned permanently"
-    : timeTillUnban.HasValue ? $"ban expires in {timeTillUnban.Value.Humanize(2)}" : "ban expired";
+    : timeTillUnban.HasValue
+      ? $"ban expires in {timeTillUnban.Value.Humanize(2)}"
+      : "ban expired";
 }
 
 <dl class="dl-horizontal">
-    <dt>@Html.DisplayNameFor(model => model.EndsAt)</dt>
-    <dd>@Html.DisplayFor(model => model.EndsAt) (@(timeTillUnbanStr))</dd>
+  <dt>@Html.DisplayNameFor(model => model.EndsAt)</dt>
+  <dd>@Html.DisplayFor(model => model.EndsAt) (@(timeTillUnbanStr))</dd>
 
-    <dt>@Html.DisplayNameFor(model => model.BannedIpAddress)</dt>
-    <dd>@Html.DisplayFor(model => model.BannedIpAddress)</dd>
+  <dt>@Html.DisplayNameFor(model => model.IpAddressType)</dt>
+  <dd>@Html.DisplayFor(model => model.IpAddressType)</dd>
 
-    <dt>@Html.DisplayNameFor(model => model.BannedCidrLowerIpAddress)</dt>
-    <dd>@Html.DisplayFor(model => model.BannedCidrLowerIpAddress)</dd>
+  <dt>@Html.DisplayNameFor(model => model.BannedIpAddress)</dt>
+  <dd>@Html.DisplayFor(model => model.BannedIpAddress)</dd>
 
-    <dt>@Html.DisplayNameFor(model => model.BannedCidrUpperIpAddress)</dt>
-    <dd>@Html.DisplayFor(model => model.BannedCidrUpperIpAddress)</dd>
+  <dt>@Html.DisplayNameFor(model => model.BannedCidrLowerIpAddress)</dt>
+  <dd>@Html.DisplayFor(model => model.BannedCidrLowerIpAddress)</dd>
 
-    <dt>@Html.DisplayNameFor(model => model.Reason)</dt>
-    <dd>@Html.DisplayFor(model => model.Reason)</dd>
+  <dt>@Html.DisplayNameFor(model => model.BannedCidrUpperIpAddress)</dt>
+  <dd>@Html.DisplayFor(model => model.BannedCidrUpperIpAddress)</dd>
 
-    <dt>@Html.DisplayNameFor(model => model.CreatedAt)</dt>
-    <dd>@Html.DisplayFor(model => model.CreatedAt)</dd>
+  <dt>@Html.DisplayNameFor(model => model.CountryIsoCode)</dt>
+  <dd>@Html.DisplayFor(model => model.CountryIsoCode)</dd>
 
-    <dt>@Html.DisplayNameFor(model => model.ModifiedAt)</dt>
-    <dd>@Html.DisplayFor(model => model.ModifiedAt)</dd>
+  <dt>@Html.DisplayNameFor(model => model.AutonomousSystemNumber)</dt>
+  <dd>@Html.DisplayFor(model => model.AutonomousSystemNumber)</dd>
 
-    <dt>@Html.DisplayNameFor(model => model.IsDeleted)</dt>
-    <dd>@Html.DisplayFor(model => model.IsDeleted)</dd>
+  <dt>@Html.DisplayNameFor(model => model.AutonomousSystemOrganization)</dt>
+  <dd>@Html.DisplayFor(model => model.AutonomousSystemOrganization)</dd>
+
+  <dt>@Html.DisplayNameFor(model => model.CategoryAlias)</dt>
+  <dd>@Html.DisplayFor(model => model.CategoryAlias)</dd>
+
+  <dt>@Html.DisplayNameFor(model => model.RelatedPostId)</dt>
+  <dd><a href="@(Model.RelatedPostId == null ? "#" : Model.GetUri(Url))">@(Model.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></dd>
+
+  <dt>@Html.DisplayNameFor(model => model.Reason)</dt>
+  <dd>@Html.DisplayFor(model => model.Reason)</dd>
+
+  <dt>@Html.DisplayNameFor(model => model.CreatedAt)</dt>
+  <dd>@Html.DisplayFor(model => model.CreatedAt)</dd>
+
+  <dt>@Html.DisplayNameFor(model => model.ModifiedAt)</dt>
+  <dd>@Html.DisplayFor(model => model.ModifiedAt)</dd>
+
+  <dt>@Html.DisplayNameFor(model => model.IsDeleted)</dt>
+  <dd>@Html.DisplayFor(model => model.IsDeleted)</dd>
 </dl>

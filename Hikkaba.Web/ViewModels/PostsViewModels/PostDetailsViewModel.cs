@@ -16,10 +16,10 @@ public class PostDetailsViewModel
     [Display(Name = @"Is deleted")]
     public required bool IsDeleted { get; set; }
 
-    [Display(Name = @"Creation date and time")]
+    [Display(Name = @"Created at")]
     public required DateTime CreatedAt { get; set; }
 
-    [Display(Name = @"Modification date and time")]
+    [Display(Name = @"Modified at")]
     public required DateTime? ModifiedAt { get; set; }
 
     [Display(Name = @"Sage")]

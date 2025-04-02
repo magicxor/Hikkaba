@@ -14,10 +14,10 @@ public class BanViewModel
     [Display(Name = @"Is deleted")]
     public required bool IsDeleted { get; set; }
 
-    [Display(Name = @"Creation date and time")]
+    [Display(Name = @"Created at")]
     public required DateTime CreatedAt { get; set; }
 
-    [Display(Name = @"Modification date and time")]
+    [Display(Name = @"Modified at")]
     public required DateTime? ModifiedAt { get; set; }
 
     [Display(Name = @"Ends at")]
@@ -27,14 +27,14 @@ public class BanViewModel
     [Display(Name = @"IP address type")]
     public required IpAddressType IpAddressType { get; set; }
 
-    [Display(Name = @"Lower IP address")]
+    [Display(Name = @"Banned IP address")]
     public required IPAddress BannedIpAddress { get; set; }
 
-    [Display(Name = @"Lower IP address")]
+    [Display(Name = @"Banned IP range lower bound")]
     [MaxLength(Defaults.MaxIpAddressStringLength)]
     public required IPAddress? BannedCidrLowerIpAddress { get; set; }
 
-    [Display(Name = @"Upper IP address")]
+    [Display(Name = @"Banned IP range upper bound")]
     [MaxLength(Defaults.MaxIpAddressStringLength)]
     public required IPAddress? BannedCidrUpperIpAddress { get; set; }
 
@@ -51,9 +51,11 @@ public class BanViewModel
     [MaxLength(Defaults.MaxReasonLength)]
     public required string Reason { get; set; }
 
+    [Display(Name = @"Category (if any)")]
     public string? CategoryAlias { get; set; }
 
     public long? RelatedThreadId { get; set; }
 
+    [Display(Name = @"Related post id")]
     public long? RelatedPostId { get; set; }
 }

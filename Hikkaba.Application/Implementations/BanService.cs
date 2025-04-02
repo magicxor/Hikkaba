@@ -59,11 +59,14 @@ public class BanService : IBanService
             BannedCidrUpperIpAddress = banCreateCommand.BanByNetwork
                 ? bannedIpAddressInfo.UpperIpAddress?.GetAddressBytes()
                 : null,
+            BanInAllCategories = banCreateCommand.BanInAllCategories,
             CountryIsoCode = bannedIpAddressInfo.CountryIsoCode,
             AutonomousSystemNumber = bannedIpAddressInfo.AutonomousSystemNumber,
             AutonomousSystemOrganization = bannedIpAddressInfo.AutonomousSystemOrganization,
+            AdditionalAction = banCreateCommand.AdditionalAction,
             Reason = banCreateCommand.Reason,
             RelatedPostId = banCreateCommand.RelatedPostId,
+            RelatedThreadId = banCreateCommand.RelatedThreadId,
             CategoryAlias = banCreateCommand.CategoryAlias,
         }, cancellationToken);
     }

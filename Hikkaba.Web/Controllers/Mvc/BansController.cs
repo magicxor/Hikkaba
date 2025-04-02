@@ -8,6 +8,7 @@ using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Infrastructure.Models.Post;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Utils;
@@ -72,6 +73,7 @@ public class BansController : BaseMvcController
     {
         var threadPosts = await _postService.ListThreadPostsAsync(new ThreadPostsFilter
         {
+            PostId = postId,
             ThreadId = threadId,
             IncludeDeleted = true,
         }, cancellationToken);
@@ -124,8 +126,11 @@ public class BansController : BaseMvcController
                 EndsAt = viewModel.EndsAt,
                 BannedIpAddress = viewModel.BannedIpAddress,
                 BanByNetwork = viewModel.BanByNetwork,
+                BanInAllCategories = viewModel.BanInAllCategories,
+                AdditionalAction = viewModel.AdditionalAction,
                 Reason = viewModel.Reason,
                 RelatedPostId = viewModel.RelatedPostId,
+                RelatedThreadId = viewModel.RelatedThreadId,
                 CategoryAlias = viewModel.CategoryAlias,
             };
             var id = await _banService.CreateBanAsync(command, cancellationToken);
@@ -138,6 +143,7 @@ public class BansController : BaseMvcController
 
             var threadPosts = await _postService.ListThreadPostsAsync(new ThreadPostsFilter
             {
+                PostId = viewModel.RelatedPostId,
                 ThreadId = viewModel.RelatedThreadId,
                 IncludeDeleted = true,
             }, cancellationToken);

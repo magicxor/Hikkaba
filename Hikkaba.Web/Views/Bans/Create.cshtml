@@ -1,3 +1,4 @@
+@using Hikkaba.Shared.Enums
 @using Hikkaba.Web.ViewModels.BansViewModels
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model BanCreateDataViewModel
@@ -37,11 +38,14 @@
 
 <partial name="_CreateBanForm" model="@(new BanCreateViewModel
                                       {
-                                        EndsAt = TimeProvider.GetUtcNow().UtcDateTime.AddDays(1),
+                                        EndsAt = TimeProvider.GetUtcNow()
+                                          .UtcDateTime.AddDays(1),
                                         BanByNetwork = false,
                                         BanInAllCategories = false,
+                                        AdditionalAction = BanAdditionalAction.None,
                                         Reason = string.Empty,
                                         BannedIpAddress = Model.PostDetails.UserIpAddress?.ToString() ?? string.Empty,
+                                        AutonomousSystemNumber = Model.IpAddressDetails.AutonomousSystemNumber,
                                         CategoryAlias = Model.PostDetails.CategoryAlias,
                                         RelatedThreadId = Model.PostDetails.ThreadId,
                                         RelatedPostId = Model.PostDetails.Id,

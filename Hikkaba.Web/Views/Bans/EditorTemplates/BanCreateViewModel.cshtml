@@ -1,3 +1,4 @@
+@using Hikkaba.Shared.Enums
 @model Hikkaba.Web.ViewModels.BansViewModels.BanCreateViewModel
 
 <div asp-validation-summary="All" class="text-danger"></div>
@@ -16,7 +17,7 @@
 <div class="form-group">
   <label asp-for="BanByNetwork" class="col-md-2 control-label"></label>
   <div class="col-md-10">
-    <input asp-for="BanByNetwork" class="form-control" />
+    <input asp-for="BanByNetwork" class="form-control" disabled="@(!Model.AutonomousSystemNumber.HasValue)" />
     <span asp-validation-for="BanByNetwork" class="text-danger"></span>
   </div>
 </div>
@@ -26,6 +27,14 @@
   <div class="col-md-10">
     <input asp-for="BanInAllCategories" class="form-control" />
     <span asp-validation-for="BanInAllCategories" class="text-danger"></span>
+  </div>
+</div>
+
+<div class="form-group">
+  <label asp-for="AdditionalAction" class="col-md-2 control-label"></label>
+  <div class="col-md-10">
+    @Html.DropDownListFor(m => m.AdditionalAction, Html.GetEnumSelectList<BanAdditionalAction>(), new { @class = "form-control" })
+    <span asp-validation-for="AdditionalAction" class="text-danger"></span>
   </div>
 </div>
 
