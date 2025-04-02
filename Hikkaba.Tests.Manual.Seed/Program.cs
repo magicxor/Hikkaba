@@ -4,16 +4,19 @@ using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Thinktecture;
+using Thinktecture.EntityFrameworkCore.BulkOperations;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Manual.Seed;
 
 public class Program
 {
-    private const int CustomSeed = 20353789;
+    private const int CustomSeed = 20157789;
     private static readonly Random Random = new(CustomSeed);
     private static readonly GuidGenerator GuidGenerator = new(CustomSeed);
 
@@ -31,6 +34,13 @@ public class Program
             await dbContext.Database.MigrateAsync();
         }
 
+        var options = new SqlServerBulkInsertOptions
+        {
+            BatchSize = 5_000,
+            EnableStreaming = true,
+            BulkCopyTimeout = TimeSpan.FromSeconds(10),
+            SqlBulkCopyOptions = SqlBulkCopyOptions.Default,
+        };
         Randomizer.Seed = Random;
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
@@ -65,7 +75,7 @@ public class Program
                     u.NormalizedUserName = u.UserName?.ToUpperInvariant();
                     u.NormalizedEmail = u.Email?.ToUpperInvariant();
                 })
-                .Generate(100);
+                .Generate(10);
 
             foreach (var testUser in testUsers)
             {
@@ -94,14 +104,15 @@ public class Program
                         Salt = GuidGenerator.GenerateSeededGuid(),
                         Category = category,
                     })
-                    .Generate(50);
+                    .Generate(150);
 
-                await dbContext.Threads.AddRangeAsync(testThreads);
-                await dbContext.SaveChangesAsync();
+                //await dbContext.BulkInsertAsync(testThreads, options);
+                dbContext.Threads.AddRange(testThreads);
 
-                foreach (var thread in testThreads)
+                for (var threadIndex = 0; threadIndex < testThreads.Count; threadIndex++)
                 {
-                    logger.LogInformation("Seeding posts for thread {ThreadId}...", thread.Id);
+                    var thread = testThreads[threadIndex];
+                    logger.LogInformation("Seeding posts for thread {ThreadIndex}...", threadIndex);
 
                     var testPosts = new Faker<Post>()
                         .CustomInstantiator(f => new Post
@@ -128,14 +139,15 @@ public class Program
                             p.MessageText = HtmlUtilities.ConvertToPlainText(p.MessageHtml);
                             p.ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, p.UserIpAddress ?? []);
                         })
-                        .Generate(50);
+                        .Generate(150);
 
-                    await dbContext.Posts.AddRangeAsync(testPosts);
-                    await dbContext.SaveChangesAsync();
+                    //await dbContext.BulkInsertAsync(testPosts, options);
+                    dbContext.Posts.AddRange(testPosts);
 
                     // add some replies
-                    foreach (var post in testPosts)
+                    for (var replyIndex = 0; replyIndex < testPosts.Count; replyIndex++)
                     {
+                        var post = testPosts[replyIndex];
                         if (Random.Next(0, 10) == 0)
                         {
                             // generate random amount of replies
@@ -167,14 +179,17 @@ public class Program
                                 })
                                 .Generate(repliesCount);
 
-                            await dbContext.Posts.AddRangeAsync(replies);
-                            await dbContext.SaveChangesAsync();
+                            //await dbContext.BulkInsertAsync(replies, options);
+                            dbContext.Posts.AddRange(replies);
                         }
                     }
                 }
             }
 
+            await dbContext.SaveChangesAsync();
             await transaction.CommitAsync();
+
+            logger.LogInformation("Database seeded successfully");
         }
         catch (Exception e)
         {
