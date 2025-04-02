@@ -1,11 +1,8 @@
-﻿using System;
-using System.Data.Common;
-using Hikkaba.Shared.Constants;
-using Hikkaba.Shared.Enums;
+﻿using System.Data.Common;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
-using Hikkaba.Tests.Integration.Utils;
+using Hikkaba.Shared.Constants;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
@@ -21,10 +18,9 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Config;
 using NLog.Web;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace Hikkaba.Tests.Integration;
+namespace Hikkaba.Tests.Manual.Seed;
 
 public class CustomAppFactory
     : WebApplicationFactory<Web.Program>
@@ -53,12 +49,9 @@ public class CustomAppFactory
                 services.RemoveAll<IdentityOptions>();
                 services.RemoveAll<KeyManagementOptions>();
 
-                // we will use TestContainers + Respawner for DB, Redis, RabbitMQ
                 services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
                 services.RemoveAll<DbConnection>();
                 services.RemoveAll<ApplicationDbContext>();
-
-                services.RemoveAll<TimeProvider>();
 
                 services
                     .Configure<HikkabaConfiguration>(o =>
@@ -85,20 +78,12 @@ public class CustomAppFactory
                     }
 
                     options
-                        .UseSqlServer(_connectionString, ContextConfiguration.SqlServerOptionsAction)
-                        .LogTo((eventId, logLevel) => logLevel >= LogLevel.Trace,
-                            eventData =>
-                            {
-                                TestLogUtils.WriteProgressMessage(eventData.ToString());
-                                TestLogUtils.WriteConsoleMessage(eventData.ToString());
-                            });
+                        .UseSqlServer(_connectionString, ContextConfiguration.SqlServerOptionsAction);
                 });
 
                 services.AddDataProtection(options => options
-                        .ApplicationDiscriminator = "5c9b3cae-3f54-4a2f-93f3-e7c03e84531f")
-                    .SetApplicationName("Hikkaba-Integration-Test");
-
-                services.AddSingleton<TimeProvider>(x => FakeTimeProviderFactory.Create());
+                        .ApplicationDiscriminator = "58268ae7-c455-4a77-b9aa-15a12d2c201e")
+                    .SetApplicationName("Hikkaba-Test-Seed");
             })
             .ConfigureLogging(logging =>
             {
