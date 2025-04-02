@@ -125,6 +125,20 @@ public class PostRepository : IPostRepository
 
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
+        if (createRequestModel is { IsCyclic: true, BumpLimit: > 0, PostCount: > 0 }
+            && createRequestModel.PostCount >= createRequestModel.BumpLimit)
+        {
+            var postsToBeDeleted = await _applicationDbContext.Posts
+                .TagWithCallSite()
+                .Where(p => p.ThreadId == createRequestModel.BaseModel.ThreadId)
+                .OrderByDescending(p => p.CreatedAt)
+                .ThenBy(p => p.Id)
+                .Skip(1) /* skip the original post */
+                .Take(1) /* delete the oldest post */
+                .ToListAsync(cancellationToken);
+            _applicationDbContext.Posts.RemoveRange(postsToBeDeleted);
+        }
+
         var post = new Post
         {
             BlobContainerId = createRequestModel.BaseModel.BlobContainerId,

@@ -128,7 +128,7 @@ public sealed class BanRepository : IBanRepository
                     t.Salt,
                     t.IsCyclic,
                     BumpLimit = t.BumpLimit > 0 ? t.BumpLimit : t.Category.DefaultBumpLimit,
-                    PostCount = t.Posts.Count(p => !p.IsDeleted),
+                    PostCount = t.Posts.Count,
                 })
                 .FirstOrDefaultAsync();
             if (thread is null)
