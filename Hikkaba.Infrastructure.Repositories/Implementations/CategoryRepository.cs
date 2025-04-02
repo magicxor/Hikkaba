@@ -5,6 +5,7 @@ using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -84,7 +85,10 @@ public sealed class CategoryRepository : ICategoryRepository
             Name = categoryCreateRequest.Name,
             IsHidden = categoryCreateRequest.IsHidden,
             DefaultBumpLimit = categoryCreateRequest.DefaultBumpLimit,
-            DefaultShowThreadLocalUserHash = categoryCreateRequest.DefaultShowThreadLocalUserHash,
+            ShowThreadLocalUserHash = categoryCreateRequest.ShowThreadLocalUserHash,
+            ShowUserAgent = categoryCreateRequest.ShowUserAgent,
+            ShowCountry = categoryCreateRequest.ShowCountry,
+            MaxThreadCount = categoryCreateRequest.MaxThreadCount,
             BoardId = boardId,
             CreatedById = user.Id,
         };
@@ -109,7 +113,10 @@ public sealed class CategoryRepository : ICategoryRepository
                 .SetProperty(c => c.Name, categoryEditRequest.Name)
                 .SetProperty(c => c.IsHidden, categoryEditRequest.IsHidden)
                 .SetProperty(c => c.DefaultBumpLimit, categoryEditRequest.DefaultBumpLimit)
-                .SetProperty(c => c.DefaultShowThreadLocalUserHash, categoryEditRequest.DefaultShowThreadLocalUserHash)
+                .SetProperty(c => c.ShowThreadLocalUserHash, categoryEditRequest.ShowThreadLocalUserHash)
+                .SetProperty(c => c.ShowUserAgent, categoryEditRequest.ShowUserAgent)
+                .SetProperty(c => c.ShowCountry, categoryEditRequest.ShowCountry)
+                .SetProperty(c => c.MaxThreadCount, categoryEditRequest.MaxThreadCount)
                 .SetProperty(c => c.ModifiedAt, utcNow)
                 .SetProperty(c => c.ModifiedById, user.Id));
     }

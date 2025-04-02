@@ -42,6 +42,12 @@ public class Post
     [MaxLength(Defaults.MaxUserAgentLength)]
     public required string UserAgent { get; set; }
 
+    [Required]
+    [MinLength(Defaults.MaxFileHashBytesLength)]
+    [MaxLength(Defaults.MaxFileHashBytesLength)]
+    [Column(TypeName = "binary(32)")]
+    public required byte[] ThreadLocalUserHash { get; set; }
+
     // FK id
     [ForeignKey(nameof(Thread))]
     public long ThreadId { get; set; }

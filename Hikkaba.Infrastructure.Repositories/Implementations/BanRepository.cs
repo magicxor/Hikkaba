@@ -87,38 +87,39 @@ public sealed class BanRepository : IBanRepository
         var userIp = restrictionsRequestModel.UserIpAddress;
         if (userIp is null)
         {
-            return new PostingRestrictionsResponseModel
+            return new PostingRestrictionsResponseFailureModel
             {
                 RestrictionType = PostingRestrictionType.IpAddressNotFound,
             };
         }
 
-        if (!string.IsNullOrEmpty(restrictionsRequestModel.CategoryAlias))
+        var category = await _applicationDbContext.Categories
+            .TagWithCallSite()
+            .Where(c => !c.IsDeleted && c.Alias == restrictionsRequestModel.CategoryAlias)
+            .OrderBy(c => c.Id)
+            .Select(c => new { c.Id, c.Alias })
+            .FirstOrDefaultAsync();
+        if (category is null)
         {
-            var category = await _applicationDbContext.Categories
-                .TagWithCallSite()
-                .Where(c => !c.IsDeleted && c.Alias == restrictionsRequestModel.CategoryAlias)
-                .OrderBy(c => c.Id)
-                .FirstOrDefaultAsync();
-            if (category is null)
+            return new PostingRestrictionsResponseFailureModel
             {
-                return new PostingRestrictionsResponseModel
-                {
-                    RestrictionType = PostingRestrictionType.CategoryNotFound,
-                };
-            }
+                RestrictionType = PostingRestrictionType.CategoryNotFound,
+            };
         }
 
-        if (restrictionsRequestModel.ThreadId.HasValue)
+        Guid? threadSalt = null;
+
+        if (restrictionsRequestModel.ThreadId is not null)
         {
             var thread = await _applicationDbContext.Threads
                 .TagWithCallSite()
                 .Where(t => !t.Category.IsDeleted && !t.IsDeleted && t.Id == restrictionsRequestModel.ThreadId)
                 .OrderBy(t => t.Id)
+                .Select(t => new { t.Id, t.IsClosed, t.Salt })
                 .FirstOrDefaultAsync();
             if (thread is null)
             {
-                return new PostingRestrictionsResponseModel
+                return new PostingRestrictionsResponseFailureModel
                 {
                     RestrictionType = PostingRestrictionType.ThreadNotFound,
                 };
@@ -126,11 +127,13 @@ public sealed class BanRepository : IBanRepository
 
             if (thread.IsClosed)
             {
-                return new PostingRestrictionsResponseModel
+                return new PostingRestrictionsResponseFailureModel
                 {
                     RestrictionType = PostingRestrictionType.ThreadClosed,
                 };
             }
+
+            threadSalt = thread.Salt;
         }
 
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
@@ -142,7 +145,7 @@ public sealed class BanRepository : IBanRepository
             .CountAsync();
         if (postsFromIpWithin5MinutesCount >= _settings.Value.MaxPostsFromIpWithin5Minutes)
         {
-            return new PostingRestrictionsResponseModel
+            return new PostingRestrictionsResponseFailureModel
             {
                 RestrictionType = PostingRestrictionType.RateLimitExceeded,
             };
@@ -151,7 +154,7 @@ public sealed class BanRepository : IBanRepository
         var ban = await FindActiveBan(restrictionsRequestModel.ThreadId, restrictionsRequestModel.CategoryAlias, userIp);
         if (ban is not null)
         {
-            return new PostingRestrictionsResponseModel
+            return new PostingRestrictionsResponseBanModel
             {
                 RestrictionType = PostingRestrictionType.IpAddressBanned,
                 RestrictionReason = ban.Reason,
@@ -159,9 +162,10 @@ public sealed class BanRepository : IBanRepository
             };
         }
 
-        return new PostingRestrictionsResponseModel
+        return new PostingRestrictionsResponseSuccessModel
         {
             RestrictionType = PostingRestrictionType.NoRestriction,
+            ThreadSalt = threadSalt,
         };
     }
 

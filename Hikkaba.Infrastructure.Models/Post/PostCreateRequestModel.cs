@@ -14,6 +14,8 @@ public class PostCreateRequestModel
 
     public required string UserAgent { get; set; }
 
+    public required string CategoryAlias { get; set; }
+
     public required long ThreadId { get; set; }
 
     public required IReadOnlyList<long> MentionedPosts { get; set; }

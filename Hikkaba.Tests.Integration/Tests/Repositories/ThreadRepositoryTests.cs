@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Blake3;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
@@ -60,8 +61,9 @@ public sealed class ThreadRepositoryTests
         // Arrange
         await using var customAppFactory = await CreateAppFactoryAsync();
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+        var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
 
         if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
         {
@@ -97,7 +99,10 @@ public sealed class ThreadRepositoryTests
             Name = "Random Foo",
             IsHidden = false,
             DefaultBumpLimit = 500,
-            DefaultShowThreadLocalUserHash = false,
+            ShowThreadLocalUserHash = false,
+            ShowUserAgent = false,
+            ShowCountry = false,
+            MaxThreadCount = Defaults.MaxThreadCountInCategory,
             Board = board,
             CreatedBy = admin,
         };
@@ -110,12 +115,13 @@ public sealed class ThreadRepositoryTests
             IsPinned = false,
             IsClosed = false,
             BumpLimit = 500,
-            ShowThreadLocalUserHash = false,
+            Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category,
             CreatedBy = null,
         };
         dbContext.Threads.Add(thread);
 
+        var userIp = IPAddress.Parse("127.0.0.1").GetAddressBytes();
         var post0 = new Post
         {
             BlobContainerId = new Guid("545917CA-374F-4C34-80B9-7D8DF0842D72"),
@@ -123,8 +129,9 @@ public sealed class ThreadRepositoryTests
             IsSageEnabled = false,
             MessageText = "test post 0",
             MessageHtml = "test post 0",
-            UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
+            UserIpAddress = userIp,
             UserAgent = "Firefox",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, userIp),
             Thread = thread,
         };
         var post1 = new Post
@@ -134,8 +141,9 @@ public sealed class ThreadRepositoryTests
             IsSageEnabled = false,
             MessageText = "test post 1",
             MessageHtml = "test post 1",
-            UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
+            UserIpAddress = userIp,
             UserAgent = "Chrome",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, userIp),
             Thread = thread,
             Audios = new List<Audio>
             {
@@ -157,8 +165,9 @@ public sealed class ThreadRepositoryTests
             IsSageEnabled = false,
             MessageText = "test post 2",
             MessageHtml = "test post 2",
-            UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
+            UserIpAddress = userIp,
             UserAgent = "Chrome",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, userIp),
             Thread = thread,
             Pictures = new List<Picture>
             {
@@ -182,8 +191,9 @@ public sealed class ThreadRepositoryTests
             IsSageEnabled = false,
             MessageText = "test post 3",
             MessageHtml = "test post 3",
-            UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
+            UserIpAddress = userIp,
             UserAgent = "Chrome",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, userIp),
             Thread = thread,
         };
         var post4 = new Post
@@ -193,8 +203,9 @@ public sealed class ThreadRepositoryTests
             IsSageEnabled = false,
             MessageText = "test post 4",
             MessageHtml = "test post 4",
-            UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
+            UserIpAddress = userIp,
             UserAgent = "Chrome",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, userIp),
             Thread = thread,
         };
         var post5 = new Post
@@ -204,8 +215,9 @@ public sealed class ThreadRepositoryTests
             IsSageEnabled = false,
             MessageText = "test post 5",
             MessageHtml = "test post 5",
-            UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
+            UserIpAddress = userIp,
             UserAgent = "Chrome",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, userIp),
             Thread = thread,
         };
         List<Post> allPosts = [post0, post1, post2, post3, post4, post5];
@@ -257,6 +269,12 @@ public sealed class ThreadRepositoryTests
         Assert.That(actualPost1.MessageHtml, Is.EqualTo(post3.MessageHtml));
         Assert.That(actualPost2.MessageHtml, Is.EqualTo(post4.MessageHtml));
         Assert.That(actualPost3.MessageHtml, Is.EqualTo(post5.MessageHtml));
+
+        // all posts have valid hash
+        foreach (var actualPost in new List<PostDetailsModel> { actualPost0, actualPost1, actualPost2, actualPost3 })
+        {
+            Assert.That(actualPost.ThreadLocalUserHash, Is.EqualTo(hashService.GetHashBytes(thread.Salt, userIp)));
+        }
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -282,8 +300,9 @@ public sealed class ThreadRepositoryTests
         await using var customAppFactory = await CreateAppFactoryAsync();
         using (var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
-            var seedTimeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+            var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
 
             if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
             {
@@ -319,7 +338,10 @@ public sealed class ThreadRepositoryTests
                 Name = "Random Foo",
                 IsHidden = false,
                 DefaultBumpLimit = 500,
-                DefaultShowThreadLocalUserHash = false,
+                ShowThreadLocalUserHash = false,
+                ShowUserAgent = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
                 Board = board,
                 CreatedBy = admin,
             };
@@ -332,12 +354,18 @@ public sealed class ThreadRepositoryTests
                 Name = "Random Bar",
                 IsHidden = false,
                 DefaultBumpLimit = 500,
-                DefaultShowThreadLocalUserHash = false,
+                ShowThreadLocalUserHash = false,
+                ShowUserAgent = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
                 Board = board,
                 CreatedBy = admin,
             };
             seedDbContext.Categories.AddRange(category1, category2);
 
+            var salt1 = GuidGenerator.GenerateSeededGuid();
+            var salt2 = GuidGenerator.GenerateSeededGuid();
+            var userIp = IPAddress.Parse($"127.0.0.1").GetAddressBytes();
             var deletedThread = new Thread
             {
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
@@ -346,7 +374,7 @@ public sealed class ThreadRepositoryTests
                 IsClosed = true,
                 IsDeleted = true,
                 BumpLimit = 500,
-                ShowThreadLocalUserHash = false,
+                Salt = salt1,
                 Category = category1,
                 CreatedBy = null,
                 Posts =
@@ -359,8 +387,9 @@ public sealed class ThreadRepositoryTests
                         IsDeleted = false,
                         MessageText = $"test post in deleted thread",
                         MessageHtml = $"test post in deleted thread",
-                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserIpAddress = userIp,
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt1, userIp),
                     }
                 ],
             };
@@ -372,7 +401,7 @@ public sealed class ThreadRepositoryTests
                 IsClosed = false,
                 IsDeleted = false,
                 BumpLimit = 500,
-                ShowThreadLocalUserHash = false,
+                Salt = salt2,
                 Category = category2,
                 CreatedBy = null,
                 Posts =
@@ -385,8 +414,9 @@ public sealed class ThreadRepositoryTests
                         IsDeleted = false,
                         MessageText = $"test post in deleted thread",
                         MessageHtml = $"test post in deleted thread",
-                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserIpAddress = userIp,
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt2, userIp),
                     }
                 ],
             };
@@ -401,7 +431,7 @@ public sealed class ThreadRepositoryTests
                     IsClosed = false,
                     IsDeleted = false,
                     BumpLimit = 500,
-                    ShowThreadLocalUserHash = false,
+                    Salt = GuidGenerator.GenerateSeededGuid(),
                     Category = category1,
                     CreatedBy = null,
                 })
@@ -421,6 +451,7 @@ public sealed class ThreadRepositoryTests
                         MessageHtml = $"test post {i}",
                         UserIpAddress = IPAddress.Parse($"127.0.0.{i}").GetAddressBytes(),
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.{i}").GetAddressBytes()),
                         Thread = t,
                     })
                     .Union([
@@ -434,6 +465,7 @@ public sealed class ThreadRepositoryTests
                             MessageHtml = $"deleted post",
                             UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                             UserAgent = "Firefox",
+                            ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                             Thread = t,
                         }
                     ])
@@ -448,6 +480,7 @@ public sealed class ThreadRepositoryTests
         using (var actScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             var threadRepository = actScope.ServiceProvider.GetRequiredService<IThreadRepository>();
+
             var actualThreadPreviews = await threadRepository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewFilter
             {
                 PageNumber = pageNumber,
@@ -503,6 +536,8 @@ public sealed class ThreadRepositoryTests
 
                 // check that posts are sorted by date ascending
                 Assert.That(thread.Posts, Is.Ordered.By(nameof(PostDetailsModel.CreatedAt)).Ascending);
+
+                Assert.That(thread.Posts, Is.All.Matches<PostDetailsModel>(x => x.ThreadLocalUserHash.Length == 32));
             }
         }
     }
@@ -529,6 +564,7 @@ public sealed class ThreadRepositoryTests
         {
             var seedTimeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
 
             if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
             {
@@ -564,7 +600,10 @@ public sealed class ThreadRepositoryTests
                 Name = "Random Foo",
                 IsHidden = false,
                 DefaultBumpLimit = 500,
-                DefaultShowThreadLocalUserHash = false,
+                ShowThreadLocalUserHash = false,
+                ShowUserAgent = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
                 Board = board,
                 CreatedBy = admin,
             };
@@ -577,12 +616,17 @@ public sealed class ThreadRepositoryTests
                 Name = "Random Bar",
                 IsHidden = false,
                 DefaultBumpLimit = 500,
-                DefaultShowThreadLocalUserHash = false,
+                ShowThreadLocalUserHash = false,
+                ShowUserAgent = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
                 Board = board,
                 CreatedBy = admin,
             };
             seedDbContext.Categories.AddRange(category1, category2);
 
+            var salt1 = GuidGenerator.GenerateSeededGuid();
+            var salt2 = GuidGenerator.GenerateSeededGuid();
             var deletedThread = new Thread
             {
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
@@ -591,7 +635,7 @@ public sealed class ThreadRepositoryTests
                 IsClosed = true,
                 IsDeleted = true,
                 BumpLimit = 500,
-                ShowThreadLocalUserHash = false,
+                Salt = salt1,
                 Category = category1,
                 CreatedBy = null,
                 Posts =
@@ -606,6 +650,7 @@ public sealed class ThreadRepositoryTests
                         MessageHtml = $"test post in deleted thread",
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
                     }
                 ],
             };
@@ -617,7 +662,7 @@ public sealed class ThreadRepositoryTests
                 IsClosed = false,
                 IsDeleted = false,
                 BumpLimit = 500,
-                ShowThreadLocalUserHash = false,
+                Salt = salt2,
                 Category = category2,
                 CreatedBy = null,
                 Posts =
@@ -632,6 +677,7 @@ public sealed class ThreadRepositoryTests
                         MessageHtml = $"test post in deleted thread",
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt2, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
                     }
                 ],
             };
@@ -646,7 +692,7 @@ public sealed class ThreadRepositoryTests
                     IsClosed = false,
                     IsDeleted = false,
                     BumpLimit = 500,
-                    ShowThreadLocalUserHash = false,
+                    Salt = GuidGenerator.GenerateSeededGuid(),
                     Category = category1,
                     CreatedBy = null,
                 })
@@ -666,6 +712,7 @@ public sealed class ThreadRepositoryTests
                         MessageHtml = $"test post {i}",
                         UserIpAddress = IPAddress.Parse($"127.0.0.{i}").GetAddressBytes(),
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.{i}").GetAddressBytes()),
                         Thread = t,
                     })
                     .Union([
@@ -679,6 +726,7 @@ public sealed class ThreadRepositoryTests
                             MessageHtml = $"deleted post",
                             UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                             UserAgent = "Firefox",
+                            ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                             Thread = t,
                         }
                     ])
@@ -780,8 +828,9 @@ public sealed class ThreadRepositoryTests
         await using var customAppFactory = await CreateAppFactoryAsync();
         using (var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
-            var seedTimeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+            var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
 
             if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
             {
@@ -817,7 +866,10 @@ public sealed class ThreadRepositoryTests
                 Name = "Random Foo",
                 IsHidden = false,
                 DefaultBumpLimit = 500,
-                DefaultShowThreadLocalUserHash = false,
+                ShowThreadLocalUserHash = false,
+                ShowUserAgent = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
                 Board = board,
                 CreatedBy = admin,
             };
@@ -830,12 +882,17 @@ public sealed class ThreadRepositoryTests
                 Name = "Random Bar",
                 IsHidden = false,
                 DefaultBumpLimit = 500,
-                DefaultShowThreadLocalUserHash = false,
+                ShowThreadLocalUserHash = false,
+                ShowUserAgent = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
                 Board = board,
                 CreatedBy = admin,
             };
             seedDbContext.Categories.AddRange(category1, category2);
 
+            var salt1 = GuidGenerator.GenerateSeededGuid();
+            var salt2 = GuidGenerator.GenerateSeededGuid();
             var deletedThread = new Thread
             {
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
@@ -844,7 +901,7 @@ public sealed class ThreadRepositoryTests
                 IsClosed = true,
                 IsDeleted = true,
                 BumpLimit = 500,
-                ShowThreadLocalUserHash = false,
+                Salt = salt1,
                 Category = category1,
                 CreatedBy = null,
                 Posts =
@@ -859,6 +916,7 @@ public sealed class ThreadRepositoryTests
                         MessageHtml = $"test post in deleted thread",
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
                     }
                 ],
             };
@@ -870,7 +928,7 @@ public sealed class ThreadRepositoryTests
                 IsClosed = false,
                 IsDeleted = false,
                 BumpLimit = 500,
-                ShowThreadLocalUserHash = false,
+                Salt = salt2,
                 Category = category2,
                 CreatedBy = null,
                 Posts =
@@ -885,6 +943,7 @@ public sealed class ThreadRepositoryTests
                         MessageHtml = $"test post in deleted thread",
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt2, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
                     }
                 ],
             };
@@ -899,7 +958,7 @@ public sealed class ThreadRepositoryTests
                     IsClosed = false,
                     IsDeleted = false,
                     BumpLimit = 500,
-                    ShowThreadLocalUserHash = false,
+                    Salt = GuidGenerator.GenerateSeededGuid(),
                     Category = category1,
                     CreatedBy = null,
                 })
@@ -907,6 +966,7 @@ public sealed class ThreadRepositoryTests
                 .ToList();
             seedDbContext.Threads.AddRange(threads);
 
+            var salt3 = GuidGenerator.GenerateSeededGuid();
             var postWithoutSage = new Post
             {
                 BlobContainerId = new Guid("9BE82B5A-0C4C-475C-9A3B-29F498E079E5"),
@@ -917,6 +977,7 @@ public sealed class ThreadRepositoryTests
                 MessageHtml = "no-sage post",
                 UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
                 UserAgent = "Chrome",
+                ThreadLocalUserHash = hashService.GetHashBytes(salt3, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
             };
             var threadWithPostWithoutSage = new Thread
             {
@@ -926,7 +987,7 @@ public sealed class ThreadRepositoryTests
                 IsClosed = false,
                 IsDeleted = false,
                 BumpLimit = 500,
-                ShowThreadLocalUserHash = false,
+                Salt = salt3,
                 Category = category1,
                 CreatedBy = null,
                 Posts = [postWithoutSage],
@@ -945,6 +1006,7 @@ public sealed class ThreadRepositoryTests
                         MessageHtml = $"test post {i}",
                         UserIpAddress = IPAddress.Parse($"127.0.0.{i}").GetAddressBytes(),
                         UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.{i}").GetAddressBytes()),
                         Thread = t,
                     })
                     .Union([
@@ -958,6 +1020,7 @@ public sealed class ThreadRepositoryTests
                             MessageHtml = $"deleted post",
                             UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                             UserAgent = "Firefox",
+                            ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                             Thread = t,
                         }
                     ])
@@ -1023,7 +1086,7 @@ public sealed class ThreadRepositoryTests
     [Test]
     public async Task ListThreadPreviewsPaginatedAsync_WhenBumpLimitReached_ReturnsCorrectResult(CancellationToken cancellationToken)
     {
-        void AddPosts(Thread thread, DateTime startingAt, int count, bool isSageEnabled, bool isDeleted)
+        void AddPosts(Thread thread, DateTime startingAt, int count, bool isSageEnabled, bool isDeleted, IHashService hashService)
         {
             for (var i = 0; i < count; i++)
             {
@@ -1037,6 +1100,7 @@ public sealed class ThreadRepositoryTests
                     MessageHtml = $"test post {i} in thread {thread.Title}",
                     UserIpAddress = IPAddress.Parse($"127.0.0.{i}").GetAddressBytes(),
                     UserAgent = "Firefox",
+                    ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse($"127.0.0.{i}").GetAddressBytes()),
                 });
             }
         }
@@ -1048,8 +1112,9 @@ public sealed class ThreadRepositoryTests
         // Arrange
         await using var customAppFactory = await CreateAppFactoryAsync();
         using var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var seedTimeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+        var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
         var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
 
         if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
         {
@@ -1085,7 +1150,10 @@ public sealed class ThreadRepositoryTests
             Name = "Random Foo",
             IsHidden = false,
             DefaultBumpLimit = 500,
-            DefaultShowThreadLocalUserHash = false,
+            ShowThreadLocalUserHash = false,
+            ShowUserAgent = false,
+            ShowCountry = false,
+            MaxThreadCount = Defaults.MaxThreadCountInCategory,
             Board = board,
             CreatedBy = admin,
         };
@@ -1098,12 +1166,17 @@ public sealed class ThreadRepositoryTests
             Name = "Random Bar",
             IsHidden = false,
             DefaultBumpLimit = 500,
-            DefaultShowThreadLocalUserHash = false,
+            ShowThreadLocalUserHash = false,
+            ShowUserAgent = false,
+            ShowCountry = false,
+            MaxThreadCount = Defaults.MaxThreadCountInCategory,
             Board = board,
             CreatedBy = admin,
         };
         seedDbContext.Categories.AddRange(category1, category2);
 
+        var salt1 = GuidGenerator.GenerateSeededGuid();
+        var salt2 = GuidGenerator.GenerateSeededGuid();
         var deletedThread = new Thread
         {
             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
@@ -1112,7 +1185,7 @@ public sealed class ThreadRepositoryTests
             IsClosed = true,
             IsDeleted = true,
             BumpLimit = 500,
-            ShowThreadLocalUserHash = false,
+            Salt = salt1,
             Category = category1,
             CreatedBy = null,
             Posts =
@@ -1127,6 +1200,7 @@ public sealed class ThreadRepositoryTests
                     MessageHtml = $"test post in deleted thread",
                     UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                     UserAgent = "Firefox",
+                    ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                 }
             ],
         };
@@ -1138,7 +1212,7 @@ public sealed class ThreadRepositoryTests
             IsClosed = false,
             IsDeleted = false,
             BumpLimit = 500,
-            ShowThreadLocalUserHash = false,
+            Salt = salt2,
             Category = category2,
             CreatedBy = null,
             Posts =
@@ -1153,6 +1227,7 @@ public sealed class ThreadRepositoryTests
                     MessageHtml = $"test post in deleted thread",
                     UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                     UserAgent = "Firefox",
+                    ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                 }
             ],
         };
@@ -1161,6 +1236,7 @@ public sealed class ThreadRepositoryTests
             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(1),
             Title = "thread with bump limit 1",
             BumpLimit = bumpLimit,
+            Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category1,
         };
         var thread2 = new Thread
@@ -1168,6 +1244,7 @@ public sealed class ThreadRepositoryTests
             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(2),
             Title = "thread with bump limit 2",
             BumpLimit = bumpLimit,
+            Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category1,
         };
         var thread3 = new Thread
@@ -1175,6 +1252,7 @@ public sealed class ThreadRepositoryTests
             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(3),
             Title = "thread with bump limit 3",
             BumpLimit = bumpLimit,
+            Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category1,
         };
         var thread4 = new Thread
@@ -1182,32 +1260,33 @@ public sealed class ThreadRepositoryTests
             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(4),
             Title = "thread with bump limit 4",
             BumpLimit = bumpLimit,
+            Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category1,
         };
         List<Thread> allThreads = [deletedThread, anotherCategoryThread, thread1, thread2, thread3, thread4];
         seedDbContext.Threads.AddRange(allThreads);
 
         // these threads contain the newest posts, but they aren't included in our query
-        AddPosts(deletedThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false);
-        AddPosts(anotherCategoryThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false);
+        AddPosts(deletedThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false, hashService);
+        AddPosts(anotherCategoryThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false, hashService);
 
         // thread1 contains several old posts before bump limit and several new posts after bump limit, which shouldn't affect the result
-        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(-1), bumpLimit, false, false);
-        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1), 2, false, false);
+        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(-1), bumpLimit, false, false, hashService);
+        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1), 2, false, false, hashService);
 
         // thread2 contains several new posts
-        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(1), 1, true, false);
-        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(2), 1, false, true);
-        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1), bumpLimit, false, false);
+        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(1), 1, true, false, hashService);
+        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(2), 1, false, true, hashService);
+        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1), bumpLimit, false, false, hashService);
 
         // thread3 contains even newer posts
-        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(3), 1, true, false);
-        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(4), 1, false, true);
-        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddSeconds(1), bumpLimit, false, false);
+        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(3), 1, true, false, hashService);
+        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(4), 1, false, true, hashService);
+        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddSeconds(1), bumpLimit, false, false, hashService);
 
         // thread4 contains a lot of posts
-        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime, bumpLimit + 10, false, false);
-        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(5), bumpLimit + 10, false, false);
+        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime, bumpLimit + 10, false, false, hashService);
+        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(5), bumpLimit + 10, false, false, hashService);
 
         await seedDbContext.SaveChangesAsync(cancellationToken);
 

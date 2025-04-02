@@ -29,7 +29,8 @@ public class PostPreviewModel
     public required IReadOnlyList<VideoModel> Video { get; set; }
 
     public required long ThreadId { get; set; }
-    public required bool ThreadShowThreadLocalUserHash { get; set; }
+    public required bool ShowThreadLocalUserHash { get; set; }
+    public required byte[] ThreadLocalUserHash { get; set; }
     public required string CategoryAlias { get; set; }
     public required int CategoryId { get; set; }
     public required IReadOnlyList<long> Replies { get; set; }

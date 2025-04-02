@@ -118,6 +118,7 @@ public class PostRepository : IPostRepository
 
     public async Task<long> CreatePostAsync(
         PostCreateRequestModel createRequestModel,
+        byte[] threadLocalUserHash,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
     {
@@ -134,6 +135,7 @@ public class PostRepository : IPostRepository
             MessageHtml = createRequestModel.MessageHtml,
             UserIpAddress = createRequestModel.UserIpAddress,
             UserAgent = createRequestModel.UserAgent,
+            ThreadLocalUserHash = threadLocalUserHash,
             ThreadId = createRequestModel.ThreadId,
             Audios = attachments.Audios,
             Documents = attachments.Documents,

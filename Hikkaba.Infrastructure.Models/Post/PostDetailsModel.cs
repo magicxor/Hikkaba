@@ -34,7 +34,9 @@ public class PostDetailsModel
 
     public required long ThreadId { get; set; }
 
-    public required bool ThreadShowThreadLocalUserHash { get; set; }
+    public required bool ShowThreadLocalUserHash { get; set; }
+
+    public required byte[] ThreadLocalUserHash { get; set; }
 
     public required string CategoryAlias { get; set; }
 

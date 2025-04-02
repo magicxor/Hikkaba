@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hikkaba.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250331183313_AddThreadIsCyclic")]
-    partial class AddThreadIsCyclic
+    [Migration("20250402012308_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -291,14 +291,14 @@ namespace Hikkaba.Data.Migrations
                     b.Property<int>("DefaultBumpLimit")
                         .HasColumnType("int");
 
-                    b.Property<bool>("DefaultShowThreadLocalUserHash")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsHidden")
                         .HasColumnType("bit");
+
+                    b.Property<int>("MaxThreadCount")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -310,6 +310,15 @@ namespace Hikkaba.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("ShowCountry")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ShowThreadLocalUserHash")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ShowUserAgent")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -392,6 +401,11 @@ namespace Hikkaba.Data.Migrations
 
                     b.Property<long>("ThreadId")
                         .HasColumnType("bigint");
+
+                    b.Property<byte[]>("ThreadLocalUserHash")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("binary(32)");
 
                     b.Property<string>("UserAgent")
                         .IsRequired()
@@ -481,8 +495,8 @@ namespace Hikkaba.Data.Migrations
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
-                    b.Property<bool>("ShowThreadLocalUserHash")
-                        .HasColumnType("bit");
+                    b.Property<Guid>("Salt")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -634,6 +648,12 @@ namespace Hikkaba.Data.Migrations
                 {
                     b.HasBaseType("Hikkaba.Data.Entities.Attachments.Base.Attachment");
 
+                    b.Property<string>("FileContentType")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("FileExtension")
                         .IsRequired()
                         .ValueGeneratedOnUpdateSometimes()
@@ -666,6 +686,12 @@ namespace Hikkaba.Data.Migrations
             modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Document", b =>
                 {
                     b.HasBaseType("Hikkaba.Data.Entities.Attachments.Base.Attachment");
+
+                    b.Property<string>("FileContentType")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("FileExtension")
                         .IsRequired()
@@ -724,6 +750,12 @@ namespace Hikkaba.Data.Migrations
                 {
                     b.HasBaseType("Hikkaba.Data.Entities.Attachments.Base.Attachment");
 
+                    b.Property<string>("FileContentType")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("FileExtension")
                         .IsRequired()
                         .ValueGeneratedOnUpdateSometimes()
@@ -762,6 +794,12 @@ namespace Hikkaba.Data.Migrations
             modelBuilder.Entity("Hikkaba.Data.Entities.Attachments.Video", b =>
                 {
                     b.HasBaseType("Hikkaba.Data.Entities.Attachments.Base.Attachment");
+
+                    b.Property<string>("FileContentType")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("FileExtension")
                         .IsRequired()

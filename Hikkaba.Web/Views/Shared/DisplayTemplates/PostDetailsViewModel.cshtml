@@ -12,7 +12,7 @@
         <div class="panel @(Model.IsDeleted ? "panel-danger" : "panel-default") post">
             <div class="panel-heading">
                 <h3 class="panel-title post-title">
-                    @if (Model.ThreadShowThreadLocalUserHash)
+                    @if (Model.ShowThreadLocalUserHash)
                     {
                         @(ThreadLocalUserHashGenerator.Generate(Model.ThreadId.ToString(), Model.UserIpAddress?.ToString()))
                     }

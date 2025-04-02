@@ -35,10 +35,20 @@ public class Category
 
     [Required]
     [Range(1, int.MaxValue)]
-    public int DefaultBumpLimit { get; set; }
+    public required int DefaultBumpLimit { get; set; }
 
     [Required]
-    public bool DefaultShowThreadLocalUserHash { get; set; }
+    public bool ShowThreadLocalUserHash { get; set; }
+
+    [Required]
+    public bool ShowUserAgent { get; set; }
+
+    [Required]
+    public bool ShowCountry { get; set; }
+
+    [Required]
+    [Range(1, int.MaxValue)]
+    public required int MaxThreadCount { get; set; }
 
     // FK id
     [ForeignKey(nameof(Board))]

@@ -29,8 +29,17 @@ public class CategoryDetailsViewModel
     [Display(Name = @"Default bump limit")]
     public required int DefaultBumpLimit { get; set; }
 
-    [Display(Name = @"Show thread-local user hash by default")]
-    public required bool DefaultShowThreadLocalUserHash { get; set; }
+    [Display(Name = @"Show thread-local user hash")]
+    public required bool ShowThreadLocalUserHash { get; set; }
+
+    [Display(Name = @"Show user agent")]
+    public required bool ShowUserAgent { get; set; }
+
+    [Display(Name = @"Show country")]
+    public required bool ShowCountry { get; set; }
+
+    [Display(Name = @"Max thread count in category")]
+    public required int MaxThreadCount { get; set; }
 
     [Display(Name = @"Board id")]
     public required int BoardId { get; set; }

@@ -3,12 +3,14 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Extensions;
@@ -25,6 +27,8 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories;
 [Parallelizable(scope: ParallelScope.Fixtures)]
 public sealed class BanRepositoryTests
 {
+    private static readonly GuidGenerator GuidGenerator = new();
+
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;
 
     [OneTimeSetUp]
@@ -59,8 +63,9 @@ public sealed class BanRepositoryTests
         // Arrange
         await using var customAppFactory = await CreateAppFactoryAsync();
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+        var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
 
         if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
         {
@@ -96,7 +101,10 @@ public sealed class BanRepositoryTests
             Name = "Random Foo",
             IsHidden = false,
             DefaultBumpLimit = 500,
-            DefaultShowThreadLocalUserHash = false,
+            ShowThreadLocalUserHash = false,
+            ShowUserAgent = false,
+            ShowCountry = false,
+            MaxThreadCount = Defaults.MaxThreadCountInCategory,
             Board = board,
             CreatedBy = admin,
         };
@@ -109,7 +117,7 @@ public sealed class BanRepositoryTests
             IsPinned = false,
             IsClosed = false,
             BumpLimit = 500,
-            ShowThreadLocalUserHash = false,
+            Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category,
             CreatedBy = null,
         };
@@ -124,6 +132,7 @@ public sealed class BanRepositoryTests
             MessageHtml = "test post 1 abc",
             UserIpAddress = IPAddress.Parse("176.213.241.52").GetAddressBytes(),
             UserAgent = "Firefox",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("176.213.241.52").GetAddressBytes()),
             Thread = thread,
         };
         var post2 = new Post
@@ -135,6 +144,7 @@ public sealed class BanRepositoryTests
             MessageHtml = "test post 2 def",
             UserIpAddress = IPAddress.Parse("b550:f112:2801:51d4:fdaf:21d8:6bbc:aaba").GetAddressBytes(),
             UserAgent = "Chrome",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("b550:f112:2801:51d4:fdaf:21d8:6bbc:aaba").GetAddressBytes()),
             Thread = thread,
         };
         dbContext.Posts.AddRange(post1, post2);
@@ -190,8 +200,9 @@ public sealed class BanRepositoryTests
         // Arrange
         await using var customAppFactory = await CreateAppFactoryAsync();
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var timeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+        var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
 
         if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
         {
@@ -227,7 +238,10 @@ public sealed class BanRepositoryTests
             Name = "Random Foo",
             IsHidden = false,
             DefaultBumpLimit = 500,
-            DefaultShowThreadLocalUserHash = false,
+            ShowThreadLocalUserHash = false,
+            ShowUserAgent = false,
+            ShowCountry = false,
+            MaxThreadCount = Defaults.MaxThreadCountInCategory,
             Board = board,
             CreatedBy = admin,
         };
@@ -240,7 +254,7 @@ public sealed class BanRepositoryTests
             IsPinned = false,
             IsClosed = false,
             BumpLimit = 500,
-            ShowThreadLocalUserHash = false,
+            Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category,
             CreatedBy = null,
         };
@@ -255,6 +269,7 @@ public sealed class BanRepositoryTests
             MessageHtml = "test post 1 abc",
             UserIpAddress = IPAddress.Parse("176.213.224.37").GetAddressBytes(),
             UserAgent = "Firefox",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("176.213.224.37").GetAddressBytes()),
             Thread = thread,
         };
         var post2 = new Post
@@ -266,6 +281,7 @@ public sealed class BanRepositoryTests
             MessageHtml = "test post 2 def",
             UserIpAddress = IPAddress.Parse("2001:4860:0000:0000:0000:0000:ffff:0").GetAddressBytes(),
             UserAgent = "Chrome",
+            ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("2001:4860:0000:0000:0000:0000:ffff:0").GetAddressBytes()),
             Thread = thread,
         };
         dbContext.Posts.AddRange(post1, post2);

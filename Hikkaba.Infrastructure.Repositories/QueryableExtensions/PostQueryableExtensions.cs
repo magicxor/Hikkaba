@@ -93,7 +93,8 @@ public static class PostQueryableExtensions
                 })
                 .ToList(),
             ThreadId = post.ThreadId,
-            ThreadShowThreadLocalUserHash = post.Thread.ShowThreadLocalUserHash,
+            ShowThreadLocalUserHash = post.Thread.Category.ShowThreadLocalUserHash,
+            ThreadLocalUserHash = post.ThreadLocalUserHash,
             CategoryAlias = post.Thread.Category.Alias,
             CategoryId = post.Thread.CategoryId,
             Replies = post.RepliesToThisMentionedPost

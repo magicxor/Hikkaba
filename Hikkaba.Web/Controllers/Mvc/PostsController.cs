@@ -90,6 +90,7 @@ public class PostsController : BaseMvcController
                     MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
                     UserIpAddress = UserIpAddressBytes,
                     UserAgent = UserAgent,
+                    CategoryAlias = categoryAlias,
                     ThreadId = viewModel.ThreadId,
                     MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
                 };

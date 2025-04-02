@@ -21,7 +21,7 @@ public static class Defaults
     public const int MaxUserAgentLength = 500;
     public const int MaxAutonomousSystemOrganizationLength = 255;
     public const int MaxCountryIsoCodeLength = 2;
-
+    public const int MaxThreadCountInCategory = 5000;
     public const int MaxAttachmentSize = 20000000;
     public const int MaxAttachmentsTotalSize = 20000000;
     public const int MaxAttachmentsCount = 6;

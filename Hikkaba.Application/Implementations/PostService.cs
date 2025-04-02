@@ -17,17 +17,20 @@ public class PostService : IPostService
     private readonly IAttachmentService _attachmentService;
     private readonly IPostRepository _postRepository;
     private readonly IBanRepository _banRepository;
+    private readonly IHashService _hashService;
 
     public PostService(
         ILogger<PostService> logger,
         IAttachmentService attachmentService,
         IPostRepository postRepository,
-        IBanRepository banRepository)
+        IBanRepository banRepository,
+        IHashService hashService)
     {
         _logger = logger;
         _attachmentService = attachmentService;
         _postRepository = postRepository;
         _banRepository = banRepository;
+        _hashService = hashService;
     }
 
     public async Task<PostDetailsModel> GetPostAsync(long id)
@@ -54,20 +57,27 @@ public class PostService : IPostService
     {
         var postingRestrictionStatus = await _banRepository.GetPostingRestrictionStatusAsync(new PostingRestrictionsRequestModel
         {
+            CategoryAlias = createRequestModel.CategoryAlias,
             ThreadId = createRequestModel.ThreadId,
             UserIpAddress = createRequestModel.UserIpAddress,
         });
 
-        if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction)
+        if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
+            || postingRestrictionStatus is not PostingRestrictionsResponseSuccessModel successModel
+            || successModel.ThreadSalt is null)
         {
-            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Posting is restricted: {postingRestrictionStatus.RestrictionType.ToString()}");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Posting is restricted: {Enum.GetName(postingRestrictionStatus.RestrictionType)}");
         }
+
+        var threadSalt = successModel.ThreadSalt.Value;
+        var userIp = createRequestModel.UserIpAddress ?? [];
+        var threadLocalUserHash = _hashService.GetHashBytes(threadSalt, userIp);
 
         await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(createRequestModel.BlobContainerId, attachments, cancellationToken);
 
         try
         {
-            return await _postRepository.CreatePostAsync(createRequestModel, uploadedAttachments, cancellationToken);
+            return await _postRepository.CreatePostAsync(createRequestModel, threadLocalUserHash, uploadedAttachments, cancellationToken);
         }
         catch (Exception e)
         {

@@ -10,5 +10,5 @@ public interface IThreadRepository
 
     Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken);
 
-    Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel createRequestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
+    Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel createRequestModel, Guid threadSalt, byte[] threadLocalUserHash, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
 }

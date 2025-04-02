@@ -201,7 +201,10 @@ namespace Hikkaba.Data.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsHidden = table.Column<bool>(type: "bit", nullable: false),
                     DefaultBumpLimit = table.Column<int>(type: "int", nullable: false),
-                    DefaultShowThreadLocalUserHash = table.Column<bool>(type: "bit", nullable: false),
+                    ShowThreadLocalUserHash = table.Column<bool>(type: "bit", nullable: false),
+                    ShowUserAgent = table.Column<bool>(type: "bit", nullable: false),
+                    ShowCountry = table.Column<bool>(type: "bit", nullable: false),
+                    MaxThreadCount = table.Column<int>(type: "int", nullable: false),
                     BoardId = table.Column<int>(type: "int", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: false),
                     ModifiedById = table.Column<int>(type: "int", nullable: true)
@@ -266,8 +269,9 @@ namespace Hikkaba.Data.Migrations
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsPinned = table.Column<bool>(type: "bit", nullable: false),
                     IsClosed = table.Column<bool>(type: "bit", nullable: false),
+                    IsCyclic = table.Column<bool>(type: "bit", nullable: false),
                     BumpLimit = table.Column<int>(type: "int", nullable: false),
-                    ShowThreadLocalUserHash = table.Column<bool>(type: "bit", nullable: false),
+                    Salt = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
                     ModifiedById = table.Column<int>(type: "int", nullable: true)
@@ -308,6 +312,7 @@ namespace Hikkaba.Data.Migrations
                     MessageHtml = table.Column<string>(type: "nvarchar(max)", maxLength: 8192, nullable: false),
                     UserIpAddress = table.Column<byte[]>(type: "varbinary(16)", maxLength: 16, nullable: true),
                     UserAgent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ThreadLocalUserHash = table.Column<byte[]>(type: "binary(32)", maxLength: 32, nullable: false),
                     ThreadId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
                     ModifiedById = table.Column<int>(type: "int", nullable: true)
@@ -345,6 +350,7 @@ namespace Hikkaba.Data.Migrations
                     FileNameWithoutExtension = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     FileExtension = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     FileSize = table.Column<long>(type: "bigint", nullable: true),
+                    FileContentType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     FileHash = table.Column<byte[]>(type: "binary(32)", maxLength: 32, nullable: true),
                     Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),

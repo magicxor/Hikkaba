@@ -52,7 +52,10 @@ public class PostDetailsViewModel
     public required long ThreadId { get; set; }
 
     [Display(Name = @"Show thread-local user hashes")]
-    public required bool ThreadShowThreadLocalUserHash { get; set; }
+    public required bool ShowThreadLocalUserHash { get; set; }
+
+    [Display(Name = @"Thread-local user hash")]
+    public required string ThreadLocalUserHash { get; set; }
 
     [Display(Name = @"Category alias")]
     public required string CategoryAlias { get; set; }

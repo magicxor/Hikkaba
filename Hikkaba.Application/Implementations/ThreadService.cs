@@ -17,17 +17,20 @@ public class ThreadService : IThreadService
     private readonly IAttachmentService _attachmentService;
     private readonly IThreadRepository _threadRepository;
     private readonly IBanRepository _banRepository;
+    private readonly IHashService _hashService;
 
     public ThreadService(
         ILogger<ThreadService> logger,
         IAttachmentService attachmentService,
         IThreadRepository threadRepository,
-        IBanRepository banRepository)
+        IBanRepository banRepository,
+        IHashService hashService)
     {
         _logger = logger;
         _attachmentService = attachmentService;
         _threadRepository = threadRepository;
         _banRepository = banRepository;
+        _hashService = hashService;
     }
 
     public async Task<ThreadEditRequestModel> GetThreadAsync(long threadId)
@@ -50,19 +53,25 @@ public class ThreadService : IThreadService
         var postingRestrictionStatus = await _banRepository.GetPostingRestrictionStatusAsync(new PostingRestrictionsRequestModel
         {
             CategoryAlias = createRequestModel.CategoryAlias,
+            ThreadId = null,
             UserIpAddress = createRequestModel.UserIpAddress,
         });
 
-        if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction)
+        if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
+            || postingRestrictionStatus is not PostingRestrictionsResponseSuccessModel successModel)
         {
-            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Posting is restricted: {postingRestrictionStatus.RestrictionType.ToString()}");
+            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Posting is restricted: {Enum.GetName(postingRestrictionStatus.RestrictionType)}");
         }
+
+        var threadSalt = Guid.NewGuid();
+        var userIp = createRequestModel.UserIpAddress ?? [];
+        var threadLocalUserHash = _hashService.GetHashBytes(threadSalt, userIp);
 
         await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(createRequestModel.BlobContainerId, attachments, cancellationToken);
 
         try
         {
-            return await _threadRepository.CreateThreadAsync(createRequestModel, uploadedAttachments, cancellationToken);
+            return await _threadRepository.CreateThreadAsync(createRequestModel, threadSalt, threadLocalUserHash, uploadedAttachments, cancellationToken);
         }
         catch (Exception e)
         {

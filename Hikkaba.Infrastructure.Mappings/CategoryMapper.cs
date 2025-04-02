@@ -16,7 +16,7 @@ public static partial class CategoryMapper
     [MapProperty(nameof(Category.Name), nameof(CategoryDashboardModel.Name))]
     [MapProperty(nameof(Category.IsHidden), nameof(CategoryDashboardModel.IsHidden))]
     [MapProperty(nameof(Category.DefaultBumpLimit), nameof(CategoryDashboardModel.DefaultBumpLimit))]
-    [MapProperty(nameof(Category.DefaultShowThreadLocalUserHash), nameof(CategoryDashboardModel.DefaultShowThreadLocalUserHash))]
+    [MapProperty(nameof(Category.ShowThreadLocalUserHash), nameof(CategoryDashboardModel.ShowThreadLocalUserHash))]
     [MapProperty(nameof(Category.BoardId), nameof(CategoryDashboardModel.BoardId))]
     [MapperIgnoreSource(nameof(Category.CreatedById))]
     [MapperIgnoreSource(nameof(Category.ModifiedById))]

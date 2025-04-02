@@ -33,7 +33,10 @@ public static class CategoryQueryableExtensions
             Name = x.Name,
             IsHidden = x.IsHidden,
             DefaultBumpLimit = x.DefaultBumpLimit,
-            DefaultShowThreadLocalUserHash = x.DefaultShowThreadLocalUserHash,
+            ShowThreadLocalUserHash = x.ShowThreadLocalUserHash,
+            ShowUserAgent = x.ShowUserAgent,
+            ShowCountry = x.ShowCountry,
+            MaxThreadCount = x.MaxThreadCount,
             BoardId = x.BoardId,
         });
     }

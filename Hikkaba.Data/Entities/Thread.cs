@@ -39,7 +39,7 @@ public class Thread
     public int BumpLimit { get; set; }
 
     [Required]
-    public bool ShowThreadLocalUserHash { get; set; }
+    public required Guid Salt { get; set; }
 
     // FK id
     [ForeignKey(nameof(Category))]

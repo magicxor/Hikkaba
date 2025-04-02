@@ -77,7 +77,7 @@ public class ThreadRepository : IThreadRepository
             IsPinned = thread.IsPinned,
             IsClosed = thread.IsClosed,
             BumpLimit = thread.BumpLimit,
-            ShowThreadLocalUserHash = thread.ShowThreadLocalUserHash,
+            ShowThreadLocalUserHash = thread.Category.ShowThreadLocalUserHash,
             CategoryId = thread.Category.Id,
             CategoryAlias = thread.Category.Alias,
             CategoryName = thread.Category.Name,
@@ -161,7 +161,7 @@ public class ThreadRepository : IThreadRepository
                 IsPinned = g.Thread.IsPinned,
                 IsClosed = g.Thread.IsClosed,
                 BumpLimit = g.Thread.BumpLimit,
-                ShowThreadLocalUserHash = g.Thread.ShowThreadLocalUserHash,
+                ShowThreadLocalUserHash = g.Category.ShowThreadLocalUserHash,
                 CategoryId = g.Category.Id,
                 CategoryAlias = g.Category.Alias,
                 CategoryName = g.Category.Name,
@@ -249,7 +249,8 @@ public class ThreadRepository : IThreadRepository
                         })
                         .ToList(),
                     ThreadId = post.ThreadId,
-                    ThreadShowThreadLocalUserHash = g.Thread.ShowThreadLocalUserHash,
+                    ShowThreadLocalUserHash = g.Category.ShowThreadLocalUserHash,
+                    ThreadLocalUserHash = post.ThreadLocalUserHash,
                     CategoryAlias = g.Category.Alias,
                     CategoryId = g.Category.Id,
                     Replies = post.RepliesToThisMentionedPost
@@ -283,6 +284,8 @@ public class ThreadRepository : IThreadRepository
 
     public async Task<ThreadPostCreateResultModel> CreateThreadAsync(
         ThreadCreateRequestModel createRequestModel,
+        Guid threadSalt,
+        byte[] threadLocalUserHash,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
     {
@@ -309,6 +312,7 @@ public class ThreadRepository : IThreadRepository
             MessageHtml = createRequestModel.MessageHtml,
             UserIpAddress = createRequestModel.UserIpAddress,
             UserAgent = createRequestModel.UserAgent,
+            ThreadLocalUserHash = threadLocalUserHash,
             Audios = attachments.Audios,
             Documents = attachments.Documents,
             Pictures = attachments.Pictures,
@@ -319,7 +323,8 @@ public class ThreadRepository : IThreadRepository
         {
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
             Title = createRequestModel.ThreadTitle,
-            ShowThreadLocalUserHash = false,
+            BumpLimit = category.DefaultBumpLimit > 0 ? category.DefaultBumpLimit : Defaults.DefaultBumpLimit,
+            Salt = threadSalt,
             CategoryId = category.Id,
             Posts = [post],
         };

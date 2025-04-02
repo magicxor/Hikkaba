@@ -27,7 +27,7 @@ public sealed class SeedManager : ISeedManager
         string alias,
         string name,
         bool isHidden = false,
-        bool defaultShowThreadLocalUserHash = false,
+        bool showThreadLocalUserHash = false,
         int defaultBumpLimit = Defaults.DefaultBumpLimit)
     {
         await context.Categories.AddAsync(new Category
@@ -35,11 +35,12 @@ public sealed class SeedManager : ISeedManager
             Alias = alias,
             Name = name,
             IsHidden = isHidden,
-            DefaultShowThreadLocalUserHash = defaultShowThreadLocalUserHash,
+            ShowThreadLocalUserHash = showThreadLocalUserHash,
             DefaultBumpLimit = defaultBumpLimit,
             Board = board,
             CreatedBy = createdBy,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            MaxThreadCount = Defaults.MaxThreadCountInCategory,
         });
     }
 
