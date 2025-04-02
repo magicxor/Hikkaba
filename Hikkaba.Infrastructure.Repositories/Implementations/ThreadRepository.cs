@@ -95,17 +95,6 @@ public class ThreadRepository : IThreadRepository
         var threadQuery = _applicationDbContext.Threads
             .TagWithCallSite()
             .Include(thread => thread.Category)
-            .Include(thread => thread.Posts)
-            .ThenInclude(post => post.Audios)
-            .Include(thread => thread.Posts)
-            .ThenInclude(post => post.Documents)
-            .Include(thread => thread.Posts)
-            .ThenInclude(post => post.Notices)
-            .Include(thread => thread.Posts)
-            .ThenInclude(post => post.Pictures)
-            .Include(thread => thread.Posts)
-            .ThenInclude(post => post.Videos)
-            .Include(thread => thread.Posts)
             .AsQueryable()
             .AsSingleQuery();
 
