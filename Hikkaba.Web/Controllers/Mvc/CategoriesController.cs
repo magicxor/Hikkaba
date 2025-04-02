@@ -43,7 +43,7 @@ public class CategoriesController : BaseMvcController
         int size = 10,
         CancellationToken cancellationToken = default)
     {
-        var category = await _categoryService.GetAsync(categoryAlias, false);
+        var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
             // todo: add 404 page

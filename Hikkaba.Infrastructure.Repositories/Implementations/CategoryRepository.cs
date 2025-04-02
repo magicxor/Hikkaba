@@ -5,7 +5,6 @@ using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
-using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +26,9 @@ public sealed class CategoryRepository : ICategoryRepository
         _timeProvider = timeProvider;
     }
 
-    public async Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(CategoryFilter categoryFilter)
+    public async Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(
+        CategoryFilter categoryFilter,
+        CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
@@ -49,12 +50,12 @@ public sealed class CategoryRepository : ICategoryRepository
         var result = await query
             .GetDetailsModel()
             .ApplyOrderBy(categoryFilter, x => x.Name)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return result.AsReadOnly();
     }
 
-    public async Task<CategoryDetailsModel?> GetCategoryAsync(string categoryAlias, bool includeDeleted)
+    public async Task<CategoryDetailsModel?> GetCategoryAsync(string categoryAlias, bool includeDeleted, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
@@ -63,10 +64,12 @@ public sealed class CategoryRepository : ICategoryRepository
             .Where(c => c.Alias == categoryAlias && (includeDeleted || !c.IsDeleted))
             .OrderBy(c => c.Id)
             .GetDetailsModel()
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<int> CreateCategoryAsync(CategoryCreateRequestModel categoryCreateRequest)
+    public async Task<int> CreateCategoryAsync(
+        CategoryCreateRequestModel categoryCreateRequest,
+        CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
@@ -76,7 +79,7 @@ public sealed class CategoryRepository : ICategoryRepository
             .TagWithCallSite()
             .Select(x => x.Id)
             .OrderBy(x => x)
-            .FirstAsync();
+            .FirstAsync(cancellationToken);
 
         var category = new Category
         {
@@ -92,13 +95,15 @@ public sealed class CategoryRepository : ICategoryRepository
             BoardId = boardId,
             CreatedById = user.Id,
         };
-        await _applicationDbContext.Categories.AddAsync(category);
-        await _applicationDbContext.SaveChangesAsync();
+        await _applicationDbContext.Categories.AddAsync(category, cancellationToken);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return category.Id;
     }
 
-    public async Task EditCategoryAsync(CategoryEditRequestModel categoryEditRequest)
+    public async Task EditCategoryAsync(
+        CategoryEditRequestModel categoryEditRequest,
+        CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
@@ -118,10 +123,11 @@ public sealed class CategoryRepository : ICategoryRepository
                 .SetProperty(c => c.ShowCountry, categoryEditRequest.ShowCountry)
                 .SetProperty(c => c.MaxThreadCount, categoryEditRequest.MaxThreadCount)
                 .SetProperty(c => c.ModifiedAt, utcNow)
-                .SetProperty(c => c.ModifiedById, user.Id));
+                .SetProperty(c => c.ModifiedById, user.Id),
+                cancellationToken);
     }
 
-    public async Task SetCategoryDeletedAsync(int categoryId, bool isDeleted)
+    public async Task SetCategoryDeletedAsync(int categoryId, bool isDeleted, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
@@ -135,6 +141,7 @@ public sealed class CategoryRepository : ICategoryRepository
                 setProp
                     .SetProperty(ban => ban.IsDeleted, isDeleted)
                     .SetProperty(ban => ban.ModifiedAt, utcNow)
-                    .SetProperty(ban => ban.ModifiedById, user.Id));
+                    .SetProperty(ban => ban.ModifiedById, user.Id),
+                cancellationToken);
     }
 }

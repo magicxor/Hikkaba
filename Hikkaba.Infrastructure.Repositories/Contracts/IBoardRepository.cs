@@ -4,6 +4,6 @@ namespace Hikkaba.Infrastructure.Repositories.Contracts;
 
 public interface IBoardRepository
 {
-    Task<BoardDetailsModel> GetBoardAsync();
-    Task EditBoardAsync(string boardName);
+    Task<BoardDetailsModel> GetBoardAsync(CancellationToken cancellationToken);
+    Task EditBoardAsync(string boardName, CancellationToken cancellationToken);
 }

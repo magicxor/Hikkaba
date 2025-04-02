@@ -61,9 +61,9 @@ public class ThreadsController : BaseMvcController
 
     [Route("{categoryAlias}/Threads/Create")]
     [AllowAnonymous]
-    public async Task<IActionResult> Create(string categoryAlias)
+    public async Task<IActionResult> Create(string categoryAlias, CancellationToken cancellationToken)
     {
-        var category = await _categoryService.GetAsync(categoryAlias, false);
+        var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
             return NotFound();
@@ -91,7 +91,7 @@ public class ThreadsController : BaseMvcController
         {
             try
             {
-                var category = await _categoryService.GetAsync(categoryAlias, false);
+                var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
                 if (category is null)
                 {
                     return NotFound();

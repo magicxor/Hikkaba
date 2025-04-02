@@ -40,7 +40,7 @@ public class HomeController : Controller
         {
             OrderBy = [new OrderByItem { Field = nameof(Category.Alias), Direction = OrderByDirection.Asc }],
         };
-        var categories = await _categoryService.ListAsync(categoryFilter);
+        var categories = await _categoryService.ListAsync(categoryFilter, cancellationToken);
 
         var homeIndexViewModel = new HomeIndexViewModel
         {

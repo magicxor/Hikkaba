@@ -14,34 +14,34 @@ public class CategoryService : ICategoryService
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<IReadOnlyList<CategoryDetailsModel>> ListAsync(CategoryFilter filter)
+    public async Task<IReadOnlyList<CategoryDetailsModel>> ListAsync(CategoryFilter filter, CancellationToken cancellationToken)
     {
-        return await _categoryRepository.ListCategoriesAsync(filter);
+        return await _categoryRepository.ListCategoriesAsync(filter, cancellationToken);
     }
 
-    public async Task<CategoryModeratorsModel> ListCategoryModeratorsAsync(CategoryModeratorsFilter filter)
+    public async Task<CategoryModeratorsModel> ListCategoryModeratorsAsync(CategoryModeratorsFilter filter, CancellationToken cancellationToken)
     {
         //return await _categoryRepository.ListCategoryModeratorsAsync(filter);
         throw new NotImplementedException();
     }
 
-    public async Task<CategoryDetailsModel?> GetAsync(string alias, bool includeDeleted)
+    public async Task<CategoryDetailsModel?> GetAsync(string alias, bool includeDeleted, CancellationToken cancellationToken)
     {
-        return await _categoryRepository.GetCategoryAsync(alias, includeDeleted);
+        return await _categoryRepository.GetCategoryAsync(alias, includeDeleted, cancellationToken);
     }
 
-    public async Task<int> CreateAsync(CategoryCreateRequestModel categoryCreateRequest)
+    public async Task<int> CreateAsync(CategoryCreateRequestModel categoryCreateRequest, CancellationToken cancellationToken)
     {
-        return await _categoryRepository.CreateCategoryAsync(categoryCreateRequest);
+        return await _categoryRepository.CreateCategoryAsync(categoryCreateRequest, cancellationToken);
     }
 
-    public async Task EditAsync(CategoryEditRequestModel categoryEditRequest)
+    public async Task EditAsync(CategoryEditRequestModel categoryEditRequest, CancellationToken cancellationToken)
     {
-        await _categoryRepository.EditCategoryAsync(categoryEditRequest);
+        await _categoryRepository.EditCategoryAsync(categoryEditRequest, cancellationToken);
     }
 
-    public async Task SetIsDeletedAsync(int id, bool newValue)
+    public async Task SetIsDeletedAsync(int id, bool newValue, CancellationToken cancellationToken)
     {
-        await _categoryRepository.SetCategoryDeletedAsync(id, newValue);
+        await _categoryRepository.SetCategoryDeletedAsync(id, newValue, cancellationToken);
     }
 }

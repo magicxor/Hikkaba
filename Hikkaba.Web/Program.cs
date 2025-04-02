@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
@@ -47,7 +48,7 @@ public class Program
                     await dbContext.Database.MigrateAsync();
                 }
 
-                await seedManager.SeedAsync(dbContext, userMgr, roleMgr, seedConfiguration);
+                await seedManager.SeedAsync(dbContext, userMgr, roleMgr, seedConfiguration, CancellationToken.None);
             }
             catch (Exception ex)
             {

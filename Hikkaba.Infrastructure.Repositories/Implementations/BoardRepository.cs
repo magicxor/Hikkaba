@@ -15,7 +15,7 @@ public sealed class BoardRepository : IBoardRepository
         _applicationDbContext = applicationDbContext;
     }
 
-    public async Task<BoardDetailsModel> GetBoardAsync()
+    public async Task<BoardDetailsModel> GetBoardAsync(CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BoardSource.StartActivity();
 
@@ -27,16 +27,17 @@ public sealed class BoardRepository : IBoardRepository
                 Name = b.Name,
             })
             .OrderBy(b => b.Id)
-            .FirstAsync();
+            .FirstAsync(cancellationToken);
     }
 
-    public async Task EditBoardAsync(string boardName)
+    public async Task EditBoardAsync(string boardName, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BoardSource.StartActivity();
 
         await _applicationDbContext.Boards
             .TagWithCallSite()
             .ExecuteUpdateAsync(setProp => setProp
-                .SetProperty(board => board.Name, boardName));
+                .SetProperty(board => board.Name, boardName),
+                cancellationToken);
     }
 }

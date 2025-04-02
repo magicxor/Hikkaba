@@ -12,5 +12,6 @@ public interface ISeedManager
         ApplicationDbContext context,
         UserManager<ApplicationUser> userMgr,
         RoleManager<ApplicationRole> roleMgr,
-        IOptions<SeedConfiguration> settings);
+        IOptions<SeedConfiguration> settings,
+        CancellationToken cancellationToken);
 }

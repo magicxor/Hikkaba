@@ -4,6 +4,6 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IBoardService
 {
-    Task<BoardDetailsModel> GetBoardAsync();
-    Task EditBoardAsync(string boardName);
+    Task<BoardDetailsModel> GetBoardAsync(CancellationToken cancellationToken);
+    Task EditBoardAsync(string boardName, CancellationToken cancellationToken);
 }

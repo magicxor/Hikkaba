@@ -13,13 +13,13 @@ public class BoardService : IBoardService
         _boardRepository = boardRepository;
     }
 
-    public async Task<BoardDetailsModel> GetBoardAsync()
+    public async Task<BoardDetailsModel> GetBoardAsync(CancellationToken cancellationToken)
     {
-        return await _boardRepository.GetBoardAsync();
+        return await _boardRepository.GetBoardAsync(cancellationToken);
     }
 
-    public async Task EditBoardAsync(string boardName)
+    public async Task EditBoardAsync(string boardName, CancellationToken cancellationToken)
     {
-        await _boardRepository.EditBoardAsync(boardName);
+        await _boardRepository.EditBoardAsync(boardName, cancellationToken);
     }
 }

@@ -4,9 +4,9 @@ namespace Hikkaba.Infrastructure.Repositories.Contracts;
 
 public interface ICategoryRepository
 {
-    Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(CategoryFilter categoryFilter);
-    Task<CategoryDetailsModel?> GetCategoryAsync(string categoryAlias, bool includeDeleted);
-    Task<int> CreateCategoryAsync(CategoryCreateRequestModel categoryCreateRequest);
-    Task EditCategoryAsync(CategoryEditRequestModel categoryEditRequest);
-    Task SetCategoryDeletedAsync(int categoryId, bool isDeleted);
+    Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(CategoryFilter categoryFilter, CancellationToken cancellationToken);
+    Task<CategoryDetailsModel?> GetCategoryAsync(string categoryAlias, bool includeDeleted, CancellationToken cancellationToken);
+    Task<int> CreateCategoryAsync(CategoryCreateRequestModel categoryCreateRequest, CancellationToken cancellationToken);
+    Task EditCategoryAsync(CategoryEditRequestModel categoryEditRequest, CancellationToken cancellationToken);
+    Task SetCategoryDeletedAsync(int categoryId, bool isDeleted, CancellationToken cancellationToken);
 }

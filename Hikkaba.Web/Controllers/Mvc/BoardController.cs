@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Mappings;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,9 @@ public class BoardController : Controller
     }
 
     [Route("Board/Edit")]
-    public async Task<IActionResult> Edit(int id)
+    public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
     {
-        var board = await _boardService.GetBoardAsync();
+        var board = await _boardService.GetBoardAsync(cancellationToken);
         var viewModel = board.ToViewModel();
         return View(viewModel);
     }

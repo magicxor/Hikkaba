@@ -28,7 +28,8 @@ public sealed class SeedManager : ISeedManager
         string name,
         bool isHidden = false,
         bool showThreadLocalUserHash = false,
-        int defaultBumpLimit = Defaults.DefaultBumpLimit)
+        int defaultBumpLimit = Defaults.DefaultBumpLimit,
+        CancellationToken cancellationToken = default)
     {
         await context.Categories.AddAsync(new Category
         {
@@ -41,7 +42,7 @@ public sealed class SeedManager : ISeedManager
             CreatedBy = createdBy,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
-        });
+        }, cancellationToken);
     }
 
     private async Task<ApplicationUser?> FindAdminUserAsync(
@@ -85,7 +86,8 @@ public sealed class SeedManager : ISeedManager
         return adminUser;
     }
 
-    private async Task<ApplicationRole> GetOrCreateAdminRoleAsync(RoleManager<ApplicationRole> roleMgr)
+    private async Task<ApplicationRole> GetOrCreateAdminRoleAsync(
+        RoleManager<ApplicationRole> roleMgr)
     {
         var adminRole = await roleMgr.FindByNameAsync(Defaults.AdministratorRoleName);
 
@@ -106,7 +108,8 @@ public sealed class SeedManager : ISeedManager
         ApplicationDbContext context,
         UserManager<ApplicationUser> userMgr,
         RoleManager<ApplicationRole> roleMgr,
-        IOptions<SeedConfiguration> settings)
+        IOptions<SeedConfiguration> settings,
+        CancellationToken cancellationToken)
     {
         var seedConfiguration = settings.Value;
 
@@ -123,24 +126,24 @@ public sealed class SeedManager : ISeedManager
         if (!context.Boards.Any())
         {
             board = new Board {Name = Defaults.BoardName};
-            await context.Boards.AddAsync(board);
+            await context.Boards.AddAsync(board, cancellationToken);
         }
         else
         {
-            board = await context.Boards.OrderBy(x => x.Id).FirstAsync();
+            board = await context.Boards.OrderBy(x => x.Id).FirstAsync(cancellationToken);
         }
 
         if (!context.Categories.Any())
         {
-            await SeedNewCategoryAsync(context, adminUser, board, "a", "Anime");
-            await SeedNewCategoryAsync(context, adminUser, board, "b", "Random");
-            await SeedNewCategoryAsync(context, adminUser, board, "mu", "Music");
-            await SeedNewCategoryAsync(context, adminUser, board, "nsfw", "18+ content", true);
-            await SeedNewCategoryAsync(context, adminUser, board, "vg", "Video Games");
-            await SeedNewCategoryAsync(context, adminUser, board, "wp", "Wallpapers");
-            await SeedNewCategoryAsync(context, adminUser, board, "d", "Discussions about " + Defaults.BoardName, false, true);
+            await SeedNewCategoryAsync(context, adminUser, board, "a", "Anime", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(context, adminUser, board, "b", "Random", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(context, adminUser, board, "mu", "Music", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(context, adminUser, board, "nsfw", "18+ content", true, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(context, adminUser, board, "vg", "Video Games", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(context, adminUser, board, "wp", "Wallpapers", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(context, adminUser, board, "d", "Discussions about " + Defaults.BoardName, false, true, cancellationToken: cancellationToken);
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

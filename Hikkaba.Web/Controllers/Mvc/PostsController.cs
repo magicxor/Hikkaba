@@ -44,9 +44,9 @@ public class PostsController : BaseMvcController
 
     [Route("{categoryAlias}/Threads/{threadId:long}/Posts/Create")]
     [AllowAnonymous]
-    public async Task<IActionResult> Create(string categoryAlias, long threadId)
+    public async Task<IActionResult> Create(string categoryAlias, long threadId, CancellationToken cancellationToken)
     {
-        var category = await _categoryService.GetAsync(categoryAlias, false);
+        var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
             return NotFound();
@@ -76,7 +76,7 @@ public class PostsController : BaseMvcController
         {
             try
             {
-                var category = await _categoryService.GetAsync(viewModel.CategoryAlias, false);
+                var category = await _categoryService.GetAsync(viewModel.CategoryAlias, false, cancellationToken);
                 if (category is null)
                 {
                     return NotFound();

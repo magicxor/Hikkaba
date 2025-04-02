@@ -6,7 +6,6 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 @inject ICategoryService CategoryService
 
 <div class="container">
@@ -16,7 +15,7 @@
                 [@Html.ActionLink(Defaults.BoardName, "Index", "Home")]
                 [
                 @{
-                    var categories = await CategoryService.ListAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] });
+                    var categories = await CategoryService.ListAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] }, Context.RequestAborted);
                     for (var index = 0; index < categories.Count; index++)
                     {
                       var category = categories[index];
