@@ -64,7 +64,7 @@ public class BanService : IBanService
             AutonomousSystemOrganization = bannedIpAddressInfo.AutonomousSystemOrganization,
             Reason = banCreateCommand.Reason,
             RelatedPostId = banCreateCommand.RelatedPostId,
-            CategoryId = banCreateCommand.CategoryId,
+            CategoryAlias = banCreateCommand.CategoryAlias,
         }, cancellationToken);
     }
 

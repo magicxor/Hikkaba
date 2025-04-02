@@ -57,7 +57,7 @@ public class PostDetailsViewModel
     [Display(Name = @"Thread-local user hash")]
     public required string ThreadLocalUserHash { get; set; }
 
-    [Display(Name = @"Category alias")]
+    [Display(Name = @"Category")]
     public required string CategoryAlias { get; set; }
 
     public required int CategoryId { get; set; }

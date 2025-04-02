@@ -38,12 +38,24 @@ public class SetAuthenticatedUserMiddleware
                 var moderatedCategories = await applicationDbContext.CategoriesToModerators
                     .Where(mc => mc.ModeratorId == userId)
                     .Select(mc => mc.CategoryId)
-                    .ToHashSetAsync();
+                    .ToHashSetAsync(httpContext.RequestAborted);
+
+                var roles = await applicationDbContext
+                    .UserRoles
+                    .Where(ur => ur.UserId == userId)
+                    .Join(applicationDbContext.Roles,
+                        userToRole => userToRole.RoleId,
+                        role => role.Id,
+                        (userToRole, role) => role.Name)
+                    .Where(roleName => roleName != null)
+                    .Select(roleName => roleName!)
+                    .ToHashSetAsync(httpContext.RequestAborted);
 
                 authenticatedUserService.SetUser(new CurrentUser
                 {
                     Id = userId,
                     UserName = userName,
+                    Roles = roles,
                     ModeratedCategories = moderatedCategories,
                 });
             }

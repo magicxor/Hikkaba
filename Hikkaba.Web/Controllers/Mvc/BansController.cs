@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Shared.Constants;
@@ -6,8 +7,10 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,28 +25,30 @@ namespace Hikkaba.Web.Controllers.Mvc;
 public class BansController : BaseMvcController
 {
     private readonly IBanService _banService;
+    private readonly IPostService _postService;
+    private readonly IGeoIpService _geoIpService;
 
     public BansController(
         UserManager<ApplicationUser> userManager,
-        IBanService banService) : base(userManager)
+        IBanService banService,
+        IPostService postService,
+        IGeoIpService geoIpService) : base(userManager)
     {
         _banService = banService;
+        _postService = postService;
+        _geoIpService = geoIpService;
     }
 
     [Route("Bans/{id}")]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
         var ban = await _banService.GetBanAsync(id, cancellationToken);
-        var viewModel = ban?.ToViewModel();
+        if (ban is null)
+        {
+            return NotFound("Ban not found");
+        }
 
-        if (viewModel is null)
-        {
-            return View();
-        }
-        else
-        {
-            return View(viewModel);
-        }
+        return View(ban.ToViewModel());
     }
 
     [Route("Bans")]
@@ -63,31 +68,118 @@ public class BansController : BaseMvcController
     }
 
     [Route("Bans/Create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create(string categoryAlias, long threadId, long postId, CancellationToken cancellationToken)
     {
-        return View();
+        var threadPosts = await _postService.ListThreadPostsAsync(new ThreadPostsFilter
+        {
+            ThreadId = threadId,
+            IncludeDeleted = true,
+        }, cancellationToken);
+
+        if (threadPosts.Count == 0)
+        {
+            return NotFound("Post not found");
+        }
+
+        var threadPost = threadPosts[0];
+
+        if (threadPost.UserIpAddress == null)
+        {
+            return Problem("User IP address is null");
+        }
+
+        var activeBan = await _banService.FindActiveBan(new ActiveBanFilter
+        {
+            UserIpAddress = threadPost.UserIpAddress,
+            CategoryAlias = threadPost.CategoryAlias,
+            ThreadId = threadPost.ThreadId,
+        }, cancellationToken);
+
+        if (activeBan != null)
+        {
+            return RedirectToAction("Details", new {id = activeBan.Id});
+        }
+
+        var postVm = threadPost.ToViewModel();
+        var ipAddressVm = _geoIpService.GetIpAddressInfo(new IPAddress(threadPost.UserIpAddress)).ToViewModel();
+
+        var vm = new BanCreateDataViewModel
+        {
+            PostDetails = postVm,
+            IpAddressDetails = ipAddressVm,
+        };
+
+        return View(vm);
     }
 
-    /*
     [Route("Bans/Create")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(BanCreateViewModel viewModel)
+    public async Task<IActionResult> Create(BanCreateViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
-            var dto = _mapper.Map<BanCreateRequestSm>(viewModel);
-            var id = await _banService.CreateBanAsync(dto);
+            var command = new BanCreateCommand
+            {
+                EndsAt = viewModel.EndsAt,
+                BannedIpAddress = viewModel.BannedIpAddress,
+                BanByNetwork = viewModel.BanByNetwork,
+                Reason = viewModel.Reason,
+                RelatedPostId = viewModel.RelatedPostId,
+                CategoryAlias = viewModel.CategoryAlias,
+            };
+            var id = await _banService.CreateBanAsync(command, cancellationToken);
 
             return RedirectToAction("Details", new {id = id});
         }
         else
         {
             ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
-            return View(viewModel);
+
+            var threadPosts = await _postService.ListThreadPostsAsync(new ThreadPostsFilter
+            {
+                ThreadId = viewModel.RelatedThreadId,
+                IncludeDeleted = true,
+            }, cancellationToken);
+
+            if (threadPosts.Count == 0)
+            {
+                return NotFound("Post not found");
+            }
+
+            var threadPost = threadPosts[0];
+
+            if (threadPost.UserIpAddress == null)
+            {
+                return Problem("User IP address is null");
+            }
+
+            var activeBan = await _banService.FindActiveBan(new ActiveBanFilter
+            {
+                UserIpAddress = threadPost.UserIpAddress,
+                CategoryAlias = threadPost.CategoryAlias,
+                ThreadId = threadPost.ThreadId,
+            }, cancellationToken);
+
+            if (activeBan != null)
+            {
+                return RedirectToAction("Details", new {id = activeBan.Id});
+            }
+
+            var postVm = threadPost.ToViewModel();
+            var ipAddressVm = _geoIpService.GetIpAddressInfo(new IPAddress(threadPost.UserIpAddress)).ToViewModel();
+
+            var vm = new BanCreateDataViewModel
+            {
+                PostDetails = postVm,
+                IpAddressDetails = ipAddressVm,
+            };
+
+            return View(vm);
         }
     }
 
+    /*
     [Route("Bans/{id}/Edit")]
     public async Task<IActionResult> Edit(int id)
     {

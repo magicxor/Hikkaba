@@ -44,6 +44,7 @@ public class PostRepository : IPostRepository
             .Include(post => post.Videos)
             .Include(post => post.RepliesToThisMentionedPost)
             .Where(p => p.ThreadId == filter.ThreadId
+                        && (filter.PostId == null || p.Id == filter.PostId)
                         && (filter.IncludeDeleted || (!p.IsDeleted && !p.Thread.IsDeleted && !p.Thread.Category.IsDeleted)))
             .AsQueryable()
             .GetDetailsModel()

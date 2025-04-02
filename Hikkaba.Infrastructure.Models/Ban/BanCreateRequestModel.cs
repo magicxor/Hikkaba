@@ -24,5 +24,5 @@ public class BanCreateRequestModel
 
     public long? RelatedPostId { get; set; }
 
-    public int? CategoryId { get; set; }
+    public string? CategoryAlias { get; set; }
 }

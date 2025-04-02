@@ -8,6 +8,7 @@ using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Shared.Exceptions;
 using Hikkaba.Shared.Extensions;
@@ -131,6 +132,7 @@ public sealed class BanRepository : IBanRepository
         }
 
         Guid? threadSalt = null;
+        var threadIsClosed = false;
         var threadIsCyclic = false;
         var threadBumpLimit = 0;
         var threadPostCount = 0;
@@ -146,8 +148,8 @@ public sealed class BanRepository : IBanRepository
                 .Select(t => new
                 {
                     t.Id,
-                    t.IsClosed,
                     t.Salt,
+                    t.IsClosed,
                     t.IsCyclic,
                     BumpLimit = t.BumpLimit > 0 ? t.BumpLimit : t.Category.DefaultBumpLimit,
                     PostCount = t.Posts.Count,
@@ -161,7 +163,12 @@ public sealed class BanRepository : IBanRepository
                 };
             }
 
-            if (thread.IsClosed)
+            var user = _userContext.GetUser();
+
+            if (thread.IsClosed
+                && (user == null
+                    || (!user.ModeratedCategories.Contains(category.Id)
+                        && !user.Roles.Contains(Defaults.AdministratorRoleName))))
             {
                 return new PostingRestrictionsResponseFailureModel
                 {
@@ -170,6 +177,7 @@ public sealed class BanRepository : IBanRepository
             }
 
             threadSalt = thread.Salt;
+            threadIsClosed = thread.IsClosed;
             threadIsCyclic = thread.IsCyclic;
             threadBumpLimit = thread.BumpLimit;
             threadPostCount = thread.PostCount;
@@ -211,6 +219,7 @@ public sealed class BanRepository : IBanRepository
         {
             RestrictionType = PostingRestrictionType.NoRestriction,
             ThreadSalt = threadSalt,
+            IsClosed = threadIsClosed,
             IsCyclic = threadIsCyclic,
             BumpLimit = threadBumpLimit,
             PostCount = threadPostCount,
@@ -306,6 +315,8 @@ public sealed class BanRepository : IBanRepository
                 AutonomousSystemNumber = ban.AutonomousSystemNumber,
                 AutonomousSystemOrganization = ban.AutonomousSystemOrganization,
                 Reason = ban.Reason,
+                CategoryAlias = ban.Category != null ? ban.Category.Alias : null,
+                RelatedThreadId = ban.RelatedPost != null ? ban.RelatedPost.ThreadId : null,
                 RelatedPostId = ban.RelatedPostId,
                 CategoryId = ban.CategoryId,
                 CreatedById = ban.CreatedById,
@@ -338,6 +349,8 @@ public sealed class BanRepository : IBanRepository
                 AutonomousSystemNumber = ban.AutonomousSystemNumber,
                 AutonomousSystemOrganization = ban.AutonomousSystemOrganization,
                 Reason = ban.Reason,
+                CategoryAlias = ban.Category != null ? ban.Category.Alias : null,
+                RelatedThreadId = ban.RelatedPost != null ? ban.RelatedPost.ThreadId : null,
                 RelatedPostId = ban.RelatedPostId,
                 CategoryId = ban.CategoryId,
                 CreatedById = ban.CreatedById,
@@ -371,6 +384,13 @@ public sealed class BanRepository : IBanRepository
             }
         }
 
+        var categoryId = await _applicationDbContext.Categories
+            .TagWithCallSite()
+            .Where(c => c.Alias == banCreateRequest.CategoryAlias)
+            .Select(c => c.Id)
+            .OrderBy(id => id)
+            .FirstOrDefaultAsync(cancellationToken);
+
         var ban = new Ban
         {
             CreatedAt = utcNow,
@@ -384,7 +404,7 @@ public sealed class BanRepository : IBanRepository
             AutonomousSystemOrganization = banCreateRequest.AutonomousSystemOrganization,
             Reason = banCreateRequest.Reason,
             RelatedPostId = banCreateRequest.RelatedPostId,
-            CategoryId = banCreateRequest.CategoryId,
+            CategoryId = categoryId,
             CreatedById = user.Id,
         };
 

@@ -1,11 +1,26 @@
-﻿@model Hikkaba.Web.ViewModels.BansViewModels.BanViewModel
+﻿@using Humanizer
+@model Hikkaba.Web.ViewModels.BansViewModels.BanViewModel
+@inject TimeProvider TimeProvider
 @{
     ViewData["Title"] = "Details";
 }
 
+@{
+  var utcNow = TimeProvider.GetUtcNow().UtcDateTime;
+  var timeTillUnban = Model.EndsAt.HasValue && utcNow < Model.EndsAt
+    ? Model.EndsAt - utcNow
+    : null;
+  var timeTillUnbanStr = !Model.EndsAt.HasValue
+    ? "banned permanently"
+    : timeTillUnban.HasValue ? $"ban expires in {timeTillUnban.Value.Humanize(2)}" : "ban expired";
+}
+
 <dl class="dl-horizontal">
     <dt>@Html.DisplayNameFor(model => model.EndsAt)</dt>
-    <dd>@Html.DisplayFor(model => model.EndsAt)</dd>
+    <dd>@Html.DisplayFor(model => model.EndsAt) (@(timeTillUnbanStr))</dd>
+
+    <dt>@Html.DisplayNameFor(model => model.BannedIpAddress)</dt>
+    <dd>@Html.DisplayFor(model => model.BannedIpAddress)</dd>
 
     <dt>@Html.DisplayNameFor(model => model.BannedCidrLowerIpAddress)</dt>
     <dd>@Html.DisplayFor(model => model.BannedCidrLowerIpAddress)</dd>

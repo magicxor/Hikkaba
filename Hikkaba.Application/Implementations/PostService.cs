@@ -90,16 +90,24 @@ public class PostService : IPostService
         try
         {
             var createPostResult = await _postRepository.CreatePostAsync(repoRequestModel, uploadedAttachments, cancellationToken);
+
             foreach (var deletedBlobContainerId in createPostResult.DeletedBlobContainerIds)
             {
-                await _attachmentService.DeleteAttachmentsContainerAsync(deletedBlobContainerId);
+                try
+                {
+                    await _attachmentService.DeleteAttachmentsContainerAsync(deletedBlobContainerId);
+                }
+                catch (Exception deleteBlobContainerException)
+                {
+                    _logger.LogError(deleteBlobContainerException, "Failed to delete blob container {BlobContainerId} after post creation. Post Id: {PostId}", deletedBlobContainerId, createPostResult.PostId);
+                }
             }
 
             return createPostResult.PostId;
         }
         catch (Exception e)
         {
-            _logger.LogWarning(e, "Failed to create post with attachments; deleting uploaded attachments");
+            _logger.LogWarning(e, "Failed to create post with attachments. Deleting uploaded attachments within blob container {BlobContainerId}", createRequestModel.BlobContainerId);
             await _attachmentService.DeleteAttachmentsContainerAsync(createRequestModel.BlobContainerId);
             throw;
         }

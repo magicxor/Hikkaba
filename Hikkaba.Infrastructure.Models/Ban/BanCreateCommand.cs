@@ -12,5 +12,5 @@ public class BanCreateCommand
 
     public required long? RelatedPostId { get; set; }
 
-    public required int CategoryId { get; set; }
+    public required string CategoryAlias { get; set; }
 }

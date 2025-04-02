@@ -14,18 +14,15 @@ namespace Hikkaba.Web.Controllers.Mvc;
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 public class AdministrationController : Controller
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IAdministrationService _administrationService;
     private readonly IBoardService _boardService;
     private readonly ISystemInfoService _systemInfoService;
 
     public AdministrationController(
-        SignInManager<ApplicationUser> signInManager,
         IAdministrationService administrationService,
         IBoardService boardService,
         ISystemInfoService systemInfoService)
     {
-        _signInManager = signInManager;
         _administrationService = administrationService;
         _boardService = boardService;
         _systemInfoService = systemInfoService;

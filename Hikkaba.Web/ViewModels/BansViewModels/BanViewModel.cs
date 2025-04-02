@@ -20,7 +20,7 @@ public class BanViewModel
     [Display(Name = @"Modification date and time")]
     public required DateTime? ModifiedAt { get; set; }
 
-    [Display(Name = @"End")]
+    [Display(Name = @"Ends at")]
     [DisplayFormat(DataFormatString = "yyyy-MM-dd HH:mm")]
     public required DateTime? EndsAt { get; set; }
 

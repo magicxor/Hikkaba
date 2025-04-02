@@ -1,17 +1,48 @@
-@model Hikkaba.Web.ViewModels.BansViewModels.BanCreateViewModel
+@using Hikkaba.Web.ViewModels.BansViewModels
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model BanCreateDataViewModel
+@inject TimeProvider TimeProvider
 @{
-    ViewData["Title"] = "Create new ban";
+  ViewData["Title"] = "Create new ban";
 }
 
-<form asp-controller="Bans" asp-action="Create" method="post" class="form-horizontal" enctype="multipart/form-data">
-    <h4>@ViewData["Title"]</h4>
+<div class="row">
+  <div class="col-md-12">
+    <h2 class="text-center">@ViewData["Title"]</h2>
     <hr />
-    
-    @Html.EditorFor(model => model)
-    
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default">Create</button>
-        </div>
-    </div>
-</form>
+
+    <dl class="dl-horizontal">
+      <dt>@Html.DisplayNameFor(model => model.PostDetails.CategoryAlias)</dt>
+      <dd>/@Html.DisplayFor(model => model.PostDetails.CategoryAlias)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.PostDetails.MessageHtml)</dt>
+      <dd>@Html.Raw(Model.PostDetails.MessageHtml)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.PostDetails.CreatedAt)</dt>
+      <dd>@Html.DisplayFor(model => model.PostDetails.CreatedAt)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.IpAddressDetails.CountryIsoCode)</dt>
+      <dd>@Html.DisplayFor(model => model.IpAddressDetails.CountryIsoCode)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.IpAddressDetails.AutonomousSystemNumber)</dt>
+      <dd>@Html.DisplayFor(model => model.IpAddressDetails.AutonomousSystemNumber)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.IpAddressDetails.AutonomousSystemOrganization)</dt>
+      <dd>@Html.DisplayFor(model => model.IpAddressDetails.AutonomousSystemOrganization)</dd>
+    </dl>
+
+    <hr />
+  </div>
+</div>
+
+<partial name="_CreateBanForm" model="@(new BanCreateViewModel
+                                      {
+                                        EndsAt = TimeProvider.GetUtcNow().UtcDateTime.AddDays(1),
+                                        BanByNetwork = false,
+                                        BanInAllCategories = false,
+                                        Reason = string.Empty,
+                                        BannedIpAddress = Model.PostDetails.UserIpAddress?.ToString() ?? string.Empty,
+                                        CategoryAlias = Model.PostDetails.CategoryAlias,
+                                        RelatedThreadId = Model.PostDetails.ThreadId,
+                                        RelatedPostId = Model.PostDetails.Id,
+                                      })"/>

@@ -12,6 +12,6 @@ public static class BanViewModelExtensions
             {
                 categoryAlias = banViewModel.CategoryAlias,
                 threadId = banViewModel.RelatedThreadId,
-            });
+            }) + "#" + banViewModel.RelatedPostId;
     }
 }

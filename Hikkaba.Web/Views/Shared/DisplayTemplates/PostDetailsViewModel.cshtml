@@ -1,5 +1,6 @@
 @using Hikkaba.Application.Contracts
 @using Hikkaba.Shared.Constants
+@using Hikkaba.Shared.Models
 @using Hikkaba.Shared.Services.Contracts
 @using Hikkaba.Web.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -46,7 +47,10 @@
                 </h3>
             </div>
             <div class="panel-body post-content">
-                @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))
+                @if (Context.User.Identity?.IsAuthenticated == true
+                     && UserContext.GetRequiredUser() is { } user
+                     && (user.ModeratedCategories.Contains(Model.CategoryId)
+                         || user.Roles.Contains(Defaults.AdministratorRoleName)))
                 {
                     <div class="row">
                         <div class="col-md-12">
@@ -58,12 +62,21 @@
                                     </button>
                                 </form>
                                 <form asp-controller="Posts" asp-action="SetIsDeleted" method="post" class="display-inline">
-                                    <input name="postId" type="hidden" value="@Model.Id"/>
-                                    <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
-                                        @(Model.IsDeleted ? "Restore" : "Delete")
-                                    </button>
+                                  <input name="postId" type="hidden" value="@Model.Id"/>
+                                  <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
+                                  <button type="submit" class="btn btn-danger">
+                                    <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
+                                    @(Model.IsDeleted ? "Restore" : "Delete")
+                                  </button>
+                                </form>
+                                <form asp-controller="Bans" asp-action="Create" method="get" class="display-inline">
+                                  <input type="hidden" id="categoryAlias" name="categoryAlias" value="@Model.CategoryAlias" />
+                                  <input type="hidden" id="threadId" name="threadId" value="@Model.ThreadId" />
+                                  <input type="hidden" id="postId" name="postId" value="@Model.Id" />
+                                  <button type="submit" class="btn btn-default">
+                                    <i class="fa fa-ban" aria-hidden="true"></i>
+                                    @("Ban")
+                                  </button>
                                 </form>
                             </div>
                         </div>
