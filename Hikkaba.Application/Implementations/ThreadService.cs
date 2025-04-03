@@ -81,7 +81,25 @@ public class ThreadService : IThreadService
 
         try
         {
-            return await _threadRepository.CreateThreadAsync(repoRequestModel, uploadedAttachments, cancellationToken);
+            var createThreadResult = await _threadRepository.CreateThreadAsync(repoRequestModel, uploadedAttachments, cancellationToken);
+
+            foreach (var deletedBlobContainerId in createThreadResult.DeletedBlobContainerIds)
+            {
+                try
+                {
+                    await _attachmentService.DeleteAttachmentsContainerAsync(deletedBlobContainerId);
+                }
+                catch (Exception deleteBlobContainerException)
+                {
+                    _logger.LogError(deleteBlobContainerException,
+                        "Failed to delete blob container {BlobContainerId} after thread creation. Post Id: {PostId}, Thread Id: {ThreadId}",
+                        deletedBlobContainerId,
+                        createThreadResult.PostId,
+                        createThreadResult.ThreadId);
+                }
+            }
+
+            return createThreadResult;
         }
         catch (Exception e)
         {

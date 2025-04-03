@@ -14,6 +14,7 @@ using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Thinktecture;
 using Thread = Hikkaba.Data.Entities.Thread;
 
@@ -21,15 +22,18 @@ namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
 public class ThreadRepository : IThreadRepository
 {
+    private readonly ILogger<ThreadRepository> _logger;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly TimeProvider _timeProvider;
     private readonly IAttachmentRepository _attachmentRepository;
 
     public ThreadRepository(
+        ILogger<ThreadRepository> logger,
         ApplicationDbContext applicationDbContext,
         TimeProvider timeProvider,
         IAttachmentRepository attachmentRepository)
     {
+        _logger = logger;
         _applicationDbContext = applicationDbContext;
         _timeProvider = timeProvider;
         _attachmentRepository = attachmentRepository;
@@ -156,99 +160,99 @@ public class ThreadRepository : IThreadRepository
                 CategoryName = g.Category.Name,
                 PostCount = g.PostCount,
                 Posts = g.Posts.Select(post => new PostDetailsModel
-                {
-                    Index = EF.Functions.RowNumber(EF.Functions.OrderByDescending(post.CreatedAt).ThenByDescending(post.Id)),
-                    Id = post.Id,
-                    IsDeleted = post.IsDeleted,
-                    CreatedAt = post.CreatedAt,
-                    ModifiedAt = post.ModifiedAt,
-                    IsSageEnabled = post.IsSageEnabled,
-                    MessageHtml = post.MessageHtml,
-                    UserIpAddress = post.UserIpAddress,
-                    UserAgent = post.UserAgent,
-                    Audio = post.Audios
-                        .Select(attachment => new AudioModel
-                        {
-                            Id = attachment.Id,
-                            PostId = attachment.PostId,
-                            ThreadId = post.ThreadId,
-                            BlobId = attachment.BlobId,
-                            BlobContainerId = post.BlobContainerId,
-                            FileName = attachment.FileNameWithoutExtension,
-                            FileExtension = attachment.FileExtension,
-                            FileSize = attachment.FileSize,
-                            FileContentType = attachment.FileContentType,
-                            FileHash = attachment.FileHash,
-                        })
-                        .ToList(),
-                    Documents = post.Documents
-                        .Select(attachment => new DocumentModel
-                        {
-                            Id = attachment.Id,
-                            PostId = attachment.PostId,
-                            ThreadId = post.ThreadId,
-                            BlobId = attachment.BlobId,
-                            BlobContainerId = post.BlobContainerId,
-                            FileName = attachment.FileNameWithoutExtension,
-                            FileExtension = attachment.FileExtension,
-                            FileSize = attachment.FileSize,
-                            FileContentType = attachment.FileContentType,
-                            FileHash = attachment.FileHash,
-                        })
-                        .ToList(),
-                    Notices = post.Notices
-                        .Select(attachment => new NoticeModel
-                        {
-                            Id = attachment.Id,
-                            PostId = attachment.PostId,
-                            ThreadId = post.ThreadId,
-                            Text = attachment.Text,
-                        })
-                        .ToList(),
-                    Pictures = post.Pictures
-                        .Select(attachment => new PictureModel
-                        {
-                            Id = attachment.Id,
-                            PostId = attachment.PostId,
-                            ThreadId = post.ThreadId,
-                            BlobId = attachment.BlobId,
-                            BlobContainerId = post.BlobContainerId,
-                            FileName = attachment.FileNameWithoutExtension,
-                            FileExtension = attachment.FileExtension,
-                            FileSize = attachment.FileSize,
-                            FileContentType = attachment.FileContentType,
-                            FileHash = attachment.FileHash,
-                            Width = attachment.Width,
-                            Height = attachment.Height,
-                        })
-                        .ToList(),
-                    Video = post.Videos
-                        .Select(attachment => new VideoModel
-                        {
-                            Id = attachment.Id,
-                            PostId = attachment.PostId,
-                            ThreadId = post.ThreadId,
-                            BlobId = attachment.BlobId,
-                            BlobContainerId = post.BlobContainerId,
-                            FileName = attachment.FileNameWithoutExtension,
-                            FileExtension = attachment.FileExtension,
-                            FileSize = attachment.FileSize,
-                            FileContentType = attachment.FileContentType,
-                            FileHash = attachment.FileHash,
-                        })
-                        .ToList(),
-                    ThreadId = post.ThreadId,
-                    ShowThreadLocalUserHash = g.Category.ShowThreadLocalUserHash,
-                    ThreadLocalUserHash = post.ThreadLocalUserHash,
-                    CategoryAlias = g.Category.Alias,
-                    CategoryId = g.Category.Id,
-                    Replies = post.RepliesToThisMentionedPost
-                        .Select(r => r.ReplyId)
-                        .ToList(),
-                })
-                .OrderBy(x => x.CreatedAt)
-                .ThenBy(x => x.Id)
-                .ToList(),
+                    {
+                        Index = EF.Functions.RowNumber(EF.Functions.OrderByDescending(post.CreatedAt).ThenByDescending(post.Id)),
+                        Id = post.Id,
+                        IsDeleted = post.IsDeleted,
+                        CreatedAt = post.CreatedAt,
+                        ModifiedAt = post.ModifiedAt,
+                        IsSageEnabled = post.IsSageEnabled,
+                        MessageHtml = post.MessageHtml,
+                        UserIpAddress = post.UserIpAddress,
+                        UserAgent = post.UserAgent,
+                        Audio = post.Audios
+                            .Select(attachment => new AudioModel
+                            {
+                                Id = attachment.Id,
+                                PostId = attachment.PostId,
+                                ThreadId = post.ThreadId,
+                                BlobId = attachment.BlobId,
+                                BlobContainerId = post.BlobContainerId,
+                                FileName = attachment.FileNameWithoutExtension,
+                                FileExtension = attachment.FileExtension,
+                                FileSize = attachment.FileSize,
+                                FileContentType = attachment.FileContentType,
+                                FileHash = attachment.FileHash,
+                            })
+                            .ToList(),
+                        Documents = post.Documents
+                            .Select(attachment => new DocumentModel
+                            {
+                                Id = attachment.Id,
+                                PostId = attachment.PostId,
+                                ThreadId = post.ThreadId,
+                                BlobId = attachment.BlobId,
+                                BlobContainerId = post.BlobContainerId,
+                                FileName = attachment.FileNameWithoutExtension,
+                                FileExtension = attachment.FileExtension,
+                                FileSize = attachment.FileSize,
+                                FileContentType = attachment.FileContentType,
+                                FileHash = attachment.FileHash,
+                            })
+                            .ToList(),
+                        Notices = post.Notices
+                            .Select(attachment => new NoticeModel
+                            {
+                                Id = attachment.Id,
+                                PostId = attachment.PostId,
+                                ThreadId = post.ThreadId,
+                                Text = attachment.Text,
+                            })
+                            .ToList(),
+                        Pictures = post.Pictures
+                            .Select(attachment => new PictureModel
+                            {
+                                Id = attachment.Id,
+                                PostId = attachment.PostId,
+                                ThreadId = post.ThreadId,
+                                BlobId = attachment.BlobId,
+                                BlobContainerId = post.BlobContainerId,
+                                FileName = attachment.FileNameWithoutExtension,
+                                FileExtension = attachment.FileExtension,
+                                FileSize = attachment.FileSize,
+                                FileContentType = attachment.FileContentType,
+                                FileHash = attachment.FileHash,
+                                Width = attachment.Width,
+                                Height = attachment.Height,
+                            })
+                            .ToList(),
+                        Video = post.Videos
+                            .Select(attachment => new VideoModel
+                            {
+                                Id = attachment.Id,
+                                PostId = attachment.PostId,
+                                ThreadId = post.ThreadId,
+                                BlobId = attachment.BlobId,
+                                BlobContainerId = post.BlobContainerId,
+                                FileName = attachment.FileNameWithoutExtension,
+                                FileExtension = attachment.FileExtension,
+                                FileSize = attachment.FileSize,
+                                FileContentType = attachment.FileContentType,
+                                FileHash = attachment.FileHash,
+                            })
+                            .ToList(),
+                        ThreadId = post.ThreadId,
+                        ShowThreadLocalUserHash = g.Category.ShowThreadLocalUserHash,
+                        ThreadLocalUserHash = post.ThreadLocalUserHash,
+                        CategoryAlias = g.Category.Alias,
+                        CategoryId = g.Category.Id,
+                        Replies = post.RepliesToThisMentionedPost
+                            .Select(r => r.ReplyId)
+                            .ToList(),
+                    })
+                    .OrderBy(x => x.CreatedAt)
+                    .ThenBy(x => x.Id)
+                    .ToList(),
             });
 
         var totalCount = await resultQuery.CountAsync(cancellationToken);
@@ -277,19 +281,55 @@ public class ThreadRepository : IThreadRepository
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
+        _logger.LogInformation("Creating thread in category {CategoryAlias}. Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
+            createRequestModel.BaseModel.CategoryAlias,
+            inputFiles.Count,
+            createRequestModel.BaseModel.BlobContainerId);
 
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
         var category = await _applicationDbContext.Categories
             .TagWithCallSite()
             .OrderBy(x => x.Id)
-            .FirstOrDefaultAsync(x => x.Alias == createRequestModel.BaseModel.CategoryAlias
-                                      && !x.IsDeleted,
-                cancellationToken);
+            .Select(x => new
+            {
+                x.Id,
+                x.Alias,
+                x.DefaultBumpLimit,
+                x.MaxThreadCount,
+                x.IsDeleted,
+                ThreadCount = x.Threads.Count,
+            })
+            .FirstOrDefaultAsync(x => x.Alias == createRequestModel.BaseModel.CategoryAlias && !x.IsDeleted, cancellationToken);
 
         if (category is null)
         {
             throw new HikkabaHttpResponseException(HttpStatusCode.NotFound, $"Category with alias {createRequestModel.BaseModel.CategoryAlias} not found");
+        }
+
+        var deletedBlobContainerIds = new List<Guid>();
+
+        if (category.ThreadCount >= category.MaxThreadCount)
+        {
+            var threadsToBeDeleted = await _applicationDbContext.Threads
+                .TagWithCallSite()
+                .Include(t => t.Posts)
+                .Where(t => t.CategoryId == category.Id)
+                .OrderBy(t => t.CreatedAt)
+                .ThenBy(t => t.Id)
+                .Take(1) /* delete the oldest thread */
+                .ToListAsync(cancellationToken);
+
+            deletedBlobContainerIds = threadsToBeDeleted.SelectMany(t => t.Posts.Select(p => p.BlobContainerId)).ToList();
+
+            _logger.LogInformation("Deleting old thread(s) in category {CategoryAlias}. Id: {CategoryId}, ThreadCount: {ThreadCount}, MaxThreadCount: {MaxThreadCount}, Blob containers to be deleted: {BlobContainerCount}",
+                category.Alias,
+                category.Id,
+                category.ThreadCount,
+                category.MaxThreadCount,
+                deletedBlobContainerIds.Count);
+
+            _applicationDbContext.Threads.RemoveRange(threadsToBeDeleted);
         }
 
         var post = new Post
@@ -319,12 +359,14 @@ public class ThreadRepository : IThreadRepository
         };
 
         _applicationDbContext.Threads.Add(thread);
+
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return new ThreadPostCreateResultModel
         {
             ThreadId = thread.Id,
             PostId = post.Id,
+            DeletedBlobContainerIds = deletedBlobContainerIds,
         };
     }
 }

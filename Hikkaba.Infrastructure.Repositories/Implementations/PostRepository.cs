@@ -8,20 +8,24 @@ using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
 public class PostRepository : IPostRepository
 {
+    private readonly ILogger<PostRepository> _logger;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly TimeProvider _timeProvider;
     private readonly IAttachmentRepository _attachmentRepository;
 
     public PostRepository(
+        ILogger<PostRepository> logger,
         ApplicationDbContext applicationDbContext,
         TimeProvider timeProvider,
         IAttachmentRepository attachmentRepository)
     {
+        _logger = logger;
         _applicationDbContext = applicationDbContext;
         _timeProvider = timeProvider;
         _attachmentRepository = attachmentRepository;
@@ -123,6 +127,11 @@ public class PostRepository : IPostRepository
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+        _logger.LogInformation("Creating post in category {CategoryAlias}. ThreadId: {ThreadId}, Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
+            createRequestModel.BaseModel.CategoryAlias,
+            createRequestModel.BaseModel.ThreadId,
+            inputFiles.Count,
+            createRequestModel.BaseModel.BlobContainerId);
 
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
@@ -134,13 +143,21 @@ public class PostRepository : IPostRepository
             var postsToBeDeleted = await _applicationDbContext.Posts
                 .TagWithCallSite()
                 .Where(p => p.ThreadId == createRequestModel.BaseModel.ThreadId)
-                .OrderByDescending(p => p.CreatedAt)
+                .OrderBy(p => p.CreatedAt)
                 .ThenBy(p => p.Id)
                 .Skip(1) /* skip the original post */
                 .Take(1) /* delete the oldest post */
                 .ToListAsync(cancellationToken);
-            _applicationDbContext.Posts.RemoveRange(postsToBeDeleted);
+
             deletedBlobContainerIds = postsToBeDeleted.Select(p => p.BlobContainerId).ToList();
+
+            _logger.LogInformation("Deleting old post(s) in cyclic thread. ThreadId: {ThreadId}, PostCount: {PostCount}, BumpLimit: {BumpLimit}, Blob containers to be deleted: {BlobContainerCount}",
+                createRequestModel.BaseModel.ThreadId,
+                createRequestModel.PostCount,
+                createRequestModel.BumpLimit,
+                deletedBlobContainerIds.Count);
+
+            _applicationDbContext.Posts.RemoveRange(postsToBeDeleted);
         }
 
         var post = new Post

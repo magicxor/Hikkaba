@@ -26,21 +26,18 @@ public class ThreadsController : BaseMvcController
     private readonly IMessagePostProcessor _messagePostProcessor;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
-    private readonly IPostService _postService;
 
     public ThreadsController(
         ILogger<ThreadsController> logger,
         UserManager<ApplicationUser> userManager,
         IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
-        IThreadService threadService,
-        IPostService postService) : base(userManager)
+        IThreadService threadService) : base(userManager)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;
         _categoryService = categoryService;
         _threadService = threadService;
-        _postService = postService;
     }
 
     [Route("{categoryAlias}/Threads/{threadId:long}")]
