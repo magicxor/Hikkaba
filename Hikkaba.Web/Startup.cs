@@ -157,6 +157,7 @@ public class Startup
         services.AddScoped<IThreadService, ThreadService>();
         services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
         services.AddScoped<IAttachmentService, AttachmentService>();
+        services.AddScoped<IBanCreationPrerequisiteService, BanCreationPrerequisiteService>();
 
         // add repositories
         services.AddScoped<IAdministrationRepository, AdministrationRepository>();
