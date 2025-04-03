@@ -67,7 +67,7 @@ public static class DependencyInjection
 
         if (!webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting) || !string.IsNullOrEmpty(connectionString))
         {
-            services.AddHikkabaDbContext(connectionString ?? throw new HikkabaConfigException("No connection string found."));
+            return services.AddHikkabaDbContext(connectionString ?? throw new HikkabaConfigException("No connection string found."));
         }
 
         return services;
