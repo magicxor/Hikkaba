@@ -11,8 +11,8 @@ public static class EnumExtensions
         return Convert.ToInt32(enumValue, CultureInfo.InvariantCulture);
     }
 
-    public static EventId ToEventId<T>(this T enumValue) where T : Enum
+    public static EventId ToEventId<T>(this T enumValue) where T : struct, Enum
     {
-        return new EventId(enumValue.ToInt(), enumValue.ToString());
+        return new EventId(enumValue.ToInt(), Enum.GetName(enumValue));
     }
 }
