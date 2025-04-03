@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class UsersRepository
+public class UserRepository
 {
     private readonly TimeProvider _timeProvider;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly UserManager<ApplicationUser> _userMgr;
     private readonly IUserContext _userContext;
 
-    public UsersRepository(
+    public UserRepository(
         TimeProvider timeProvider,
         ApplicationDbContext applicationDbContext,
         UserManager<ApplicationUser> userMgr,

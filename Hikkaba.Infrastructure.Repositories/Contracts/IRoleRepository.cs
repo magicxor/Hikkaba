@@ -3,7 +3,7 @@ using Hikkaba.Infrastructure.Models.ApplicationRole;
 
 namespace Hikkaba.Infrastructure.Repositories.Contracts;
 
-public interface IRolesRepository
+public interface IRoleRepository
 {
     Task<IReadOnlyList<ApplicationRoleModel>> ListRolesAsync(CancellationToken cancellationToken);
     Task<int> CreateAsync(string roleName, CancellationToken cancellationToken);

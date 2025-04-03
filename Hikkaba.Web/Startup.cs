@@ -164,7 +164,7 @@ public class Startup
         services.AddScoped<IBoardRepository, BoardRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
-        services.AddScoped<IRolesRepository, RolesRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<ISeedManager, SeedManager>();
         services.AddScoped<IThreadRepository, ThreadRepository>();
         services.AddScoped<IAttachmentRepository, AttachmentRepository>();

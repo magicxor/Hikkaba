@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class RolesRepository : IRolesRepository
+public class RoleRepository : IRoleRepository
 {
     private readonly RoleManager<ApplicationRole> _roleMgr;
 
-    public RolesRepository(RoleManager<ApplicationRole> roleMgr)
+    public RoleRepository(RoleManager<ApplicationRole> roleMgr)
     {
         _roleMgr = roleMgr;
     }
