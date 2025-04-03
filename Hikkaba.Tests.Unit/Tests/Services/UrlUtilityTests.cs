@@ -118,7 +118,7 @@ public class UrlUtilityTests
         yield return new TestCaseData("", UriKind.Absolute).Returns(false).SetDescription("Empty string - invalid");
         yield return new TestCaseData("/", UriKind.Relative).Returns(true).SetDescription("Relative URI: root path '/'");
         yield return new TestCaseData("/", UriKind.Absolute).Returns(false).SetDescription("Relative URI with absolute URI kind");
-        yield return new TestCaseData("?q=test", UriKind.Relative).Returns(false).SetDescription("Relative URI: query string only - controversial edge case, not sure if valid [TODO]");
+        yield return new TestCaseData("?q=test", UriKind.Relative).Returns(false).SetDescription("Relative URI: query string only - controversial edge case, not sure if valid");
         yield return new TestCaseData("?q=test", UriKind.Absolute).Returns(false).SetDescription("Relative URI with absolute URI kind");
         yield return new TestCaseData("#anchor", UriKind.Relative).Returns(true).SetDescription("Relative URI: fragment only");
         yield return new TestCaseData("#a", UriKind.Relative).Returns(true).SetDescription("Relative URI: fragment only");

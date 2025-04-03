@@ -8,7 +8,6 @@ using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Infrastructure.Models.Post;
-using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Utils;
@@ -18,9 +17,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc;
-// todo: add ban for specific category (select category from list)
-// todo: add ability to attach related post to ban
-// todo: add ban functions: 1) ban by ip 2) ban by ip range 3) ban and delete all posts in category 4) ban and delete all posts
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 public class BansController : BaseMvcController
