@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Paging.Tests.Unit.Models;
 
-public class Person
+public sealed class Person
 {
     [Key]
     public int PersonId { get; set; }

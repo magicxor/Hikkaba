@@ -4,7 +4,7 @@ using Hikkaba.Paging.Tests.Unit.Filters;
 namespace Hikkaba.Paging.Tests.Unit;
 
 [TestFixture]
-public class PagedResultTests
+public sealed class PagedResultTests
 {
     [Test]
     public void Constructor_WithNullData_ThrowsArgumentNullException()

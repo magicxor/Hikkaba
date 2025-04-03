@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Hikkaba.Paging.Tests.Unit.OrderByProjectionConfiguratorTests;
 
 [TestFixture]
-public class AppendTests
+public sealed class AppendTests
 {
     private const string DbName = "AppendTests";
 

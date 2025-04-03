@@ -10,7 +10,7 @@ using NUnit.Framework.Legacy;
 namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
-public class BbCodeParserTests
+public sealed class BbCodeParserTests
 {
     private BBParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")], [], []);
     private const string CodeClassName = "code";

@@ -5,7 +5,7 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public class SimplifiedUrlRegexTests
+public sealed class SimplifiedUrlRegexTests
 {
     private static IEnumerable<TestCaseData> UriTestCases()
     {

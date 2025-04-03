@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Hikkaba.Tests.Unit.Mocks;
 
-public class FakeUrlHelper : IUrlHelper
+public sealed class FakeUrlHelper : IUrlHelper
 {
     private readonly string _action;
 

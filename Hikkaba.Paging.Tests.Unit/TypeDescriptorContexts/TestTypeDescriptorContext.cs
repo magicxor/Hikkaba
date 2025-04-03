@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Paging.Tests.Unit.TypeDescriptorContexts;
 
-public class TestTypeDescriptorContext : ITypeDescriptorContext
+public sealed class TestTypeDescriptorContext : ITypeDescriptorContext
 {
     public TestTypeDescriptorContext(object instance, string propertyName)
     {

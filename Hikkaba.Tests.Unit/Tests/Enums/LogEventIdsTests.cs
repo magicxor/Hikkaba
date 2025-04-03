@@ -7,7 +7,7 @@ namespace Hikkaba.Tests.Unit.Tests.Enums;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public class LogEventIdsTests
+public sealed class LogEventIdsTests
 {
     [Test]
     public void EnsureIdsInRange()

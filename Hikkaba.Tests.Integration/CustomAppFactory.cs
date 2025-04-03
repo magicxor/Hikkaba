@@ -26,7 +26,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Tests.Integration;
 
-public class CustomAppFactory
+public sealed class CustomAppFactory
     : WebApplicationFactory<Web.Program>
 {
     private readonly string _connectionString;

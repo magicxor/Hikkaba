@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Hikkaba.Tests.Unit.Mocks;
 
-public class FakeUrlHelperFactory : IUrlHelperFactory
+public sealed class FakeUrlHelperFactory : IUrlHelperFactory
 {
     private readonly string _action;
 

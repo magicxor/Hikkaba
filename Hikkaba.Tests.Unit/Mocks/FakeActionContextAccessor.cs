@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Hikkaba.Tests.Unit.Mocks;
 
-public class FakeActionContextAccessor : IActionContextAccessor
+public sealed class FakeActionContextAccessor : IActionContextAccessor
 {
-    public ActionContext? ActionContext { get; set; } = new ActionContext(
+    public ActionContext? ActionContext { get; set; } = new(
         new HttpContextMock().SetupUrl("https://example.com").Mock.Object,
         new Microsoft.AspNetCore.Routing.RouteData(),
         new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());

@@ -5,7 +5,7 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public class IpRangeCalculatorTests
+public sealed class IpRangeCalculatorTests
 {
     [Test]
     public void IPv4_StandardRange_ShouldReturnCorrectHosts()

@@ -6,7 +6,7 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public class UrlUtilityTests
+public sealed class UrlUtilityTests
 {
     private static IEnumerable<TestCaseData> UriTestCases()
     {

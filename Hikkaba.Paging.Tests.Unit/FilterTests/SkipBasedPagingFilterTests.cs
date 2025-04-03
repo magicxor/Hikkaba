@@ -6,7 +6,7 @@ using Hikkaba.Paging.Tests.Unit.Filters;
 namespace Hikkaba.Paging.Tests.Unit.FilterTests;
 
 [TestFixture]
-public class SkipBasedPagingFilterTests
+public sealed class SkipBasedPagingFilterTests
 {
     [Test]
     public void PageSize_WithDefaultValue_ReturnsDefaultPageSize()

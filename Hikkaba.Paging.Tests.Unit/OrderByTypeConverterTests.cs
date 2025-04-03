@@ -8,7 +8,7 @@ using Hikkaba.Paging.TypeConverters;
 namespace Hikkaba.Paging.Tests.Unit;
 
 [TestFixture]
-public class OrderByTypeConverterTests
+public sealed class OrderByTypeConverterTests
 {
     [Test]
     public void CanConvertFrom_WithStringType_ReturnsTrue()

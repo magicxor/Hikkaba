@@ -18,7 +18,7 @@ namespace Hikkaba.Tests.Unit.Tests.Architecture;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public class ArchitectureTests
+public sealed class ArchitectureTests
 {
     private static readonly HikkabaSharedAssemblyInfo HikkabaSharedAssemblyInfo = new();
     private static readonly HikkabaDataAssemblyInfo HikkabaDataAssemblyInfo = new();

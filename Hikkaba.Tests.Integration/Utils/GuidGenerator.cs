@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Tests.Integration.Utils;
 
-public class GuidGenerator
+public sealed class GuidGenerator
 {
     private readonly Random _random;
 

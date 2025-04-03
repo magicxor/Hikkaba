@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Paging.Tests.Unit.Database;
 
-public class TestDbContext : DbContext
+public sealed class TestDbContext : DbContext
 {
     public TestDbContext(DbContextOptions<TestDbContext> options)
         : base(options)

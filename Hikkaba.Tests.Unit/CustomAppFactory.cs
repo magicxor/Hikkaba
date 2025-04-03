@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Data.Common;
 using Hikkaba.Shared.Constants;
-using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Tests.Unit.Mocks;
@@ -28,18 +27,14 @@ using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Config;
 using NLog.Web;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Tests.Unit;
 
-public class CustomAppFactory
+public sealed class CustomAppFactory
     : WebApplicationFactory<Web.Program>
 {
     private readonly string _currentAction;
-
-    private static readonly Action<ILogger, string, Exception?> LogMessage =
-        LoggerMessage.Define<string>(LogLevel.Debug, LogEventIds.DbQuery, "UnitTest DB query: {Message}");
 
     public CustomAppFactory(string currentAction)
     {

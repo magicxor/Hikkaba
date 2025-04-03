@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Paging.Tests.Unit.Filters;
 
-public class SearchSortingFilter : SortingFilter
+public sealed class SearchSortingFilter : SortingFilter
 {
     public string? SearchText { get; set; }
 }

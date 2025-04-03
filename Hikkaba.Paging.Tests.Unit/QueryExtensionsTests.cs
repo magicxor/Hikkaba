@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Hikkaba.Paging.Tests.Unit;
 
 [TestFixture]
-public class QueryExtensionsTests
+public sealed class QueryExtensionsTests
 {
     private const string DbName = "QueryExtensionsTests";
 

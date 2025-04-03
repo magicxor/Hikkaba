@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Paging.Tests.Unit.Models;
 
-public class PersonDto
+public sealed class PersonDto
 {
     public int PersonId { get; set; }
 

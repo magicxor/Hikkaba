@@ -6,7 +6,7 @@ using Hikkaba.Paging.Tests.Unit.Models;
 namespace Hikkaba.Paging.Tests.Unit;
 
 [TestFixture]
-public class ExpressionExtensionsTests
+public sealed class ExpressionExtensionsTests
 {
     private const string DbName = "ExpressionExtensionsTests";
     private readonly IReadOnlyCollection<int> _collection = new List<int> { 10, 4, 8, 1, 7, 0, 0, 2, 5 };

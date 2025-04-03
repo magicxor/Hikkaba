@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Tests.Manual.Seed;
 
-public class GuidGenerator
+public sealed class GuidGenerator
 {
     private readonly Random _random;
 

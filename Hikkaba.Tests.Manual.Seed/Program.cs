@@ -4,17 +4,14 @@ using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Thinktecture;
-using Thinktecture.EntityFrameworkCore.BulkOperations;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Manual.Seed;
 
-public class Program
+public sealed class Program
 {
     private const int CustomSeed = 20157789;
     private static readonly Random Random = new(CustomSeed);
@@ -34,13 +31,6 @@ public class Program
             await dbContext.Database.MigrateAsync();
         }
 
-        var options = new SqlServerBulkInsertOptions
-        {
-            BatchSize = 5_000,
-            EnableStreaming = true,
-            BulkCopyTimeout = TimeSpan.FromSeconds(10),
-            SqlBulkCopyOptions = SqlBulkCopyOptions.Default,
-        };
         Randomizer.Seed = Random;
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
@@ -106,7 +96,6 @@ public class Program
                     })
                     .Generate(150);
 
-                //await dbContext.BulkInsertAsync(testThreads, options);
                 dbContext.Threads.AddRange(testThreads);
 
                 for (var threadIndex = 0; threadIndex < testThreads.Count; threadIndex++)
@@ -141,7 +130,6 @@ public class Program
                         })
                         .Generate(150);
 
-                    //await dbContext.BulkInsertAsync(testPosts, options);
                     dbContext.Posts.AddRange(testPosts);
 
                     // add some replies
@@ -179,7 +167,6 @@ public class Program
                                 })
                                 .Generate(repliesCount);
 
-                            //await dbContext.BulkInsertAsync(replies, options);
                             dbContext.Posts.AddRange(replies);
                         }
                     }
