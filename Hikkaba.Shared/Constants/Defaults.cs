@@ -9,6 +9,7 @@ public static class Defaults
     public const string AttachmentsStorageDirectoryName = "AttachmentsStorage";
     public const string ThumbnailPostfix = "_thumbnail";
 
+    public const string ServiceName = "Hikkaba";
     public const string BoardName = "Hikkaba";
 
     public const string AnonymousUserName = "Anonymous";
