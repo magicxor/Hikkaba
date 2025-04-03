@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.8'
 
 services:
   hikkaba.web:
@@ -10,7 +10,8 @@ services:
     domainname: hikkaba.web.dev.local
     hostname: hikkaba.web.dev.local
     ports:
-      - "35443:443"
+      - "35080:8080"
+      - "35443:8081"
     env_file:
       - Hikkaba.Web/Development.env
     depends_on:
@@ -21,7 +22,7 @@ services:
     container_name: hikkaba.db.dev.local
     domainname: hikkaba.db.dev.local
     hostname: hikkaba.db.dev.local
-    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
     user: root
     environment:
       MSSQL_SA_PASSWORD: "dev_passworD@4568919"

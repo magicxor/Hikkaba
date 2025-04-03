@@ -37,14 +37,14 @@ jobs:
         dotnet --version
 
     - name: Run tests
-      run: dotnet test $SOLUTION --configuration $BUILD_CONFIG --framework ${{ matrix.dotnet.tfm }} --logger trx --results-directory "TestResults-${{ matrix.dotnet.version }}" /p:CollectCoverage=true /maxcpucount:1
+      run: dotnet test $SOLUTION --configuration $BUILD_CONFIG --framework ${{ matrix.dotnet.tfm }} --logger trx --results-directory "TestResults" /maxcpucount:1 /p:CollectCoverage=true /p:CoverletOutput="../TestResults/" /p:MergeWith="../TestResults/coverage.json" /p:CoverletOutputFormat="cobertura" --verbosity normal
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: dotnet-test-results-${{ matrix.dotnet.version }}
-        path: TestResults-${{ matrix.dotnet.version }}
+        path: TestResults
 
     - name: Publish test report
       uses: dorny/test-reporter@v1
@@ -54,3 +54,9 @@ jobs:
         path: "**/*.trx"
         reporter: dotnet-trx
         fail-on-error: true
+
+    - name: Create Test Coverage Badge
+      uses: gaelgirodon/ci-badges-action@v1
+      with:
+        gist-id: 45e3ca73a0c4dcf8685dce0bf047c5b1
+        token: ${{ secrets.GIST_AUTH_TOKEN }}

@@ -8,3 +8,4 @@ jobs:
   call_reusable_run_tests:
     name: run tests
     uses: ./.github/workflows/reusable_run_tests.yml
+    secrets: inherit
