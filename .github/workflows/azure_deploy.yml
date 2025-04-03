@@ -9,7 +9,7 @@ on:
       - master
 
 env:
-  DOTNET_VERSION: '3.1.x'
+  DOTNET_VERSION: '9.0.x'
   PROJECT_NAME: 'Hikkaba.Web'
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Set up .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
