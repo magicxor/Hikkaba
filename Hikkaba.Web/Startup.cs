@@ -1,6 +1,6 @@
-using DNTCaptcha.Core;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Context;
+using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,12 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.DataProtection;
-using Hikkaba.Shared.Exceptions;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Models.Extensions;
 using Hikkaba.Web.Extensions;
 using Hikkaba.Web.Middleware;
 using Hikkaba.Web.Utils;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Hikkaba.Web;
 
@@ -39,30 +39,19 @@ public class Startup
             .Bind(_configuration.GetSection(nameof(SeedConfiguration)))
             .ValidateDataAnnotations();
 
-        services.AddHikkabaDbContext(_configuration.GetConnectionString("DefaultConnection"));
+        services.AddHikkabaDbContext(_configuration, _webHostEnvironment);
 
-        var hikkabaConfig = _configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>()
-                            ?? throw new HikkabaConfigException($"{nameof(HikkabaConfiguration)} is null");
+        services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, int>>()
+            .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, int>>();
 
-        services.AddDataProtection(options =>
-            {
-                options.ApplicationDiscriminator = "4036e12c07fa7f8fb6f58a70c90ee85b52c15be531acf7bd0d480d1ca7f9ea5d";
-            })
-            .SetApplicationName(Defaults.ServiceName)
-            .ProtectKeysWithCertificate(CertificateUtils.LoadCertificate(hikkabaConfig))
-            .PersistKeysToDbContext<ApplicationDbContext>();
-
-        if (!_webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
-        {
-            services.AddDNTCaptcha(options => options
-                .UseSessionStorageProvider()
-                .WithEncryptionKey(hikkabaConfig.AuthCertificatePassword));
-        }
-
-        services.AddHikkabaRepositories()
+        services.AddHikkabaDataProtection(_configuration, _webHostEnvironment)
+            .AddHikkabaRepositories()
             .AddHikkabaServices()
             .AddHikkabaCookieConfig()
-            .AddHikkabaMvc()
+            .AddHikkabaMvc(_configuration, _webHostEnvironment)
             .AddObservabilityTools(_webHostEnvironment);
 
         services.AddResponseCompression();
@@ -105,7 +94,11 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapHealthChecks("/health");
+            if (!env.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+            {
+                endpoints.MapHealthChecks("/health");
+            }
+
             endpoints.MapRazorPages();
             endpoints.MapControllerRoute(
                 name: "default",
