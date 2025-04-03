@@ -21,7 +21,7 @@ public class BanCreationPrerequisiteService : IBanCreationPrerequisiteService
         _geoIpService = geoIpService;
     }
 
-    public async Task<BanCreationPrerequisites> GetPrerequisitesAsync(long? postId, long threadId, CancellationToken cancellationToken)
+    public async Task<BanCreationPrerequisitesModel> GetPrerequisitesAsync(long? postId, long threadId, CancellationToken cancellationToken)
     {
         var threadPosts = await _postService.ListThreadPostsAsync(new ThreadPostsFilter
         {
@@ -32,14 +32,14 @@ public class BanCreationPrerequisiteService : IBanCreationPrerequisiteService
 
         if (!threadPosts.Any())
         {
-            return new BanCreationPrerequisites { Status = BanCreationPrerequisiteStatus.PostNotFound };
+            return new BanCreationPrerequisitesModel { Status = BanCreationPrerequisiteStatus.PostNotFound };
         }
 
         var threadPost = threadPosts[0];
 
         if (threadPost.UserIpAddress == null)
         {
-            return new BanCreationPrerequisites { Status = BanCreationPrerequisiteStatus.IpAddressNull };
+            return new BanCreationPrerequisitesModel { Status = BanCreationPrerequisiteStatus.IpAddressNull };
         }
 
         var activeBan = await _banService.FindActiveBan(new ActiveBanFilter
@@ -51,13 +51,13 @@ public class BanCreationPrerequisiteService : IBanCreationPrerequisiteService
 
         if (activeBan != null)
         {
-            return new BanCreationPrerequisites { Status = BanCreationPrerequisiteStatus.ActiveBanFound, ActiveBanId = activeBan.Id };
+            return new BanCreationPrerequisitesModel { Status = BanCreationPrerequisiteStatus.ActiveBanFound, ActiveBanId = activeBan.Id };
         }
 
         // Use IP from the fetched post
         var ipAddressInfo = _geoIpService.GetIpAddressInfo(new IPAddress(threadPost.UserIpAddress));
 
-        return new BanCreationPrerequisites
+        return new BanCreationPrerequisitesModel
         {
             Post = threadPost,
             IpAddressInfo = ipAddressInfo,

@@ -4,5 +4,5 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IBanCreationPrerequisiteService
 {
-    Task<BanCreationPrerequisites> GetPrerequisitesAsync(long? postId, long threadId, CancellationToken cancellationToken);
+    Task<BanCreationPrerequisitesModel> GetPrerequisitesAsync(long? postId, long threadId, CancellationToken cancellationToken);
 }

@@ -131,6 +131,8 @@ public class ArchitectureTests
             .HaveNameEndingWith("Configuration", StringComparison.Ordinal)
             .Or()
             .HaveNameEndingWith("Extensions", StringComparison.Ordinal)
+            .Or()
+            .MeetCustomRule(new IsEnumRule())
             .GetResult();
 
         var failingTypeNames = result.FailingTypeNames ?? [];
