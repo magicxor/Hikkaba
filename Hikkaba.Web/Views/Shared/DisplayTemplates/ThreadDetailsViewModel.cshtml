@@ -5,75 +5,82 @@
 @inject IUserContext UserContext
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="panel @(Model.IsDeleted ? "panel-danger" : "panel-default")">
-            <div class="panel-body">
-                <h4>
-                    <b>@Model.Title</b>
-                    &nbsp;
-                    @Model.PostCount posts
-                    &nbsp;
-                    @Html.DisplayFor(model => model.CreatedAt)
-                    &nbsp;
-                    <a href="@Model.GetUri(Url)">@Model.Id</a>
-                    @if (Model.IsPinned)
-                    {
-                        <span>&nbsp;</span>
-                        <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-                    }
-                    @if (Model.IsClosed)
-                    {
-                        <span>&nbsp;</span>
-                        <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-                    }
-                </h4>
-                @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))
-                {
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="btn-group thread-moderation-panel" role="group">
-                                <form asp-controller="Threads" asp-action="SetIsPinned" method="post" class="display-inline">
-                                    <input name="threadId" type="hidden" value="@Model.Id" />
-                                    <input name="isPinned" type="hidden" value="@((!Model.IsPinned).ToString())" />
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="@(Model.IsPinned ? "fa fa-arrow-down" : "fa fa-thumb-tack")" aria-hidden="true"></i>
-                                        @(Model.IsPinned ? "Unpin" : "Pin")
-                                    </button>
-                                </form>
-                                <form asp-controller="Threads" asp-action="SetIsClosed" method="post" class="display-inline">
-                                    <input name="threadId" type="hidden" value="@Model.Id" />
-                                    <input name="isClosed" type="hidden" value="@((!Model.IsClosed).ToString())" />
-                                    <button type="submit" class="btn btn-warning">
-                                        <i class="@(Model.IsClosed ? "fa fa-unlock" : "fa fa-lock")" aria-hidden="true"></i>
-                                        @(Model.IsClosed ? "Open" : "Close")
-                                    </button>
-                                </form>
-                                <form asp-controller="Threads" asp-action="SetIsDeleted" method="post" class="display-inline">
-                                    <input name="threadId" type="hidden" value="@Model.Id" />
-                                    <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())" />
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
-                                        @(Model.IsDeleted ? "Restore" : "Delete")
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                }
-                @if (Model.Posts.Any())
-                {
-                    @for (int i = 0; i < Model.Posts.Count; i++)
-                    {
-                        @Html.DisplayFor(m => m.Posts[i])
-                        @if (i == 0 && Model.PostCount > Model.Posts.Count)
-                        {
-                            <div class="alert alert-info" role="alert">
-                                @(Model.PostCount - Model.Posts.Count) replies omitted. Click <a href="@Model.GetUri(Url)">here</a> to view.
-                            </div>
-                        }
-                    }
-                }
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <h4>
+          <b>@Model.Title</b>
+          &nbsp;
+          @Model.PostCount posts
+          &nbsp;
+          @Html.DisplayFor(model => model.CreatedAt)
+          &nbsp;
+          <a class="decoration-on-hover" href="@Model.GetUri(Url)">@Model.Id</a>
+          @if (Model.IsPinned)
+          {
+            <span>&nbsp;</span>
+            <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+          }
+          @if (Model.IsClosed)
+          {
+            <span>&nbsp;</span>
+            <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+          }
+        </h4>
+        @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))
+        {
+          <div class="row">
+            <div class="col-md-12">
+              <div class="btn-group thread-moderation-panel" role="group">
+                <form asp-controller="Threads" asp-action="SetIsPinned" method="post" class="display-inline">
+                  <input name="threadId" type="hidden" value="@Model.Id"/>
+                  <input name="isPinned" type="hidden" value="@((!Model.IsPinned).ToString())"/>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="@(Model.IsPinned ? "fa fa-arrow-down" : "fa fa-thumb-tack")" aria-hidden="true"></i>
+                    @(Model.IsPinned ? "Unpin" : "Pin")
+                  </button>
+                </form>
+                <form asp-controller="Threads" asp-action="SetIsClosed" method="post" class="display-inline">
+                  <input name="threadId" type="hidden" value="@Model.Id"/>
+                  <input name="isClosed" type="hidden" value="@((!Model.IsClosed).ToString())"/>
+                  <button type="submit" class="btn btn-warning">
+                    <i class="@(Model.IsClosed ? "fa fa-unlock" : "fa fa-lock")" aria-hidden="true"></i>
+                    @(Model.IsClosed ? "Open" : "Close")
+                  </button>
+                </form>
+                <form asp-controller="Threads" asp-action="SetIsDeleted" method="post" class="display-inline">
+                  <input name="threadId" type="hidden" value="@Model.Id"/>
+                  <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
+                  <button type="submit" class="btn btn-danger">
+                    <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
+                    @(Model.IsDeleted ? "Restore" : "Delete")
+                  </button>
+                </form>
+              </div>
             </div>
-        </div>
+          </div>
+        }
+        @if (Model.Posts.Any())
+        {
+          <div class="container">
+            @for (var i = 0; i < Model.Posts.Count; i++)
+            {
+              <div class="mt-3 mb-1">
+                @Html.DisplayFor(m => m.Posts[i])
+              </div>
+
+              @if (i == 0 && Model.PostCount > Model.Posts.Count)
+              {
+                <div class="mt-2 mb-0">
+                  <div class="alert alert-info m-0" role="alert">
+                    @(Model.PostCount - Model.Posts.Count) replies omitted. Click <a href="@Model.GetUri(Url)">here</a> to view.
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
     </div>
+  </div>
 </div>

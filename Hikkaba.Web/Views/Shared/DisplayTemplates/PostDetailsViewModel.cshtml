@@ -1,117 +1,132 @@
-@using Hikkaba.Application.Contracts
 @using Hikkaba.Shared.Constants
-@using Hikkaba.Shared.Models
+@using Hikkaba.Shared.Extensions
 @using Hikkaba.Shared.Services.Contracts
 @using Hikkaba.Web.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
-@inject IThreadLocalUserHashGenerator ThreadLocalUserHashGenerator
 @inject IUserContext UserContext
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel @(Model.IsDeleted ? "panel-danger" : "panel-default") post">
-            <div class="panel-heading">
-                <h3 class="panel-title post-title">
-                    @if (Model.ShowThreadLocalUserHash)
-                    {
-                        @(ThreadLocalUserHashGenerator.Generate(Model.ThreadId.ToString(), Model.UserIpAddress?.ToString()))
-                    }
-                    else
-                    {
-                       @(Defaults.AnonymousUserName)
-                    }
-                    @if (Model.IsSageEnabled)
-                    {
-                        <b>SAGE</b>
-                    }
-                    @Html.DisplayFor(model => model.CreatedAt)
-                    @{
-                        if (Model.ModifiedAt.HasValue)
-                        {
-                            <i>&nbsp;(&nbsp;</i><i class="fa fa-pencil" aria-hidden="true"></i><i>&nbsp;@Html.DisplayFor(model => model.ModifiedAt)&nbsp;)</i>
-                        }
-                    }
-                    &nbsp;
-                    <a id="@Html.DisplayFor(model => model.Id)" class="post-title post-id-link" href="@Model.GetUri(Url)">@Html.DisplayFor(model => model.Id)</a>
-                    &nbsp;
-                    @{
-                        if (Model.Index > 0)
-                        {
-                            <span class="post-number">
-                                №
-                                @Html.DisplayFor(model => model.Index)
-                            </span>
-                        }
-                    }
-                </h3>
-            </div>
-            <div class="panel-body post-content">
-                @if (Context.User.Identity?.IsAuthenticated == true
-                     && UserContext.GetRequiredUser() is { } user
-                     && (user.ModeratedCategories.Contains(Model.CategoryId)
-                         || user.Roles.Contains(Defaults.AdministratorRoleName)))
-                {
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="btn-group thread-moderation-panel" role="group">
-                                <form asp-controller="Posts" asp-action="Edit" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.ThreadId" asp-route-postId="@Model.Id" method="get" class="display-inline">
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                                        @("Edit")
-                                    </button>
-                                </form>
-                                <form asp-controller="Posts" asp-action="SetIsDeleted" method="post" class="display-inline">
-                                  <input name="postId" type="hidden" value="@Model.Id"/>
-                                  <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
-                                  <button type="submit" class="btn btn-danger">
-                                    <i class="@(Model.IsDeleted ? "fa fa-history" : "fa fa-trash")" aria-hidden="true"></i>
-                                    @(Model.IsDeleted ? "Restore" : "Delete")
-                                  </button>
-                                </form>
-                                <form asp-controller="Bans" asp-action="Create" method="get" class="display-inline">
-                                  <input type="hidden" id="categoryAlias" name="categoryAlias" value="@Model.CategoryAlias" />
-                                  <input type="hidden" id="threadId" name="threadId" value="@Model.ThreadId" />
-                                  <input type="hidden" id="postId" name="postId" value="@Model.Id" />
-                                  <button type="submit" class="btn btn-default">
-                                    <i class="fa fa-ban" aria-hidden="true"></i>
-                                    @("Ban")
-                                  </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                }
-                @if (Model.Audio.Any()
-                     || Model.Documents.Any()
-                     || Model.Notices.Any()
-                     || Model.Pictures.Any()
-                     || Model.Video.Any())
-                {
-                    <ul class="list-inline">
-                        @Html.DisplayFor(model => model.Audio)
-                        @Html.DisplayFor(model => model.Documents)
-                        @Html.DisplayFor(model => model.Notices)
-                        @Html.DisplayFor(model => model.Pictures)
-                        @Html.DisplayFor(model => model.Video)
-                    </ul>
-                }
-                <span class="visible-line-breaks">@Html.Raw(Model.MessageHtml)</span>
-            </div>
-            @if (Model.Replies.Any())
-            {
-                <div class="panel-footer">
-                    <ul class="list-inline">
-                        <li>@Html.DisplayNameFor(model => model.Replies):</li>
-                        @foreach (var reply in Model.Replies)
-                        {
-                            <li>
-                                <a href="@Url.Action("Details", "Threads", new {categoryAlias = Model.CategoryAlias,threadId = Model.ThreadId})#@(reply.ToString())">&gt;&gt;@(reply.ToString())</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            }
+<div class="card @(Model.IsDeleted ? "bg-light" : "")">
+  <h5 class="card-header">
+    <div class="container">
+      <div class="d-flex flex-wrap gap-2">
+        <!-- User name -->
+        <div class="post-header-flex-item">
+          @(Defaults.AnonymousUserName)
         </div>
+
+        <!-- User unique hash in this thread -->
+        @if (Model.ShowThreadLocalUserHash)
+        {
+          <div class="post-header-flex-item">
+            <span class="text-success" data-full-hash="@(Model.ThreadLocalUserHash)">@(Model.ThreadLocalUserHash.TryLeft(8))</span>
+          </div>
+        }
+
+        <!-- Sage -->
+        @if (Model.IsSageEnabled)
+        {
+          <div class="post-header-flex-item">
+            <i class="bi bi-caret-down-fill"></i>
+          </div>
+        }
+
+        <!-- Post created at -->
+        <div class="post-header-flex-item">
+          <code>@Html.DisplayFor(model => model.CreatedAt)</code>
+        </div>
+
+        <!-- Post modified at -->
+        @if (Model.ModifiedAt.HasValue)
+        {
+          <div class="post-header-flex-item">
+            <span class="font-monospace">[</span><code><i class="bi bi-pencil" aria-hidden="true"></i>@Html.DisplayFor(model => model.ModifiedAt)</code><span class="font-monospace">]</span>
+          </div>
+        }
+
+        <!-- Post ID -->
+        <div class="post-header-flex-item">
+          <a id="@Html.DisplayFor(model => model.Id)" class="decoration-on-hover post-id-link"
+             href="@Model.GetUri(Url)">@Html.DisplayFor(model => model.Id)</a>
+        </div>
+
+        <!-- Post sequence number in thread -->
+        @if (Model.Index > 0)
+        {
+          <div class="post-header-flex-item">
+            <span class="post-number">№@Html.DisplayFor(model => model.Index)</span>
+          </div>
+        }
+      </div>
     </div>
+  </h5>
+  <div class="card-body">
+    @if (Context.User.Identity?.IsAuthenticated == true
+         && UserContext.GetRequiredUser() is { } user
+         && (user.ModeratedCategories.Contains(Model.CategoryId)
+             || user.Roles.Contains(Defaults.AdministratorRoleName)))
+    {
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-grid gap-2 d-md-block thread-moderation-panel" role="group">
+            <form asp-controller="Posts" asp-action="Edit" asp-route-categoryAlias="@Model.CategoryAlias"
+                  asp-route-threadId="@Model.ThreadId" asp-route-postId="@Model.Id" method="get" class="display-inline">
+              <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-pencil" aria-hidden="true"></i>
+                @("Edit")
+              </button>
+            </form>
+            <form asp-controller="Posts" asp-action="SetIsDeleted" method="post" class="display-inline">
+              <input name="postId" type="hidden" value="@Model.Id"/>
+              <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
+              <button type="submit" class="btn btn-outline-danger">
+                <i class="@(Model.IsDeleted ? "bi bi-arrow-clockwise" : "bi bi-trash")" aria-hidden="true"></i>
+                @(Model.IsDeleted ? "Restore" : "Delete")
+              </button>
+            </form>
+            <form asp-controller="Bans" asp-action="Create" method="get" class="display-inline">
+              <input type="hidden" id="categoryAlias" name="categoryAlias" value="@Model.CategoryAlias"/>
+              <input type="hidden" id="threadId" name="threadId" value="@Model.ThreadId"/>
+              <input type="hidden" id="postId" name="postId" value="@Model.Id"/>
+              <button type="submit" class="btn btn-outline-dark">
+                <i class="bi bi-ban" aria-hidden="true"></i>
+                @("Ban")
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    }
+    @if (Model.Audio.Any()
+         || Model.Documents.Any()
+         || Model.Notices.Any()
+         || Model.Pictures.Any()
+         || Model.Video.Any())
+    {
+      <div class="container">
+        <div class="d-flex flex-wrap gap-3">
+          @Html.DisplayFor(model => model.Audio)
+          @Html.DisplayFor(model => model.Documents)
+          @Html.DisplayFor(model => model.Notices)
+          @Html.DisplayFor(model => model.Pictures)
+          @Html.DisplayFor(model => model.Video)
+        </div>
+      </div>
+    }
+    <span class="post-msg-text visible-line-breaks">@Html.Raw(Model.MessageHtml)</span>
+  </div>
+  @if (Model.Replies.Any())
+  {
+    <div class="card-footer">
+      <ul class="list-inline m-0">
+        <li class="list-inline-item">@Html.DisplayNameFor(model => model.Replies):</li>
+        @foreach (var reply in Model.Replies)
+        {
+          <li class="list-inline-item">
+            <a class="decoration-on-hover" href="@Url.Action("Details", "Threads", new { categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId })#@(reply.ToString())">&gt;&gt;@(reply.ToString())</a>
+          </li>
+        }
+      </ul>
+    </div>
+  }
 </div>

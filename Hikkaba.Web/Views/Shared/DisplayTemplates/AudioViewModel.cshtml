@@ -6,11 +6,9 @@
     var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
 }
 
-<li>
-    <div>
-        <p><a href="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.BlobId.ToString().@Model.FileExtension">@filePropertiesString</a></p>
-        <audio src="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" controls="controls">
-            Audio (@filePropertiesString)
-        </audio>
-    </div>
-</li>
+<div class="attachment-flex-item">
+  <p><a class="decoration-on-hover" href="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.BlobId.ToString().@Model.FileExtension">@filePropertiesString</a></p>
+  <audio src="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" controls="controls">
+    Audio (@filePropertiesString)
+  </audio>
+</div>

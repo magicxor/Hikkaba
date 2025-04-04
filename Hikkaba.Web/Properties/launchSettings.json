@@ -6,6 +6,7 @@
       "hotReloadEnabled": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation",
         "Hikkaba_ConnectionStrings__DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=Hikkaba;Integrated Security=true;",
         "Hikkaba_Logging__IncludeScopes": "false",
         "Hikkaba_Logging__LogLevel__Default": "Trace",

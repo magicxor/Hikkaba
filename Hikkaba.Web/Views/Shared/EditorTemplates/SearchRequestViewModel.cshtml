@@ -2,8 +2,9 @@
 @model SearchRequestViewModel
 
 <form asp-controller="Posts" asp-action="Search" method="get" class="form-group">
-    <div class="input-group">
-        <input asp-for="Query" class="form-control search-input" placeholder="Search for..."><span class="input-group-btn"><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button></span>
-    </div>
-    <div><span asp-validation-for="Query" class="text-danger"></span></div>
+  <div class="input-group">
+    <input asp-for="Query" type="text" class="form-control search-input" placeholder="Search posts..." aria-label="Search posts...">
+    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+  </div>
+  <div><span asp-validation-for="Query" class="text-danger"></span></div>
 </form>

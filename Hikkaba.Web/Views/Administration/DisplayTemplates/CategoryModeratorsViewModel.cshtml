@@ -1,7 +1,7 @@
 ﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.CategoryModeratorsViewModel
 
-<tr class="@(Model.Category.IsDeleted 
-               ? "danger" 
+<tr class="@(Model.Category.IsDeleted
+               ? "danger"
                : Model.Category.IsHidden
                     ? "warning"
                     : Model.Category.ShowThreadLocalUserHash
@@ -20,8 +20,8 @@
         @Html.ActionLink("Add moderator", "AddModerator", "Categories", new {id = Model.Category.Id})
         | @Html.ActionLink("Remove moderator", "RemoveModerator", "Categories", new {id = Model.Category.Id})
         | @Html.ActionLink("Edit", "Edit", "Categories", new {id = Model.Category.Id})
-        | 
-        <form class="form-inline" asp-action="SetIsDeleted" asp-controller="Categories">
+        |
+        <form class="display-inline" asp-action="SetIsDeleted" asp-controller="Categories">
             <input type="hidden" name="id" value="@Model.Category.Id" />
             <input type="hidden" name="isDeleted" value="@((!Model.Category.IsDeleted).ToString())" />
             <button type="submit" class="nav-link btn-link text-dark">@(Model.Category.IsDeleted ? "Restore" : "Delete")</button>

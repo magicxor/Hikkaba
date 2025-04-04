@@ -1,28 +1,39 @@
 ﻿@using Hikkaba.Web.ViewModels
 @model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryThreadsViewModel
 @{
-    ViewData["Title"] = $"/{Model.Category.Alias} - {Model.Category.Name}";
+  ViewData["Title"] = $"/{Model.Category.Alias} - {Model.Category.Name}";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
-<hr />
-@Html.ActionLink("Create new thread", "Create", "Threads", new { categoryAlias = Model.Category.Alias })
-<hr />
+<h2 class="text-center m-3">@ViewData["Title"]</h2>
+
+<hr/>
+
+<a class="decoration-on-hover" href="@Url.Action("Create", "Threads", new { categoryAlias = Model.Category.Alias })">
+  Create new thread
+</a>
 
 <div class="row">
-    <div class="col-md-12">
-        @if ((Model.Threads.TotalItemCount > 0) && (Model.Threads.PageNumber > 0))
+  <div class="col-md-12">
+    @if (Model.Threads is { TotalItemCount: > 0, PageNumber: > 0, Data.Count: > 0 })
+    {
+      <div class="container">
+        @for (var i = 0; i < Model.Threads.Data.Count; i++)
         {
-            @Html.DisplayFor(model => model.Threads.Data)
-            <partial name="_PagerPartial" model="@(new PageInfoViewModel
-                                                 {
-                                                   CurrentPageNumber = Model.Threads.PageNumber,
-                                                   TotalPageCount = Model.Threads.TotalPageCount ?? 0,
-                                                 })"/>
+          <div class="mt-4 mb-4">
+            @Html.DisplayFor(m => m.Threads.Data[i])
+          </div>
         }
-        else
-        {
-            <p class="text-center">There are no threads yet.</p>
-        }
-    </div>
+      </div>
+
+      <partial name="_PagerPartial" model="@(new PageInfoViewModel
+                                           {
+                                             CurrentPageNumber = Model.Threads.PageNumber,
+                                             TotalPageCount = Model.Threads.TotalPageCount ?? 0,
+                                           })"/>
+    }
+    else
+    {
+      <p class="text-center">There are no threads yet.</p>
+    }
+  </div>
 </div>
