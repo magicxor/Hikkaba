@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
-public class HomeController : Controller
+public sealed class HomeController : Controller
 {
     private readonly ICategoryService _categoryService;
     private readonly IPostService _postService;

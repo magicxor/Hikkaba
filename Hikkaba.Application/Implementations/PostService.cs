@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Application.Telemetry.Metrics;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Infrastructure.Models.Post;
@@ -19,19 +20,22 @@ public class PostService : IPostService
     private readonly IPostRepository _postRepository;
     private readonly IBanRepository _banRepository;
     private readonly IHashService _hashService;
+    private readonly PostMetrics _postMetrics;
 
     public PostService(
         ILogger<PostService> logger,
         IAttachmentService attachmentService,
         IPostRepository postRepository,
         IBanRepository banRepository,
-        IHashService hashService)
+        IHashService hashService,
+        PostMetrics postMetrics)
     {
         _logger = logger;
         _attachmentService = attachmentService;
         _postRepository = postRepository;
         _banRepository = banRepository;
         _hashService = hashService;
+        _postMetrics = postMetrics;
     }
 
     public async Task<PostDetailsModel> GetPostAsync(long id)
@@ -90,6 +94,8 @@ public class PostService : IPostService
         try
         {
             var createPostResult = await _postRepository.CreatePostAsync(repoRequestModel, uploadedAttachments, cancellationToken);
+
+            _postMetrics.PostCreated(createRequestModel.ThreadId, createPostResult.PostId, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
 
             foreach (var deletedBlobContainerId in createPostResult.DeletedBlobContainerIds)
             {

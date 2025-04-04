@@ -7,12 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.DataProtection;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Models.Extensions;
 using Hikkaba.Web.Extensions;
 using Hikkaba.Web.Middleware;
-using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Hikkaba.Web;
@@ -52,7 +50,8 @@ public class Startup
             .AddHikkabaServices()
             .AddHikkabaCookieConfig()
             .AddHikkabaMvc(_configuration, _webHostEnvironment)
-            .AddObservabilityTools(_webHostEnvironment);
+            .AddHikkabaObservabilityTools(_configuration, _webHostEnvironment)
+            .AddHikkabaMetrics();
 
         services.AddResponseCompression();
     }
@@ -66,14 +65,10 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
         }
-        else
-        {
-            app.UseStatusCodePagesWithReExecute("/Error/Details", "?statusCode={0}");
-            app.UseExceptionHandler("/Error/Exception");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
-        }
-        app.UseHttpsRedirection();
+
+        app.UseStatusCodePagesWithReExecute("/Error/Details", "?statusCode={0}");
+        app.UseExceptionHandler("/Error/Exception");
+
         app.UseResponseCompression();
         app.UseStaticFiles(new StaticFileOptions
         {
@@ -86,7 +81,6 @@ public class Startup
         app.UseSession();
         app.UseRouting();
 
-        app.UseHttpsRedirection();
         app.UseCookiePolicy();
         app.UseAuthentication();
         app.UseAuthorization();

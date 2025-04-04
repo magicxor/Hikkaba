@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc.Base;
 
-public class BaseMvcController: Controller
+public abstract class BaseMvcController : Controller
 {
     private UserManager<ApplicationUser> UserManager { get; set; }
 

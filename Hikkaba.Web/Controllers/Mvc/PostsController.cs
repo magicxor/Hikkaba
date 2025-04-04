@@ -19,7 +19,7 @@ using Microsoft.Extensions.Logging;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
-public class PostsController : BaseMvcController
+public sealed class PostsController : BaseMvcController
 {
     private readonly ILogger<PostsController> _logger;
     private readonly IMessagePostProcessor _messagePostProcessor;

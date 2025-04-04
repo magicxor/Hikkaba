@@ -4,6 +4,7 @@ using System.IO;
 using DNTCaptcha.Core;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
+using Hikkaba.Application.Telemetry.Metrics;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
@@ -75,13 +76,14 @@ public static class DependencyInjection
 
     public static IServiceCollection AddHikkabaRepositories(this IServiceCollection services)
     {
+        services.AddScoped<ISeedRepository, SeedRepository>();
+        services.AddScoped<IMigrationRepository, MigrationRepository>();
         services.AddScoped<IAdministrationRepository, AdministrationRepository>();
         services.AddScoped<IBanRepository, BanRepository>();
         services.AddScoped<IBoardRepository, BoardRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<ISeedManager, SeedManager>();
         services.AddScoped<IThreadRepository, ThreadRepository>();
         services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 
@@ -99,6 +101,8 @@ public static class DependencyInjection
         services.AddSingleton<IGeoIpService, GeoIpService>();
 
         // general
+        services.AddScoped<ISeedService, SeedService>();
+        services.AddScoped<IMigrationService, MigrationService>();
         services.AddScoped<IEmailSender, AuthMessageSender>();
         services.AddScoped<ISmsSender, AuthMessageSender>();
         services.AddScoped<IAdministrationService, AdministrationService>();
@@ -122,7 +126,10 @@ public static class DependencyInjection
         services.AddScoped<FileExtensionContentTypeProvider>();
         services.AddScoped<IStorageProvider>(s =>
         {
-            var fileStorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Defaults.ServiceName, Defaults.AttachmentsStorageDirectoryName);
+            var options = s.GetService<IOptions<HikkabaConfiguration>>();
+            var storagePath = options?.Value.StoragePath;
+            var webHostEnvironment = s.GetRequiredService<IWebHostEnvironment>();
+            var fileStorageDirectory = storagePath ?? Path.Combine(webHostEnvironment.WebRootPath, Defaults.AttachmentsStorageDirectoryName);
             Directory.CreateDirectory(fileStorageDirectory);
             return new LocalStorageProvider(fileStorageDirectory);
         });
@@ -196,40 +203,64 @@ public static class DependencyInjection
             options.ConfigureDefault();
         });
 
-        if (!webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+        // disable captcha for integration testing
+        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
         {
-            var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>()
-                                ?? throw new HikkabaConfigException($"{nameof(HikkabaConfiguration)} is null");
+            return services;
+        }
 
-            services.AddDNTCaptcha(options => options
-                .UseSessionStorageProvider()
-                .WithEncryptionKey(hikkabaConfig.AuthCertificatePassword));
+        var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>()
+                            ?? throw new HikkabaConfigException($"{nameof(HikkabaConfiguration)} is null");
+
+        services.AddDNTCaptcha(options => options
+            .UseSessionStorageProvider()
+            .WithEncryptionKey(hikkabaConfig.AuthCertificatePassword));
+
+        return services;
+    }
+
+    public static IServiceCollection AddHikkabaObservabilityTools(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+    {
+        // disable observability tools for integration testing
+        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+        {
+            return services;
+        }
+
+        // add fake listener for better development experience
+        if (webHostEnvironment.IsDevelopment())
+        {
+            DiagnosticListener.AllListeners.Subscribe(new DiagnosticObserver());
+        }
+
+        services.AddHealthChecks();
+
+        var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
+        var otlpExporterUri = hikkabaConfig?.OtlpExporterUri;
+
+        if (!string.IsNullOrEmpty(otlpExporterUri))
+        {
+            services.AddOpenTelemetry()
+                .ConfigureResource(resource => resource.AddService(Defaults.ServiceName))
+                .WithTracing(tracing => tracing
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddOtlpExporter(options => options.Endpoint = new Uri(otlpExporterUri)))
+                .WithMetrics(metrics => metrics
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddRuntimeInstrumentation()
+                    .AddProcessInstrumentation()
+                    .AddOtlpExporter(options => options.Endpoint = new Uri(otlpExporterUri)));
         }
 
         return services;
     }
 
-    public static IServiceCollection AddObservabilityTools(this IServiceCollection services, IWebHostEnvironment webHostEnvironment)
+    public static IServiceCollection AddHikkabaMetrics(this IServiceCollection services)
     {
-        if (!webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
-        {
-            if (webHostEnvironment.IsDevelopment())
-            {
-                DiagnosticListener.AllListeners.Subscribe(new DiagnosticObserver());
-            }
-
-            services.AddHealthChecks();
-
-            services.AddOpenTelemetry()
-                .ConfigureResource(resource => resource.AddService(Defaults.ServiceName))
-                .WithTracing(tracing => tracing
-                    .AddAspNetCoreInstrumentation()
-                    .AddOtlpExporter())
-                .WithMetrics(metrics => metrics
-                    .AddAspNetCoreInstrumentation()
-                    .AddOtlpExporter());
-        }
-
-        return services;
+        return services
+            .AddSingleton<PostMetrics>()
+            .AddSingleton<ThreadMetrics>();
     }
 }

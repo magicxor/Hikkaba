@@ -17,7 +17,7 @@ using Hikkaba.Web.Mappings;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
-public class CategoriesController : BaseMvcController
+public sealed class CategoriesController : BaseMvcController
 {
     private readonly IBoardService _boardService;
     private readonly ICategoryService _categoryService;

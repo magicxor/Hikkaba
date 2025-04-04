@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
-public class ThreadsController : BaseMvcController
+public sealed class ThreadsController : BaseMvcController
 {
     private readonly ILogger<ThreadsController> _logger;
     private readonly IMessagePostProcessor _messagePostProcessor;

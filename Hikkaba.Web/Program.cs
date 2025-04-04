@@ -33,30 +33,6 @@ public class Program
         try
         {
             var host = CreateHostBuilder(args).Build();
-
-            using var scope = host.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var seedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
-            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-            var seedConfiguration = scope.ServiceProvider.GetRequiredService<IOptions<SeedConfiguration>>();
-
-            try
-            {
-                if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
-                {
-                    await dbContext.Database.MigrateAsync();
-                }
-
-                await seedManager.SeedAsync(dbContext, userMgr, roleMgr, seedConfiguration, CancellationToken.None);
-            }
-            catch (Exception ex)
-            {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occurred seeding the DB");
-                throw;
-            }
-
             await host.RunAsync();
         }
         catch (Exception ex)

@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
-public class BansController : BaseMvcController
+public sealed class BansController : BaseMvcController
 {
     private readonly IBanService _banService;
     private readonly IBanCreationPrerequisiteService _banCreationPrerequisiteService;

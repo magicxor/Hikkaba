@@ -3,7 +3,9 @@
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER root
-RUN apt-get update \
+RUN mkdir -p /var/hikkaba/storage \
+    && chown -R 1654:1654 /var/hikkaba/storage \
+    && apt-get update \
     && apt-get install -y libgdiplus
 USER $APP_UID
 WORKDIR /app

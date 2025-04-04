@@ -41,4 +41,12 @@ public class HikkabaConfiguration
     [Required]
     [Range(1, 10)]
     public int MaxPostsFromIpWithin5Minutes { get; set; } = Defaults.MaxPostsFromIpWithin5Minutes;
+
+    [Url]
+    public string? OtlpExporterUri { get; set; }
+
+    [Required]
+    public required string MaintenanceKey { get; set; }
+
+    public string? StoragePath { get; set; }
 }

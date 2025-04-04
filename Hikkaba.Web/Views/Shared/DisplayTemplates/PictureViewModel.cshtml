@@ -11,12 +11,12 @@
 }
 
 <li>
-    <a href="@Url.Action("Get", "Attachments", new { containerName = Model.BlobContainerId.ToString(), blobName = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" target="_blank">
-        <div>
-            <p>@filePropertiesString</p>
-            <img style="max-width: @(Settings.Value.ThumbnailsMaxWidth)px; max-height: @(Settings.Value.ThumbnailsMaxHeight)px"
-                 src="@Url.Action("Get", "Attachments", new { containerName = Model.BlobContainerId.ToString(), blobName = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = true })"
-                 alt="Attached image (@filePropertiesString)" />
-        </div>
+    <a href="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" target="_blank">
+      <div>
+        <p>@filePropertiesString</p>
+        <img style="max-width: @(Settings.Value.ThumbnailsMaxWidth)px; max-height: @(Settings.Value.ThumbnailsMaxHeight)px"
+             src="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = true })"
+             alt="Attached image (@filePropertiesString)"/>
+      </div>
     </a>
 </li>
