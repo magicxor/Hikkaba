@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
@@ -137,7 +138,11 @@ public sealed class PostsController : BaseMvcController
 
     [Route("Search")]
     [AllowAnonymous]
-    public async Task<IActionResult> Search(SearchRequestViewModel request, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Search(
+        [Required][FromQuery] SearchRequestViewModel request,
+        [FromQuery] int page = 1,
+        [FromQuery][Range(1, 100)] int size = 10,
+        CancellationToken cancellationToken = default)
     {
         if (!ModelState.IsValid)
         {

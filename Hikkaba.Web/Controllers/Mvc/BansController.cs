@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Shared.Constants;
@@ -43,8 +44,12 @@ public sealed class BansController : BaseMvcController
         return View(ban.ToViewModel());
     }
 
+    [HttpGet]
     [Route("Bans")]
-    public async Task<IActionResult> Index(int page = 1, int size = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index(
+        [FromQuery] int page = 1,
+        [FromQuery][Range(1, 100)] int size = 10,
+        CancellationToken cancellationToken = default)
     {
         var filter = new BanPagingFilter
         {

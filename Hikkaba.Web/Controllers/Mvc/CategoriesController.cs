@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Shared.Constants;
@@ -38,9 +39,9 @@ public sealed class CategoriesController : BaseMvcController
     [AllowAnonymous]
     [Route("{categoryAlias}")]
     public async Task<IActionResult> Details(
-        string categoryAlias,
-        int page = 1,
-        int size = 10,
+        [Required][FromRoute] string categoryAlias,
+        [FromQuery] int page = 1,
+        [FromQuery][Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
