@@ -1,73 +1,65 @@
 @using Hikkaba.Shared.Constants
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostAnonymousCreateViewModel
 
-<form asp-controller="Posts" asp-action="Create" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.ThreadId" method="post" class="form-horizontal" enctype="multipart/form-data" id="@Defaults.HtmlNewPostFormId">
-    <h4>Reply to thread</h4>
-    <hr />
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <input asp-for="ThreadId" type="hidden" />
 
-    <div class="form-group">
-        <label asp-for="IsSageEnabled" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="IsSageEnabled" class="form-control" />
-            <span asp-validation-for="IsSageEnabled" class="text-danger"></span>
-        </div>
-    </div>
+<div class="row">
+  <div class="col-md-8 offset-md-1">
+    <form asp-controller="Posts" asp-action="Create" asp-route-categoryAlias="@Model.CategoryAlias"
+          asp-route-threadId="@Model.ThreadId" method="post" class="form-horizontal" enctype="multipart/form-data"
+          id="@Defaults.HtmlNewPostFormId">
+      <h4 class="m-3">Reply to thread</h4>
 
-    <div class="form-group">
-        <div class="col-md-2"></div>
-        <div class="col-md-10">
-            <partial name="_MarkupPanelPartial" model="@nameof(Model.Message)"/>
-        </div>
-    </div>
+      <hr/>
 
-    <div class="form-group">
-        <label asp-for="Message" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <textarea asp-for="Message" class="form-control"></textarea>
-            <span asp-validation-for="Message" class="text-danger"></span>
-        </div>
-    </div>
+      <div asp-validation-summary="All" class="text-danger"></div>
 
-    <div class="form-group">
-        <label asp-for="Attachments" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="Attachments" type="file" multiple accept="@(Defaults.AllSupportedExtensionsWithDot)" class="form-control" />
-            <span asp-validation-for="Attachments" class="text-danger"></span>
-        </div>
-    </div>
+      <input asp-for="ThreadId" type="hidden"/>
 
-    <div class="form-group">
-        <label class="col col-md-2 control-label">
-            Security code
-        </label>
-        <div class="controls col col-md-10">
-            <dnt-captcha asp-captcha-generator-max="9000"
-                         asp-captcha-generator-min="100"
-                         asp-captcha-generator-language="English"
-                         asp-captcha-generator-display-mode="ShowDigits"
-                         asp-use-relative-urls="false"
-                         asp-placeholder="Security code as a number"
-                         asp-validation-error-message="Please enter the security code as a number."
-                         asp-too-many-requests-error-message="Too many requests. Please wait a moment and try again."
-                         asp-font-name="Tahoma"
-                         asp-font-size="20"
-                         asp-fore-color="black"
-                         asp-back-color="#ccc"
-                         asp-text-box-class="form-control"
-                         asp-text-box-template="<div class='input-group'><span class='input-group-text'><span class='bi-lock'></span></span>{0}</div>"
-                         asp-validation-message-class="text-danger"
-                         asp-refresh-button-class="bi-arrow-counterclockwise btn-lg"
-                         asp-show-refresh-button="true"
-                         asp-dir="ltr"
-                         />
-        </div>
-    </div>
+      <div class="mb-2 form-group">
+        <label asp-for="IsSageEnabled" class="form-label"></label>
+        <input asp-for="IsSageEnabled" class="form-check-input" type="checkbox"/>
+        <span asp-validation-for="IsSageEnabled" class="text-danger"></span>
+      </div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default">Post</button>
-        </div>
-    </div>
-</form>
+      <partial name="_MarkupPanelPartial" model="@nameof(Model.Message)"/>
+
+      <div class="mb-2 form-group">
+        <label asp-for="Message" class="form-label"></label>
+        <textarea asp-for="Message" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+      </div>
+
+      <div class="mb-2 form-group">
+        <label asp-for="Attachments" class="form-label"></label>
+        <input asp-for="Attachments" class="form-control" type="file" multiple
+               accept="@(Defaults.AllSupportedExtensionsWithDot)"/>
+        <span asp-validation-for="Attachments" class="text-danger"></span>
+      </div>
+
+      <div class="mb-2 form-group">
+        <label class="form-label">Security code</label>
+        <dnt-captcha asp-captcha-generator-max="9000"
+                     asp-captcha-generator-min="100"
+                     asp-captcha-generator-language="English"
+                     asp-captcha-generator-display-mode="ShowDigits"
+                     asp-use-relative-urls="false"
+                     asp-placeholder="Security code as a number"
+                     asp-validation-error-message="Please enter the security code as a number."
+                     asp-too-many-requests-error-message="Too many requests. Please wait a moment and try again."
+                     asp-font-name="Tahoma"
+                     asp-font-size="60"
+                     asp-fore-color="black"
+                     asp-back-color="#ccc"
+                     asp-text-box-class="form-control"
+                     asp-text-box-template="<div class='input-group mt-1'><span class='input-group-text'><span class='bi-lock'></span></span>{0}</div>"
+                     asp-validation-message-class="text-danger"
+                     asp-refresh-button-class="bi-arrow-counterclockwise btn btn-lg"
+                     asp-show-refresh-button="true"
+                     asp-dir="ltr"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg mt-2">Post</button>
+    </form>
+  </div>
+</div>
