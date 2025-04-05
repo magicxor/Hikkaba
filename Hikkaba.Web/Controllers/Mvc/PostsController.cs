@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
@@ -12,7 +13,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Paging.Enums;
+using Hikkaba.Paging.Models;
+using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Services.Contracts;
+using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -130,10 +135,9 @@ public sealed class PostsController : BaseMvcController
         }
     }
 
-    /*
     [Route("Search")]
     [AllowAnonymous]
-    public async Task<IActionResult> Search(SearchRequestViewModel request, int page = 1, int size = 10)
+    public async Task<IActionResult> Search(SearchRequestViewModel request, int page = 1, int size = 10, CancellationToken cancellationToken = default)
     {
         if (!ModelState.IsValid)
         {
@@ -141,34 +145,29 @@ public sealed class PostsController : BaseMvcController
         }
         else
         {
-            var latestPostsDtoList = await _postService
-                .ListPostsAsync(new PostSearchPagingFilter
-                {
-                    PageNumber = page,
-                    PageSize = size,
-                    OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
-                    SearchQuery = request.Query,
-                });
-            var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.Data);
-            foreach (var latestPostDetailsViewModel in latestPostDetailsViewModels)
+            var filter = new SearchPostsPagingFilter
             {
-                var threadDto = await _threadService.GetThreadAsync(latestPostDetailsViewModel.ThreadId);
-                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
-                latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
-                latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
-            }
-
-            var searchResultViewModel = new PostSearchResultViewModel
-            {
-                Query = query,
-                Posts = new PagedResult<PostDetailsViewModel>
+                PageSize = size,
+                PageNumber = page,
+                OrderBy = new List<OrderByItem>
                 {
-                    CurrentPage = pageDto,
-                    CurrentPageItems = latestPostDetailsViewModels,
-                    TotalItemsCount = latestPostsDtoList.TotalItemCount,
+                    new() { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc },
+                    new() { Field = nameof(Post.Id), Direction = OrderByDirection.Desc },
                 },
+                SearchQuery = request.Query,
             };
-            return View(searchResultViewModel);
+
+            var result = await _postService.SearchPostsPaginatedAsync(filter, cancellationToken);
+
+            var posts = new PagedResult<PostDetailsViewModel>(result.Data.ToViewModels(), filter, result.TotalItemCount);
+
+            var vm = new PostSearchResultViewModel
+            {
+                Query = request.Query,
+                Posts = posts,
+            };
+
+            return View(vm);
         }
     }
 
