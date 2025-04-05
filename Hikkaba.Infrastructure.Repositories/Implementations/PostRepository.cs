@@ -75,9 +75,7 @@ public class PostRepository : IPostRepository
             .Where(post => !post.IsDeleted
                            && !post.Thread.IsDeleted
                            && !post.Thread.Category.IsDeleted
-                           && (EF.Functions.Contains(post.MessageText, filter.SearchQuery)
-                               || (EF.Functions.Contains(post.Thread.Title, filter.SearchQuery)
-                                   && post == post.Thread.Posts.OrderBy(tp => tp.CreatedAt).FirstOrDefault())))
+                           && EF.Functions.Contains(post.MessageText, filter.SearchQuery))
             .GetDetailsModel();
 
         var totalCount = await query.CountAsync(cancellationToken);
