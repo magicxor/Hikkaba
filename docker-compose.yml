@@ -3,12 +3,14 @@ services:
     image: ${DOCKER_REGISTRY-}hikkabaweb
     build:
       context: .
-      dockerfile: Hikkaba.Web/Dockerfile
+      dockerfile: ./Hikkaba.Web/Dockerfile
     container_name: hikkaba.web.dev.local
     domainname: hikkaba.web.dev.local
     hostname: hikkaba.web.dev.local
     ports:
       - "35080:8080"
+    volumes:
+      - "hikkaba_storage:/var/hikkaba/storage"
     env_file:
       - ./Hikkaba.Web/Development.env
     depends_on:
@@ -16,10 +18,13 @@ services:
       - mailhog
 
   db:
+    image: ${DOCKER_REGISTRY-}hikkabadb
+    build:
+      context: .
+      dockerfile: ./Components/Database/Dockerfile
     container_name: hikkaba.db.dev.local
     domainname: hikkaba.db.dev.local
     hostname: hikkaba.db.dev.local
-    image: "mcr.microsoft.com/mssql/server:2022-latest"
     user: root
     environment:
       MSSQL_SA_PASSWORD: "dev_passworD@4568919"
@@ -62,6 +67,8 @@ services:
   # 19105 - Prometheus
   # 19924 - ASP.NET Core
   # 19925 - ASP.NET Core Endpoint
+  # 23179 - Dotnet Runtime Metrics
+  # 23178 - Kestrel Metrics
   grafana:
     container_name: hikkaba.grafana.dev.local
     domainname: hikkaba.grafana.dev.local
@@ -78,3 +85,4 @@ services:
 
 volumes:
   hikkaba_mssql:
+  hikkaba_storage:

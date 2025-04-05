@@ -254,13 +254,16 @@ public static class DependencyInjection
                 .ConfigureResource(resource => resource.AddService(Defaults.ServiceName))
                 .WithTracing(tracing => tracing
                     .AddAspNetCoreInstrumentation()
+                    .AddEntityFrameworkCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddOtlpExporter(options => options.Endpoint = new Uri(otlpExporterUri)))
                 .WithMetrics(metrics => metrics
                     .AddAspNetCoreInstrumentation()
+                    .AddMeter("Microsoft.EntityFrameworkCore")
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddProcessInstrumentation()
+                    .AddMeter("Hikkaba.*")
                     .AddOtlpExporter(options => options.Endpoint = new Uri(otlpExporterUri)));
         }
 
