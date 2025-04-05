@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
@@ -6,6 +7,7 @@ using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Services.Contracts;
@@ -20,6 +22,7 @@ using Microsoft.Extensions.Logging;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
+[Route("Threads")]
 public sealed class ThreadsController : BaseMvcController
 {
     private readonly ILogger<ThreadsController> _logger;
@@ -32,7 +35,8 @@ public sealed class ThreadsController : BaseMvcController
         UserManager<ApplicationUser> userManager,
         IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
-        IThreadService threadService) : base(userManager)
+        IThreadService threadService)
+        : base(userManager)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;
@@ -42,7 +46,10 @@ public sealed class ThreadsController : BaseMvcController
 
     [Route("{categoryAlias}/Threads/{threadId:long}")]
     [AllowAnonymous]
-    public async Task<IActionResult> Details(string categoryAlias, long threadId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Details(
+        [FromRoute][MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
+        [FromRoute][Range(1, long.MaxValue)] long threadId,
+        CancellationToken cancellationToken)
     {
         var threadPosts = await _threadService.GetThreadDetailsAsync(threadId, cancellationToken);
 

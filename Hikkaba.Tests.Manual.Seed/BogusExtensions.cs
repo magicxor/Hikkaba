@@ -17,18 +17,12 @@ public static class BogusExtensions
         ArgumentOutOfRangeException.ThrowIfLessThan(maxLength, minLength);
 
         var r = internet.Random;
-        var s = "";
+        var s = string.Empty;
 
         s += r.Char('a', 'z').ToString();
-        if (s.Length < maxLength)
-            if (includeUppercase)
-                s += r.Char('A', 'Z').ToString();
-        if (s.Length < maxLength)
-            if (includeNumber)
-                s += r.Char('0', '9').ToString();
-        if (s.Length < maxLength)
-            if (includeSymbol)
-                s += r.Char('!', '/').ToString();
+        if (s.Length < maxLength && includeUppercase) s += r.Char('A', 'Z').ToString();
+        if (s.Length < maxLength && includeNumber) s += r.Char('0', '9').ToString();
+        if (s.Length < maxLength && includeSymbol) s += r.Char('!', '/').ToString();
         if (s.Length < minLength) s += r.String2(minLength - s.Length); // pad up to min
         if (s.Length < maxLength) s += r.String2(r.Number(0, maxLength - s.Length)); // random extra padding in range min..max
 

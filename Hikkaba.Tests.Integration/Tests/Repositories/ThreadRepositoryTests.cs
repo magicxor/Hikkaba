@@ -390,7 +390,7 @@ public sealed class ThreadRepositoryTests
                         UserIpAddress = userIp,
                         UserAgent = "Firefox",
                         ThreadLocalUserHash = hashService.GetHashBytes(salt1, userIp),
-                    }
+                    },
                 ],
             };
             var anotherCategoryThread = new Thread
@@ -417,7 +417,7 @@ public sealed class ThreadRepositoryTests
                         UserIpAddress = userIp,
                         UserAgent = "Firefox",
                         ThreadLocalUserHash = hashService.GetHashBytes(salt2, userIp),
-                    }
+                    },
                 ],
             };
 
@@ -467,7 +467,7 @@ public sealed class ThreadRepositoryTests
                             UserAgent = "Firefox",
                             ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                             Thread = t,
-                        }
+                        },
                     ])
                     .ToList())
                 .ToList();
@@ -513,10 +513,10 @@ public sealed class ThreadRepositoryTests
             Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
 
             // check that there are no deleted threads
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.IsDeleted == false));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => !x.IsDeleted));
 
             // check that there are no deleted posts
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => p.IsDeleted == false)));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => !p.IsDeleted)));
 
             // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
             Assert.That(actualThreadPreviews.Data, Is.Ordered
@@ -651,7 +651,7 @@ public sealed class ThreadRepositoryTests
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
                         ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
-                    }
+                    },
                 ],
             };
             var anotherCategoryThread = new Thread
@@ -678,7 +678,7 @@ public sealed class ThreadRepositoryTests
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
                         ThreadLocalUserHash = hashService.GetHashBytes(salt2, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
-                    }
+                    },
                 ],
             };
 
@@ -728,7 +728,7 @@ public sealed class ThreadRepositoryTests
                             UserAgent = "Firefox",
                             ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                             Thread = t,
-                        }
+                        },
                     ])
                     .ToList())
                 .ToList();
@@ -778,10 +778,10 @@ public sealed class ThreadRepositoryTests
             Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
 
             // check that there are no deleted threads
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.IsDeleted == false));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => !x.IsDeleted));
 
             // check that there are no deleted posts
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => p.IsDeleted == false)));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => !p.IsDeleted)));
 
             // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
             Assert.That(actualThreadPreviews.Data, Is.Ordered
@@ -917,7 +917,7 @@ public sealed class ThreadRepositoryTests
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
                         ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
-                    }
+                    },
                 ],
             };
             var anotherCategoryThread = new Thread
@@ -944,7 +944,7 @@ public sealed class ThreadRepositoryTests
                         UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                         UserAgent = "Firefox",
                         ThreadLocalUserHash = hashService.GetHashBytes(salt2, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
-                    }
+                    },
                 ],
             };
 
@@ -1022,7 +1022,7 @@ public sealed class ThreadRepositoryTests
                             UserAgent = "Firefox",
                             ThreadLocalUserHash = hashService.GetHashBytes(t.Salt, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
                             Thread = t,
-                        }
+                        },
                     ])
                     .ToList())
                 .ToList();
@@ -1061,10 +1061,10 @@ public sealed class ThreadRepositoryTests
             Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
 
             // check that there are no deleted threads
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.IsDeleted == false));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => !x.IsDeleted));
 
             // check that there are no deleted posts
-            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => p.IsDeleted == false)));
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => !p.IsDeleted)));
 
             // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
             Assert.That(actualThreadPreviews.Data, Is.Ordered
@@ -1201,7 +1201,7 @@ public sealed class ThreadRepositoryTests
                     UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                     UserAgent = "Firefox",
                     ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
-                }
+                },
             ],
         };
         var anotherCategoryThread = new Thread
@@ -1228,7 +1228,7 @@ public sealed class ThreadRepositoryTests
                     UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
                     UserAgent = "Firefox",
                     ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
-                }
+                },
             ],
         };
         var thread1 = new Thread
@@ -1321,10 +1321,10 @@ public sealed class ThreadRepositoryTests
         Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
 
         // check that there are no deleted threads
-        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.IsDeleted == false));
+        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => !x.IsDeleted));
 
         // check that there are no deleted posts
-        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => p.IsDeleted == false)));
+        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => !p.IsDeleted)));
 
         // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
         Assert.That(actualThreadPreviews.Data, Is.Ordered

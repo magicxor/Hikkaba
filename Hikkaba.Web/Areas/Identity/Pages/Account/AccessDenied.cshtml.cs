@@ -18,5 +18,6 @@ public class AccessDeniedModel : PageModel
     /// </summary>
     public void OnGet()
     {
+        // This method intentionally left empty.
     }
 }

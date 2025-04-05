@@ -18,18 +18,23 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
+[Route("Bans")]
 public sealed class BansController : BaseMvcController
 {
     private readonly IBanService _banService;
     private readonly IBanCreationPrerequisiteService _banCreationPrerequisiteService;
+    private readonly TimeProvider _timeProvider;
 
     public BansController(
         UserManager<ApplicationUser> userManager,
         IBanService banService,
-        IBanCreationPrerequisiteService banCreationPrerequisiteService) : base(userManager)
+        IBanCreationPrerequisiteService banCreationPrerequisiteService,
+        TimeProvider timeProvider)
+        : base(userManager)
     {
         _banService = banService;
         _banCreationPrerequisiteService = banCreationPrerequisiteService;
+        _timeProvider = timeProvider;
     }
 
     [Route("Bans/{id:int}")]
@@ -47,13 +52,13 @@ public sealed class BansController : BaseMvcController
     [HttpGet]
     [Route("Bans")]
     public async Task<IActionResult> Index(
-        [FromQuery] int page = 1,
+        [FromQuery][Range(1, int.MaxValue)] int page = 1,
         [FromQuery][Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {
         var filter = new BanPagingFilter
         {
-            EndsNotBefore = DateTime.UtcNow,
+            EndsNotBefore = _timeProvider.GetUtcNow().UtcDateTime,
         };
         var bans = await _banService.ListBansPaginatedAsync(filter, cancellationToken);
 

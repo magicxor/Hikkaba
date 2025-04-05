@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using BBCodeParser;
 using BBCodeParser.Enums;
@@ -12,7 +13,8 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 [TestFixture]
 public sealed class BbCodeParserTests
 {
-    private BBParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")], [], []);
+    private static readonly IReadOnlyDictionary<string, string> EmptyDict = ReadOnlyDictionary<string, string>.Empty;
+    private BBParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")], EmptyDict, EmptyDict);
     private const string CodeClassName = "code";
     private const string PreClassName = "pref";
     private const string SpoilerHeadClassName = "spoiler-head";
@@ -39,9 +41,11 @@ public sealed class BbCodeParserTests
                 new Tag("link", "<a href=\"{value}\">", "</a>", true),
                 new Tag("quote",
                     $"<div class=\"{QuoteClassName}\"><div class=\"{QuoteAuthorClassName}\">{{value}}</div>",
-                    "</div>", true, AttributeEscapeMode.Html),
+                    "</div>",
+                    true,
+                    AttributeEscapeMode.Html),
                 new Tag("tab", "&nbsp;&nbsp;&nbsp;"),
-                new Tag("private", "{value}", "", true, AttributeEscapeMode.Html),
+                new Tag("private", "{value}", string.Empty, true, AttributeEscapeMode.Html),
                 new CodeTag("code", $"<pre class=\"{CodeClassName}\">", "</pre>"),
                 new ListTag("ul", "<ul>", "</ul>"),
                 new Tag("li", "<li>", "</li>"),
@@ -49,9 +53,9 @@ public sealed class BbCodeParserTests
             BBParser.SecuritySubstitutions,
             new Dictionary<string, string>
             {
-                {"---", "&mdash;"},
-                {"--", "&ndash;"},
-                {"\r\n", "<br />"}
+                { "---", "&mdash;" },
+                { "--", "&ndash;" },
+                { "\r\n", "<br />" },
             });
     }
 
@@ -313,10 +317,10 @@ public sealed class BbCodeParserTests
     {
         const string input = @"Порядок тегов имеет значение при использовании тега head (проверял в [link=""http://dungeonmaster.ru.trioptimum.ru/profile/Hatchet""]своем профиле[/link])\r\n\r\n1. [code][head][b]Lorem Ipsum[/b][/head][/code] - на выходе получаем полужирный заголовок\r\n2. [code][b][head]Lorem Ipsum[/head][/b][/code] - на выходе получаем просто заголовок\r\nВ то же время для остальных тегов - b, i, s, u - порядок вложения значения не имеет.\r\n\r\nОжидание: оба варианта выше должны работать одинаково.\r\n\r\nP.S. А в [link=""http://dungeonmaster.ru.trioptimum.ru/parsertest""]тесте парсера[/link] тег head вообще не работает";
         NodeTree? actual = null;
-        Assert.DoesNotThrow(delegate { actual = _bbCodeParser.Parse(input); });
-        Assert.DoesNotThrow(delegate { actual?.ToHtml(); });
-        Assert.DoesNotThrow(delegate { actual?.ToBb(); });
-        Assert.DoesNotThrow(delegate { actual?.ToText(); });
+        Assert.DoesNotThrow(() => actual = _bbCodeParser.Parse(input));
+        Assert.DoesNotThrow(() => actual?.ToHtml());
+        Assert.DoesNotThrow(() => actual?.ToBb());
+        Assert.DoesNotThrow(() => actual?.ToText());
     }
 
     [Test]
@@ -324,10 +328,10 @@ public sealed class BbCodeParserTests
     {
         const string input = "[spoiler][img=\"http://s05.radikal.ru/i178/1609/96/a9db8fef8310.png\"][/spoiler][spoiler][img=\"http://s019.radikal.ru/i614/1609/e0/0cf83e802ef7.png\"][/spoiler]\r\nКогда ставятся теги спойлера и цитаты, они отображаются на тексте с лишней пустой строкой, если писать текст начинать не сразу же после тега, а в другой строке.\r\n[code][spoiler]Спойлер[/spoiler]текст сразу после тега[/code] преобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\nТо же самое с цитатой. \r\n\r\nНо если сделать:\r\n[code][spoiler]Спойлер[/spoiler]\r\nТекст в другой строке после тега[/code]\r\nоно преобразится в \r\n\"показать содержимое\r\n\r\nТекст в другой строке после тега\"\r\nТ.е., появится пустая строка. Это очень неудобно при форматировании текста, приходится постоянно учитывать этот момент, что появится пустая строка. А если хочешь сделать цепочку без разрывов:\r\n\"текст\r\nспойлер\r\nтекст\r\nспойлер и тд\"\r\nТо её нужно записать сплошным текстом:  \"текст[спойлер]текст[спойлер]текст[спо...\", что опять же неудобно.\r\n\r\n[i]Предложение[/i]: не вставлять эту пустую строку у тегов спойлер и цитата, если текст после тега начинается в другой/других строке/строках.\r\n\r\nТ.е.\r\n\"[code][spoiler]Спойлер[/spoiler]текст сразу после тега[/code] \"\r\nпреобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\n\"[code][spoiler]Спойлер[/spoiler]\r\nтекст в другой строке после тега[/code] \"\r\nпреобразится в \r\n\"скрыть содержимое\r\nтекст сразу после тега\"\r\n\r\n\"[code][spoiler]Спойлер[/spoiler]\r\n\r\nтекст во второй строке после тега[/code] \"\r\nпреобразится в\r\n\"скрыть содержимое\r\n\r\nтекст во второй строке после тега\"\r\n\r\nUPD: почему-то не хочет \"предложение\" выделяться курсивом. Делаю его [code][i]Предложение[/i]:[/code], а сохраняется \"[code][_i]Предложение: ([_/i] вот это тут само вставляется в конце, если убрать подчёркивание и оставить один [_i])[/code]\"";
         NodeTree? actual = null;
-        Assert.DoesNotThrow(delegate { actual = _bbCodeParser.Parse(input); });
-        Assert.DoesNotThrow(delegate { actual?.ToHtml(); });
-        Assert.DoesNotThrow(delegate { actual?.ToBb(); });
-        Assert.DoesNotThrow(delegate { actual?.ToText(); });
+        Assert.DoesNotThrow(() => actual = _bbCodeParser.Parse(input));
+        Assert.DoesNotThrow(() => actual?.ToHtml());
+        Assert.DoesNotThrow(() => actual?.ToBb());
+        Assert.DoesNotThrow(() => actual?.ToText());
     }
 
     [Test]
@@ -384,7 +388,7 @@ public sealed class BbCodeParserTests
         const string input = "[i]Hello[/i] [b]world[/b]";
         var actual = _bbCodeParser.Parse(input);
 
-        Func<Node, bool> filter = n => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
+        Func<Node, bool> filter = n => n is not TagNode || ((TagNode?)n)?.Tag?.Name != "b";
         Assert.That(actual.ToBb(filter), Is.EqualTo("[i]Hello[/i] "));
         Assert.That(actual.ToText(filter), Is.EqualTo("Hello "));
     }
@@ -395,7 +399,7 @@ public sealed class BbCodeParserTests
         const string input = "[i]Hello[/i] [code][b]world[/b][/code]";
         var actual = _bbCodeParser.Parse(input);
 
-        static bool Filter(Node n) => n is not TagNode || ((TagNode?) n)?.Tag?.Name != "b";
+        static bool Filter(Node n) => n is not TagNode || ((TagNode?)n)?.Tag?.Name != "b";
         Assert.That(actual.ToBb(Filter), Is.EqualTo("[i]Hello[/i] [code][b]world[/b][/code]"));
         Assert.That(actual.ToText(Filter), Is.EqualTo("Hello [b]world[/b]"));
     }

@@ -11,7 +11,7 @@ public abstract class BaseMvcController : Controller
 {
     private UserManager<ApplicationUser> UserManager { get; set; }
 
-    public BaseMvcController(UserManager<ApplicationUser> userManager)
+    protected BaseMvcController(UserManager<ApplicationUser> userManager)
     {
         UserManager = userManager;
     }

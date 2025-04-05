@@ -74,7 +74,7 @@ public sealed class CategoryRepository : ICategoryRepository
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
         var user = _userContext.GetRequiredUser();
-        var utcNow = DateTime.UtcNow;
+        var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
         var boardId = await _applicationDbContext.Boards
             .TagWithCallSite()
             .Select(x => x.Id)

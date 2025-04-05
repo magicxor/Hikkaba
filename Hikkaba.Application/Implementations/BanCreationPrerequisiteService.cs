@@ -61,7 +61,7 @@ public class BanCreationPrerequisiteService : IBanCreationPrerequisiteService
         {
             Post = threadPost,
             IpAddressInfo = ipAddressInfo,
-            Status = BanCreationPrerequisiteStatus.Success
+            Status = BanCreationPrerequisiteStatus.Success,
         };
     }
 }

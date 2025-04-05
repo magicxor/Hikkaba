@@ -60,8 +60,8 @@ public partial class Tag
             attributeValue = attributeValue.Replace("\"", "&quot;", StringComparison.Ordinal);
         }
 
-        return WithAttribute ?
-            tagPartNullSafe.Replace("{value}", GetAttributeValueForHtml(attributeValue))
+        return WithAttribute
+            ? tagPartNullSafe.Replace("{value}", GetAttributeValueForHtml(attributeValue))
             : tagPartNullSafe;
     }
 

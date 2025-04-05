@@ -114,8 +114,8 @@ public sealed class UrlUtilityTests
         yield return new TestCaseData("/search?q=кошка&type=repositories", UriKind.Relative).Returns(false).SetDescription("Invalid URL with unescaped non-ASCII characters");
 
         // Edge cases
-        yield return new TestCaseData("", UriKind.Relative).Returns(false).SetDescription("Empty string - invalid");
-        yield return new TestCaseData("", UriKind.Absolute).Returns(false).SetDescription("Empty string - invalid");
+        yield return new TestCaseData(string.Empty, UriKind.Relative).Returns(false).SetDescription("Empty string - invalid");
+        yield return new TestCaseData(string.Empty, UriKind.Absolute).Returns(false).SetDescription("Empty string - invalid");
         yield return new TestCaseData("/", UriKind.Relative).Returns(true).SetDescription("Relative URI: root path '/'");
         yield return new TestCaseData("/", UriKind.Absolute).Returns(false).SetDescription("Relative URI with absolute URI kind");
         yield return new TestCaseData("?q=test", UriKind.Relative).Returns(false).SetDescription("Relative URI: query string only - controversial edge case, not sure if valid");

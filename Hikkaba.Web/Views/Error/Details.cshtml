@@ -7,15 +7,15 @@
 }
 
 <div class="jumbotron">
-    @if (Model is HikkabaHttpResponseException)
+    @if (Model is HikkabaHttpResponseException httpResponseException)
     {
-        var customException = (HikkabaHttpResponseException) Model;
+        var customException = httpResponseException;
         <h1>Error @((int)customException.HttpStatusCode) - @customException.HttpStatusCode</h1>
         <h3>@customException.Message</h3>
     }
-    else if (Model is StorageException)
+    else if (Model is StorageException storageException)
     {
-        var customException = (StorageException) Model;
+        var customException = storageException;
         HttpStatusCode httpStatusCode;
         switch (customException.ErrorCode)
         {

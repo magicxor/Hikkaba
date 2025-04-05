@@ -18,6 +18,7 @@ using Hikkaba.Web.Mappings;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
+[Route("Categories")]
 public sealed class CategoriesController : BaseMvcController
 {
     private readonly IBoardService _boardService;
@@ -40,7 +41,7 @@ public sealed class CategoriesController : BaseMvcController
     [Route("{categoryAlias}")]
     public async Task<IActionResult> Details(
         [Required][FromRoute] string categoryAlias,
-        [FromQuery] int page = 1,
+        [FromQuery][Range(1, int.MaxValue)] int page = 1,
         [FromQuery][Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {

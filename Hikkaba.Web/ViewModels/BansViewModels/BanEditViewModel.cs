@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 
-public class BanEditViewModel: BanCreateViewModel
+public class BanEditViewModel : BanCreateViewModel
 {
     [Display(Name = @"Id")]
     public int Id { get; set; }

@@ -7,7 +7,9 @@ public static class BanViewModelExtensions
 {
     public static string? GetUri(this BanViewModel banViewModel, IUrlHelper urlHelper)
     {
-        return urlHelper.Action("Details", "Threads",
+        return urlHelper.Action(
+            "Details",
+            "Threads",
             new
             {
                 categoryAlias = banViewModel.CategoryAlias,

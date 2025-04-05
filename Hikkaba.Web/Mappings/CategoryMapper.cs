@@ -13,11 +13,11 @@ public static partial class CategoryMapper
     [MapperIgnoreSource(nameof(CategoryDashboardModel.ModifiedBy))]
     public static partial CategoryDetailsViewModel ToViewModel(this CategoryDashboardModel model);
 
-    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDashboardModel> models);
-
     [MapperIgnoreSource(nameof(CategoryDetailsModel.CreatedBy))]
     [MapperIgnoreSource(nameof(CategoryDetailsModel.ModifiedBy))]
     public static partial CategoryDetailsViewModel ToViewModel(this CategoryDetailsModel model);
+
+    public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDashboardModel> models);
 
     public static partial IReadOnlyList<CategoryDetailsViewModel> ToViewModels(this IReadOnlyList<CategoryDetailsModel> models);
 }

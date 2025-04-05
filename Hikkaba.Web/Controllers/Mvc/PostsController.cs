@@ -16,6 +16,7 @@ using Hikkaba.Web.Utils;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.ViewModels.SearchViewModels;
@@ -25,6 +26,7 @@ using Microsoft.Extensions.Logging;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
+[Route("Posts")]
 public sealed class PostsController : BaseMvcController
 {
     private readonly ILogger<PostsController> _logger;
@@ -39,7 +41,8 @@ public sealed class PostsController : BaseMvcController
         IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
         IThreadService threadService,
-        IPostService postService) : base(userManager)
+        IPostService postService)
+        : base(userManager)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;
@@ -50,7 +53,10 @@ public sealed class PostsController : BaseMvcController
 
     [Route("{categoryAlias}/Threads/{threadId:long}/Posts/Create")]
     [AllowAnonymous]
-    public async Task<IActionResult> Create(string categoryAlias, long threadId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        [FromRoute][MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
+        [FromRoute][Range(1, long.MaxValue)] long threadId,
+        CancellationToken cancellationToken)
     {
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
         if (category is null)
@@ -140,7 +146,7 @@ public sealed class PostsController : BaseMvcController
     [AllowAnonymous]
     public async Task<IActionResult> Search(
         [Required][FromQuery] SearchRequestViewModel request,
-        [FromQuery] int page = 1,
+        [FromQuery][Range(1, int.MaxValue)] int page = 1,
         [FromQuery][Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {

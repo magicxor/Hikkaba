@@ -7,7 +7,9 @@ public static class PostDetailsViewModelExtensions
 {
     public static string GetUri(this PostDetailsViewModel postDetailsViewModel, IUrlHelper urlHelper)
     {
-        return urlHelper.Action("Details", "Threads",
+        return urlHelper.Action(
+            "Details",
+            "Threads",
             new
             {
                 categoryAlias = postDetailsViewModel.CategoryAlias,

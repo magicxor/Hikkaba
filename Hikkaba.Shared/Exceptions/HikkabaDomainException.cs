@@ -8,11 +8,13 @@ public class HikkabaDomainException : Exception
     {
     }
 
-    public HikkabaDomainException(string message) : base(message)
+    public HikkabaDomainException(string message)
+        : base(message)
     {
     }
 
-    public HikkabaDomainException(string message, Exception innerException) : base(message, innerException)
+    public HikkabaDomainException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }

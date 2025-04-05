@@ -4,7 +4,8 @@ namespace BBCodeParser.Tags;
 
 public class CodeTag : Tag
 {
-    public CodeTag(string name, string openTag, string closeTag) : base(name, openTag, closeTag, true, AttributeEscapeMode.JsXss)
+    public CodeTag(string name, string openTag, string closeTag)
+        : base(name, openTag, closeTag, true, AttributeEscapeMode.JsXss)
     {
     }
 }

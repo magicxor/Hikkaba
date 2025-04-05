@@ -1,4 +1,5 @@
-﻿using Bogus;
+﻿using System.Diagnostics.CodeAnalysis;
+using Bogus;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Context;
@@ -12,6 +13,7 @@ using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Manual.Seed;
 
+[SuppressMessage("Major Code Smell", "S1118:Utility classes should not have public constructors", Justification = "This is an entry point.")]
 public sealed class Program
 {
     private static readonly Random Random = new();
@@ -26,6 +28,7 @@ public sealed class Program
         var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
         var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
         {
@@ -36,6 +39,7 @@ public sealed class Program
 
         Randomizer.Seed = Random;
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
 
         try
         {
@@ -60,7 +64,7 @@ public sealed class Program
                     LockoutEnabled = false,
                     AccessFailedCount = 0,
                     IsDeleted = f.Random.Bool(),
-                    CreatedAt = f.Date.Past(),
+                    CreatedAt = f.Date.Between(utcNow.AddYears(-5), utcNow),
                     LastLoginAt = f.Date.Past(),
                 })
                 .FinishWith((f, u) =>
@@ -87,8 +91,8 @@ public sealed class Program
                     .CustomInstantiator(f => new Thread
                     {
                         IsDeleted = false,
-                        CreatedAt = f.Date.Past(),
-                        ModifiedAt = Random.Next(2) == 0 ? f.Date.Past() : null,
+                        CreatedAt = f.Date.Between(utcNow.AddYears(-5), utcNow),
+                        ModifiedAt = Random.Next(5) == 0 ? f.Date.Between(utcNow.AddYears(-5), utcNow) : null,
                         Title = f.Lorem.Sentence(5),
                         IsPinned = Random.Next(0, 3000) == 0,
                         IsClosed = Random.Next(0, 500) == 0,
@@ -111,8 +115,8 @@ public sealed class Program
                         {
                             BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                             IsDeleted = Random.Next(0, 50) == 0,
-                            CreatedAt = f.Date.Past(),
-                            ModifiedAt = Random.Next(2) == 0 ? f.Date.Past() : null,
+                            CreatedAt = f.Date.Between(thread.CreatedAt, utcNow),
+                            ModifiedAt = Random.Next(2) == 0 ? f.Date.Between(thread.CreatedAt, utcNow) : null,
                             IsSageEnabled = Random.Next(0, 5) == 0,
                             MessageText = string.Empty,
                             MessageHtml = f.Lorem.Paragraph(1)
@@ -149,8 +153,8 @@ public sealed class Program
                                 {
                                     BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                                     IsDeleted = Random.Next(0, 50) == 0,
-                                    CreatedAt = f.Date.Between(post.CreatedAt.AddSeconds(1), DateTime.UtcNow),
-                                    ModifiedAt = Random.Next(2) == 0 ? f.Date.Past() : null,
+                                    CreatedAt = f.Date.Between(post.CreatedAt.AddSeconds(1), utcNow),
+                                    ModifiedAt = Random.Next(8) == 0 ? f.Date.Between(post.CreatedAt.AddSeconds(1), utcNow) : null,
                                     IsSageEnabled = Random.Next(0, 5) == 0,
                                     MessageText = string.Empty,
                                     MessageHtml = f.Lorem.Paragraph(1)

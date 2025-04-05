@@ -6,19 +6,19 @@ public abstract class Node
     public Node? ParentNode { get; set; }
 
     public abstract string ToHtml(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null);
 
     public abstract string ToText(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null);
 
     public abstract string ToBb(
-        Dictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null);
 

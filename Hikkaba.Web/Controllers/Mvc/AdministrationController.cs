@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
+[Route("Administration")]
 public sealed class AdministrationController : Controller
 {
     private readonly IAdministrationService _administrationService;

@@ -1,5 +1,4 @@
-﻿
-namespace Hikkaba.Infrastructure.Models.Thread;
+﻿namespace Hikkaba.Infrastructure.Models.Thread;
 
 public class ThreadPostCreateResultModel
 {

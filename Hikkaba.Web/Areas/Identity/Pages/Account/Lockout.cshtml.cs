@@ -20,5 +20,6 @@ public class LockoutModel : PageModel
     /// </summary>
     public void OnGet()
     {
+        // This method intentionally left empty.
     }
 }

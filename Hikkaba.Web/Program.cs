@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,9 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Web;
 
+[SuppressMessage("Roslynator", "RCS1102:Make class static", Justification = "Entry point requires a non-static class for testability.")]
+[SuppressMessage("Major Code Smell", "S1118:Utility classes should not have public constructors", Justification = "Entry point requires a non-static class for testability.")]
+[SuppressMessage("ApiDesign", "RS0030:Do not use banned APIs", Justification = "Entry point requires this call")]
 public class Program
 {
     private const string NlogFileName = "nlog.config";

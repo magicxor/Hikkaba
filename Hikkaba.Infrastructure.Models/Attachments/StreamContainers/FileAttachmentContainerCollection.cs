@@ -6,11 +6,13 @@ public sealed class FileAttachmentContainerCollection : List<FileAttachmentStrea
     {
     }
 
-    public FileAttachmentContainerCollection(IEnumerable<FileAttachmentStreamContainer> collection) : base(collection)
+    public FileAttachmentContainerCollection(IEnumerable<FileAttachmentStreamContainer> collection)
+        : base(collection)
     {
     }
 
-    public FileAttachmentContainerCollection(int capacity) : base(capacity)
+    public FileAttachmentContainerCollection(int capacity)
+        : base(capacity)
     {
     }
 

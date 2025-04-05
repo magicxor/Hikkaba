@@ -3,7 +3,8 @@ using System.Net;
 
 namespace Hikkaba.Shared.Exceptions;
 
-public class HikkabaHttpResponseException: Exception
+public class HikkabaHttpResponseException
+    : Exception
 {
     public HttpStatusCode HttpStatusCode { get; set; }
 
@@ -12,7 +13,8 @@ public class HikkabaHttpResponseException: Exception
         HttpStatusCode = httpStatusCode;
     }
 
-    public HikkabaHttpResponseException(HttpStatusCode httpStatusCode, string message) : base(message)
+    public HikkabaHttpResponseException(HttpStatusCode httpStatusCode, string message)
+        : base(message)
     {
         HttpStatusCode = httpStatusCode;
     }

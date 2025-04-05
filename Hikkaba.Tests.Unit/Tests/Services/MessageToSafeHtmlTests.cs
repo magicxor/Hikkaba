@@ -78,7 +78,7 @@ public sealed class MessageToSafeHtmlTests
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
-        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 345345345, input);
+        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 12387, input);
         Assert.That(actualOutput, Is.EqualTo(expectedOutput));
     }
 
@@ -90,7 +90,7 @@ public sealed class MessageToSafeHtmlTests
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
-        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 345345345, input);
+        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 9024389, input);
         Assert.That(actualOutput, Is.EqualTo(expectedOutput));
     }
 
@@ -104,7 +104,7 @@ public sealed class MessageToSafeHtmlTests
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
-        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 345345345, input);
+        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 234092, input);
         Assert.That(actualOutput, Is.EqualTo(expectedOutput));
     }
 
@@ -121,7 +121,7 @@ public sealed class MessageToSafeHtmlTests
     [TestCase("[b]Bold[/b]<img src=x onerror=alert('XSS')>", "<b>Bold</b>&lt;img src=x onerror=alert('XSS')&gt;")]
     // Check that a string with already encoded HTML entities remains unchanged
     // todo: investigate why this could be a problem
-    //[TestCase("&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;", "&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;")]
+    /* [TestCase("&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;", "&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;")] */
     // Check line break normalization along with injection
     [TestCase("Text\n<script>alert(1)</script>\nText", "Text\r\n&lt;script&gt;alert(1)&lt;/script&gt;\r\nText")]
     // If an attempt is made to use bb-code for a link with an unsuitable protocol
@@ -160,7 +160,7 @@ public sealed class MessageToSafeHtmlTests
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
-        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 345345345, input);
+        var actualOutput = messagePostProcessor.MessageToSafeHtml("a", 209483, input);
         Assert.That(actualOutput, Is.EqualTo(expectedOutput));
     }
 }

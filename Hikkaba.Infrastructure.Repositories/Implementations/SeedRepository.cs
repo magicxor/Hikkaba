@@ -132,9 +132,9 @@ public sealed class SeedRepository : ISeedRepository
         }
 
         Board board;
-        if (!_context.Boards.Any())
+        if (!await _context.Boards.AnyAsync(cancellationToken))
         {
-            board = new Board {Name = Defaults.BoardName};
+            board = new Board { Name = Defaults.BoardName };
             await _context.Boards.AddAsync(board, cancellationToken);
         }
         else
@@ -142,7 +142,7 @@ public sealed class SeedRepository : ISeedRepository
             board = await _context.Boards.OrderBy(x => x.Id).FirstAsync(cancellationToken);
         }
 
-        if (!_context.Categories.Any())
+        if (!await _context.Categories.AnyAsync(cancellationToken))
         {
             await SeedNewCategoryAsync(adminUser, board, "a", "Anime", cancellationToken: cancellationToken);
             await SeedNewCategoryAsync(adminUser, board, "b", "Random", cancellationToken: cancellationToken);

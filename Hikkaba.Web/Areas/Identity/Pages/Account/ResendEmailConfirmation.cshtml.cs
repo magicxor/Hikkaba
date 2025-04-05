@@ -53,6 +53,7 @@ public class ResendEmailConfirmationModel : PageModel
 
     public void OnGet()
     {
+        // This method is intentionally left empty.
     }
 
     public async Task<IActionResult> OnPostAsync()

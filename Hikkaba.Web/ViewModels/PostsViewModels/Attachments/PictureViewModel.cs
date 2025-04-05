@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
 

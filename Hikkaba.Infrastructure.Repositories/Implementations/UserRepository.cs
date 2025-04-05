@@ -49,7 +49,7 @@ public class UserRepository
                 UserName = x.UserName,
                 PhoneNumber = x.PhoneNumber,
                 PhoneNumberConfirmed = x.PhoneNumberConfirmed,
-                TwoFactorEnabled = x.TwoFactorEnabled
+                TwoFactorEnabled = x.TwoFactorEnabled,
             })
             .ToListAsync();
     }

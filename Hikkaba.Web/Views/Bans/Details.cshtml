@@ -11,11 +11,13 @@
   var timeTillUnban = Model.EndsAt.HasValue && utcNow < Model.EndsAt
     ? Model.EndsAt - utcNow
     : null;
-  var timeTillUnbanStr = !Model.EndsAt.HasValue
-    ? "banned permanently"
-    : timeTillUnban.HasValue
-      ? $"ban expires in {timeTillUnban.Value.Humanize(2)}"
-      : "ban expired";
+
+  var timeTillUnbanStr = Model.EndsAt switch
+  {
+    null => "banned permanently",
+    _ when timeTillUnban.HasValue => $"ban expires in {timeTillUnban.Value.Humanize(2)}",
+    _ => "ban expired",
+  };
 }
 
 <dl class="dl-horizontal">

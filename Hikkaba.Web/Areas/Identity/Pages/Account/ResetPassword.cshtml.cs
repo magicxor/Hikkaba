@@ -69,7 +69,6 @@ public class ResetPasswordModel : PageModel
         /// </summary>
         [Required]
         public string Code { get; set; }
-
     }
 
     public IActionResult OnGet(string code = null)
@@ -82,7 +81,7 @@ public class ResetPasswordModel : PageModel
         {
             Input = new InputModel
             {
-                Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+                Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code)),
             };
             return Page();
         }

@@ -1,4 +1,5 @@
 @using Hikkaba.Shared.Constants
+@inject TimeProvider TimeProvider
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +27,7 @@
   @RenderBody()
   <hr/>
   <footer>
-    <p class="text-center">&copy; @DateTime.UtcNow.Year - @Defaults.BoardName</p>
+    <p class="text-center">&copy; @TimeProvider.GetUtcNow().UtcDateTime.Year - @Defaults.BoardName</p>
   </footer>
 </div>
 

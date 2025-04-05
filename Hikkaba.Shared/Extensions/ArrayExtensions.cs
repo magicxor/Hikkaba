@@ -4,7 +4,8 @@ namespace Hikkaba.Shared.Extensions;
 
 public static class ArrayExtensions
 {
-    public static int Compare(this byte[]? b1, byte[]? b2) {
+    public static int Compare(this byte[]? b1, byte[]? b2)
+    {
         if (b1 == null && b2 == null)
             return 0;
         else if (b1 == null)

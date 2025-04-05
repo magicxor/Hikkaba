@@ -6,10 +6,10 @@ public class TextNode : Node
 
     public TextNode(string text)
     {
-        this._text = text;
+        _text = text;
     }
 
-    private static string SubstituteText(string text, Dictionary<string, string>? substitutions)
+    private static string SubstituteText(string text, IReadOnlyDictionary<string, string>? substitutions)
     {
         return substitutions == null
             ? text
@@ -18,8 +18,8 @@ public class TextNode : Node
     }
 
     public override string ToHtml(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {
@@ -27,8 +27,8 @@ public class TextNode : Node
     }
 
     public override string ToText(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null
     )
@@ -37,7 +37,7 @@ public class TextNode : Node
     }
 
     public override string ToBb(
-        Dictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {

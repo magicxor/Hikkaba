@@ -27,7 +27,7 @@ public class DateTimeKindSensitiveBinder : IModelBinder
         {
             bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
 
-            if (DateTime.TryParse(valueProviderResult.FirstValue, null, DateTimeStyles.RoundtripKind, out var model))
+            if (DateTime.TryParse(valueProviderResult.FirstValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var model))
             {
                 bindingContext.Result = ModelBindingResult.Success(model);
                 return Task.CompletedTask;

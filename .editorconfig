@@ -310,6 +310,19 @@ dotnet_diagnostic.S6602.severity = suggestion
 # S6605: Collection-specific "Exists" method should be used instead of the "Any" extension.
 dotnet_diagnostic.S6605.severity = suggestion
 
+# SA1011: Closing square bracket should be followed by a space.
+# Reason: it doesn't support collection expressions and nullable arrays yet: [a, b, c]
+dotnet_diagnostic.SA1011.severity = none
+
+# S1075: Refactor your code not to use hardcoded absolute paths or URIs.
+dotnet_diagnostic.S1075.severity = suggestion
+
+# S3358 : Extract this nested ternary operation into an independent statement.
+dotnet_diagnostic.S3358.severity = suggestion
+
+# S6967 : ModelState.IsValid should be checked in controller actions.
+dotnet_diagnostic.S6967.severity = suggestion
+
 # Function is not convertible to SQL and must not be called in the database context
 # Reason: false positive when using LinqKit
 resharper_entity_framework_unsupported_server_side_function_call_highlighting = none

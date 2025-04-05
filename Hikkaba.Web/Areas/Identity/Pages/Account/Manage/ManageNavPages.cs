@@ -5,7 +5,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace  Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
+namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
 /// <summary>
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

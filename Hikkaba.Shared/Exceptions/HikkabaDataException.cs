@@ -8,11 +8,13 @@ public class HikkabaDataException : Exception
     {
     }
 
-    public HikkabaDataException(string message) : base(message)
+    public HikkabaDataException(string message)
+        : base(message)
     {
     }
 
-    public HikkabaDataException(string message, Exception innerException) : base(message, innerException)
+    public HikkabaDataException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }

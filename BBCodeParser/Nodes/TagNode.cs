@@ -18,8 +18,8 @@ public class TagNode : Node
     }
 
     public override string ToHtml(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {
@@ -52,8 +52,8 @@ public class TagNode : Node
     }
 
     public override string ToText(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null
     )
@@ -79,7 +79,7 @@ public class TagNode : Node
     }
 
     public override string ToBb(
-        Dictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {

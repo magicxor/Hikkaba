@@ -1,13 +1,16 @@
 ﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.CategoryModeratorsViewModel
 
-<tr class="@(Model.Category.IsDeleted
-               ? "danger"
-               : Model.Category.IsHidden
-                    ? "warning"
-                    : Model.Category.ShowThreadLocalUserHash
-                        ? "info"
-                        : ""
-            )">
+@{
+  var colorClass = Model.Category switch
+  {
+    { IsDeleted: true } => "danger",
+    { IsHidden: true } => "warning",
+    { ShowThreadLocalUserHash: true } => "info",
+    _ => "",
+  };
+}
+
+<tr class="@(colorClass)">
     <td>/@Model.Category.Alias</td>
     <td>@Model.Category.Name</td>
     <td>@Model.Category.DefaultBumpLimit</td>

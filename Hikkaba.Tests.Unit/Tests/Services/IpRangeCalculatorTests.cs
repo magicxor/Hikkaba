@@ -75,23 +75,17 @@ public sealed class IpRangeCalculatorTests
         Assert.That(last, Is.EqualTo(IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:fffe")));
     }
 
+    /* IPv4 */
     [TestCase("1.0.0.0", 24, "1.0.0.1", "1.0.0.254")]
     [TestCase("1.0.224.0", 19, "1.0.224.1", "1.0.255.254")]
     [TestCase("195.49.210.0", 23, "195.49.210.1", "195.49.211.254")]
     [TestCase("223.255.254.0", 24, "223.255.254.1", "223.255.254.254")]
-    public void IPv4_SubnetRanges_ShouldReturnExpected(string network, int prefix, string expectedFirst, string expectedLast)
-    {
-        var ip = IPAddress.Parse(network);
-        IpRangeCalculator.GetHostRange(ip, prefix, out var first, out var last);
-        Assert.That(first, Is.EqualTo(IPAddress.Parse(expectedFirst)));
-        Assert.That(last, Is.EqualTo(IPAddress.Parse(expectedLast)));
-    }
-
+    /* IPv6 */
     [TestCase("2001:200::", 37, "2001:200::1", "2001:200:7ff:ffff:ffff:ffff:ffff:fffe")]
     [TestCase("2604:de00:32::", 47, "2604:de00:32::1", "2604:de00:33:ffff:ffff:ffff:ffff:fffe")]
     [TestCase("2604:dc00:1000::", 44, "2604:dc00:1000::1", "2604:dc00:100f:ffff:ffff:ffff:ffff:fffe")]
     [TestCase("2c0f:fc89:809f:f3c6::", 64, "2c0f:fc89:809f:f3c6::1", "2c0f:fc89:809f:f3c6:ffff:ffff:ffff:fffe")]
-    public void IPv6_SubnetRanges_ShouldReturnExpected(string network, int prefix, string expectedFirst, string expectedLast)
+    public void SubnetRanges_ShouldReturnExpected(string network, int prefix, string expectedFirst, string expectedLast)
     {
         var ip = IPAddress.Parse(network);
         IpRangeCalculator.GetHostRange(ip, prefix, out var first, out var last);

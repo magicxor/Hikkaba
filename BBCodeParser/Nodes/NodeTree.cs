@@ -5,16 +5,16 @@ namespace BBCodeParser.Nodes;
 
 public class NodeTree : Node
 {
-    private readonly Dictionary<string, string> _securitySubstitutions;
-    private readonly Dictionary<string, string> _aliasSubstitutions;
+    private readonly IReadOnlyDictionary<string, string> _securitySubstitutions;
+    private readonly IReadOnlyDictionary<string, string> _aliasSubstitutions;
 
     public NodeTree(
-        Dictionary<string, string> securitySubstitutions,
-        Dictionary<string, string> aliasSubstitutions
+        IReadOnlyDictionary<string, string> securitySubstitutions,
+        IReadOnlyDictionary<string, string> aliasSubstitutions
     )
     {
-        this._securitySubstitutions = securitySubstitutions;
-        this._aliasSubstitutions = aliasSubstitutions;
+        _securitySubstitutions = securitySubstitutions;
+        _aliasSubstitutions = aliasSubstitutions;
         ChildNodes = new List<Node>();
         ParentNode = null;
     }
@@ -27,12 +27,51 @@ public class NodeTree : Node
         return ToHtml(_securitySubstitutions, _aliasSubstitutions, filter, filterAttributeValue);
     }
 
+    public override string ToHtml(
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null)
+    {
+        var result = new StringBuilder(ChildNodes?.Count ?? 0);
+        foreach (var childNode in ChildNodes?.Where(n => filter == null || filter(n)) ?? [])
+        {
+            result.Append(childNode.ToHtml(
+                securitySubstitutions,
+                aliasSubstitutions,
+                filter,
+                filterAttributeValue));
+        }
+
+        return result.ToString();
+    }
+
     public string ToText(
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {
         using var activity = BBCodeParserTelemetry.RendererSource.StartActivity();
         return ToText(_securitySubstitutions, _aliasSubstitutions, filter, filterAttributeValue);
+    }
+
+    public override string ToText(
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? aliasSubstitutions,
+        Func<Node, bool>? filter = null,
+        Func<Node, string?, string>? filterAttributeValue = null
+    )
+    {
+        var result = new StringBuilder(ChildNodes?.Count ?? 0);
+        foreach (var childNode in ChildNodes?.Where(n => filter == null || filter(n)) ?? [])
+        {
+            result.Append(childNode.ToText(
+                securitySubstitutions,
+                aliasSubstitutions,
+                filter,
+                filterAttributeValue));
+        }
+
+        return result.ToString();
     }
 
     public string ToBb(
@@ -43,41 +82,8 @@ public class NodeTree : Node
         return ToBb(null, filter, filterAttributeValue);
     }
 
-    public override string ToHtml(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
-        Func<Node, bool>? filter = null,
-        Func<Node, string?, string>? filterAttributeValue = null)
-    {
-        var result = new StringBuilder(ChildNodes?.Count ?? 0);
-        foreach (var childNode in ChildNodes?.Where(n => filter == null || filter(n)) ?? [])
-        {
-            result.Append(childNode.ToHtml(securitySubstitutions, aliasSubstitutions, filter,
-                filterAttributeValue));
-        }
-
-        return result.ToString();
-    }
-
-    public override string ToText(
-        Dictionary<string, string>? securitySubstitutions,
-        Dictionary<string, string>? aliasSubstitutions,
-        Func<Node, bool>? filter = null,
-        Func<Node, string?, string>? filterAttributeValue = null
-    )
-    {
-        var result = new StringBuilder(ChildNodes?.Count ?? 0);
-        foreach (var childNode in ChildNodes?.Where(n => filter == null || filter(n)) ?? [])
-        {
-            result.Append(childNode.ToText(securitySubstitutions, aliasSubstitutions, filter,
-                filterAttributeValue));
-        }
-
-        return result.ToString();
-    }
-
     public override string ToBb(
-        Dictionary<string, string>? securitySubstitutions,
+        IReadOnlyDictionary<string, string>? securitySubstitutions,
         Func<Node, bool>? filter = null,
         Func<Node, string?, string>? filterAttributeValue = null)
     {

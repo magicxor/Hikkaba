@@ -18,7 +18,6 @@ public class ThreadDetailsViewModel
     [Display(Name = @"Modified at")]
     public required DateTime? ModifiedAt { get; set; }
 
-
     [Display(Name = @"Title")]
     public required string Title { get; set; }
 

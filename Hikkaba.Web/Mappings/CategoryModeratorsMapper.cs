@@ -14,4 +14,3 @@ public static partial class CategoryModeratorsMapper
 
     public static partial IReadOnlyList<CategoryModeratorsViewModel> ToViewModels(this IReadOnlyList<CategoryModeratorsModel> models);
 }
-

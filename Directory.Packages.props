@@ -1,9 +1,16 @@
 <Project>
-  <PropertyGroup>
+  <PropertyGroup Condition=" '$(MSBuildProjectExtension)' != '.dcproj'">
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Global Analyzers -->
+    <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
+    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.13.1" />
+    <GlobalPackageReference Include="Roslynator.Formatting.Analyzers" Version="4.13.1" />
+    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445" />
+    <!-- Normal packages -->
     <PackageVersion Include="Blake3" Version="2.0.0" />
     <PackageVersion Include="Bogus" Version="35.6.2" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />

@@ -21,7 +21,6 @@ public class CategoryService : ICategoryService
 
     public async Task<CategoryModeratorsModel> ListCategoryModeratorsAsync(CategoryModeratorsFilter filter, CancellationToken cancellationToken)
     {
-        //return await _categoryRepository.ListCategoryModeratorsAsync(filter);
         throw new NotImplementedException();
     }
 
