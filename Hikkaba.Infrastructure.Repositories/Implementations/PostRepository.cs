@@ -75,7 +75,7 @@ public class PostRepository : IPostRepository
             .Where(post => !post.IsDeleted
                            && !post.Thread.IsDeleted
                            && !post.Thread.Category.IsDeleted
-                           && (post.MessageText.Contains(filter.SearchQuery)
+                           && (EF.Functions.Contains(post.MessageText, filter.SearchQuery)
                                || (post.Thread.Title.Contains(filter.SearchQuery)
                                    && post == post.Thread.Posts.OrderBy(tp => tp.CreatedAt).FirstOrDefault())))
             .GetDetailsModel();

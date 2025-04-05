@@ -70,7 +70,8 @@ public static class DependencyInjection
 
         if (!webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting) || !string.IsNullOrEmpty(connectionString))
         {
-            return services.AddHikkabaDbContext(connectionString ?? throw new HikkabaConfigException("No connection string found."));
+            // "EmptyConnectionString" is used for dotnet ef tools
+            return services.AddHikkabaDbContext(connectionString ?? "EmptyConnectionString");
         }
 
         return services;
@@ -166,7 +167,9 @@ public static class DependencyInjection
 
     public static IServiceCollection AddHikkabaDataProtection(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
-        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+        var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
+
+        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting) || hikkabaConfig == null)
         {
             services.AddDataProtection(options =>
                 {
@@ -177,9 +180,6 @@ public static class DependencyInjection
         }
         else
         {
-            var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>()
-                                ?? throw new HikkabaConfigException($"{nameof(HikkabaConfiguration)} is null");
-
             services.AddDataProtection(options =>
                 {
                     options.ApplicationDiscriminator = "4036e12c07fa7f8fb6f58a70c90ee85b52c15be531acf7bd0d480d1ca7f9ea5d";
@@ -209,14 +209,13 @@ public static class DependencyInjection
             options.ConfigureDefault();
         });
 
+        var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
+
         // disable captcha for integration testing
-        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting) || hikkabaConfig == null)
         {
             return services;
         }
-
-        var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>()
-                            ?? throw new HikkabaConfigException($"{nameof(HikkabaConfiguration)} is null");
 
         services.AddDNTCaptcha(options => options
             .UseCookieStorageProvider(SameSiteMode.Strict)

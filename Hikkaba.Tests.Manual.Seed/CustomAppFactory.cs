@@ -63,7 +63,7 @@ public sealed class CustomAppFactory
                     .Configure<SeedConfiguration>(o =>
                     {
                         o.AdministratorEmail = "admin@example.com";
-                        o.AdministratorPassword = "6fd71994-b5ca-4b17-aa4f-513a42dab5ad";
+                        o.AdministratorPassword = "6fd71994-b5ZA@-4b17-aa4f-513a42dab5ad";
                     })
                     .Configure<MemoryDistributedCacheOptions>(_ => { });
 

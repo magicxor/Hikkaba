@@ -45,6 +45,9 @@ public class Startup
             .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, int>>()
             .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, int>>();
 
+        services.AddResponseCompression()
+            .AddRateLimiter();
+
         services.AddHikkabaDataProtection(_configuration, _webHostEnvironment)
             .AddHikkabaRepositories()
             .AddHikkabaServices()
@@ -52,8 +55,6 @@ public class Startup
             .AddHikkabaMvc(_configuration, _webHostEnvironment)
             .AddHikkabaObservabilityTools(_configuration, _webHostEnvironment)
             .AddHikkabaMetrics();
-
-        services.AddResponseCompression();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

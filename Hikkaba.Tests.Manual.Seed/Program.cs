@@ -3,6 +3,7 @@ using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,15 +14,15 @@ namespace Hikkaba.Tests.Manual.Seed;
 
 public sealed class Program
 {
-    private const int CustomSeed = 20157789;
-    private static readonly Random Random = new(CustomSeed);
-    private static readonly GuidGenerator GuidGenerator = new(CustomSeed);
+    private static readonly Random Random = new();
+    private static readonly GuidGenerator GuidGenerator = new(Random.Next());
 
     public static async Task Main(string[] args)
     {
-        var customAppFactory = new CustomAppFactory("Server=(localdb)\\mssqllocaldb;Database=Hikkaba;Integrated Security=true;");
+        var customAppFactory = new CustomAppFactory("Server=tcp:localhost,62140;Encrypt=False;Database=Hikkaba;User ID=SA;Password=dev_passworD@4568919;Persist Security Info=False;TrustServerCertificate=True;MultiSubnetFailover=True");
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var seedRepository = scope.ServiceProvider.GetRequiredService<ISeedRepository>();
         var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
         var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -30,6 +31,8 @@ public sealed class Program
         {
             await dbContext.Database.MigrateAsync();
         }
+
+        await seedRepository.SeedAsync(CancellationToken.None);
 
         Randomizer.Seed = Random;
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
@@ -94,7 +97,7 @@ public sealed class Program
                         Salt = GuidGenerator.GenerateSeededGuid(),
                         Category = category,
                     })
-                    .Generate(150);
+                    .Generate(100);
 
                 dbContext.Threads.AddRange(testThreads);
 
@@ -128,7 +131,7 @@ public sealed class Program
                             p.MessageText = HtmlUtilities.ConvertToPlainText(p.MessageHtml);
                             p.ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, p.UserIpAddress ?? []);
                         })
-                        .Generate(150);
+                        .Generate(100);
 
                     dbContext.Posts.AddRange(testPosts);
 

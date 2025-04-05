@@ -26,7 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <None Remove="Migrations\20250405100526_AddPostMessageFulltextIndex.Down.sql" />
+    <EmbeddedResource Include="Migrations\20250405100526_AddPostMessageFulltextIndex.Down.sql" />
+    <None Remove="Migrations\20250405100526_AddPostMessageFulltextIndex.Up.sql" />
+    <EmbeddedResource Include="Migrations\20250405100526_AddPostMessageFulltextIndex.Up.sql" />
   </ItemGroup>
 
 </Project>
