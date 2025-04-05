@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using DNTCaptcha.Core;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
@@ -25,6 +26,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.StaticFiles;
@@ -116,7 +118,6 @@ public static class DependencyInjection
         services.AddScoped<IIpAddressCalculator, IpAddressCalculator>();
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<ISystemInfoService, SystemInfoService>();
-        services.AddScoped<IThreadLocalUserHashGenerator, ThreadLocalUserHashGenerator>();
         services.AddScoped<IThreadService, ThreadService>();
         services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
         services.AddScoped<IAttachmentService, AttachmentService>();
@@ -196,6 +197,11 @@ public static class DependencyInjection
         services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
         services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
 
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
+
         services.AddControllersWithViews();
         services.AddRazorPages();
         services.AddBootstrapPagerGenerator(options =>
@@ -213,7 +219,12 @@ public static class DependencyInjection
                             ?? throw new HikkabaConfigException($"{nameof(HikkabaConfiguration)} is null");
 
         services.AddDNTCaptcha(options => options
-            .UseSessionStorageProvider()
+            .UseCookieStorageProvider(SameSiteMode.Strict)
+            .AbsoluteExpiration(minutes: 7)
+            .RateLimiterPermitLimit(20)
+            .WithRateLimiterRejectResponse("Rate limit exceeded")
+            .WithNoise(0.015f, 0.015f, 1, 0.0f)
+            .WithNonceKey("NETESCAPADES_NONCE")
             .WithEncryptionKey(hikkabaConfig.AuthCertificatePassword));
 
         return services;

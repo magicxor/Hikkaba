@@ -11,8 +11,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <div class="lead">
-                [@Html.ActionLink(Defaults.BoardName, "Index", "Home")]
+            <span style="font-size: 21px" class="h5">
+              [<a class="decoration-on-hover" href="@Url.Action("Index", "Home")">@Defaults.BoardName</a>]
                 [
                 @{
                     var categories = await CategoryService.ListAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] }, Context.RequestAborted);
@@ -23,7 +23,7 @@
                       {
                         @("/")
                       }
-                      <a href="@Url.Action("Details", "Categories", new { categoryAlias = category.Alias })">@category.Alias</a>
+                      <a class="decoration-on-hover" href="@Url.Action("Details", "Categories", new { categoryAlias = category.Alias })">@category.Alias</a>
                     }
                 }
                 ]
@@ -31,25 +31,25 @@
                 [
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity?.Name</a>
+                    <a class="decoration-on-hover" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity?.Name</a>
                     @if (User.IsInRole(Defaults.AdministratorRoleName))
                     {
                         @("|")
-                        <a class="nav-link text-dark" asp-action="Index" asp-controller="Administration" title="Administration">Administration</a>
+                        <a class="decoration-on-hover" asp-action="Index" asp-controller="Administration" title="Administration">Administration</a>
                     }
                     @("|")
-                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                        <button type="submit" class="nav-link btn-link text-dark">Logout</button>
+                    <form class="display-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="btn btn-link button-link-inline p-0 align-baseline link-primary decoration-on-hover">Logout</button>
                     </form>
                 }
                 else
                 {
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    <a class="decoration-on-hover" asp-area="Identity" asp-page="/Account/Register">Register</a>
                     @("|")
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                    <a class="decoration-on-hover" asp-area="Identity" asp-page="/Account/Login">Login</a>
                 }
                 ]
-            </div>
+            </span>
         </div>
         <div class="col-md-4">
             <partial name="_SearchPartial" model="@(new SearchRequestViewModel { Query = string.Empty })" />

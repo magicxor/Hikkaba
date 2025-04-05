@@ -1,3 +1,7 @@
 ﻿@model Hikkaba.Web.ViewModels.PageInfoViewModel
 
-<pager current-page="@Model.CurrentPageNumber" total-page="@Model.TotalPageCount" />
+<div class="container">
+  <div class="parent-block d-flex justify-content-center align-items-center">
+    <pager current-page="@Model.CurrentPageNumber" total-page="@Model.TotalPageCount" />
+  </div>
+</div>

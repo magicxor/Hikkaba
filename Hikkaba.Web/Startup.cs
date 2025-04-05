@@ -80,6 +80,7 @@ public class Startup
 
         app.UseSession();
         app.UseRouting();
+        app.UseRateLimiter();
 
         app.UseCookiePolicy();
         app.UseAuthentication();

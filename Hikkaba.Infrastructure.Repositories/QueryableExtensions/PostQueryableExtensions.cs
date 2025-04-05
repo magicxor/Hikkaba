@@ -12,7 +12,7 @@ public static class PostQueryableExtensions
     {
         return query.Select(post => new PostDetailsModel
         {
-            Index = EF.Functions.RowNumber(EF.Functions.OrderBy(post.CreatedAt).ThenBy(post.Id)),
+            Index = EF.Functions.RowNumber(post.ThreadId, EF.Functions.OrderBy(post.CreatedAt).ThenBy(post.Id)),
             Id = post.Id,
             IsDeleted = post.IsDeleted,
             CreatedAt = post.CreatedAt,
