@@ -1,7 +1,6 @@
 @using Hikkaba.Shared.Constants
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostAnonymousCreateViewModel
 
-
 <div class="row">
   <div class="col-md-8 offset-md-1">
     <form asp-controller="Posts" asp-action="Create" asp-route-categoryAlias="@Model.CategoryAlias"
@@ -31,8 +30,7 @@
 
       <div class="mb-2 form-group">
         <label asp-for="Attachments" class="form-label"></label>
-        <input asp-for="Attachments" class="form-control" type="file" multiple
-               accept="@(Defaults.AllSupportedExtensionsWithDot)"/>
+        <input asp-for="Attachments" class="form-control" type="file" multiple accept="@(Defaults.AllSupportedExtensionsWithDot)"/>
         <span asp-validation-for="Attachments" class="text-danger"></span>
       </div>
 
@@ -59,7 +57,7 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary btn-lg mt-2">Post</button>
+      <button type="submit" class="btn btn-primary btn-lg mt-2">Reply</button>
     </form>
   </div>
 </div>
