@@ -21,7 +21,7 @@ public sealed class DbContainerManager
 
         var containerBuilder = new MsSqlBuilder()
             .WithName(containerName)
-            .WithImage("mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-22.04")
+            .WithImage("magicxor/mssql-fts:2022-latest")
             .WithExposedPort(TestDefaults.DbPort)
             .WithPassword(TestDefaults.DbPassword)
             .WithAutoRemove(true)

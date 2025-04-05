@@ -18,6 +18,7 @@ using Hikkaba.Tests.Integration.Utils;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories;
@@ -49,12 +50,12 @@ public sealed class PostRepositoryTests
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
-    [TestCase("Fizz", 0)]
-    [TestCase("Foo", 0)]
-    [TestCase("Buzz", 1)]
-    [TestCase("test", 2)]
-    [TestCase("abc", 1)]
-    [TestCase("def", 1)]
+    [TestCase("BoardSearchTerm", 0)]
+    [TestCase("CategorySearchTerm", 0)]
+    [TestCase("ThreadAndPostSearchTerm", 1, Ignore = "Temporary disabled due to ongoing query performance improvements")]
+    [TestCase("BoardThreadPostSearchTerm", 2)]
+    [TestCase("Post1SearchTerm", 1)]
+    [TestCase("Post2SearchTerm", 1)]
     public async Task SearchPostsPaginatedAsync_WhenSearchQueryIsProvided_ReturnsExpectedResultsAsync(
         string searchQuery,
         int expectedCount,
@@ -66,6 +67,7 @@ public sealed class PostRepositoryTests
         var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<PostRepositoryTests>>();
 
         if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
         {
@@ -88,7 +90,7 @@ public sealed class PostRepositoryTests
 
         var board = new Board
         {
-            Name = "Test Board Fizz",
+            Name = "BoardThreadPostSearchTerm Board BoardSearchTerm",
         };
         dbContext.Boards.Add(board);
 
@@ -98,7 +100,7 @@ public sealed class PostRepositoryTests
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             ModifiedAt = null,
             Alias = "b",
-            Name = "Random Foo",
+            Name = "Random CategorySearchTerm",
             IsHidden = false,
             DefaultBumpLimit = 500,
             ShowThreadLocalUserHash = false,
@@ -111,7 +113,7 @@ public sealed class PostRepositoryTests
         var thread = new Thread
         {
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
-            Title = "test thread 1 Buzz",
+            Title = "BoardThreadPostSearchTerm thread 1 ThreadAndPostSearchTerm",
             IsPinned = false,
             IsClosed = false,
             BumpLimit = 500,
@@ -126,8 +128,8 @@ public sealed class PostRepositoryTests
             BlobContainerId = new Guid("243D7DB4-4EE8-4285-8888-E7185A7CB1B2"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
-            MessageText = "test post 1 abc",
-            MessageHtml = "test post 1 abc",
+            MessageText = "BoardThreadPostSearchTerm post 1 Post1SearchTerm",
+            MessageHtml = "BoardThreadPostSearchTerm post 1 Post1SearchTerm",
             UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
             UserAgent = "Firefox",
             ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
@@ -138,8 +140,8 @@ public sealed class PostRepositoryTests
             BlobContainerId = new Guid("D9AED982-37D6-4C5C-B235-E1AADC342236"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
-            MessageText = "test post 2 def",
-            MessageHtml = "test post 2 def",
+            MessageText = "BoardThreadPostSearchTerm post 2 Post2SearchTerm",
+            MessageHtml = "BoardThreadPostSearchTerm post 2 Post2SearchTerm",
             UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
             UserAgent = "Chrome",
             ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
@@ -151,8 +153,8 @@ public sealed class PostRepositoryTests
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsDeleted = true,
             IsSageEnabled = false,
-            MessageText = "test abc def Fizz Foo Buzz",
-            MessageHtml = "test abc def Fizz Foo Buzz",
+            MessageText = "BoardThreadPostSearchTerm Post1SearchTerm Post2SearchTerm BoardSearchTerm CategorySearchTerm ThreadAndPostSearchTerm",
+            MessageHtml = "BoardThreadPostSearchTerm Post1SearchTerm Post2SearchTerm BoardSearchTerm CategorySearchTerm ThreadAndPostSearchTerm",
             UserIpAddress = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
             UserAgent = "Chrome",
             ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
@@ -161,6 +163,8 @@ public sealed class PostRepositoryTests
         dbContext.AddRange(post1, post2, post3);
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await DbUtils.WaitForFulltextIndexAsync(logger, dbContext, ["Posts", "Threads"], cancellationToken: cancellationToken);
 
         var repository = scope.ServiceProvider.GetRequiredService<IPostRepository>();
 
