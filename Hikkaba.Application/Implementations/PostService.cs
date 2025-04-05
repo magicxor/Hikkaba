@@ -95,7 +95,7 @@ public class PostService : IPostService
         {
             var createPostResult = await _postRepository.CreatePostAsync(repoRequestModel, uploadedAttachments, cancellationToken);
 
-            _postMetrics.PostCreated(createRequestModel.ThreadId, createPostResult.PostId, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
+            _postMetrics.PostCreated(createRequestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
 
             foreach (var deletedBlobContainerId in createPostResult.DeletedBlobContainerIds)
             {

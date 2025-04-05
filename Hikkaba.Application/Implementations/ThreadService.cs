@@ -21,6 +21,7 @@ public class ThreadService : IThreadService
     private readonly IBanRepository _banRepository;
     private readonly IHashService _hashService;
     private readonly ThreadMetrics _threadMetrics;
+    private readonly PostMetrics _postMetrics;
 
     public ThreadService(
         ILogger<ThreadService> logger,
@@ -28,7 +29,8 @@ public class ThreadService : IThreadService
         IThreadRepository threadRepository,
         IBanRepository banRepository,
         IHashService hashService,
-        ThreadMetrics threadMetrics)
+        ThreadMetrics threadMetrics,
+        PostMetrics postMetrics)
     {
         _logger = logger;
         _attachmentService = attachmentService;
@@ -36,6 +38,7 @@ public class ThreadService : IThreadService
         _banRepository = banRepository;
         _hashService = hashService;
         _threadMetrics = threadMetrics;
+        _postMetrics = postMetrics;
     }
 
     public async Task<ThreadEditRequestModel> GetThreadAsync(long threadId)
@@ -87,7 +90,8 @@ public class ThreadService : IThreadService
         {
             var createThreadResult = await _threadRepository.CreateThreadAsync(repoRequestModel, uploadedAttachments, cancellationToken);
 
-            _threadMetrics.ThreadCreated(createThreadResult.ThreadId, createThreadResult.PostId, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
+            _threadMetrics.ThreadCreated(createRequestModel.CategoryAlias);
+            _postMetrics.PostCreated(createRequestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
 
             foreach (var deletedBlobContainerId in createThreadResult.DeletedBlobContainerIds)
             {
