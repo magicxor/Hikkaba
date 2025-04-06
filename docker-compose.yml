@@ -44,7 +44,7 @@ services:
       - "4318:4318" # OTLP http receiver
       - "55679:55679" # zpages extension
     volumes:
-      - ./collector-config.yaml:/etc/otelcol-contrib/config.yaml
+      - ./Components/OpentelemetryCollector/collector-config.yaml:/etc/otelcol-contrib/config.yaml
 
   prometheus:
     container_name: hikkaba.prometheus.dev.local
@@ -54,9 +54,13 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./Components/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.enable-lifecycle' # config reload
       - '--web.enable-remote-write-receiver' # enable remote write receiver (OTLP)
 
@@ -73,6 +77,13 @@ services:
     image: "grafana/grafana"
     ports:
       - "3000:3000"
+    volumes:
+      - ./Components/Grafana/provisioning:/etc/grafana/provisioning
+      - ./Components/Grafana/dashboards:/etc/grafana/provisioning/dashboards_json
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=kjln3uiIKJHOsdjka@l234
 
   mailhog:
     container_name: hikkaba.mailhog.dev.local
@@ -83,3 +94,5 @@ services:
 volumes:
   hikkaba_mssql:
   hikkaba_storage:
+  prometheus_data:
+  grafana_data:
