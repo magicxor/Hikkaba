@@ -42,7 +42,6 @@ public class HikkabaConfiguration
     [Range(1, 10)]
     public int MaxPostsFromIpWithin5Minutes { get; set; } = Defaults.MaxPostsFromIpWithin5Minutes;
 
-    [Url]
     public Uri? OtlpExporterUri { get; set; }
 
     [Required]
