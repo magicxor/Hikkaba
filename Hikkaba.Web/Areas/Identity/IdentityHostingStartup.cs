@@ -4,7 +4,7 @@
 
 namespace Hikkaba.Web.Areas.Identity;
 
-internal class IdentityHostingStartup : IHostingStartup
+public class IdentityHostingStartup : IHostingStartup
 {
     public void Configure(IWebHostBuilder builder)
     {

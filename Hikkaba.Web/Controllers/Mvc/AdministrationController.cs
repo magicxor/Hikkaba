@@ -13,7 +13,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("Administration")]
-internal sealed class AdministrationController : Controller
+public sealed class AdministrationController : Controller
 {
     private readonly IAdministrationService _administrationService;
     private readonly IBoardService _boardService;

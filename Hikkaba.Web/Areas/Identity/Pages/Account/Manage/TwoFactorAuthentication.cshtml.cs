@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
-internal class TwoFactorAuthenticationModel : PageModel
+public class TwoFactorAuthenticationModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;

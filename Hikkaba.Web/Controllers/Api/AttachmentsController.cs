@@ -12,7 +12,7 @@ namespace Hikkaba.Web.Controllers.Api;
 [ApiController]
 [AllowAnonymous]
 [Route("api/v1/attachments")]
-internal sealed class AttachmentsController : ControllerBase
+public sealed class AttachmentsController : ControllerBase
 {
     private readonly IStorageProvider _storageProvider;
     private readonly FileExtensionContentTypeProvider _contentTypeProvider;

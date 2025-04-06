@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
-internal class Disable2faModel : PageModel
+public class Disable2faModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<Disable2faModel> _logger;

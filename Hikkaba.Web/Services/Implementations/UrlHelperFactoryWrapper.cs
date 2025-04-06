@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Hikkaba.Web.Services.Implementations;
 
-internal class UrlHelperFactoryWrapper : IUrlHelperFactoryWrapper
+public class UrlHelperFactoryWrapper : IUrlHelperFactoryWrapper
 {
     private readonly IUrlHelperFactory _urlHelperFactory;
     private readonly IActionContextAccessor _actionContextAccessor;

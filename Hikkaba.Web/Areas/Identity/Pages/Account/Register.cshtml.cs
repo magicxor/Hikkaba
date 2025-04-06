@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
-internal class RegisterModel : PageModel
+public class RegisterModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
@@ -69,7 +69,7 @@ internal class RegisterModel : PageModel
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
-    internal class InputModel
+    public class InputModel
     {
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
-internal class ConfirmEmailChangeModel : PageModel
+public class ConfirmEmailChangeModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;

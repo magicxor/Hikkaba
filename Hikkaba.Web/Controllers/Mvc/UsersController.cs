@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
-internal sealed class UsersController : Controller
+public sealed class UsersController : Controller
 {
     private readonly IApplicationUserService _applicationUserService;
 

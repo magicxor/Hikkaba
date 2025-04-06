@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
-internal sealed class ErrorController : Controller
+public sealed class ErrorController : Controller
 {
     private const string DefaultErrorMessage = "Something went wrong";
     private const string PageNotFoundMessage = "Page not found";

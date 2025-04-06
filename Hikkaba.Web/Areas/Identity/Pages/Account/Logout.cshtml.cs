@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
-internal class LogoutModel : PageModel
+public class LogoutModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<LogoutModel> _logger;

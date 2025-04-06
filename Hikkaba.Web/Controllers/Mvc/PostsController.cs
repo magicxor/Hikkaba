@@ -27,7 +27,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
 [Route("Posts")]
-internal sealed class PostsController : BaseMvcController
+public sealed class PostsController : BaseMvcController
 {
     private readonly ILogger<PostsController> _logger;
     private readonly IMessagePostProcessor _messagePostProcessor;

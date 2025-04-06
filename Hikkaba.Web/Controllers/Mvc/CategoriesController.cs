@@ -19,7 +19,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("Categories")]
-internal sealed class CategoriesController : BaseMvcController
+public sealed class CategoriesController : BaseMvcController
 {
     private readonly IBoardService _boardService;
     private readonly ICategoryService _categoryService;

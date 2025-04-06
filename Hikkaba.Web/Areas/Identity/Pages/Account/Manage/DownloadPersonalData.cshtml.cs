@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
-internal class DownloadPersonalDataModel : PageModel
+public class DownloadPersonalDataModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<DownloadPersonalDataModel> _logger;

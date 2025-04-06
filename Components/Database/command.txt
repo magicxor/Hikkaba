@@ -1,1 +1,1 @@
-docker run -i -t -d -p 62140:1433 -e MSSQL_SA_PASSWORD=YOUR_P@SSW0RD_121 -e ACCEPT_EULA=Y -e MSSQL_PID=Developer -e MSSQL_IP_ADDRESS=0.0.0.0 --restart=always --name=mssql mcr.microsoft.com/mssql/server:2022-latest
+docker run -i -t -d -p 62140:1433 -e MSSQL_SA_PASSWORD=YOUR_P@SSW0RD_121 -e ACCEPT_EULA=Y -e MSSQL_PID=Developer -e MSSQL_IP_ADDRESS=0.0.0.0 --restart=always --name=mssql magicxor/mssql-fts:2022-latest

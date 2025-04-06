@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
-internal class ForgotPasswordModel : PageModel
+public class ForgotPasswordModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
@@ -39,7 +39,7 @@ internal class ForgotPasswordModel : PageModel
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
-    internal class InputModel
+    public class InputModel
     {
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

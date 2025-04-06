@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
-internal class PersonalDataModel : PageModel
+public class PersonalDataModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<PersonalDataModel> _logger;

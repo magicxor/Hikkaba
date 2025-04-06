@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
-internal class GenerateRecoveryCodesModel : PageModel
+public class GenerateRecoveryCodesModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<GenerateRecoveryCodesModel> _logger;

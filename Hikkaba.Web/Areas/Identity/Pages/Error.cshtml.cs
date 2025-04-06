@@ -15,7 +15,7 @@ namespace Hikkaba.Web.Areas.Identity.Pages;
 /// </summary>
 [AllowAnonymous]
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-internal class ErrorModel : PageModel
+public class ErrorModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

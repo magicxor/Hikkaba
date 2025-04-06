@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Route("Board")]
-internal sealed class BoardController : Controller
+public sealed class BoardController : Controller
 {
     private readonly ILogger<BoardController> _logger;
     private readonly IBoardService _boardService;

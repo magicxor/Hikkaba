@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
 [AllowAnonymous]
-internal class RegisterConfirmationModel : PageModel
+public class RegisterConfirmationModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _sender;

@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
-internal class ExternalLoginsModel : PageModel
+public class ExternalLoginsModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;

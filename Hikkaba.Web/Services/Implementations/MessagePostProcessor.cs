@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Services.Implementations;
 
-internal partial class MessagePostProcessor : IMessagePostProcessor
+public partial class MessagePostProcessor : IMessagePostProcessor
 {
     private readonly IUrlHelper _urlHelper;
 

@@ -19,7 +19,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("Bans")]
-internal sealed class BansController : BaseMvcController
+public sealed class BansController : BaseMvcController
 {
     private readonly IBanService _banService;
     private readonly IBanCreationPrerequisiteService _banCreationPrerequisiteService;
