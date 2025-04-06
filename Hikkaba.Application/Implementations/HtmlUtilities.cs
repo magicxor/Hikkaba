@@ -12,7 +12,7 @@ public static class HtmlUtilities
     /// Converts HTML to plain text / strips tags.
     /// </summary>
     /// <param name="html">The HTML.</param>
-    /// <returns></returns>
+    /// <returns>The plain text.</returns>
     public static string ConvertToPlainText(string html)
     {
         using var activity = ApplicationTelemetry.HtmlUtilitiesSource.StartActivity();
