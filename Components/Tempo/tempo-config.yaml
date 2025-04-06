@@ -1,0 +1,58 @@
+server:
+  http_listen_port: 3200 # Port for API requests (from Grafana)
+
+distributor:
+  receivers: # Enable receiving data via different protocols
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317 # Internal port for receiving OTLP gRPC
+        http:
+          endpoint: 0.0.0.0:4318 # Internal port for receiving OTLP HTTP
+    zipkin: # If Zipkin format is needed
+      endpoint: 0.0.0.0:9411
+    jaeger: # If Jaeger format is needed
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:14250
+        thrift_http:
+          endpoint: 0.0.0.0:14268
+
+ingester:
+  # Settings for how long traces are kept in memory before flushing to storage
+  # max_block_duration: 5m
+  # complete_block_timeout: 15s
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory # For a single instance
+      replication_factor: 1
+
+compactor:
+  compaction:
+    block_retention: 168h # Keep compacted blocks for 7 days (adjust as needed)
+    compaction_window: 1h  # How often to run compaction
+
+storage:
+  trace:
+    backend: s3 # Using S3 (MinIO)
+    # wal: # Optional: enable Write Ahead Log for reliability (requires a local volume)
+      # path: /var/tempo/wal
+    s3:
+      endpoint: hikkaba.minio.dev.local:9000
+      bucket: tempo-data # Bucket name for Tempo data (will be created later)
+      access_key: minioadmin
+      secret_key: minioadmin
+      insecure: true
+
+# Disable authentication for simplicity
+auth_enabled: false
+
+metrics_generator: # Optional: Generate metrics from traces (service graphs, span metrics)
+  storage:
+      path: /tmp/tempo/generator/wal
+      remote_write:
+          - url: http://hikkaba.prometheus.dev.local:9090/api/v1/write # Send generated metrics to Prometheus
+            send_exemplars: true
+            headers:
+                X-Scope-OrgID: tempo-metrics # Just an example header

@@ -1,22 +1,18 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Data.Context;
-using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Configuration;
-using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NLog;
+using NLog.Config;
 using NLog.Web;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Web;
@@ -32,11 +28,12 @@ internal class Program
     public static async Task Main(string[] args)
     {
         // NLog: set up the logger first to catch all errors
-        LogManager.Setup(s => s.LoadConfigurationFromXml(NlogFileName));
+        var loggingConfiguration = new XmlLoggingConfiguration(NlogFileName);
+        LogManager.Configuration = loggingConfiguration;
 
         try
         {
-            var host = CreateHostBuilder(args).Build();
+            var host = CreateHostBuilder(args, loggingConfiguration).Build();
             await host.RunAsync();
         }
         catch (Exception ex)
@@ -52,15 +49,30 @@ internal class Program
         }
     }
 
-    private static IHostBuilder CreateHostBuilder(string[] args) =>
+    private static IHostBuilder CreateHostBuilder(string[] args, LoggingConfiguration loggingConfiguration) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables(EnvPrefix))
-            .ConfigureLogging(logging =>
+            .ConfigureLogging((hostBuilderContext, logging) =>
             {
                 logging.ClearProviders();
                 logging.SetMinimumLevel(LogLevel.Trace);
+                logging.AddNLog(loggingConfiguration);
+
+                var hikkabaConfig = hostBuilderContext.Configuration
+                    .GetSection(nameof(HikkabaConfiguration))
+                    .Get<HikkabaConfiguration>();
+                var otlpExporterUri = hikkabaConfig?.OtlpExporterUri;
+
+                if (otlpExporterUri is not null)
+                {
+                    logging.AddOpenTelemetry(telemetryLoggerOptions =>
+                    {
+                        telemetryLoggerOptions.SetResourceBuilder(ResourceBuilder.CreateDefault()
+                            .AddService(Defaults.ServiceName))
+                            .AddOtlpExporter(otlpExporterOptions => otlpExporterOptions.Endpoint = otlpExporterUri);
+                    });
+                }
             })
-            .UseNLog()
             .UseDefaultServiceProvider((_, options) =>
             {
                 options.ValidateScopes = true;

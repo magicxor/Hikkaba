@@ -7,3 +7,35 @@ datasources:
     url: http://hikkaba.prometheus.dev.local:9090
     isDefault: true
     editable: false
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://hikkaba.loki.dev.local:3100
+    editable: false
+    jsonData:
+      derivedFields:
+        - datasourceUid: Tempo
+          matcherRegex: \[?(trace_id|traceId)=(\w+)\]? # Regex for finding TraceID in logs
+          name: TraceID
+          url: $${__value.raw} # Pass the found TraceID
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://hikkaba.tempo.dev.local:3200
+    editable: false
+    uid: Tempo # Unique ID that we used above in Loki
+    jsonData:
+      # Optional: Configure connection with Loki
+      tracesToLogs:
+        datasourceUid: Loki # Name or UID of the Loki source above
+        tags: ['job', 'instance', 'level'] # Trace tags that will be used to search logs
+        mappedTags: [{ key: 'service.name', value: 'job' }, { key: 'service.instance.id', value: 'instance' }] # Mapping trace attributes to Loki labels
+        spanStartTimeShift: '1s'
+        spanEndTimeShift: '1s'
+        filterByTraceID: true
+        filterBySpanID: false
+        lokiSearch: true
+      serviceMap: # Connection with Prometheus for Service Graphs
+        datasourceUid: Prometheus

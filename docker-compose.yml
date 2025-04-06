@@ -84,6 +84,63 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=kjln3uiIKJHOsdjka@l234
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-exploretraces-app/grafana-exploretraces-app-latest.zip;grafana-traces-app
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: hikkaba.minio.dev.local
+    hostname: hikkaba.minio.dev.local
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # UI
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  loki:
+    image: grafana/loki:latest
+    container_name: hikkaba.loki.dev.local
+    hostname: hikkaba.loki.dev.local
+    ports:
+      - "3100:3100" # HTTP port for API and UI
+      # - "9096:9096" # gRPC
+    volumes:
+      - ./Components/Loki/loki-config.yaml:/etc/loki/config.yaml
+      # Loki with BoltDB-Shipper requires storage for index
+      - loki_data:/loki
+    command: -config.file=/etc/loki/config.yaml
+    depends_on:
+      minio:
+        condition: service_healthy
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: hikkaba.tempo.dev.local
+    hostname: hikkaba.tempo.dev.local
+    ports:
+      # - "4317" # OTLP gRPC
+      # - "4318" # OTLP HTTP
+      # - "9411:9411" # Zipkin
+      # - "14250:14250" # Jaeger gRPC
+      # - "14268:14268" # Jaeger HTTP
+      - "3200:3200"   # Tempo HTTP API (for Grafana)
+    volumes:
+      - ./Components/Tempo/tempo-config.yaml:/etc/tempo/tempo.yaml
+      # Tempo with S3 storage usually doesn't require large local storage,
+      # but can use WAL (Write Ahead Log) for better performance
+      - tempo_data:/var/tempo
+    command: -config.file=/etc/tempo/tempo.yaml
+    depends_on:
+      minio:
+        condition: service_healthy
 
   mailhog:
     container_name: hikkaba.mailhog.dev.local
@@ -96,3 +153,6 @@ volumes:
   hikkaba_storage:
   prometheus_data:
   grafana_data:
+  minio_data:
+  loki_data:
+  tempo_data:

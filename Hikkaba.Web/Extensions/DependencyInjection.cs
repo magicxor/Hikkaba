@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Threading.RateLimiting;
 using DNTCaptcha.Core;
 using Hikkaba.Application.Contracts;
@@ -14,7 +13,6 @@ using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.Implementations;
 using Hikkaba.Shared.Constants;
-using Hikkaba.Shared.Exceptions;
 using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Shared.Services.Implementations;
 using Hikkaba.Web.Binding.Providers;
@@ -278,9 +276,14 @@ internal static class DependencyInjection
             services.AddOpenTelemetry()
                 .ConfigureResource(resource => resource.AddService(Defaults.ServiceName))
                 .WithTracing(tracing => tracing
-                    .AddAspNetCoreInstrumentation()
-                    .AddEntityFrameworkCoreInstrumentation()
+                    .AddAspNetCoreInstrumentation(o => o.RecordException = true)
+                    .AddEntityFrameworkCoreInstrumentation(o =>
+                    {
+                        o.SetDbStatementForText = true;
+                        o.SetDbStatementForStoredProcedure = true;
+                    })
                     .AddHttpClientInstrumentation()
+                    .AddSource("Hikkaba.*")
                     .AddOtlpExporter(options => options.Endpoint = otlpExporterUri))
                 .WithMetrics(metrics => metrics
                     .AddAspNetCoreInstrumentation()
