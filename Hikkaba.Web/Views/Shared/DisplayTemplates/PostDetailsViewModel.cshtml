@@ -60,7 +60,7 @@
       </div>
     </div>
   </h5>
-  <div class="card-body">
+  <div class="card-body clearfix">
     @if (Context.User.Identity?.IsAuthenticated == true
          && UserContext.GetRequiredUser() is { } user
          && (user.ModeratedCategories.Contains(Model.CategoryId)
@@ -103,7 +103,7 @@
          || Model.Pictures.Any()
          || Model.Video.Any())
     {
-      <div class="container">
+      <div class="float-start me-3 mb-2">
         <div class="d-flex flex-wrap gap-3">
           @Html.DisplayFor(model => model.Audio)
           @Html.DisplayFor(model => model.Documents)
