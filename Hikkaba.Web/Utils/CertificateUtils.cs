@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using Hikkaba.Infrastructure.Models.Configuration;
 
 namespace Hikkaba.Web.Utils;
 
-public static class CertificateUtils
+internal static class CertificateUtils
 {
     public static X509Certificate2 LoadCertificate(HikkabaConfiguration configuration)
     {

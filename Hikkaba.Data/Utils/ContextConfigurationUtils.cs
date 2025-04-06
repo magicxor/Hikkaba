@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Hikkaba.Data.Utils;
 
-public static class ContextConfigurationUtils
+internal static class ContextConfigurationUtils
 {
     private static readonly ValueConverter DateTimeUtcValueConverter =
         new ValueConverter<DateTime, DateTime>(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
     private static readonly ValueConverter DateTimeUtcNullableValueConverter =
         new ValueConverter<DateTime?, DateTime?>(v => v, v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
 
-    public static void SetValueConverters(ModelBuilder modelBuilder)
+    internal static void SetValueConverters(ModelBuilder modelBuilder)
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {

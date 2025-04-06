@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Hikkaba.Web.Metrics;
 
-public class KeyValueObserver : IObserver<KeyValuePair<string, object?>>
+internal class KeyValueObserver : IObserver<KeyValuePair<string, object?>>
 {
     public void OnCompleted()
     {

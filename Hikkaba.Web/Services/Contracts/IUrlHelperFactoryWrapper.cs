@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Services.Contracts;
 
-public interface IUrlHelperFactoryWrapper
+internal interface IUrlHelperFactoryWrapper
 {
     IUrlHelper GetUrlHelper();
 }

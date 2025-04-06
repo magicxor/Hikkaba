@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Riok.Mapperly.Abstractions;
@@ -8,7 +8,7 @@ namespace Hikkaba.Web.Mappings;
 
 [Mapper]
 [UseStaticMapper(typeof(Hikkaba.Infrastructure.Mappings.IpAddressMapper))]
-public static partial class BanMapper
+internal static partial class BanMapper
 {
     public static partial ViewModels.BansViewModels.BanPreviewModel ToViewModel(this BanPreviewModel model);
 

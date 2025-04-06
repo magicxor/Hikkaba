@@ -25,7 +25,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.Fixtures)]
-public sealed class BanRepositoryTests
+internal sealed class BanRepositoryTests
 {
     private static readonly GuidGenerator GuidGenerator = new();
 

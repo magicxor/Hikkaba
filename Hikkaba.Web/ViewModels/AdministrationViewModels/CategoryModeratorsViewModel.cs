@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 
 namespace Hikkaba.Web.ViewModels.AdministrationViewModels;

@@ -1,4 +1,4 @@
-﻿namespace Hikkaba.Web.ViewModels;
+namespace Hikkaba.Web.ViewModels;
 
 public class PageInfoViewModel
 {

@@ -1,8 +1,8 @@
-﻿using Bogus.DataSets;
+using Bogus.DataSets;
 
 namespace Hikkaba.Tests.Manual.Seed;
 
-public static class BogusExtensions
+internal static class BogusExtensions
 {
     public static string Password(
         this Internet internet,

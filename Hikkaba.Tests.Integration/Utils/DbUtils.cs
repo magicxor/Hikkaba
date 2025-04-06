@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Tests.Integration.Utils;
 
-public static class DbUtils
+internal static class DbUtils
 {
     public static async Task WaitForFulltextIndexAsync(
         ILogger logger,

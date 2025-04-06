@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Binding.Providers;
 
-public class DateTimeKindSensitiveBinderProvider : IModelBinderProvider
+internal class DateTimeKindSensitiveBinderProvider : IModelBinderProvider
 {
     private readonly ILoggerFactory _loggerFactory;
 

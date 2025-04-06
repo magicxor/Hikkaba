@@ -14,23 +14,12 @@ namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
 public class AdministrationRepository : IAdministrationRepository
 {
-    private readonly ILogger<AdministrationRepository> _logger;
     private readonly ApplicationDbContext _context;
-    private readonly IServiceScopeFactory _scopeFactory;
-
-    private static readonly string[] SupportedDbProviders =
-    [
-        "Microsoft.EntityFrameworkCore.SqlServer",
-    ];
 
     public AdministrationRepository(
-        ILogger<AdministrationRepository> logger,
-        ApplicationDbContext context,
-        IServiceScopeFactory scopeFactory)
+        ApplicationDbContext context)
     {
-        _logger = logger;
         _context = context;
-        _scopeFactory = scopeFactory;
     }
 
     public async Task<DashboardModel> GetDashboardAsync(CancellationToken cancellationToken)

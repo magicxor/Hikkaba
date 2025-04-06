@@ -323,6 +323,28 @@ dotnet_diagnostic.S3358.severity = suggestion
 # S6967 : ModelState.IsValid should be checked in controller actions.
 dotnet_diagnostic.S6967.severity = suggestion
 
+# CA1819: Properties should not return arrays
+dotnet_diagnostic.CA1819.severity = suggestion
+
+# CA2007: Consider calling ConfigureAwait on the awaited task
+# Reason: we don't use ConfigureAwait in our codebase
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1062: In externally visible method 'string IpAddressMapper.IpAddressToString(IPAddress src)', validate parameter 'src' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'
+dotnet_diagnostic.CA1062.severity = suggestion
+
+# CA1031: Modify 'GetIpAddressInfo' to catch a more specific allowed exception type, or rethrow the exception
+dotnet_diagnostic.CA1031.severity = suggestion
+
+# CA1308: In method 'ConvertToFileAttachmentSmAsync', replace the call to 'ToLowerInvariant' with 'ToUpperInvariant'
+dotnet_diagnostic.CA1308.severity = suggestion
+
+# CA1056: Change the type of property 'ExternalLoginModel.ReturnUrl' from 'string' to 'System.Uri'
+dotnet_diagnostic.CA1056.severity = suggestion
+
+# S3871: Make this exception 'public'.
+dotnet_diagnostic.S3871.severity = suggestion
+
 # Function is not convertible to SQL and must not be called in the database context
 # Reason: false positive when using LinqKit
 resharper_entity_framework_unsupported_server_side_function_call_highlighting = none

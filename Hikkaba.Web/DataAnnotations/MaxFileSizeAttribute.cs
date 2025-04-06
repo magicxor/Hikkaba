@@ -8,20 +8,20 @@ namespace Hikkaba.Web.DataAnnotations;
 /// Validation attribute to check the maximum file size of a IFormFile object.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class MaxFileSizeAttribute : ValidationAttribute
+internal sealed class MaxFileSizeAttribute : ValidationAttribute
 {
     /// <summary>
     /// Maximum file size in bytes.
     /// </summary>
-    private readonly long _maxFileSize;
+    public long MaxFileSize { get; }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="MaxFileSizeAttribute"/> class.
     /// </summary>
     /// <param name="maxFileSize">Maximum file size in bytes.</param>
     public MaxFileSizeAttribute(long maxFileSize)
     {
-        _maxFileSize = maxFileSize;
+        MaxFileSize = maxFileSize;
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ public class MaxFileSizeAttribute : ValidationAttribute
     /// </summary>
     /// <param name="value">Object to validate.</param>
     /// <param name="validationContext">Context in which a validation check is performed.</param>
-    /// <returns>True if the file size is equal or smaller than <see cref="_maxFileSize"/> bytes or if it is null.</returns>
+    /// <returns>True if the file size is equal or smaller than <see cref="MaxFileSize"/> bytes or if it is null.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)
@@ -37,8 +37,8 @@ public class MaxFileSizeAttribute : ValidationAttribute
 
         if (value is IFormFile formFile)
         {
-            if (formFile.Length > _maxFileSize)
-                return new ValidationResult($"Maximum allowed file size: {_maxFileSize} bytes. Size of {formFile.FileName}: {formFile.Length}.");
+            if (formFile.Length > MaxFileSize)
+                return new ValidationResult($"Maximum allowed file size: {MaxFileSize} bytes. Size of {formFile.FileName}: {formFile.Length}.");
 
             return ValidationResult.Success;
         }
@@ -47,8 +47,8 @@ public class MaxFileSizeAttribute : ValidationAttribute
         {
             foreach (var collectionItem in formFileCollection)
             {
-                if (collectionItem.Length > _maxFileSize)
-                    return new ValidationResult($"Maximum allowed file size: {_maxFileSize} bytes. Size of {collectionItem.FileName}: {collectionItem.Length}.");
+                if (collectionItem.Length > MaxFileSize)
+                    return new ValidationResult($"Maximum allowed file size: {MaxFileSize} bytes. Size of {collectionItem.FileName}: {collectionItem.Length}.");
             }
 
             return ValidationResult.Success;

@@ -1,11 +1,11 @@
-﻿using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Riok.Mapperly.Abstractions;
 
 namespace Hikkaba.Web.Mappings;
 
 [Mapper]
-public static partial class IpAddresDetailsMapper
+internal static partial class IpAddresDetailsMapper
 {
     [MapperIgnoreSource(nameof(IpAddressInfoModel.NetworkIpAddress))]
     [MapperIgnoreSource(nameof(IpAddressInfoModel.NetworkPrefixLength))]

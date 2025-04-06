@@ -39,8 +39,6 @@
     <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="Sakura.AspNetCore.Mvc.PagedList" />
     <PackageReference Include="Sakura.AspNetCore.PagedList.Async" />
-    <PackageReference Include="System.Net.Http" />
-    <PackageReference Include="System.Text.RegularExpressions" />
     <PackageReference Include="TwentyTwenty.Storage" />
     <PackageReference Include="TwentyTwenty.Storage.Local" />
   </ItemGroup>

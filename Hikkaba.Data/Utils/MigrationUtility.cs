@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Hikkaba.Data.Utils;
 
-public static class MigrationUtility
+internal static class MigrationUtility
 {
     /// <summary>
     /// Read a SQL script that is embedded into a resource.
@@ -11,7 +11,7 @@ public static class MigrationUtility
     /// <param name="migrationType">The migration type the SQL file script is attached to.</param>
     /// <param name="sqlFileName">The embedded SQL file name.</param>
     /// <returns>The content of the SQL file.</returns>
-    public static string ReadSql(Type migrationType, string sqlFileName)
+    internal static string ReadSql(Type migrationType, string sqlFileName)
     {
         var assembly = migrationType.Assembly;
         var resourceName = $"{migrationType.Namespace}.{sqlFileName}";

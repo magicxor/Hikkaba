@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using Hikkaba.Shared.Enums;
 using Microsoft.Extensions.Logging;
@@ -7,7 +7,7 @@ namespace Hikkaba.Tests.Unit.Tests.Enums;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class LogEventIdsTests
+internal sealed class LogEventIdsTests
 {
     [Test]
     public void EnsureIdsInRange()

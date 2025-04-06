@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.Time.Testing;
 
 namespace Hikkaba.Tests.Unit;
 
-public static class FakeTimeProviderFactory
+internal static class FakeTimeProviderFactory
 {
     private const string LocalTimeZoneId = "Etc/GMT-11";
 

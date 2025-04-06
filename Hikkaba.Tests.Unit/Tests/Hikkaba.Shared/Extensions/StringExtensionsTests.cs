@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using Hikkaba.Shared.Extensions;
 
 namespace Hikkaba.Tests.Unit.Tests.Hikkaba.Shared.Extensions;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class StringExtensionsTests
+internal sealed class StringExtensionsTests
 {
     [Test]
     public void TryLeft_WhenNull_ShouldReturnNull()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Web.ViewModels.PostsViewModels;
@@ -9,7 +9,7 @@ namespace Hikkaba.Web.Mappings;
 [Mapper]
 [UseStaticMapper(typeof(AttachmentMapper))]
 [UseStaticMapper(typeof(Hikkaba.Infrastructure.Mappings.IpAddressMapper))]
-public static partial class PostMapper
+internal static partial class PostMapper
 {
     [UserMapping]
     public static string BytesToString(byte[] src) => Convert.ToHexStringLower(src);

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Extensions;
 
-public static class BanViewModelExtensions
+internal static class BanViewModelExtensions
 {
     public static string? GetUri(this BanViewModel banViewModel, IUrlHelper urlHelper)
     {

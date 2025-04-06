@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Tests.Integration.Constants;
@@ -16,7 +16,7 @@ namespace Hikkaba.Tests.Integration.Tests.Data;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.Fixtures)]
-public sealed class EfMigrationsTests
+internal sealed class EfMigrationsTests
 {
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;
 

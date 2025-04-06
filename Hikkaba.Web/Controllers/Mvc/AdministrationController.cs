@@ -13,7 +13,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("Administration")]
-public sealed class AdministrationController : Controller
+internal sealed class AdministrationController : Controller
 {
     private readonly IAdministrationService _administrationService;
     private readonly IBoardService _boardService;
@@ -29,6 +29,7 @@ public sealed class AdministrationController : Controller
         _systemInfoService = systemInfoService;
     }
 
+    [HttpGet]
     [Route("Administration")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {

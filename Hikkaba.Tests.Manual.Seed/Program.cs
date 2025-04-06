@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Bogus;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
@@ -14,14 +14,14 @@ using Thread = Hikkaba.Data.Entities.Thread;
 namespace Hikkaba.Tests.Manual.Seed;
 
 [SuppressMessage("Major Code Smell", "S1118:Utility classes should not have public constructors", Justification = "This is an entry point.")]
-public sealed class Program
+internal sealed class Program
 {
     private static readonly Random Random = new();
-    private static readonly GuidGenerator GuidGenerator = new(Random.Next());
+    private static readonly GuidGenerator GuidGenerator = new();
 
     public static async Task Main(string[] args)
     {
-        var customAppFactory = new CustomAppFactory("Server=tcp:localhost,62140;Encrypt=False;Database=Hikkaba;User ID=SA;Password=dev_passworD@4568919;Persist Security Info=False;TrustServerCertificate=True;MultiSubnetFailover=True");
+        await using var customAppFactory = new CustomAppFactory("Server=tcp:localhost,62140;Encrypt=False;Database=Hikkaba;User ID=SA;Password=dev_passworD@4568919;Persist Security Info=False;TrustServerCertificate=True;MultiSubnetFailover=True");
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var seedRepository = scope.ServiceProvider.GetRequiredService<ISeedRepository>();
@@ -165,7 +165,7 @@ public sealed class Program
                                     UserAgent = f.Internet.UserAgent(),
                                     ThreadLocalUserHash = [],
                                     Thread = thread,
-                                    MentionedPosts = new List<Post> { post },
+                                    MentionedPosts = [post],
                                 })
                                 .FinishWith((f, r) =>
                                 {

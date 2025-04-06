@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 
-public class EnableAuthenticatorModel : PageModel
+internal class EnableAuthenticatorModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<EnableAuthenticatorModel> _logger;
@@ -73,7 +73,7 @@ public class EnableAuthenticatorModel : PageModel
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
-    public class InputModel
+    internal class InputModel
     {
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -114,7 +114,9 @@ public class EnableAuthenticatorModel : PageModel
         }
 
         // Strip spaces and hyphens
-        var verificationCode = Input.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+        var verificationCode = Input.Code
+            .Replace(" ", string.Empty, StringComparison.Ordinal)
+            .Replace("-", string.Empty, StringComparison.Ordinal);
 
         var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
             user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);

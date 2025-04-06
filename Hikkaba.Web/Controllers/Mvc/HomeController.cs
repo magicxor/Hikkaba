@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
-public sealed class HomeController : Controller
+internal sealed class HomeController : Controller
 {
     private readonly ICategoryService _categoryService;
     private readonly IPostService _postService;
@@ -26,6 +26,7 @@ public sealed class HomeController : Controller
         _postService = postService;
     }
 
+    [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var postPagingFilter = new PostPagingFilter

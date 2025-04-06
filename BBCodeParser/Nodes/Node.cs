@@ -2,8 +2,8 @@
 
 public abstract class Node
 {
-    protected List<Node>? ChildNodes { get; set; }
-    public Node? ParentNode { get; set; }
+    protected List<Node>? ChildNodes { get; init; }
+    public Node? ParentNode { get; init; }
 
     public abstract string ToHtml(
         IReadOnlyDictionary<string, string>? securitySubstitutions,

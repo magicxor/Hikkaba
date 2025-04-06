@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +11,7 @@ namespace Hikkaba.Web.Controllers.Api;
 [AllowAnonymous]
 [Route("api/v1/maintenance")]
 [ApiExplorerSettings(IgnoreApi = true)]
-public sealed class MaintenanceController : ControllerBase
+internal sealed class MaintenanceController : ControllerBase
 {
     private readonly IMigrationService _migrationService;
     private readonly ISeedService _seedService;

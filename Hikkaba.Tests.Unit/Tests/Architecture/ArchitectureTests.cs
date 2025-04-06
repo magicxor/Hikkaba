@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -18,7 +18,7 @@ namespace Hikkaba.Tests.Unit.Tests.Architecture;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class ArchitectureTests
+internal sealed class ArchitectureTests
 {
     private static readonly HikkabaSharedAssemblyInfo HikkabaSharedAssemblyInfo = new();
     private static readonly HikkabaDataAssemblyInfo HikkabaDataAssemblyInfo = new();

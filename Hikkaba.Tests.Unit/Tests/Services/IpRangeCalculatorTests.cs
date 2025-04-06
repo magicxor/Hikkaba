@@ -1,11 +1,11 @@
-﻿using System.Net;
+using System.Net;
 using Hikkaba.Application.Implementations;
 
 namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class IpRangeCalculatorTests
+internal sealed class IpRangeCalculatorTests
 {
     [Test]
     public void IPv4_StandardRange_ShouldReturnCorrectHosts()

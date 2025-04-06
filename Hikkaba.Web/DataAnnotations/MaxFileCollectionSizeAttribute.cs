@@ -9,20 +9,20 @@ namespace Hikkaba.Web.DataAnnotations;
 /// Validation attribute to check the maximum total size of a file collection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class MaxFileCollectionSizeAttribute : ValidationAttribute
+internal sealed class MaxFileCollectionSizeAttribute : ValidationAttribute
 {
     /// <summary>
     /// Maximum total size in bytes.
     /// </summary>
-    private readonly long _maxFileCollectionSize;
+    public long MaxFileCollectionSize { get; }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="MaxFileCollectionSizeAttribute"/> class.
     /// </summary>
     /// <param name="maxFileCollectionSize">Maximum total size in bytes.</param>
     public MaxFileCollectionSizeAttribute(long maxFileCollectionSize)
     {
-        _maxFileCollectionSize = maxFileCollectionSize;
+        MaxFileCollectionSize = maxFileCollectionSize;
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public class MaxFileCollectionSizeAttribute : ValidationAttribute
     /// </summary>
     /// <param name="value">Object to validate.</param>
     /// <param name="validationContext">Context in which a validation check is performed.</param>
-    /// <returns>True if the total size is equal or smaller than <see cref="_maxFileCollectionSize"/> bytes or if it is null.</returns>
+    /// <returns>True if the total size is equal or smaller than <see cref="MaxFileCollectionSize"/> bytes or if it is null.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)
@@ -43,8 +43,8 @@ public class MaxFileCollectionSizeAttribute : ValidationAttribute
 
             var totalSize = formFileCollection.Sum(formFile => formFile.Length);
 
-            if (totalSize > _maxFileCollectionSize)
-                return new ValidationResult($"Maximum allowed total file size: {_maxFileCollectionSize} bytes. Actual: {totalSize}.");
+            if (totalSize > MaxFileCollectionSize)
+                return new ValidationResult($"Maximum allowed total file size: {MaxFileCollectionSize} bytes. Actual: {totalSize}.");
 
             return ValidationResult.Success;
         }

@@ -1,4 +1,5 @@
-﻿using Hikkaba.Shared.Enums;
+﻿using System;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -21,6 +22,7 @@ public sealed class ApplicationDbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
         ContextConfigurationUtils.SetValueConverters(builder);
         builder.AddEfFunctions();
 

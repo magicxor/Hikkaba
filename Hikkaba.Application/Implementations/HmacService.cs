@@ -8,7 +8,7 @@ public class HmacService : IHmacService
 {
     private static byte[] HashHmac(byte[] key, byte[] message)
     {
-        var hash = new HMACSHA3_512(key);
+        using var hash = new HMACSHA3_512(key);
         return hash.ComputeHash(message);
     }
 

@@ -18,13 +18,10 @@ services:
       - mailhog
 
   db:
-    image: ${DOCKER_REGISTRY-}hikkabadb
-    build:
-      context: .
-      dockerfile: ./Components/Database/Dockerfile
     container_name: hikkaba.db.dev.local
     domainname: hikkaba.db.dev.local
     hostname: hikkaba.db.dev.local
+    image: "magicxor/mssql-fts:2022-latest"
     user: root
     environment:
       MSSQL_SA_PASSWORD: "dev_passworD@4568919"

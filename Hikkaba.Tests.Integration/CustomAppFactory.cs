@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Common;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
@@ -26,7 +26,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Tests.Integration;
 
-public sealed class CustomAppFactory
+internal sealed class CustomAppFactory
     : WebApplicationFactory<Web.Program>
 {
     private readonly string _connectionString;

@@ -5,9 +5,9 @@ namespace Hikkaba.Tests.Unit.Tests.Hikkaba.Shared.Extensions;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class EnumExtensionsTests
+internal sealed class EnumExtensionsTests
 {
-    public enum TestValues
+    internal enum TestValues
     {
         Zero = 0,
         One = 1,

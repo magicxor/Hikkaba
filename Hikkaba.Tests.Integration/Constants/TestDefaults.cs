@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Hikkaba.Tests.Integration.Constants;
 
-public static class TestDefaults
+internal static class TestDefaults
 {
     public const string DbPassword = "mdkoe@ri^_SDFSFD@@4958$jsdihuq";
     public const string DbName = "hikkaba_tests";

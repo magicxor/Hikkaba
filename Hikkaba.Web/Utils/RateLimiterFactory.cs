@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.RateLimiting;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.Utils;
 
-public static class RateLimiterFactory
+internal static class RateLimiterFactory
 {
     public const int DefaultSegmentsPerWindow = 12;
 

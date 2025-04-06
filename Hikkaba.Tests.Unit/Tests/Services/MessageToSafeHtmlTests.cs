@@ -5,7 +5,7 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class MessageToSafeHtmlTests
+internal sealed class MessageToSafeHtmlTests
 {
     private const string FakeActionPath = "/b/23454362";
 

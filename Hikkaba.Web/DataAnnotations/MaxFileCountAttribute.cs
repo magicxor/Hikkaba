@@ -9,17 +9,17 @@ namespace Hikkaba.Web.DataAnnotations;
 /// Validation attribute to check the maximum number of files in a file collection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class MaxFileCountAttribute : ValidationAttribute
+internal sealed class MaxFileCountAttribute : ValidationAttribute
 {
-    private readonly long _maxFileCount;
+    public int MaxFileCount { get; }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="MaxFileCountAttribute"/> class.
     /// </summary>
     /// <param name="maxFileCount">Maximum number of files.</param>
     public MaxFileCountAttribute(int maxFileCount)
     {
-        _maxFileCount = maxFileCount;
+        MaxFileCount = maxFileCount;
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class MaxFileCountAttribute : ValidationAttribute
     /// </summary>
     /// <param name="value">Object to validate.</param>
     /// <param name="validationContext">Context in which a validation check is performed.</param>
-    /// <returns>True if the number of files is equal or smaller than <see cref="_maxFileCount"/> or if it is null.</returns>
+    /// <returns>True if the number of files is equal or smaller than <see cref="MaxFileCount"/> or if it is null.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)
@@ -37,8 +37,8 @@ public class MaxFileCountAttribute : ValidationAttribute
         {
             var fileCount = formFileCollection.Count;
 
-            if (fileCount > _maxFileCount)
-                return new ValidationResult($"Maximum allowed file count: {_maxFileCount}. Actual: {fileCount}.");
+            if (fileCount > MaxFileCount)
+                return new ValidationResult($"Maximum allowed file count: {MaxFileCount}. Actual: {fileCount}.");
 
             return ValidationResult.Success;
         }

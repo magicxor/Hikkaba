@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;

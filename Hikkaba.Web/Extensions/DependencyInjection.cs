@@ -46,7 +46,7 @@ using TwentyTwenty.Storage.Local;
 
 namespace Hikkaba.Web.Extensions;
 
-public static class DependencyInjection
+internal static class DependencyInjection
 {
     private static IServiceCollection AddHikkabaDbContext(this IServiceCollection services, string connectionString)
     {
@@ -66,7 +66,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaDbContext(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+    internal static IServiceCollection AddHikkabaDbContext(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
@@ -79,7 +79,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaRepositories(this IServiceCollection services)
+    internal static IServiceCollection AddHikkabaRepositories(this IServiceCollection services)
     {
         services.AddScoped<ISeedRepository, SeedRepository>();
         services.AddScoped<IMigrationRepository, MigrationRepository>();
@@ -95,7 +95,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaServices(this IServiceCollection services)
+    internal static IServiceCollection AddHikkabaServices(this IServiceCollection services)
     {
         // core
         services.AddScoped<IUserContext, UserContext>();
@@ -146,7 +146,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaCookieConfig(this IServiceCollection services)
+    internal static IServiceCollection AddHikkabaCookieConfig(this IServiceCollection services)
     {
         services.Configure<CookiePolicyOptions>(options =>
         {
@@ -167,7 +167,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaDataProtection(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+    internal static IServiceCollection AddHikkabaDataProtection(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
 
@@ -194,7 +194,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaHttpServerConfig(this IServiceCollection services)
+    internal static IServiceCollection AddHikkabaHttpServerConfig(this IServiceCollection services)
     {
         services.Configure<ForwardedHeadersOptions>(options =>
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
@@ -222,7 +222,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaMvc(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+    internal static IServiceCollection AddHikkabaMvc(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
         services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
@@ -254,7 +254,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddHikkabaObservabilityTools(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+    internal static IServiceCollection AddHikkabaObservabilityTools(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         // disable observability tools for integration testing
         if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
@@ -273,7 +273,7 @@ public static class DependencyInjection
         var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
         var otlpExporterUri = hikkabaConfig?.OtlpExporterUri;
 
-        if (!string.IsNullOrEmpty(otlpExporterUri))
+        if (otlpExporterUri is not null)
         {
             services.AddOpenTelemetry()
                 .ConfigureResource(resource => resource.AddService(Defaults.ServiceName))
@@ -281,7 +281,7 @@ public static class DependencyInjection
                     .AddAspNetCoreInstrumentation()
                     .AddEntityFrameworkCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddOtlpExporter(options => options.Endpoint = new Uri(otlpExporterUri)))
+                    .AddOtlpExporter(options => options.Endpoint = otlpExporterUri))
                 .WithMetrics(metrics => metrics
                     .AddAspNetCoreInstrumentation()
                     .AddMeter("Microsoft.EntityFrameworkCore")
@@ -289,13 +289,13 @@ public static class DependencyInjection
                     .AddRuntimeInstrumentation()
                     .AddProcessInstrumentation()
                     .AddMeter("Hikkaba.*")
-                    .AddOtlpExporter(options => options.Endpoint = new Uri(otlpExporterUri)));
+                    .AddOtlpExporter(options => options.Endpoint = otlpExporterUri));
         }
 
         return services;
     }
 
-    public static IServiceCollection AddHikkabaMetrics(this IServiceCollection services)
+    internal static IServiceCollection AddHikkabaMetrics(this IServiceCollection services)
     {
         return services
             .AddSingleton<PostMetrics>()

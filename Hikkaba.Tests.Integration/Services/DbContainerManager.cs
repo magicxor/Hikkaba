@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Containers;
@@ -9,7 +9,7 @@ using Testcontainers.MsSql;
 
 namespace Hikkaba.Tests.Integration.Services;
 
-public sealed class DbContainerManager
+internal sealed class DbContainerManager
 {
     private IContainer? _container;
 

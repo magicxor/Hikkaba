@@ -1,4 +1,4 @@
-﻿namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
+namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
 
 public class NoticeViewModel
 {

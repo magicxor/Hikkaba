@@ -10,19 +10,22 @@ namespace Hikkaba.Web.DataAnnotations;
 /// Validation attribute to check the extension of a file.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class AllowedExtensionsAttribute : ValidationAttribute
+internal sealed class AllowedExtensionsAttribute : ValidationAttribute
 {
     /// <summary>
     /// Allowed file extensions.
     /// </summary>
     private readonly string[] _allowedExtensions;
 
+    public string AllowedExtensions { get; }
+
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="AllowedExtensionsAttribute"/> class.
     /// </summary>
     /// <param name="allowedExtensions">Allowed file extensions.</param>
     public AllowedExtensionsAttribute(string allowedExtensions)
     {
+        AllowedExtensions = allowedExtensions;
         _allowedExtensions = allowedExtensions.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 

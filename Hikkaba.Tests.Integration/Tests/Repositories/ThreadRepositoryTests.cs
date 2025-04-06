@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -28,7 +28,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.Fixtures)]
-public sealed class ThreadRepositoryTests
+internal sealed class ThreadRepositoryTests
 {
     private static readonly GuidGenerator GuidGenerator = new();
 

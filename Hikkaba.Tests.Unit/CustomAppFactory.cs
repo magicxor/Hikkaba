@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Data.Common;
 using Hikkaba.Shared.Constants;
@@ -31,7 +31,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Tests.Unit;
 
-public sealed class CustomAppFactory
+internal sealed class CustomAppFactory
     : WebApplicationFactory<Web.Program>
 {
     private readonly string _currentAction;

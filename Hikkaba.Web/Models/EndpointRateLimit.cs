@@ -1,8 +1,8 @@
-﻿using System.Threading.RateLimiting;
+using System.Threading.RateLimiting;
 
 namespace Hikkaba.Web.Models;
 
-public sealed class EndpointRateLimit
+internal sealed class EndpointRateLimit
 {
     public required string Path { get; init; }
     public required string Method { get; init; }

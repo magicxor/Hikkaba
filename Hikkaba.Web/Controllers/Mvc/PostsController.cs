@@ -27,7 +27,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
 [Route("Posts")]
-public sealed class PostsController : BaseMvcController
+internal sealed class PostsController : BaseMvcController
 {
     private readonly ILogger<PostsController> _logger;
     private readonly IMessagePostProcessor _messagePostProcessor;
@@ -51,6 +51,7 @@ public sealed class PostsController : BaseMvcController
         _postService = postService;
     }
 
+    [HttpGet]
     [Route("{categoryAlias}/Threads/{threadId:long}/Posts/Create")]
     [AllowAnonymous]
     public async Task<IActionResult> Create(
@@ -142,6 +143,7 @@ public sealed class PostsController : BaseMvcController
         }
     }
 
+    [HttpGet]
     [Route("Search")]
     [AllowAnonymous]
     public async Task<IActionResult> Search(

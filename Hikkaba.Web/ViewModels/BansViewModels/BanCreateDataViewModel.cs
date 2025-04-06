@@ -1,4 +1,4 @@
-﻿using Hikkaba.Web.ViewModels.PostsViewModels;
+using Hikkaba.Web.ViewModels.PostsViewModels;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 

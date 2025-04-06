@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
-public sealed class ErrorController : Controller
+internal sealed class ErrorController : Controller
 {
     private const string DefaultErrorMessage = "Something went wrong";
     private const string PageNotFoundMessage = "Page not found";
@@ -20,11 +20,13 @@ public sealed class ErrorController : Controller
         _logger = logger;
     }
 
+    [HttpGet]
     public IActionResult PageNotFound()
     {
         return Details(PageNotFoundMessage, HttpStatusCode.NotFound);
     }
 
+    [HttpGet]
     public IActionResult Exception()
     {
         var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
@@ -45,6 +47,7 @@ public sealed class ErrorController : Controller
         return Details(message, (HttpStatusCode)statusCode);
     }
 
+    [HttpGet]
     public IActionResult Details(HttpStatusCode statusCode)
     {
         _logger.LogDebug(statusCode.ToEventId(), "Return status page for {StatusCodeName}={StatusCode}", nameof(statusCode), statusCode);

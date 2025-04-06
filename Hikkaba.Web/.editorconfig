@@ -1,0 +1,3 @@
+﻿[*.cs]
+# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+dotnet_diagnostic.CA1515.severity = none

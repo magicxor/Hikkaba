@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HttpContextMoq;
 using HttpContextMoq.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Hikkaba.Tests.Unit.Mocks;
 
-public sealed class FakeUrlHelper : IUrlHelper
+internal sealed class FakeUrlHelper : IUrlHelper
 {
     private readonly string _action;
 
@@ -20,7 +20,7 @@ public sealed class FakeUrlHelper : IUrlHelper
         return _action;
     }
 
-    [return: NotNullIfNotNull("contentPath")]
+    [return: NotNullIfNotNull(nameof(contentPath))]
     public string? Content(string? contentPath)
     {
         return "FakeContent";

@@ -1,0 +1,6 @@
+[*.cs]
+# CA1002: Change 'List<Node>' in 'Node.ChildNodes' to use 'Collection<T>', 'ReadOnlyCollection<T>' or 'KeyedCollection<K,V>'
+dotnet_diagnostic.CA1002.severity = suggestion
+
+# CA1054: Change the type of parameter 'uriStr' of method 'UriUtility.IsWellFormedUriString(string, UriKind)' from 'string' to 'System.Uri', or provide an overload to 'UriUtility.IsWellFormedUriString(string, UriKind)' that allows 'uriStr' to be passed as a 'System.Uri' object
+dotnet_diagnostic.CA1054.severity = suggestion

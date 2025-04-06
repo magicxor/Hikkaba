@@ -13,16 +13,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
-public class LoginWith2faModel : PageModel
+internal class LoginWith2FaModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ILogger<LoginWith2faModel> _logger;
+    private readonly ILogger<LoginWith2FaModel> _logger;
 
-    public LoginWith2faModel(
+    public LoginWith2FaModel(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
-        ILogger<LoginWith2faModel> logger)
+        ILogger<LoginWith2FaModel> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -52,7 +52,7 @@ public class LoginWith2faModel : PageModel
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
-    public class InputModel
+    internal class InputModel
     {
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -103,7 +103,9 @@ public class LoginWith2faModel : PageModel
             throw new InvalidOperationException($"Unable to load two-factor authentication user.");
         }
 
-        var authenticatorCode = Input.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
+        var authenticatorCode = Input.TwoFactorCode
+            .Replace(" ", string.Empty, StringComparison.Ordinal)
+            .Replace("-", string.Empty, StringComparison.Ordinal);
 
         var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, Input.RememberMachine);
 

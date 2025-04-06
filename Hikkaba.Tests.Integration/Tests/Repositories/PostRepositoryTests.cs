@@ -25,7 +25,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.Fixtures)]
-public sealed class PostRepositoryTests
+internal sealed class PostRepositoryTests
 {
     private static readonly GuidGenerator GuidGenerator = new();
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;

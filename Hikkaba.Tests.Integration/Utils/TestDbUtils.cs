@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Tests.Integration.Utils;
 
-public static class TestDbUtils
+internal static class TestDbUtils
 {
     public static string GetExactConnectionString(string host, ushort port, string db, string password)
     {

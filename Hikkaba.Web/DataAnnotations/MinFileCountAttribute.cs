@@ -9,17 +9,17 @@ namespace Hikkaba.Web.DataAnnotations;
 /// Validation attribute to check the minimum number of files in a file collection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class MinFileCountAttribute : ValidationAttribute
+internal sealed class MinFileCountAttribute : ValidationAttribute
 {
-    private readonly long _minFileCount;
+    public int MinFileCount { get; }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="MinFileCountAttribute"/> class.
     /// </summary>
     /// <param name="minFileCount">Minimum number of files.</param>
     public MinFileCountAttribute(int minFileCount)
     {
-        _minFileCount = minFileCount;
+        MinFileCount = minFileCount;
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class MinFileCountAttribute : ValidationAttribute
     /// </summary>
     /// <param name="value">Object to validate.</param>
     /// <param name="validationContext">Context in which a validation check is performed.</param>
-    /// <returns>True if the number of files is equal or greater than <see cref="_minFileCount"/> or if it is null.</returns>
+    /// <returns>True if the number of files is equal or greater than <see cref="MinFileCount"/> or if it is null.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)
@@ -37,8 +37,8 @@ public class MinFileCountAttribute : ValidationAttribute
         {
             var fileCount = formFileCollection.Count;
 
-            if (fileCount < _minFileCount)
-                return new ValidationResult($"At least {_minFileCount} file(s) required. Actual: {fileCount}.");
+            if (fileCount < MinFileCount)
+                return new ValidationResult($"At least {MinFileCount} file(s) required. Actual: {fileCount}.");
 
             return ValidationResult.Success;
         }

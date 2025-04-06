@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Humanizer;
 using Humanizer.Bytes;
 
 namespace Hikkaba.Web.Utils;
 
-public static class FileSizeUtils
+internal static class FileSizeUtils
 {
     public static string Humanize(long sizeInBytes)
     {

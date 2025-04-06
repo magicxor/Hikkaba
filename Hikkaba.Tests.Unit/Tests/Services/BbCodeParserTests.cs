@@ -11,7 +11,7 @@ using NUnit.Framework.Legacy;
 namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
-public sealed class BbCodeParserTests
+internal sealed class BbCodeParserTests
 {
     private static readonly IReadOnlyDictionary<string, string> EmptyDict = ReadOnlyDictionary<string, string>.Empty;
     private BBParser _bbCodeParser = new([new Tag("b", "<strong>", "</strong>")], EmptyDict, EmptyDict);

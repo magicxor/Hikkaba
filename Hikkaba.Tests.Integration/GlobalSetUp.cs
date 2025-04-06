@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Hikkaba.Tests.Integration.Extensions;
 using Hikkaba.Tests.Integration.Services;
@@ -6,7 +6,7 @@ using Hikkaba.Tests.Integration.Services;
 namespace Hikkaba.Tests.Integration;
 
 [SetUpFixture]
-public sealed class GlobalSetUp
+internal sealed class GlobalSetUp
 {
     private static DbContainerManager? GlobalDbContainerManager { get; set; }
 

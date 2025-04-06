@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Hikkaba.Web.Controllers.Mvc;
 
 [Route("Board")]
-public sealed class BoardController : Controller
+internal sealed class BoardController : Controller
 {
     private readonly ILogger<BoardController> _logger;
     private readonly IBoardService _boardService;
@@ -21,6 +21,7 @@ public sealed class BoardController : Controller
         _boardService = boardService;
     }
 
+    [HttpGet]
     [Route("Board/Edit")]
     public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
     {

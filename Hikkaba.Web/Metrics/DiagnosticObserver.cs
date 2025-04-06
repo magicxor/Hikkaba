@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Web.Metrics;
 
-public class DiagnosticObserver : IObserver<DiagnosticListener>
+internal class DiagnosticObserver : IObserver<DiagnosticListener>
 {
     public void OnCompleted()
     {

@@ -5,7 +5,7 @@ namespace Hikkaba.Tests.Unit.Tests.Hikkaba.Shared.Extensions;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class ArrayExtensionsTests
+internal sealed class ArrayExtensionsTests
 {
     // Test cases for null inputs
     [Test]

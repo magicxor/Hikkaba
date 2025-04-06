@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Hikkaba.Tests.Unit.Mocks;
 
-public sealed class FakeUrlHelperFactory : IUrlHelperFactory
+internal sealed class FakeUrlHelperFactory : IUrlHelperFactory
 {
     private readonly string _action;
 

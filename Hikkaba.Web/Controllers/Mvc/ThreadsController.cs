@@ -23,7 +23,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize]
 [Route("Threads")]
-public sealed class ThreadsController : BaseMvcController
+internal sealed class ThreadsController : BaseMvcController
 {
     private readonly ILogger<ThreadsController> _logger;
     private readonly IMessagePostProcessor _messagePostProcessor;
@@ -44,6 +44,7 @@ public sealed class ThreadsController : BaseMvcController
         _threadService = threadService;
     }
 
+    [HttpGet]
     [Route("{categoryAlias}/Threads/{threadId:long}")]
     [AllowAnonymous]
     public async Task<IActionResult> Details(
@@ -63,8 +64,9 @@ public sealed class ThreadsController : BaseMvcController
         return View(threadDetailsViewModel);
     }
 
-    [Route("{categoryAlias}/Threads/Create")]
     [AllowAnonymous]
+    [HttpGet]
+    [Route("{categoryAlias}/Threads/Create")]
     public async Task<IActionResult> Create(string categoryAlias, CancellationToken cancellationToken)
     {
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);

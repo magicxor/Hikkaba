@@ -19,7 +19,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("Categories")]
-public sealed class CategoriesController : BaseMvcController
+internal sealed class CategoriesController : BaseMvcController
 {
     private readonly IBoardService _boardService;
     private readonly ICategoryService _categoryService;
@@ -38,6 +38,7 @@ public sealed class CategoriesController : BaseMvcController
     }
 
     [AllowAnonymous]
+    [HttpGet]
     [Route("{categoryAlias}")]
     public async Task<IActionResult> Details(
         [Required][FromRoute] string categoryAlias,

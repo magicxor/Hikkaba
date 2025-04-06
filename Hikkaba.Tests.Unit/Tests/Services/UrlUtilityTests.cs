@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BBCodeParser;
 
@@ -6,7 +6,7 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class UrlUtilityTests
+internal sealed class UrlUtilityTests
 {
     private static IEnumerable<TestCaseData> UriTestCases()
     {

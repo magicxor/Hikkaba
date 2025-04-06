@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Hikkaba.Web.Services.Implementations;
 
 namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class SimplifiedUrlRegexTests
+internal sealed class SimplifiedUrlRegexTests
 {
     private static IEnumerable<TestCaseData> UriTestCases()
     {

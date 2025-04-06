@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Hikkaba.Infrastructure.Models.Administration;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
@@ -7,7 +7,7 @@ using Riok.Mapperly.Abstractions;
 namespace Hikkaba.Web.Mappings;
 
 [Mapper]
-public static partial class CategoryMapper
+internal static partial class CategoryMapper
 {
     [MapperIgnoreSource(nameof(CategoryDashboardModel.CreatedBy))]
     [MapperIgnoreSource(nameof(CategoryDashboardModel.ModifiedBy))]

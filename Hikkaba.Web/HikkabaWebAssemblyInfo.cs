@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Web;
 
-public class HikkabaWebAssemblyInfo : IAssemblyInfo
+internal class HikkabaWebAssemblyInfo : IAssemblyInfo
 {
     public int HierarchyLevel { get; } = 5;
 }

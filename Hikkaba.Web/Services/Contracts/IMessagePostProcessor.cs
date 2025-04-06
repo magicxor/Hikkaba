@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Hikkaba.Web.Services.Contracts;
 
-public interface IMessagePostProcessor
+internal interface IMessagePostProcessor
 {
     string MessageToSafeHtml(string categoryAlias, long? threadId, string text);
     string MessageToPlainText(string text);

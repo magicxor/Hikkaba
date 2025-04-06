@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
 [AllowAnonymous]
-public class RegisterConfirmationModel : PageModel
+internal class RegisterConfirmationModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _sender;

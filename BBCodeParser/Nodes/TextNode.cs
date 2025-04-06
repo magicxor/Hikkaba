@@ -14,7 +14,7 @@ public class TextNode : Node
         return substitutions == null
             ? text
             : substitutions.Aggregate(text,
-                (current, substitution) => current.Replace(substitution.Key, substitution.Value));
+                (current, substitution) => current.Replace(substitution.Key, substitution.Value, StringComparison.OrdinalIgnoreCase));
     }
 
     public override string ToHtml(

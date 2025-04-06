@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc.Base;
 
-public abstract class BaseMvcController : Controller
+internal abstract class BaseMvcController : Controller
 {
     private UserManager<ApplicationUser> UserManager { get; set; }
 
@@ -16,7 +16,7 @@ public abstract class BaseMvcController : Controller
         UserManager = userManager;
     }
 
-    public int GetCurrentUserId()
+    protected int GetCurrentUserId()
     {
         if (User.Identity?.IsAuthenticated == true
             && UserManager.GetUserId(User) is { } uid)

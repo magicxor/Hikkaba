@@ -23,4 +23,13 @@ public sealed class OrderByItem
     {
         return new OrderByItem { Field = fieldName };
     }
+
+    public OrderByItem ToOrderByItem()
+    {
+        return new OrderByItem
+        {
+            Field = Field,
+            Direction = Direction,
+        };
+    }
 }

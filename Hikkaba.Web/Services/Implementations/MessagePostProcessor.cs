@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using BBCodeParser;
 using BBCodeParser.Enums;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Services.Implementations;
 
-public partial class MessagePostProcessor : IMessagePostProcessor
+internal partial class MessagePostProcessor : IMessagePostProcessor
 {
     private readonly IUrlHelper _urlHelper;
 

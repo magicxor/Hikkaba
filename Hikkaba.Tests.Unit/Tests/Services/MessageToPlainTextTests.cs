@@ -1,11 +1,11 @@
-﻿using Hikkaba.Web.Services.Contracts;
+using Hikkaba.Web.Services.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class MessageToPlainTextTests
+internal sealed class MessageToPlainTextTests
 {
     private const string FakeActionPath = "/b/23454362";
 

@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Hikkaba.Tests.Integration.Services;
 
 namespace Hikkaba.Tests.Integration.Extensions;
 
-public static class DbContainerManagerExtensions
+internal static class DbContainerManagerExtensions
 {
     public static async Task StopIfNotNullAsync(this DbContainerManager? containerManager)
     {

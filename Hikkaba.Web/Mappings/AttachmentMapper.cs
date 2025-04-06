@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Hikkaba.Infrastructure.Models.Attachments.Concrete;
 using Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
 using Riok.Mapperly.Abstractions;
@@ -7,7 +7,7 @@ namespace Hikkaba.Web.Mappings;
 
 [Mapper]
 [UseStaticMapper(typeof(StringBytesMapper))]
-public static partial class AttachmentMapper
+internal static partial class AttachmentMapper
 {
     public static partial AudioViewModel ToViewModel(this AudioModel model);
 

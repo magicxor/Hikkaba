@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -12,7 +12,7 @@ using Table = Respawn.Graph.Table;
 
 namespace Hikkaba.Tests.Integration.Services;
 
-public sealed class RespawnableContextManager<TContext> : IDisposable
+internal sealed class RespawnableContextManager<TContext> : IDisposable
     where TContext : DbContext
 {
     private readonly RespawnerOptions _respawnerOptions = new()
@@ -52,7 +52,7 @@ public sealed class RespawnableContextManager<TContext> : IDisposable
         var respawner = await _respawnerLazy;
         await respawner.ResetAsync(_dbConnection ?? throw new IntegrationTestException("DbConnection passed to Respawner is null"));
 
-        TestLogUtils.WriteProgressMessage($"{nameof(ResetDatabaseAsync)} on {typeof(TContext).Name} {_dbConnection?.ConnectionString}: OK");
+        TestLogUtils.WriteProgressMessage($"{nameof(ResetDatabaseAsync)} on {typeof(TContext).Name} {_dbConnection.ConnectionString}: OK");
     }
 
     public async Task<string> CreateRespawnedDbConnectionStringAsync()

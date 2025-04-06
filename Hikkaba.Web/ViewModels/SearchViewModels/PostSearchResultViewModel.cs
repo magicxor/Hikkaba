@@ -1,4 +1,4 @@
-﻿using Hikkaba.Paging.Models;
+using Hikkaba.Paging.Models;
 
 using Hikkaba.Web.ViewModels.PostsViewModels;
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Web.Middleware;
 
-public class SetAuthenticatedUserMiddleware
+internal class SetAuthenticatedUserMiddleware
 {
     private readonly RequestDelegate _next;
 

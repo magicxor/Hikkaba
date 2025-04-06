@@ -19,7 +19,7 @@ namespace Hikkaba.Web.Controllers.Mvc;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("Bans")]
-public sealed class BansController : BaseMvcController
+internal sealed class BansController : BaseMvcController
 {
     private readonly IBanService _banService;
     private readonly IBanCreationPrerequisiteService _banCreationPrerequisiteService;
@@ -37,6 +37,7 @@ public sealed class BansController : BaseMvcController
         _timeProvider = timeProvider;
     }
 
+    [HttpGet]
     [Route("Bans/{id:int}")]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
@@ -69,6 +70,7 @@ public sealed class BansController : BaseMvcController
         return View(viewModelList);
     }
 
+    [HttpGet]
     [Route("Bans/Create")]
     public async Task<IActionResult> Create(string categoryAlias, long threadId, long postId, CancellationToken cancellationToken)
     {
@@ -176,6 +178,7 @@ public sealed class BansController : BaseMvcController
         }
     }
 
+    [HttpGet]
     [Route("Bans/{id:int}/Delete")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {

@@ -1,4 +1,4 @@
-﻿using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.BoardViewModels;

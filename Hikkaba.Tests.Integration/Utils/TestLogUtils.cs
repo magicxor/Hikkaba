@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Hikkaba.Tests.Integration.Utils;
 
-public static class TestLogUtils
+internal static class TestLogUtils
 {
     private static readonly TimeProvider TimeProvider = TimeProvider.System;
 

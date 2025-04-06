@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Extensions;
 
-public static class ThreadDetailsViewModelExtensions
+internal static class ThreadDetailsViewModelExtensions
 {
     public static string? GetUri(this ThreadDetailsViewModel threadDetailsViewModel, IUrlHelper urlHelper)
     {

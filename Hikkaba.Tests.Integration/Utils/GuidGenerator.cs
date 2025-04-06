@@ -1,8 +1,9 @@
-﻿using System;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Hikkaba.Tests.Integration.Utils;
 
-public sealed class GuidGenerator
+internal sealed class GuidGenerator
 {
     private readonly Random _random;
 
@@ -11,6 +12,7 @@ public sealed class GuidGenerator
         _random = new Random(seed);
     }
 
+    [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "This is a test utility, not production code.")]
     public Guid GenerateSeededGuid()
     {
         var guid = new byte[16];

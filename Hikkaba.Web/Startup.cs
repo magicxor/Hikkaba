@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Hikkaba.Web;
 
-public class Startup
+internal class Startup
 {
     private readonly IConfiguration _configuration;
     private readonly IWebHostEnvironment _webHostEnvironment;

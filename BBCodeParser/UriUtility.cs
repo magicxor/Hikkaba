@@ -31,7 +31,7 @@ public static partial class UriUtility
             return false;
         }
 
-        if (uri is null || uri.ToString().StartsWith("file://", StringComparison.Ordinal))
+        if (uri is null || uri.ToString().StartsWith("file://", StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Binding.Binders;
 
-public class DateTimeKindSensitiveBinder : IModelBinder
+internal class DateTimeKindSensitiveBinder : IModelBinder
 {
     private readonly SimpleTypeModelBinder _baseBinder;
 

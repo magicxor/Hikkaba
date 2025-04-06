@@ -8,6 +8,20 @@ public class HikkabaHttpResponseException
 {
     public HttpStatusCode HttpStatusCode { get; set; }
 
+    public HikkabaHttpResponseException()
+    {
+    }
+
+    public HikkabaHttpResponseException(string message)
+        : base(message)
+    {
+    }
+
+    public HikkabaHttpResponseException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
+
     public HikkabaHttpResponseException(HttpStatusCode httpStatusCode)
     {
         HttpStatusCode = httpStatusCode;

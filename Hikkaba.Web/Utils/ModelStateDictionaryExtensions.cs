@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Hikkaba.Web.Utils;
 
-public static class ModelStateDictionaryExtensions
+internal static class ModelStateDictionaryExtensions
 {
     public static string ModelErrorsToString(this ModelStateDictionary modelStateDictionary)
     {

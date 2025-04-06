@@ -6,7 +6,7 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.All)]
-public sealed class IpAddressCalculatorTests
+internal sealed class IpAddressCalculatorTests
 {
     private const string LowerLocalIpv4 = "127.0.0.1";
     private const string SomeLocalIpv4 = "127.0.0.29";

@@ -43,11 +43,13 @@ public partial class Tag
 
     public string GetOpenHtml(string attributeValue)
     {
+        ArgumentNullException.ThrowIfNull(attributeValue);
         return GetHtmlPart(OpenTag, attributeValue);
     }
 
     public string GetCloseHtml(string attributeValue)
     {
+        ArgumentNullException.ThrowIfNull(attributeValue);
         return GetHtmlPart(CloseTag, attributeValue);
     }
 
@@ -55,19 +57,19 @@ public partial class Tag
     {
         var tagPartNullSafe = tagPart ?? string.Empty;
 
-        if (attributeValue.Contains('"'))
+        if (attributeValue.Contains('"', StringComparison.Ordinal))
         {
             attributeValue = attributeValue.Replace("\"", "&quot;", StringComparison.Ordinal);
         }
 
         return WithAttribute
-            ? tagPartNullSafe.Replace("{value}", GetAttributeValueForHtml(attributeValue))
+            ? tagPartNullSafe.Replace("{value}", GetAttributeValueForHtml(attributeValue), StringComparison.OrdinalIgnoreCase)
             : tagPartNullSafe;
     }
 
     private string GetAttributeValueForHtml(string attributeValue)
     {
-        if (attributeValue.Contains('"'))
+        if (attributeValue.Contains('"', StringComparison.Ordinal))
         {
             attributeValue = attributeValue.Replace("\"", "&quot;", StringComparison.Ordinal);
         }
