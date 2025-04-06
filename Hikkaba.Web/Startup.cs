@@ -45,10 +45,8 @@ public class Startup
             .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, int>>()
             .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, int>>();
 
-        services.AddResponseCompression()
-            .AddRateLimiter();
-
         services.AddHikkabaDataProtection(_configuration, _webHostEnvironment)
+            .AddHikkabaHttpServerConfig()
             .AddHikkabaRepositories()
             .AddHikkabaServices()
             .AddHikkabaCookieConfig()

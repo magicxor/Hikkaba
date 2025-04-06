@@ -9,7 +9,8 @@ namespace Hikkaba.Web.Controllers.Api;
 
 [ApiController]
 [AllowAnonymous]
-[Route("v1/maintenance")]
+[Route("api/v1/maintenance")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public sealed class MaintenanceController : ControllerBase
 {
     private readonly IMigrationService _migrationService;

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Web.Models;
 
-public class ConfigureMvcOptions : IConfigureOptions<MvcOptions>
+public sealed class ConfigureMvcOptions : IConfigureOptions<MvcOptions>
 {
     private readonly DateTimeKindSensitiveBinderProvider _dateTimeKindSensitiveBinderProvider;
 

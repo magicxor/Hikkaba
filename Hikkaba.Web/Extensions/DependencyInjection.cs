@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Threading.RateLimiting;
 using DNTCaptcha.Core;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
@@ -192,15 +194,38 @@ public static class DependencyInjection
         return services;
     }
 
+    public static IServiceCollection AddHikkabaHttpServerConfig(this IServiceCollection services)
+    {
+        services.Configure<ForwardedHeadersOptions>(options =>
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
+
+        services.AddResponseCompression();
+
+        services.AddRateLimiter(rateLimiterOptions =>
+        {
+            rateLimiterOptions.OnRejected = async (context, cancellationToken) =>
+            {
+                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                {
+                    context.HttpContext.Response.Headers.RetryAfter =
+                        ((int)retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
+                }
+
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", cancellationToken);
+            };
+
+            rateLimiterOptions.GlobalLimiter = RateLimiterFactory.CreateSlidingPerEndpointPerIpPerMinute(
+                RateLimiterFactory.DefaultEndpointRateLimits);
+        });
+
+        return services;
+    }
+
     public static IServiceCollection AddHikkabaMvc(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
         services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
-
-        services.Configure<ForwardedHeadersOptions>(options =>
-        {
-            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-        });
 
         services.AddControllersWithViews();
         services.AddRazorPages();
@@ -220,7 +245,7 @@ public static class DependencyInjection
         services.AddDNTCaptcha(options => options
             .UseCookieStorageProvider(SameSiteMode.Strict)
             .AbsoluteExpiration(minutes: 7)
-            .RateLimiterPermitLimit(20)
+            .RateLimiterPermitLimit(50)
             .WithRateLimiterRejectResponse("Rate limit exceeded")
             .WithNoise(0.015f, 0.015f, 1, 0.0f)
             .WithNonceKey("NETESCAPADES_NONCE")
