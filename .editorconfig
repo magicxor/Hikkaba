@@ -345,6 +345,15 @@ dotnet_diagnostic.CA1056.severity = suggestion
 # S3871: Make this exception 'public'.
 dotnet_diagnostic.S3871.severity = suggestion
 
+# AsyncFixer01: The method 'RunAfterAnyTestsAsync' does not need to use async/await.
+dotnet_diagnostic.AsyncFixer01.severity = none
+
+# SS033: Async overload available for DbSet.AddRange
+dotnet_diagnostic.SS033.severity = none
+
+# SS047: Unexpected collection traversal before Where() clause. Could the traversal be more efficient if filtering is performed first?
+dotnet_diagnostic.SS047.severity = suggestion
+
 # Function is not convertible to SQL and must not be called in the database context
 # Reason: false positive when using LinqKit
 resharper_entity_framework_unsupported_server_side_function_call_highlighting = none

@@ -80,6 +80,8 @@ public static class HtmlUtilities
                     case "br":
                         outText.Write(LineBreak);
                         break;
+                    default:
+                        break;
                 }
 
                 if (node.HasChildNodes)
@@ -87,6 +89,9 @@ public static class HtmlUtilities
                     ConvertContentTo(node, outText);
                 }
 
+                break;
+
+            default:
                 break;
         }
     }

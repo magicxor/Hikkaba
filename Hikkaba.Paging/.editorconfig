@@ -1,0 +1,3 @@
+[*.cs]
+## SS003: The operands in the divisive expression SkipCount / PageSize are both integers and result in an implicit rounding.
+dotnet_diagnostic.SS003.severity = none
