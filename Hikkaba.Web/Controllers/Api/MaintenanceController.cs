@@ -29,7 +29,8 @@ public sealed class MaintenanceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<bool> Migrate(string key, CancellationToken cancellationToken)
+    [IgnoreAntiforgeryToken]
+    public async Task<bool> Migrate([FromQuery] string key, CancellationToken cancellationToken)
     {
         return await _migrationService.MigrateAsync(key, cancellationToken);
     }
@@ -39,7 +40,8 @@ public sealed class MaintenanceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<bool> Seed(string key, CancellationToken cancellationToken)
+    [IgnoreAntiforgeryToken]
+    public async Task<bool> Seed([FromQuery] string key, CancellationToken cancellationToken)
     {
         return await _seedService.SeedAsync(key, cancellationToken);
     }
