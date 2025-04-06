@@ -17,7 +17,7 @@ namespace Hikkaba.Tests.Manual.Seed;
 internal sealed class Program
 {
     private static readonly Random Random = new();
-    private static readonly GuidGenerator GuidGenerator = new();
+    private static readonly GuidGenerator GuidGenerator = new(Random);
 
     public static async Task Main(string[] args)
     {

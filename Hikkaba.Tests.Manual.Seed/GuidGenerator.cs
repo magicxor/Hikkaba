@@ -4,9 +4,9 @@ internal sealed class GuidGenerator
 {
     private readonly Random _random;
 
-    public GuidGenerator(int seed = 420)
+    public GuidGenerator(Random random)
     {
-        _random = new Random(seed);
+        _random = random;
     }
 
     public Guid GenerateSeededGuid()

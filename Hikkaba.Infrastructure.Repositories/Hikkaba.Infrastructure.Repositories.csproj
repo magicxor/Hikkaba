@@ -13,4 +13,12 @@
       <ProjectReference Include="..\Hikkaba.Infrastructure.Models\Hikkaba.Infrastructure.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MR.EntityFrameworkCore.KeysetPagination" />
+      <PackageReference Include="MR.EntityFrameworkCore.KeysetPagination.Analyzers">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
 </Project>
