@@ -8,8 +8,6 @@ public class ThreadCreateRequestModel
 
     public required Guid BlobContainerId { get; set; }
 
-    public required bool IsSageEnabled { get; set; }
-
     public required string MessageHtml { get; set; }
 
     public required string MessageText { get; set; }

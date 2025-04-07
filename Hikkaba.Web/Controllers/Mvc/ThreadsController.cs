@@ -8,6 +8,7 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Extensions;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Services.Contracts;
@@ -103,14 +104,18 @@ public sealed class ThreadsController : BaseMvcController
                     return NotFound();
                 }
 
+                var messagePlainText = _messagePostProcessor.MessageToPlainText(viewModel.Message);
+                var threadTitle = string.IsNullOrWhiteSpace(viewModel.Title)
+                    ? messagePlainText.Cut(Defaults.MaxTitleLength)
+                    : viewModel.Title.Cut(Defaults.MaxTitleLength);
+
                 var threadCreateRm = new ThreadCreateRequestModel
                 {
                     CategoryAlias = category.Alias,
-                    ThreadTitle = viewModel.Title,
+                    ThreadTitle = threadTitle,
                     BlobContainerId = Guid.NewGuid(),
-                    IsSageEnabled = false,
                     MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, null, viewModel.Message),
-                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
+                    MessageText = messagePlainText,
                     UserIpAddress = UserIpAddressBytes,
                     UserAgent = UserAgent,
                 };

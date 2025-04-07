@@ -336,7 +336,7 @@ public class ThreadRepository : IThreadRepository
         {
             BlobContainerId = createRequestModel.BaseModel.BlobContainerId,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            IsSageEnabled = createRequestModel.BaseModel.IsSageEnabled,
+            IsSageEnabled = false,
             MessageText = createRequestModel.BaseModel.MessageText,
             MessageHtml = createRequestModel.BaseModel.MessageHtml,
             UserIpAddress = createRequestModel.BaseModel.UserIpAddress,

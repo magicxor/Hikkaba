@@ -17,6 +17,7 @@ using Hikkaba.Application.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Extensions;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.ViewModels.SearchViewModels;
@@ -99,10 +100,10 @@ public sealed class PostsController : BaseMvcController
                 {
                     BlobContainerId = Guid.NewGuid(),
                     IsSageEnabled = viewModel.IsSageEnabled,
-                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, viewModel.ThreadId, viewModel.Message),
-                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
+                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, viewModel.ThreadId, viewModel.Message).Cut(Defaults.MaxMessageHtmlLength),
+                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message).Cut(Defaults.MaxMessageLength),
                     UserIpAddress = UserIpAddressBytes,
-                    UserAgent = UserAgent,
+                    UserAgent = UserAgent.TryLeft(Defaults.MaxUserAgentLength),
                     CategoryAlias = categoryAlias,
                     ThreadId = viewModel.ThreadId,
                     MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
