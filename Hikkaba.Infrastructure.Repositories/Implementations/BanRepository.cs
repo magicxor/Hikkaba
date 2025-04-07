@@ -183,21 +183,6 @@ public sealed class BanRepository : IBanRepository
             threadPostCount = thread.PostCount;
         }
 
-        var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
-        var utcFiveMinutesAgo = utcNow.AddMinutes(-5);
-        var postsFromIpWithin5MinutesCount = await _applicationDbContext.Posts
-            .TagWithCallSite()
-            .IgnoreQueryFilters()
-            .Where(p => p.UserIpAddress == userIp && p.CreatedAt >= utcFiveMinutesAgo)
-            .CountAsync(cancellationToken);
-        if (postsFromIpWithin5MinutesCount >= _settings.Value.MaxPostsFromIpWithin5Minutes)
-        {
-            return new PostingRestrictionsResponseFailureModel
-            {
-                RestrictionType = PostingRestrictionType.RateLimitExceeded,
-            };
-        }
-
         var ban = await FindActiveBanAsync(new ActiveBanFilter
         {
             UserIpAddress = userIp,

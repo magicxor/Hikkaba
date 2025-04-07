@@ -9,33 +9,33 @@ namespace Hikkaba.Web.Utils;
 
 internal static class RateLimiterFactory
 {
-    public const int DefaultSegmentsPerWindow = 12;
+    private const int DefaultSegmentsPerWindow = 12;
 
-    public const int DefaultLimit = 100;
+    private const int DefaultLimit = 200;
 
-    public static readonly TimeSpan DefaultWindow = TimeSpan.FromMinutes(1);
+    private static readonly TimeSpan DefaultWindow = TimeSpan.FromMinutes(1);
 
-    public static readonly IReadOnlyList<EndpointRateLimit> DefaultEndpointRateLimits = new List<EndpointRateLimit>
-    {
+    public static readonly IReadOnlyList<EndpointRateLimit> DefaultEndpointRateLimits =
+    [
         new() { Path = "/api/v1/attachments", Method = HttpMethod.Get.Method, PartitionName = "attachments_GET", SlidingWindowOptions = CreateSlidingWindowOptions(3_600_000) },
         new() { Path = "/api/v1/maintenance", Method = HttpMethod.Post.Method, PartitionName = "maintenance_POST", SlidingWindowOptions = CreateSlidingWindowOptions(60) },
 
         new() { Path = "/Posts", Method = HttpMethod.Post.Method, PartitionName = "posts_POST", SlidingWindowOptions = CreateSlidingWindowOptions(10) },
-        new() { Path = "/Posts", Method = HttpMethod.Get.Method, PartitionName = "posts_GET", SlidingWindowOptions = CreateSlidingWindowOptions(100) },
+        new() { Path = "/Posts", Method = HttpMethod.Get.Method, PartitionName = "posts_GET", SlidingWindowOptions = CreateSlidingWindowOptions(200) },
 
-        new() { Path = "/Threads", Method = HttpMethod.Post.Method, PartitionName = "threads_POST", SlidingWindowOptions = CreateSlidingWindowOptions(6) },
-        new() { Path = "/Threads", Method = HttpMethod.Get.Method, PartitionName = "threads_GET", SlidingWindowOptions = CreateSlidingWindowOptions(100) },
+        new() { Path = "/Threads", Method = HttpMethod.Post.Method, PartitionName = "threads_POST", SlidingWindowOptions = CreateSlidingWindowOptions(10) },
+        new() { Path = "/Threads", Method = HttpMethod.Get.Method, PartitionName = "threads_GET", SlidingWindowOptions = CreateSlidingWindowOptions(200) },
 
-        new() { Path = "/Categories", Method = HttpMethod.Post.Method, PartitionName = "categories_POST", SlidingWindowOptions = CreateSlidingWindowOptions(5) },
-        new() { Path = "/Categories", Method = HttpMethod.Get.Method, PartitionName = "categories_GET", SlidingWindowOptions = CreateSlidingWindowOptions(100) },
-    };
+        new() { Path = "/Categories", Method = HttpMethod.Post.Method, PartitionName = "categories_POST", SlidingWindowOptions = CreateSlidingWindowOptions(15) },
+        new() { Path = "/Categories", Method = HttpMethod.Get.Method, PartitionName = "categories_GET", SlidingWindowOptions = CreateSlidingWindowOptions(200) },
+    ];
 
-    public static readonly SlidingWindowRateLimiterOptions DefaultSlidingWindowOptions = CreateSlidingWindowOptions(
+    private static readonly SlidingWindowRateLimiterOptions DefaultSlidingWindowOptions = CreateSlidingWindowOptions(
         permitLimit: DefaultLimit,
         window: DefaultWindow,
         segmentsPerWindow: DefaultSegmentsPerWindow);
 
-    public static SlidingWindowRateLimiterOptions CreateSlidingWindowOptions(
+    private static SlidingWindowRateLimiterOptions CreateSlidingWindowOptions(
         int permitLimit,
         TimeSpan? window = null,
         int segmentsPerWindow = DefaultSegmentsPerWindow)
@@ -50,7 +50,7 @@ internal static class RateLimiterFactory
         };
     }
 
-    public static RateLimitPartition<string> CreateSlidingRateLimitPartition(
+    private static RateLimitPartition<string> CreateSlidingRateLimitPartition(
         string partitionKey,
         SlidingWindowRateLimiterOptions slidingWindowOptions)
     {
@@ -73,11 +73,14 @@ internal static class RateLimiterFactory
                 if (method.Equals(endpointLimit.Method, StringComparison.Ordinal)
                     && path.StartsWith(endpointLimit.Path, StringComparison.Ordinal))
                 {
+                    // Console.WriteLine($"ROUTE MATCHED: Rate limit for {path} {method} is {endpointLimit.SlidingWindowOptions.PermitLimit} per {endpointLimit.SlidingWindowOptions.Window.TotalSeconds} seconds");
                     return CreateSlidingRateLimitPartition(
                         $"{httpContext.Connection.RemoteIpAddress}-{endpointLimit.PartitionName}",
                         endpointLimit.SlidingWindowOptions);
                 }
             }
+
+            // Console.WriteLine($"NO MATCH FOR ROUTE: Rate limit for {path} {method} is {DefaultSlidingWindowOptions.PermitLimit} per {DefaultSlidingWindowOptions.Window.TotalSeconds} seconds");
 
             return CreateSlidingRateLimitPartition(
                 $"{httpContext.Connection.RemoteIpAddress}",
