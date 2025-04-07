@@ -38,7 +38,7 @@ services:
     container_name: hikkaba.otel_collector.dev.local
     domainname: hikkaba.otel_collector.dev.local
     hostname: hikkaba.otel_collector.dev.local
-    image: "otel/opentelemetry-collector-contrib:latest"
+    image: "otel/opentelemetry-collector-contrib:0.123.0"
     ports:
       - "4317:4317" # OTLP gRPC receiver
       - "4318:4318" # OTLP http receiver
@@ -50,7 +50,7 @@ services:
     container_name: hikkaba.prometheus.dev.local
     domainname: hikkaba.prometheus.dev.local
     hostname: hikkaba.prometheus.dev.local
-    image: "prom/prometheus"
+    image: "prom/prometheus:v2.53.4"
     ports:
       - "9090:9090"
     volumes:
@@ -74,7 +74,7 @@ services:
     container_name: hikkaba.grafana.dev.local
     domainname: hikkaba.grafana.dev.local
     hostname: hikkaba.grafana.dev.local
-    image: "grafana/grafana"
+    image: "grafana/grafana:11.6.0"
     ports:
       - "3000:3000"
     volumes:
@@ -87,7 +87,7 @@ services:
       - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-exploretraces-app/grafana-exploretraces-app-latest.zip;grafana-traces-app
 
   minio:
-    image: quay.io/minio/minio:latest
+    image: quay.io/minio/minio:RELEASE.2025-04-03T14-56-28Z
     container_name: hikkaba.minio.dev.local
     hostname: hikkaba.minio.dev.local
     ports:
@@ -106,7 +106,7 @@ services:
       retries: 3
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3
     container_name: hikkaba.loki.dev.local
     hostname: hikkaba.loki.dev.local
     ports:
@@ -122,7 +122,7 @@ services:
         condition: service_healthy
 
   tempo:
-    image: grafana/tempo:latest
+    image: grafana/tempo:r195-4a113b0
     container_name: hikkaba.tempo.dev.local
     hostname: hikkaba.tempo.dev.local
     ports:
