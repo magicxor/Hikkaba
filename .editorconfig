@@ -354,6 +354,9 @@ dotnet_diagnostic.SS033.severity = none
 # SS047: Unexpected collection traversal before Where() clause. Could the traversal be more efficient if filtering is performed first?
 dotnet_diagnostic.SS047.severity = suggestion
 
+# CA1024: Use properties where appropriate
+dotnet_diagnostic.CA1024.severity = suggestion
+
 # Function is not convertible to SQL and must not be called in the database context
 # Reason: false positive when using LinqKit
 resharper_entity_framework_unsupported_server_side_function_call_highlighting = none

@@ -64,4 +64,6 @@ public class PostDetailsViewModel
 
     [Display(Name = @"Replies")]
     public required IReadOnlyList<long> Replies { get; set; }
+
+    public int GetAttachmentCount() => Audio.Count + Documents.Count + Pictures.Count + Video.Count;
 }
