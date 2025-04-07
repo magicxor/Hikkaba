@@ -2,7 +2,9 @@
 using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
+using Hikkaba.Shared.Extensions;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
@@ -17,10 +19,10 @@ public class AttachmentRepository : IAttachmentRepository
                 {
                     BlobId = f.BlobId,
                     AttachmentType = f.AttachmentType,
-                    FileNameWithoutExtension = f.FileNameWithoutExtension,
-                    FileExtension = f.FileExtension,
+                    FileNameWithoutExtension = f.FileNameWithoutExtension.TryLeft(Defaults.MaxFileNameLength),
+                    FileExtension = f.FileExtension.TryLeft(Defaults.MaxFileExtensionLength),
                     FileSize = f.FileSize,
-                    FileContentType = f.FileContentType,
+                    FileContentType = f.FileContentType.TryLeft(Defaults.MaxFileContentTypeLength),
                     FileHash = f.FileHash,
                 })
                 .ToList(),
@@ -29,10 +31,10 @@ public class AttachmentRepository : IAttachmentRepository
                 {
                     BlobId = f.BlobId,
                     AttachmentType = f.AttachmentType,
-                    FileNameWithoutExtension = f.FileNameWithoutExtension,
-                    FileExtension = f.FileExtension,
+                    FileNameWithoutExtension = f.FileNameWithoutExtension.TryLeft(Defaults.MaxFileNameLength),
+                    FileExtension = f.FileExtension.TryLeft(Defaults.MaxFileExtensionLength),
                     FileSize = f.FileSize,
-                    FileContentType = f.FileContentType,
+                    FileContentType = f.FileContentType.TryLeft(Defaults.MaxFileContentTypeLength),
                     FileHash = f.FileHash,
                 })
                 .ToList(),
@@ -42,10 +44,10 @@ public class AttachmentRepository : IAttachmentRepository
                 {
                     BlobId = f.BlobId,
                     AttachmentType = f.AttachmentType,
-                    FileNameWithoutExtension = f.FileNameWithoutExtension,
-                    FileExtension = f.FileExtension,
+                    FileNameWithoutExtension = f.FileNameWithoutExtension.TryLeft(Defaults.MaxFileNameLength),
+                    FileExtension = f.FileExtension.TryLeft(Defaults.MaxFileExtensionLength),
                     FileSize = f.FileSize,
-                    FileContentType = f.FileContentType,
+                    FileContentType = f.FileContentType.TryLeft(Defaults.MaxFileContentTypeLength),
                     FileHash = f.FileHash,
                     Width = f.Width,
                     Height = f.Height,
@@ -56,10 +58,10 @@ public class AttachmentRepository : IAttachmentRepository
                 {
                     BlobId = f.BlobId,
                     AttachmentType = f.AttachmentType,
-                    FileNameWithoutExtension = f.FileNameWithoutExtension,
-                    FileExtension = f.FileExtension,
+                    FileNameWithoutExtension = f.FileNameWithoutExtension.TryLeft(Defaults.MaxFileNameLength),
+                    FileExtension = f.FileExtension.TryLeft(Defaults.MaxFileExtensionLength),
                     FileSize = f.FileSize,
-                    FileContentType = f.FileContentType,
+                    FileContentType = f.FileContentType.TryLeft(Defaults.MaxFileContentTypeLength),
                     FileHash = f.FileHash,
                 })
                 .ToList(),
