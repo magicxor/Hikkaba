@@ -33,14 +33,14 @@
 
         <!-- Post created at -->
         <div class="post-header-flex-item">
-          <code>@Html.DisplayFor(model => model.CreatedAt)</code>
+          @Html.DisplayFor(model => model.CreatedAt)
         </div>
 
         <!-- Post modified at -->
         @if (Model.ModifiedAt.HasValue)
         {
           <div class="post-header-flex-item">
-            <span class="font-monospace">[</span><code><i class="bi bi-pencil" aria-hidden="true"></i>@Html.DisplayFor(model => model.ModifiedAt)</code><span class="font-monospace">]</span>
+            <span class="font-monospace">[</span><i class="bi bi-pencil" aria-hidden="true"></i>@Html.DisplayFor(model => model.ModifiedAt)<span class="font-monospace">]</span>
           </div>
         }
 
