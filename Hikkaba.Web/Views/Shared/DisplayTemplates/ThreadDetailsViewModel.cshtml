@@ -19,12 +19,17 @@
           @if (Model.IsPinned)
           {
             <span>&nbsp;</span>
-            <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+            <i class="bi bi-pin"></i>
           }
           @if (Model.IsClosed)
           {
             <span>&nbsp;</span>
-            <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+            <i class="bi bi-lock"></i>
+          }
+          @if (Model.IsCyclic)
+          {
+            <span>&nbsp;</span>
+            <i class="bi bi-infinity"></i>
           }
         </h4>
         @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))

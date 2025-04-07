@@ -16,6 +16,8 @@ public class ThreadPreviewModel
     public required string Title { get; set; }
     public required bool IsPinned { get; set; }
     public required bool IsClosed { get; set; }
+
+    public required bool IsCyclic { get; set; }
     public required int BumpLimit { get; set; }
     public required bool ShowThreadLocalUserHash { get; set; }
 

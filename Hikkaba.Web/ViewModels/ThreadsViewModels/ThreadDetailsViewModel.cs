@@ -27,6 +27,9 @@ public class ThreadDetailsViewModel
     [Display(Name = @"Is closed")]
     public required bool IsClosed { get; set; }
 
+    [Display(Name = @"Is cyclic")]
+    public required bool IsCyclic { get; set; }
+
     [Display(Name = @"Bump limit")]
     public required int BumpLimit { get; set; }
 

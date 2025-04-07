@@ -18,6 +18,8 @@ public class ThreadDetailsRequestModel
 
     public required bool IsClosed { get; set; }
 
+    public required bool IsCyclic { get; set; }
+
     public required int BumpLimit { get; set; }
 
     public required bool ShowThreadLocalUserHash { get; set; }
