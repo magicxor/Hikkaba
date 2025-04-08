@@ -120,6 +120,18 @@ public sealed class ThreadsController : BaseMvcController
                     UserAgent = UserAgent,
                 };
 
+                if (threadCreateRm.MessageText.Length > Defaults.MaxMessageLength)
+                {
+                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageLength} characters.");
+                    return View(viewModel);
+                }
+
+                if (threadCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
+                {
+                    ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
+                    return View(viewModel);
+                }
+
                 var createThreadResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
 
                 _logger.LogDebug(LogEventIds.ThreadCreated, "Thread created. ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", createThreadResult.ThreadId, category.Alias);
