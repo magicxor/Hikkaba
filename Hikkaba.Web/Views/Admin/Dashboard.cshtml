@@ -1,0 +1,64 @@
+@using Hikkaba.Web.ViewModels.AdministrationViewModels
+@using Hikkaba.Web.ViewModels.CategoriesViewModels
+@model Hikkaba.Web.ViewModels.AdministrationViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Administration";
+}
+
+<h2 class="text-center">@Html.DisplayNameFor(model => model.Board)</h2>
+
+<table class="table table-bordered">
+  <thead>
+  <tr>
+    <th class="text-center">@Html.DisplayNameFor(model => model.Board)</th>
+    <th class="text-center">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td class="text-center">@Html.DisplayFor(model => model.Board.Name)</td>
+    <td class="text-center">@Html.RouteLink("Edit", "BoardEdit", new { id = Model.Board.Id }, new { @class = "decoration-on-hover" })</td>
+  </tr>
+  </tbody>
+</table>
+
+<h2 class="text-center">Categories</h2>
+
+<div class="mb-2">
+  @Html.RouteLink("Create new category", "CategoryCreate", new {}, new { @class = "decoration-on-hover" })
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Alias)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Name)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.DefaultBumpLimit)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.MaxThreadCount)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowThreadLocalUserHash)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowCountry)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowOs)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowBrowser)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.IsHidden)</th>
+            <th class="text-center">@Html.DisplayNameForInnerType((DashboardViewModel dashboard) => dashboard.CategoriesModerators)</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @Html.DisplayFor(model => model.CategoriesModerators)
+    </tbody>
+</table>
+
+<h2 class="text-center">
+  @Html.RouteLink("Users", "UserIndex", new {}, new { @class = "decoration-on-hover" })
+</h2>
+<hr />
+
+<h2 class="text-center">
+  @Html.RouteLink("Bans", "BanIndex", new {}, new { @class = "decoration-on-hover" })
+</h2>
+<hr />
+
+<h2 class="text-center">@Html.DisplayNameFor(model => model.SystemInfo)</h2>
+@Html.DisplayFor(model => model.SystemInfo)

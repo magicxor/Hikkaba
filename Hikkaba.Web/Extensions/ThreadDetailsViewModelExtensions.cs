@@ -7,9 +7,8 @@ internal static class ThreadDetailsViewModelExtensions
 {
     public static string? GetUri(this ThreadDetailsViewModel threadDetailsViewModel, IUrlHelper urlHelper)
     {
-        return urlHelper.Action(
-            "Details",
-            "Threads",
+        return urlHelper.RouteUrl(
+            "ThreadDetails",
             new
             {
                 categoryAlias = threadDetailsViewModel.CategoryAlias,

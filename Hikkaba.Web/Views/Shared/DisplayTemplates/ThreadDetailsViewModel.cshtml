@@ -37,7 +37,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="btn-group thread-moderation-panel" role="group">
-                <form asp-controller="Threads" asp-action="SetIsPinned" method="post" class="display-inline">
+                <form asp-route="ThreadSetIsPinned" method="post" class="display-inline">
                   <input name="threadId" type="hidden" value="@Model.Id"/>
                   <input name="isPinned" type="hidden" value="@((!Model.IsPinned).ToString())"/>
                   <button type="submit" class="btn btn-primary">
@@ -45,7 +45,7 @@
                     @(Model.IsPinned ? "Unpin" : "Pin")
                   </button>
                 </form>
-                <form asp-controller="Threads" asp-action="SetIsClosed" method="post" class="display-inline">
+                <form asp-route="ThreadSetIsClosed" method="post" class="display-inline">
                   <input name="threadId" type="hidden" value="@Model.Id"/>
                   <input name="isClosed" type="hidden" value="@((!Model.IsClosed).ToString())"/>
                   <button type="submit" class="btn btn-warning">
@@ -53,7 +53,7 @@
                     @(Model.IsClosed ? "Open" : "Close")
                   </button>
                 </form>
-                <form asp-controller="Threads" asp-action="SetIsDeleted" method="post" class="display-inline">
+                <form asp-route="ThreadSetIsDeleted" method="post" class="display-inline">
                   <input name="threadId" type="hidden" value="@Model.Id"/>
                   <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
                   <button type="submit" class="btn btn-danger">

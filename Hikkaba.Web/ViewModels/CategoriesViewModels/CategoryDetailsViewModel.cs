@@ -29,19 +29,19 @@ public class CategoryDetailsViewModel
     [Display(Name = @"Default bump limit")]
     public required int DefaultBumpLimit { get; set; }
 
-    [Display(Name = @"Show thread-local user hash")]
+    [Display(Name = @"Show hash")]
     public required bool ShowThreadLocalUserHash { get; set; }
 
-    [Display(Name = @"Show user country")]
+    [Display(Name = @"Show country")]
     public required bool ShowCountry { get; set; }
 
-    [Display(Name = @"Show user OS")]
+    [Display(Name = @"Show OS")]
     public required bool ShowOs { get; init; }
 
-    [Display(Name = @"Show user browser")]
+    [Display(Name = @"Show browser")]
     public required bool ShowBrowser { get; init; }
 
-    [Display(Name = @"Max thread count in category")]
+    [Display(Name = @"Max thread count")]
     public required int MaxThreadCount { get; set; }
 
     [Display(Name = @"Board id")]

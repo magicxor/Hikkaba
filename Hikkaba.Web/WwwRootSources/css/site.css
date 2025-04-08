@@ -53,11 +53,11 @@ span.visible-line-breaks pre {
     background-color: inherit !important;
 }
 
-a.decoration-on-hover, .post-msg-text > a {
+.decoration-on-hover, .post-msg-text > a {
     text-decoration: none;
 }
 
-a.decoration-on-hover:hover, a.decoration-on-hover:focus, .post-msg-text > a:hover, .post-msg-text > a:focus {
+.decoration-on-hover:hover, .decoration-on-hover:focus, .post-msg-text > a:hover, .post-msg-text > a:focus {
     text-decoration: underline;
 }
 

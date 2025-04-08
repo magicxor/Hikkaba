@@ -33,7 +33,8 @@ internal class SetAuthenticatedUserMiddleware
 
             if (userIdStr is not null
                 && userName is not null
-                && int.TryParse(userIdStr, CultureInfo.InvariantCulture, out var userId))
+                && int.TryParse(userIdStr, CultureInfo.InvariantCulture, out var userId)
+                && authenticatedUserService.GetUser() is null)
             {
                 var moderatedCategories = await applicationDbContext.CategoriesToModerators
                     .Where(mc => mc.ModeratorId == userId)

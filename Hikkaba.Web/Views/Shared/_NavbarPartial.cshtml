@@ -21,9 +21,9 @@
                       var category = categories[index];
                       @if (index > 0)
                       {
-                        @("/")
+                        @(" / ")
                       }
-                      <a class="decoration-on-hover" href="@Url.Action("Details", "Categories", new { categoryAlias = category.Alias })">@category.Alias</a>
+                      @Html.RouteLink(category.Alias, "CategoryDetails", new { categoryAlias = category.Alias }, new { @class = "decoration-on-hover" })
                     }
                 }
                 ]
@@ -35,7 +35,7 @@
                     @if (User.IsInRole(Defaults.AdministratorRoleName))
                     {
                         @("|")
-                        <a class="decoration-on-hover" asp-action="Index" asp-controller="Administration" title="Administration">Administration</a>
+                        <a class="decoration-on-hover" asp-route="AdminDashboard" title="Administration">Administration</a>
                     }
                     @("|")
                     <form class="display-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

@@ -16,6 +16,7 @@ public static class Defaults
 
     public const string AdministratorUserName = "Administrator";
     public const string AdministratorRoleName = "administrator";
+    public const string ModeratorRoleName = "moderator";
 
     public const int MaxNameLength = 100;
     public const int MaxEmailLength = 100;

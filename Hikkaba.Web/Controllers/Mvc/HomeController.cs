@@ -10,10 +10,12 @@ using Hikkaba.Application.Contracts;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.HomeViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
+[AllowAnonymous]
 public sealed class HomeController : Controller
 {
     private readonly ICategoryService _categoryService;

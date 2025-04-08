@@ -54,6 +54,8 @@
 
 
   <ItemGroup>
+    <Folder Include="Views\BanAdmin\EditorTemplates\" />
+    <Folder Include="Views\PostAdmin\" />
     <Folder Include="WwwRootSources\" />
   </ItemGroup>
 
@@ -67,6 +69,18 @@
     <Content Include="GeoIp\GeoLite2-ASN.mmdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\CategoryAnon\EditorTemplates\CategoryCreateViewModel.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\CategoryAnon\EditorTemplates\CategoryEditViewModel.cshtml" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <AdditionalFiles Include="Views\CategoryAdmin\EditorTemplates\CategoryCreateViewModel.cshtml" />
+    <AdditionalFiles Include="Views\CategoryAdmin\EditorTemplates\CategoryEditViewModel.cshtml" />
   </ItemGroup>
 
 </Project>

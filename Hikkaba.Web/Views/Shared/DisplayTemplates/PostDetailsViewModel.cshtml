@@ -1,3 +1,4 @@
+@using Azure.Core
 @using Hikkaba.Shared.Constants
 @using Hikkaba.Shared.Extensions
 @using Hikkaba.Shared.Services.Contracts
@@ -78,14 +79,13 @@
       <div class="row">
         <div class="col-md-12">
           <div class="d-grid gap-2 d-md-block thread-moderation-panel" role="group">
-            <form asp-controller="Posts" asp-action="Edit" asp-route-categoryAlias="@Model.CategoryAlias"
-                  asp-route-threadId="@Model.ThreadId" asp-route-postId="@Model.Id" method="get" class="display-inline">
+            <form asp-route="PostEdit" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.ThreadId" asp-route-postId="@Model.Id" method="get" class="display-inline">
               <button type="submit" class="btn btn-outline-primary">
                 <i class="bi bi-pencil" aria-hidden="true"></i>
                 @("Edit")
               </button>
             </form>
-            <form asp-controller="Posts" asp-action="SetIsDeleted" method="post" class="display-inline">
+            <form asp-route="PostSetIsDeleted" method="post" class="display-inline">
               <input name="postId" type="hidden" value="@Model.Id"/>
               <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
               <button type="submit" class="btn btn-outline-danger">
@@ -93,7 +93,7 @@
                 @(Model.IsDeleted ? "Restore" : "Delete")
               </button>
             </form>
-            <form asp-controller="Bans" asp-action="Create" method="get" class="display-inline">
+            <form asp-route="BanCreate" method="get" class="display-inline">
               <input type="hidden" id="categoryAlias" name="categoryAlias" value="@Model.CategoryAlias"/>
               <input type="hidden" id="threadId" name="threadId" value="@Model.ThreadId"/>
               <input type="hidden" id="postId" name="postId" value="@Model.Id"/>
@@ -131,10 +131,17 @@
     <div class="card-footer">
       <ul class="list-inline m-0">
         <li class="list-inline-item">@Html.DisplayNameFor(model => model.Replies):</li>
-        @foreach (var reply in Model.Replies)
+        @foreach (var replyId in Model.Replies)
         {
           <li class="list-inline-item">
-            <a class="decoration-on-hover" href="@Url.Action("Details", "Threads", new { categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId })#@(reply.ToString())">&gt;&gt;@(reply.ToString())</a>
+            @Html.RouteLink(
+              $">>{replyId}",
+              "ThreadDetails",
+              null,
+              null,
+              replyId.ToString(),
+              new { categoryAlias = Model.CategoryAlias, threadId = Model.ThreadId },
+              new {@class="decoration-on-hover"})
           </li>
         }
       </ul>

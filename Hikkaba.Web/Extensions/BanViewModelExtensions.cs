@@ -7,13 +7,15 @@ internal static class BanViewModelExtensions
 {
     public static string? GetUri(this BanViewModel banViewModel, IUrlHelper urlHelper)
     {
-        return urlHelper.Action(
-            "Details",
-            "Threads",
+        return urlHelper.RouteUrl(
+            "ThreadDetails",
             new
             {
                 categoryAlias = banViewModel.CategoryAlias,
                 threadId = banViewModel.RelatedThreadId,
-            }) + "#" + banViewModel.RelatedPostId;
+            },
+            protocol: null,
+            host: null,
+            fragment: $"{banViewModel.RelatedPostId}");
     }
 }

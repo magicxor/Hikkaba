@@ -2,12 +2,15 @@ using System.Net;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Shared.Exceptions;
 using Hikkaba.Shared.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
+[AllowAnonymous]
+[Route("error")]
 public sealed class ErrorController : Controller
 {
     private const string DefaultErrorMessage = "Something went wrong";

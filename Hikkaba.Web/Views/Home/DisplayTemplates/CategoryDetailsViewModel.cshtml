@@ -3,7 +3,7 @@
 <div class="col">
   <div class="list-item">
     <b>
-      <a class="decoration-on-hover" href="@Url.Action("Details", "Categories", new {categoryAlias = Model.Alias})">/@Model.Alias - @Model.Name</a>
+      @Html.RouteLink($"/{Model.Alias} - {Model.Name}", "CategoryDetails", new { categoryAlias = Model.Alias }, new { @class = "decoration-on-hover" })
     </b>
   </div>
 </div>

@@ -60,9 +60,8 @@ public partial class MessagePostProcessor : IMessagePostProcessor
     private string ReplacePostLinksWithBbCodeUrl(string categoryAlias, long threadId, string text)
     {
         using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
-        var threadUri = _urlHelper.Action(
-            "Details",
-            "Threads",
+        var threadUri = _urlHelper.RouteUrl(
+            "ThreadDetails",
             new
             {
                 categoryAlias = categoryAlias,

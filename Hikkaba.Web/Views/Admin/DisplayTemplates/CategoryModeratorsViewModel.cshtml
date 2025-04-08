@@ -1,0 +1,37 @@
+﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.CategoryModeratorsViewModel
+
+@{
+  var colorClass = Model.Category switch
+  {
+    { IsDeleted: true } => "table-danger",
+    { IsHidden: true } => "table-warning",
+    { ShowThreadLocalUserHash: true } => "table-info",
+    _ => "",
+  };
+}
+
+<tr class="@(colorClass)">
+    <td class="text-center">@Model.Category.Alias</td>
+    <td class="text-center">@Model.Category.Name</td>
+    <td class="text-center">@Model.Category.DefaultBumpLimit</td>
+    <td class="text-center">@Model.Category.MaxThreadCount</td>
+    <td class="text-center">@Html.DisplayFor(model => model.Category.ShowThreadLocalUserHash)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.Category.ShowCountry)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.Category.ShowOs)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.Category.ShowBrowser)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.Category.IsHidden)</td>
+    <td>
+        @(string.Join(", ", Model.Moderators.Select(m => m.UserName)))
+    </td>
+    <td>
+      @Html.RouteLink("Add moderator", "CategoryAddModerator", new { categoryAlias = Model.Category.Alias }, new { @class = "decoration-on-hover" })
+      | @Html.RouteLink("Remove moderator", "CategoryRemoveModerator", new { categoryAlias = Model.Category.Alias }, new { @class = "decoration-on-hover" })
+      | @Html.RouteLink("Edit", "CategoryEdit", new { categoryAlias = Model.Category.Alias }, new { @class = "decoration-on-hover" })
+      |
+      <form class="display-inline" asp-route="CategorySetIsDeleted">
+        <input type="hidden" name="id" value="@Model.Category.Id"/>
+        <input type="hidden" name="isDeleted" value="@((!Model.Category.IsDeleted).ToString())"/>
+        <button type="submit" class="btn btn-link button-link-inline p-0 align-baseline link-primary decoration-on-hover">@(Model.Category.IsDeleted ? "Restore" : "Delete")</button>
+      </form>
+    </td>
+</tr>

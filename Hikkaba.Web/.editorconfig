@@ -10,3 +10,6 @@ dotnet_diagnostic.CA2227.severity = suggestion
 
 # CA1054: Change the type of parameter 'returnUrl' of method 'ExternalLoginModel.OnPost(string, [string])' from 'string' to 'System.Uri', or provide an overload to 'ExternalLoginModel.OnPost(string, [string])' that allows 'returnUrl' to be passed as a 'System.Uri' object
 dotnet_diagnostic.CA1054.severity = suggestion
+
+# S6931: Change the paths of the actions of this controller to be relative and adapt the controller route accordingly.
+dotnet_diagnostic.S6931.severity = suggestion

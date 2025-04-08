@@ -5,15 +5,17 @@ namespace Hikkaba.Web.Extensions;
 
 internal static class PostDetailsViewModelExtensions
 {
-    public static string GetUri(this PostDetailsViewModel postDetailsViewModel, IUrlHelper urlHelper)
+    public static string? GetUri(this PostDetailsViewModel postDetailsViewModel, IUrlHelper urlHelper)
     {
-        return urlHelper.Action(
-            "Details",
-            "Threads",
+        return urlHelper.RouteUrl(
+            "ThreadDetails",
             new
             {
                 categoryAlias = postDetailsViewModel.CategoryAlias,
                 threadId = postDetailsViewModel.ThreadId,
-            }) + "#" + postDetailsViewModel.Id;
+            },
+            protocol: null,
+            host: null,
+            fragment: $"{postDetailsViewModel.Id}");
     }
 }
