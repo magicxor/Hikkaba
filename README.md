@@ -1,53 +1,92 @@
-Hikkaba [pre-alpha]
-![Azure deploy](https://github.com/magicxor/Hikkaba/workflows/Azure%20deploy/badge.svg)
+Hikkaba [Pre-alpha]
+
 =====
 
-Hikkaba is an imageboard written in ASP.NET Core and Entity Framework with minimal JavaScript usage.
-
+Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, designed with minimal JavaScript usage.
 
 Features
 ========
 
-- [x] Multiple files per post
+### Core Functionality
+- [x] **Multiple files per post:** Supports attaching various file types:
    * Audio
    * Video
    * Pictures
    * Documents
-- [x] Thumbnail generation ([ImageSharp](https://github.com/JimBobSquarePants/ImageSharp))
-- [x] BBCode markup support ([Codekicker.BBCode](https://archive.codeplex.com/?p=bbcode))
-   * b, i, u, s, pre, sub, sup, spoiler, quote BBCodes are availiable
-   * `>>postId` - a link to the post in the current thread
-- [x] SAGE support
-- [x] URI detection
-   * http://, https://, ftp:// links autodetection
-- [x] Captcha ([DNTCaptcha.Core](https://github.com/VahidN/DNTCaptcha.Core))
-- [x] Server-side paging ([Sakura.AspNetCore.PagedList](https://github.com/sgjsakura/AspNetCore))
-- [x] Thread-local user hashes (can be enabled for each thread separately)
-- [x] Search
-- [x] Display a datetime in the current user timezone ([Moment.js](http://momentjs.com/))
-- [x] Support for multiple file storage engines ([20|20 Storage](https://github.com/2020IP/TwentyTwenty.Storage))
-   * Local File System Storage (enabled by default)
+- [x] **SAGE support:** Prevents thread bumping on reply.
+- [x] **Search:** Allows full-text searching through posts.
+- [x] **Server-side paging:** Efficiently handles navigation through category indexes ([Sakura.AspNetCore.PagedList](https://github.com/sgjsakura/AspNetCore)).
+- [x] **Thread-local user hashes:** Option to display unique user identifiers per thread.
+- [x] **Timezone display:** Shows post datetimes adjusted to the current user's timezone ([Moment.js](http://momentjs.com/)).
+- [x] **Docker support:** Ready for containerized deployment.
+- [ ] Archive old threads
+- [ ] API for third-party integration
+- [ ] Localization (multi-language support)
+- [ ] Fetch new replies automatically
+- [ ] User-created boards
+- [ ] Virtual `/all` category (shows threads from all non-hidden categories)
+- [ ] Tor and I2P network support
+
+### Content & Formatting
+- [x] **Thumbnail generation:** Creates thumbnails for image and video files ([ImageSharp](https://github.com/SixLabors/ImageSharp)).
+- [x] **BBCode markup:** Supports common formatting tags ([BBCodeParser](https://github.com/quilin/BBCodeParser)):
+   * `[b]`, `[i]`, `[u]`, `[s]`, `[code]`, `[sub]`, `[sup]`, `[spoiler]`, `[quote]`
+   * `>>postId` - Creates a link to another post within the same thread.
+- [x] **URI detection:** Automatically converts `http://`, `https://`, and `ftp://` links.
+- [x] Post backlink display (shows replies to a post)
+- [ ] Media gallery view
+- [ ] Embedding content from YouTube, Vimeo, Coub, Twitter, Instagram, etc.
+- [ ] Detection of duplicate attachments within a thread
+- [ ] Tripcodes
+- [ ] Visual style/theme switching
+- [ ] Post reactions (e.g., likes, dislikes, etc.)
+- [ ] Display country flags for posters (using GeoIP)
+- [ ] Display user agent icons (e.g. browser type or OS type)
+- [ ] Post highlighting via unique ID click
+- [ ] Truncate long messages by line count
+
+### Storage
+- [x] **Multiple storage backends:** Flexible file storage options via [20|20 Storage](https://github.com/2020IP/TwentyTwenty.Storage):
+   * Local File System (default)
    * Azure Blob Storage
    * Amazon S3
    * Google Cloud Storage
-- [x] Administration panel [in progress]
-- [x] Сategory specific moderators [in progress]
-- [x] Moderation functions [in progress]
-- [x] Ban system - by IP or IP range [in progress]
-- [ ] Custom file size limit
-- [ ] Custom post size limit
-- [x] Custom attachment count limit
-- [ ] Identity lockout
-- [ ] Custom maximum number of threads per category
-- [ ] Archive old threads
-- [ ] Media gallery
-- [ ] API
-- [ ] Embedding of youtube, vimeo, coub, twitter, instagram objects
-- [ ] Detection of attachment duplicates per thread
-- [ ] Image compression
-- [ ] Custom primary key type (guid/long/int/etc) [in progress]
-- [x] Docker
 
+### Moderation & Administration
+- [x] **Captcha:** Protects against automated posting ([DNTCaptcha.Core](https://github.com/VahidN/DNTCaptcha.Core)).
+- [x] Administration panel (In Progress)
+- [x] Per-category moderator assignments (In Progress)
+- [x] Moderation functions (In Progress)
+- [x] **Ban system:** Supports banning by IP address or range (In Progress).
+  * Board-wide or category-specific bans.
+  * Options for post deletion upon banning: single post, all posts in the category, or all posts board-wide.
+- [x] **Thread locking:** Prevents further replies.
+- [x] **Thread stickying:** Pins threads to the top.
+- [ ] Identity lockout (Account security feature)
+- [ ] Two-factor authentication (TOTP)
+- [ ] Passcodes (user captcha bypass)
+- [ ] Delete posts via password
+- [ ] Report posts
+- [ ] DNSBL integration (spam prevention)
+- [ ] Move threads between boards
+- [ ] Modlog (audit trail for staff actions)
+- [ ] Wordfilter (regex support, configurable actions: replace, hide, deny)
+- [ ] Checksum-based attachment filter
+
+### Limits & Configuration
+- [x] Custom attachment count limit per post.
+- [x] Maximum size per individual file attachment
+- [x] Maximum total size of all attachments per post
+- [x] Custom maximum number of threads per category
+- [x] Allowed file extensions filter
+- [x] Bump limit (per category and/or per thread)
+- [x] Cycling thread mode (deletes old posts when limit is reached)
+
+### Observability
+- [x] Metrics
+- [x] Tracing
+- [x] Structured Logging
+- [x] Health Checks
 
 Screenshots
 ========
