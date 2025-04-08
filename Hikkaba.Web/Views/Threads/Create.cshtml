@@ -28,7 +28,7 @@
 
       <div class="mb-2 form-group">
         <label asp-for="Message" class="form-label"></label>
-        <textarea asp-for="Message" class="form-control" rows="5"></textarea>
+        <textarea asp-for="Message" class="form-control" rows="5" maxlength="@(Defaults.MaxMessageLength)"></textarea>
         <span asp-validation-for="Message" class="text-danger"></span>
       </div>
 
