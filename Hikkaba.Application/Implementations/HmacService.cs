@@ -3,6 +3,7 @@ using System.Text;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Telemetry;
 using Hikkaba.Infrastructure.Models.Configuration;
+using Hikkaba.Shared.Constants;
 using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Application.Implementations;
@@ -44,6 +45,21 @@ public class HmacService : IHmacService
         if (string.IsNullOrWhiteSpace(password))
         {
             throw new ArgumentException("Password part cannot be empty", nameof(input));
+        }
+
+        if (password.Length < Defaults.MinPasswordLength)
+        {
+            throw new ArgumentException($"Password must be at least {Defaults.MinPasswordLength} characters", nameof(input));
+        }
+
+        if (password.Length > Defaults.MaxPasswordLength)
+        {
+            throw new ArgumentException($"Password part cannot exceed {Defaults.MaxPasswordLength} characters", nameof(input));
+        }
+
+        if (name.Length > Defaults.MaxNameLength)
+        {
+            throw new ArgumentException($"Name part cannot exceed {Defaults.MaxNameLength} characters", nameof(input));
         }
 
         var tripCodeSalt = _options.Value.TripCodeSalt;

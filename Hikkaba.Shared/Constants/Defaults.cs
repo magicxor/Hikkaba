@@ -17,6 +17,10 @@ public static class Defaults
     public const string AdministratorUserName = "Administrator";
     public const string AdministratorRoleName = "administrator";
 
+    public const int MaxNameLength = 100;
+    public const int MaxEmailLength = 100;
+    public const int MinPasswordLength = 8;
+    public const int MaxPasswordLength = 100;
     public const int MaxIpAddressStringLength = 50;
     public const int MaxIpAddressBytesLength = 16;
     public const int MaxUserAgentLength = 500;
