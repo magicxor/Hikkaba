@@ -69,3 +69,7 @@ a.decoration-on-hover:hover, a.decoration-on-hover:focus, .post-msg-text > a:hov
     width: 100%;
     max-width: 100%;
 }
+
+.inherit-color {
+    color: inherit;
+}

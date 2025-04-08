@@ -6,7 +6,13 @@
     ViewData["Title"] = $"{Model.Title} - {Model.CategoryName}";
 }
 
-<h2 class="text-center m-3">/@Model.CategoryAlias - @Model.CategoryName</h2>
+<h2 class="text-center m-3">
+  @Html.RouteLink(
+    $"/{Model.CategoryAlias} - {Model.CategoryName}",
+    "CategoryDetails",
+    new { categoryAlias = Model.CategoryAlias },
+    new { @class = "inherit-color decoration-on-hover" })
+</h2>
 
 @Html.DisplayFor(model => model)
 

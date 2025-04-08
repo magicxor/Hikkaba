@@ -3,13 +3,22 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadAnonymousCreateViewModel
 @{
-    ViewData["Title"] = $"New thread in /{Model.CategoryAlias} - «{Model.CategoryName}»";
+    var pageTitle = $"New thread in /{Model.CategoryAlias} - «{Model.CategoryName}»";
+    ViewData["Title"] = pageTitle;
 }
 
 <div class="row">
   <div class="col-md-8 offset-md-1">
     <form asp-controller="Threads" asp-action="Create" asp-route-categoryAlias="@Model.CategoryAlias" method="post" class="form-horizontal" enctype="multipart/form-data">
-      <h4 class="m-3">@ViewData["Title"]</h4>
+      <h4 class="m-3">
+        @(pageTitle)
+      </h4>
+
+      <p class="ms-3">
+        <a class="decoration-on-hover" href="@Url.RouteUrl("CategoryDetails", new { categoryAlias = Model.CategoryAlias })">
+          <i class="fas fa-angle-left"></i> Back to category
+        </a>
+      </p>
 
       <hr />
 

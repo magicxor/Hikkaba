@@ -39,7 +39,7 @@ public sealed class CategoriesController : BaseMvcController
 
     [AllowAnonymous]
     [HttpGet]
-    [Route("{categoryAlias}")]
+    [Route("{categoryAlias}", Name = "CategoryDetails")]
     public async Task<IActionResult> Details(
         [Required][FromRoute] string categoryAlias,
         [FromQuery][Range(1, int.MaxValue)] int page = 1,
