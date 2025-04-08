@@ -17,6 +17,7 @@ using Hikkaba.Application.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Exceptions;
 using Hikkaba.Shared.Extensions;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Services.Contracts;
@@ -100,14 +101,26 @@ public sealed class PostsController : BaseMvcController
                 {
                     BlobContainerId = Guid.NewGuid(),
                     IsSageEnabled = viewModel.IsSageEnabled,
-                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, viewModel.ThreadId, viewModel.Message).Cut(Defaults.MaxMessageHtmlLength),
-                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message).Cut(Defaults.MaxMessageLength),
+                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, viewModel.ThreadId, viewModel.Message),
+                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
                     UserIpAddress = UserIpAddressBytes,
                     UserAgent = UserAgent.TryLeft(Defaults.MaxUserAgentLength),
                     CategoryAlias = categoryAlias,
                     ThreadId = viewModel.ThreadId,
                     MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
                 };
+
+                if (postCreateRm.MessageText.Length > Defaults.MaxMessageLength)
+                {
+                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageLength} characters.");
+                    return View(viewModel);
+                }
+
+                if (postCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
+                {
+                    ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
+                    return View(viewModel);
+                }
 
                 var postId = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments ?? new FormFileCollection(), cancellationToken);
 

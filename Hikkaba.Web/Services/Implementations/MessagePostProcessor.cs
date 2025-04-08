@@ -34,7 +34,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
     [GeneratedRegex(@"\u000D\u000A|\u000A|\u000B|\u000C|\u000D|\u0085|\u2028|\u2029", RegexOptions.Compiled, 500)]
     private static partial Regex GetReplaceLineTerminatorsRegex();
 
-    [GeneratedRegex(@"(\u000D\u000A){3,}", RegexOptions.Compiled, 500)]
+    [GeneratedRegex(@"(\u000D\u000A|\u000A){3,}", RegexOptions.Compiled, 500)]
     private static partial Regex GetLimitLineTerminatorCountRegex();
 
     [GeneratedRegex(@">>([0-9]+)", RegexOptions.Compiled, 500)]
@@ -74,13 +74,13 @@ public partial class MessagePostProcessor : IMessagePostProcessor
     private static string NormalizeLineBreaks(string text)
     {
         using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
-        return ReplaceLineTerminatorsRegex.Replace(text, "\r\n");
+        return ReplaceLineTerminatorsRegex.Replace(text, "\n");
     }
 
     private static string LimitLineBreaksCount(string text)
     {
         using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
-        return LimitLineTerminatorCountRegex.Replace(text, "\r\n\r\n");
+        return LimitLineTerminatorCountRegex.Replace(text, "\n\n");
     }
 
     public string MessageToSafeHtml(string categoryAlias, long? threadId, string text)

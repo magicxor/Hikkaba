@@ -16,7 +16,6 @@ public class ThreadAnonymousCreateViewModel
     [Required]
     [DataType(DataType.MultilineText)]
     [MinLength(1)]
-    [MaxLength(Defaults.MaxMessageLength)]
     [Display(Name = @"Message")]
     public required string Message { get; set; }
 

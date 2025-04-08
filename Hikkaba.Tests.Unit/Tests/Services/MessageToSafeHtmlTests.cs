@@ -26,12 +26,12 @@ internal sealed class MessageToSafeHtmlTests
         Assert.That(actualOutput, Is.EqualTo(input));
     }
 
-    [TestCase("TEXT\r\nWITH\r\nLINE\r\nBREAKS", "TEXT\r\nWITH\r\nLINE\r\nBREAKS")]
-    [TestCase("TEXT\r\n\r\n\r\nWITH LINE BREAKS", "TEXT\r\n\r\nWITH LINE BREAKS")]
-    [TestCase("TEXT\r\nWITH LINE BREAKS", "TEXT\r\nWITH LINE BREAKS")]
-    [TestCase("TEXT\nWITH LINE BREAKS", "TEXT\r\nWITH LINE BREAKS")]
-    [TestCase("TEXT\n\nWITH LINE BREAKS", "TEXT\r\n\r\nWITH LINE BREAKS")]
-    [TestCase("TEXT\n\rWITH LINE BREAKS", "TEXT\r\n\r\nWITH LINE BREAKS")]
+    [TestCase("TEXT\r\nWITH\r\nLINE\r\nBREAKS", "TEXT\nWITH\nLINE\nBREAKS")]
+    [TestCase("TEXT\r\n\r\n\r\nWITH LINE BREAKS", "TEXT\n\nWITH LINE BREAKS")]
+    [TestCase("TEXT\r\nWITH LINE BREAKS", "TEXT\nWITH LINE BREAKS")]
+    [TestCase("TEXT\nWITH LINE BREAKS", "TEXT\nWITH LINE BREAKS")]
+    [TestCase("TEXT\n\nWITH LINE BREAKS", "TEXT\n\nWITH LINE BREAKS")]
+    [TestCase("TEXT\n\rWITH LINE BREAKS", "TEXT\n\nWITH LINE BREAKS")]
     public void MessageToSafeHtml_WhenCalledWithLineBreaks_ShouldReturnNormalizedLineBreaks(string input, string expectedOutput)
     {
         using var customAppFactory = new CustomAppFactory(FakeActionPath);
@@ -123,7 +123,7 @@ internal sealed class MessageToSafeHtmlTests
     // todo: investigate why this could be a problem
     /* [TestCase("&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;", "&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;")] */
     // Check line break normalization along with injection
-    [TestCase("Text\n<script>alert(1)</script>\nText", "Text\r\n&lt;script&gt;alert(1)&lt;/script&gt;\r\nText")]
+    [TestCase("Text\n<script>alert(1)</script>\nText", "Text\n&lt;script&gt;alert(1)&lt;/script&gt;\nText")]
     // If an attempt is made to use bb-code for a link with an unsuitable protocol
     [TestCase("[url]javascript:alert('XSS')[/url]", """<a href="" rel="nofollow noopener noreferrer external">javascript:alert('XSS')</a>""")]
     [TestCase("""[url="javascript:alert('XSS')"]test[/url]""", """<a href="_xss_alert('XSS')" rel="nofollow noopener noreferrer external">test</a>""")]
@@ -143,8 +143,8 @@ internal sealed class MessageToSafeHtmlTests
     }
 
     [TestCase("[code]text[/code]", "<pre class=\"code\" data-syntax=\"\">text</pre>")]
-    [TestCase("[code]text\ntext[/code]", "<pre class=\"code\" data-syntax=\"\">text\r\ntext</pre>")]
-    [TestCase("[code]text\r\ntext[/code]", "<pre class=\"code\" data-syntax=\"\">text\r\ntext</pre>")]
+    [TestCase("[code]text\ntext[/code]", "<pre class=\"code\" data-syntax=\"\">text\ntext</pre>")]
+    [TestCase("[code]text\r\ntext[/code]", "<pre class=\"code\" data-syntax=\"\">text\ntext</pre>")]
     [TestCase("[code]<a>text</a>[/code]", "<pre class=\"code\" data-syntax=\"\">&lt;a&gt;text&lt;/a&gt;</pre>")]
     [TestCase("[code]<a href=\"javascript:alert('XSS')\">Click me</a>[/code]", "<pre class=\"code\" data-syntax=\"\">&lt;a href=\"javascript:alert('XSS')\"&gt;Click me&lt;/a&gt;</pre>")]
     [TestCase("[code]<script>alert('XSS')</script>[/code]", "<pre class=\"code\" data-syntax=\"\">&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>")]

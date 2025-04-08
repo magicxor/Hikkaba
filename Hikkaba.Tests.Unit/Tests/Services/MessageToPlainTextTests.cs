@@ -17,18 +17,8 @@ internal sealed class MessageToPlainTextTests
     [TestCase("丂のﾶ乇　丂ｲ尺ﾑ刀ム乇　ｲ乇ﾒｲ，　んひん　^^")]
     [TestCase("Some letters. 1234567890; 987 * 2 - 5 @! | [wow](!wow)[!wow][[ yoy )))) [[[ ]] ] \\ //.")]
     [TestCase("<div>Some text</div>")]
-    [TestCase("""
-              Line 1
-              Line 2
-              Line 3
-              """)]
-    [TestCase("""
-              Line 1
-
-              Line 2
-
-              Line 3
-              """)]
+    [TestCase("Line 1\nLine 2\nLine 3")]
+    [TestCase("Line 1\n\nLine 2\n\nLine 3")]
     public void MessageToPlainText_WhenCalledWithText_ShouldReturnTheSameText(string input)
     {
         using var customAppFactory = new CustomAppFactory(FakeActionPath);
@@ -49,7 +39,7 @@ internal sealed class MessageToPlainTextTests
               mix3[/u]
               mix2[/i] mix1[/b]
               plain
-              """, "plain \r\nmix3\r\nmix2 mix1\r\nplain")]
+              """, "plain \nmix3\nmix2 mix1\nplain")]
     public void MessageToPlainText_WhenCalledWithTags_ShouldReturnPlainText(string input, string expectedOutput)
     {
         using var customAppFactory = new CustomAppFactory(FakeActionPath);
