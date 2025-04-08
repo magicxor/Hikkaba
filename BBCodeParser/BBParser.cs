@@ -7,11 +7,10 @@ namespace BBCodeParser;
 
 public class BBParser : IBBParser
 {
-    private const int TreeMaxDepth = 6000;
-
     private readonly Tag[] _tags;
     private readonly IReadOnlyDictionary<string, string> _securitySubstitutions;
     private readonly IReadOnlyDictionary<string, string> _aliasSubstitutions;
+    private readonly int _treeMaxDepth;
 
     public static readonly IReadOnlyDictionary<string, string> SecuritySubstitutions = new Dictionary<string, string>
         {
@@ -24,11 +23,13 @@ public class BBParser : IBBParser
     public BBParser(
         Tag[] tags,
         IReadOnlyDictionary<string, string> securitySubstitutions,
-        IReadOnlyDictionary<string, string> aliasSubstitutions)
+        IReadOnlyDictionary<string, string> aliasSubstitutions,
+        int treeMaxDepth = 20)
     {
         _tags = tags;
         _securitySubstitutions = securitySubstitutions;
         _aliasSubstitutions = aliasSubstitutions;
+        _treeMaxDepth = treeMaxDepth;
     }
 
     public NodeTree Parse(string input)
@@ -80,7 +81,7 @@ public class BBParser : IBBParser
 
                         current = tagNode;
                         treeDepth++;
-                        if (treeDepth > TreeMaxDepth)
+                        if (treeDepth > _treeMaxDepth)
                         {
                             throw new BBParserException("Tree is too deep");
                         }
