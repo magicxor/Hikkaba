@@ -15,10 +15,12 @@ internal static partial class PostMapper
     public static string BytesToString(byte[] src) => Convert.ToHexStringLower(src);
 
     [MapProperty(nameof(PostDetailsModel.ThreadLocalUserHash), nameof(PostDetailsViewModel.ThreadLocalUserHash), Use = nameof(BytesToString))]
+    [MapperIgnoreTarget(nameof(PostDetailsViewModel.ShowCategoryAlias))]
     public static partial PostDetailsViewModel ToViewModel(this PostDetailsModel model);
 
     [MapperIgnoreSource(nameof(PostPreviewModel.CreatedBy))]
     [MapperIgnoreSource(nameof(PostPreviewModel.ModifiedBy))]
+    [MapperIgnoreTarget(nameof(PostDetailsViewModel.ShowCategoryAlias))]
     [MapProperty(nameof(PostPreviewModel.ThreadLocalUserHash), nameof(PostDetailsViewModel.ThreadLocalUserHash), Use = nameof(BytesToString))]
     public static partial PostDetailsViewModel ToViewModel(this PostPreviewModel model);
 

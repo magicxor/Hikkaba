@@ -89,8 +89,9 @@ public sealed class CategoryRepository : ICategoryRepository
             IsHidden = categoryCreateRequest.IsHidden,
             DefaultBumpLimit = categoryCreateRequest.DefaultBumpLimit,
             ShowThreadLocalUserHash = categoryCreateRequest.ShowThreadLocalUserHash,
-            ShowUserAgent = categoryCreateRequest.ShowUserAgent,
             ShowCountry = categoryCreateRequest.ShowCountry,
+            ShowOs = categoryCreateRequest.ShowOs,
+            ShowBrowser = categoryCreateRequest.ShowBrowser,
             MaxThreadCount = categoryCreateRequest.MaxThreadCount,
             BoardId = boardId,
             CreatedById = user.Id,
@@ -119,8 +120,9 @@ public sealed class CategoryRepository : ICategoryRepository
                 .SetProperty(c => c.IsHidden, categoryEditRequest.IsHidden)
                 .SetProperty(c => c.DefaultBumpLimit, categoryEditRequest.DefaultBumpLimit)
                 .SetProperty(c => c.ShowThreadLocalUserHash, categoryEditRequest.ShowThreadLocalUserHash)
-                .SetProperty(c => c.ShowUserAgent, categoryEditRequest.ShowUserAgent)
                 .SetProperty(c => c.ShowCountry, categoryEditRequest.ShowCountry)
+                .SetProperty(c => c.ShowOs, categoryEditRequest.ShowOs)
+                .SetProperty(c => c.ShowBrowser, categoryEditRequest.ShowBrowser)
                 .SetProperty(c => c.MaxThreadCount, categoryEditRequest.MaxThreadCount)
                 .SetProperty(c => c.ModifiedAt, utcNow)
                 .SetProperty(c => c.ModifiedById, user.Id),

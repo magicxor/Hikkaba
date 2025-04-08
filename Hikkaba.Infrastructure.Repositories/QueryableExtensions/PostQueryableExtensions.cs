@@ -12,7 +12,9 @@ public static class PostQueryableExtensions
     {
         return query.Select(post => new PostDetailsModel
         {
-            Index = EF.Functions.RowNumber(post.ThreadId, EF.Functions.OrderBy(post.CreatedAt).ThenBy(post.Id)),
+            Index = EF.Functions.RowNumber(post.ThreadId,
+                EF.Functions.OrderBy(post.CreatedAt)
+                    .ThenBy(post.Id)),
             Id = post.Id,
             IsDeleted = post.IsDeleted,
             CreatedAt = post.CreatedAt,
@@ -95,6 +97,9 @@ public static class PostQueryableExtensions
             ThreadId = post.ThreadId,
             ShowThreadLocalUserHash = post.Thread.Category.ShowThreadLocalUserHash,
             ThreadLocalUserHash = post.ThreadLocalUserHash,
+            ShowCountry = post.Thread.Category.ShowCountry,
+            ShowOs = post.Thread.Category.ShowOs,
+            ShowBrowser = post.Thread.Category.ShowBrowser,
             CategoryAlias = post.Thread.Category.Alias,
             CategoryId = post.Thread.CategoryId,
             Replies = post.RepliesToThisMentionedPost

@@ -163,7 +163,8 @@ public class ThreadRepository : IThreadRepository
                 PostCount = g.PostCount,
                 Posts = g.Posts.Select(post => new PostDetailsModel
                     {
-                        Index = EF.Functions.RowNumber(EF.Functions.OrderByDescending(post.CreatedAt).ThenByDescending(post.Id)),
+                        Index = EF.Functions.RowNumber(EF.Functions.OrderByDescending(post.CreatedAt)
+                            .ThenByDescending(post.Id)),
                         Id = post.Id,
                         IsDeleted = post.IsDeleted,
                         CreatedAt = post.CreatedAt,
@@ -245,6 +246,9 @@ public class ThreadRepository : IThreadRepository
                             .ToList(),
                         ThreadId = post.ThreadId,
                         ShowThreadLocalUserHash = g.Category.ShowThreadLocalUserHash,
+                        ShowCountry = g.Category.ShowCountry,
+                        ShowOs = g.Category.ShowOs,
+                        ShowBrowser = g.Category.ShowBrowser,
                         ThreadLocalUserHash = post.ThreadLocalUserHash,
                         CategoryAlias = g.Category.Alias,
                         CategoryId = g.Category.Id,

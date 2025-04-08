@@ -57,6 +57,15 @@
             <span class="post-number">№@Html.DisplayFor(model => model.Index)</span>
           </div>
         }
+
+        <div class="ms-auto">
+          @if (Model.ShowCategoryAlias)
+          {
+            <a class="decoration-on-hover" href="@Url.RouteUrl("CategoryDetails", new { categoryAlias = Model.CategoryAlias })">
+              <i class="fas fa-angle-right"></i> /@Model.CategoryAlias
+            </a>
+          }
+        </div>
       </div>
     </div>
   </h5>

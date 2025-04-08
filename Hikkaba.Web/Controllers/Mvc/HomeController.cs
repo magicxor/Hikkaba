@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Entities;
@@ -42,11 +43,16 @@ public sealed class HomeController : Controller
             OrderBy = [new OrderByItem { Field = nameof(Category.Alias), Direction = OrderByDirection.Asc }],
         };
         var categories = await _categoryService.ListAsync(categoryFilter, cancellationToken);
+        var categoriesVm = categories.ToViewModels();
+        var postsVm = posts.Data.ToViewModels()
+            .Select(p => p with { ShowCategoryAlias = true })
+            .ToList()
+            .AsReadOnly();
 
         var homeIndexViewModel = new HomeIndexViewModel
         {
-            Categories = categories.ToViewModels(),
-            Posts = new PagedResult<PostDetailsViewModel>(posts.Data.ToViewModels(), postPagingFilter),
+            Categories = categoriesVm,
+            Posts = new PagedResult<PostDetailsViewModel>(postsVm, postPagingFilter),
         };
         return View(homeIndexViewModel);
     }

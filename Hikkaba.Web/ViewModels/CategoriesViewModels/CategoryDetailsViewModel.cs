@@ -32,11 +32,14 @@ public class CategoryDetailsViewModel
     [Display(Name = @"Show thread-local user hash")]
     public required bool ShowThreadLocalUserHash { get; set; }
 
-    [Display(Name = @"Show user agent")]
-    public required bool ShowUserAgent { get; set; }
-
-    [Display(Name = @"Show country")]
+    [Display(Name = @"Show user country")]
     public required bool ShowCountry { get; set; }
+
+    [Display(Name = @"Show user OS")]
+    public required bool ShowOs { get; init; }
+
+    [Display(Name = @"Show user browser")]
+    public required bool ShowBrowser { get; init; }
 
     [Display(Name = @"Max thread count in category")]
     public required int MaxThreadCount { get; set; }

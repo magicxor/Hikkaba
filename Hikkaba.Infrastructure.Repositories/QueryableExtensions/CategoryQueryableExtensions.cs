@@ -34,8 +34,9 @@ public static class CategoryQueryableExtensions
             IsHidden = x.IsHidden,
             DefaultBumpLimit = x.DefaultBumpLimit,
             ShowThreadLocalUserHash = x.ShowThreadLocalUserHash,
-            ShowUserAgent = x.ShowUserAgent,
             ShowCountry = x.ShowCountry,
+            ShowOs = x.ShowOs,
+            ShowBrowser = x.ShowBrowser,
             MaxThreadCount = x.MaxThreadCount,
             BoardId = x.BoardId,
         });

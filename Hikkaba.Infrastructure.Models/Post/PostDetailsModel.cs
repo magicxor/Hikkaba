@@ -36,6 +36,12 @@ public class PostDetailsModel
 
     public required bool ShowThreadLocalUserHash { get; set; }
 
+    public required bool ShowCountry { get; set; }
+
+    public required bool ShowOs { get; init; }
+
+    public required bool ShowBrowser { get; init; }
+
     public required byte[] ThreadLocalUserHash { get; set; }
 
     public required string CategoryAlias { get; set; }

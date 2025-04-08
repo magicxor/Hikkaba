@@ -41,10 +41,13 @@ public class Category
     public bool ShowThreadLocalUserHash { get; set; }
 
     [Required]
-    public bool ShowUserAgent { get; set; }
+    public bool ShowCountry { get; set; }
 
     [Required]
-    public bool ShowCountry { get; set; }
+    public bool ShowOs { get; init; }
+
+    [Required]
+    public bool ShowBrowser { get; init; }
 
     [Required]
     [Range(1, int.MaxValue)]
