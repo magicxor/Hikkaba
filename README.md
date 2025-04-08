@@ -1,11 +1,8 @@
-Hikkaba [Pre-alpha]
-
-=====
+# Hikkaba [Pre-alpha]
 
 Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, designed with minimal JavaScript usage.
 
-Features
-========
+## Features
 
 ### Core Functionality
 - [x] **Multiple files per post:** Supports attaching various file types:
@@ -93,30 +90,22 @@ Features
 - [x] Unit tests ([NUnit](https://nunit.org/))
 - [x] Integration tests ([NUnit](https://nunit.org/), [Testcontainers](https://dotnet.testcontainers.org/))
 
-Screenshots
-========
+## Screenshots
 
-## Home page
+### Home page
 ![Home page](http://i.imgur.com/VSqxCqE.png)
 
 ---
 
-## Reply form
+### Reply form
 ![Reply form](http://i.imgur.com/aVO3paD.png)
 
 ---
 
-## Thread
+### Thread
 ![Thread](http://i.imgur.com/OLJ8YS6.png)
 
 ---
 
-## Search
+### Search
 ![Search](http://i.imgur.com/wkp4WoR.png)
-
-
-EF Migrations
-========
-```powershell
-$env:Hikkaba_ConnectionStrings__DefaultConnection="Server=(localdb)\mssqllocaldb;Database=Hikkaba;Integrated Security=true;"; dotnet ef migrations list --project Hikkaba.Data --startup-project Hikkaba.Web --verbose
-```
