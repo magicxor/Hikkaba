@@ -1,20 +1,56 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Application.Telemetry;
+using Hikkaba.Infrastructure.Models.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Application.Implementations;
 
 public class HmacService : IHmacService
 {
-    private static byte[] HashHmac(byte[] key, byte[] message)
+    private readonly IOptions<HikkabaConfiguration> _options;
+
+    public HmacService(IOptions<HikkabaConfiguration> options)
     {
-        using var hash = new HMACSHA3_512(key);
+        _options = options;
+    }
+
+    public byte[] HashHmac(byte[] key, byte[] message)
+    {
+        using var activity = ApplicationTelemetry.HashServiceSource.StartActivity();
+        using var hash = new HMACSHA3_256(key);
         return hash.ComputeHash(message);
     }
 
-    public string HashHmacHex(string key, string message)
+    public byte[] HashHmac(string key, string message)
     {
-        var hash = HashHmac(Encoding.Unicode.GetBytes(key), Encoding.Unicode.GetBytes(message));
-        return Convert.ToHexStringLower(hash);
+        return HashHmac(Encoding.UTF8.GetBytes(key), Encoding.UTF8.GetBytes(message));
+    }
+
+    public string GetTripCode(string input)
+    {
+        input = input.Trim();
+
+        var values = input.Split("##", 2, StringSplitOptions.TrimEntries);
+        if (values.Length != 2)
+        {
+            throw new ArgumentException("Input must contain '##' separator", nameof(input));
+        }
+
+        var name = values[0];
+        var password = values[1];
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new ArgumentException("Password part cannot be empty", nameof(input));
+        }
+
+        var tripCodeSalt = _options.Value.TripCodeSalt;
+        var tripCodeHash = HashHmac(tripCodeSalt, input);
+        var tripCodeHashShort = tripCodeHash.AsSpan(0, 9);
+        var tripCodeHashBase64 = Convert.ToBase64String(tripCodeHashShort);
+
+        return $"{name}!!{tripCodeHashBase64}";
     }
 }

@@ -2,5 +2,7 @@
 
 public interface IHmacService
 {
-    string HashHmacHex(string key, string message);
+    byte[] HashHmac(byte[] key, byte[] message);
+    byte[] HashHmac(string key, string message);
+    public string GetTripCode(string input);
 }

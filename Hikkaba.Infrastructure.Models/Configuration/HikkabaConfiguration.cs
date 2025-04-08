@@ -47,5 +47,9 @@ public class HikkabaConfiguration
     [Required]
     public required string MaintenanceKey { get; set; }
 
+    [Required]
+    [MinLength(10)]
+    public required string TripCodeSalt { get; set; }
+
     public string? StoragePath { get; set; }
 }
