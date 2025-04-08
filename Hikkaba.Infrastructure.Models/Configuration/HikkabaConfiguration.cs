@@ -45,6 +45,7 @@ public class HikkabaConfiguration
     public Uri? OtlpExporterUri { get; set; }
 
     [Required]
+    [MinLength(10)]
     public required string MaintenanceKey { get; set; }
 
     [Required]
