@@ -225,12 +225,10 @@ internal static class DependencyInjection
         services.AddSingleton<DateTimeKindSensitiveBinderProvider>();
         services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
 
+        services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddControllersWithViews();
         services.AddRazorPages();
-        services.AddBootstrapPagerGenerator(options =>
-        {
-            options.ConfigureDefault();
-        });
+        services.AddBootstrapPagerGenerator(options => options.ConfigureDefault());
 
         var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
 
