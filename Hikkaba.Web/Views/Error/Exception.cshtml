@@ -1,4 +1,4 @@
-﻿@model Hikkaba.Web.ViewModels.ErrorViewModels.StatusCodeViewModel
+﻿@model Hikkaba.Web.ViewModels.ErrorViewModels.ExceptionViewModel
 
 @{
   ViewData["Title"] = $"Error {Model.StatusCode} - {Model.StatusCodeName}";
@@ -9,6 +9,6 @@
   <h2>@Model.StatusCodeName</h2>
   <h3>@Model.StatusCodeDescription</h3>
   <p class="lead">
-    Error details: @Model.TraceId
+    Error details: @Model.ExceptionName, @Model.TraceId
   </p>
 </div>

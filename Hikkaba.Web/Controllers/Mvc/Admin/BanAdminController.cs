@@ -123,7 +123,7 @@ public sealed class BanAdminController : BaseMvcController
 
     [HttpPost("create", Name = "BanCreateConfirm")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(BanCreateViewModel viewModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateConfirm(BanCreateViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
@@ -182,7 +182,7 @@ public sealed class BanAdminController : BaseMvcController
                 IpAddressDetails = ipAddressVm,
             };
 
-            return View(vm);
+            return View("Create", vm);
         }
     }
 

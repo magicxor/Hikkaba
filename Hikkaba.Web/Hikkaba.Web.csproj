@@ -54,7 +54,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Views\BanAdmin\EditorTemplates\" />
     <Folder Include="Views\PostAdmin\" />
     <Folder Include="WwwRootSources\" />
   </ItemGroup>

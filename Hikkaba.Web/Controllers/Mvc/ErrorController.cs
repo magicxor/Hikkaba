@@ -1,7 +1,9 @@
-using System.Net;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Hikkaba.Shared.Enums;
-using Hikkaba.Shared.Exceptions;
-using Hikkaba.Shared.Extensions;
+using Hikkaba.Web.Utils;
+using Hikkaba.Web.ViewModels.ErrorViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +15,6 @@ namespace Hikkaba.Web.Controllers.Mvc;
 [Route("error")]
 public sealed class ErrorController : Controller
 {
-    private const string DefaultErrorMessage = "Something went wrong";
-    private const string PageNotFoundMessage = "Page not found";
-
     private readonly ILogger<ErrorController> _logger;
 
     public ErrorController(ILogger<ErrorController> logger)
@@ -23,19 +22,35 @@ public sealed class ErrorController : Controller
         _logger = logger;
     }
 
-    [HttpGet]
-    public IActionResult PageNotFound()
+    [Route("", Name = "ErrorStatusCode")]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    [IgnoreAntiforgeryToken]
+    [SuppressMessage("Security", "CA5395:Miss HttpVerb attribute for action methods", Justification = "This is acceptable for the error controller.")]
+    public IActionResult Index([Required] int statusCode)
     {
-        return Details(PageNotFoundMessage, HttpStatusCode.NotFound);
+        var (statusCodeName, statusCodeDescription) = StatusCodeUtils.GetDetails(statusCode);
+
+        var vm = new StatusCodeViewModel
+        {
+            StatusCode = statusCode,
+            StatusCodeName = statusCodeName,
+            StatusCodeDescription = statusCodeDescription,
+            TraceId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+        };
+
+        return View(vm);
     }
 
-    [HttpGet]
+    [Route("details", Name = "ErrorException")]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    [IgnoreAntiforgeryToken]
+    [SuppressMessage("Security", "CA5395:Miss HttpVerb attribute for action methods", Justification = "This is acceptable for the error controller.")]
     public IActionResult Exception()
     {
         var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
         var exception = feature?.Error;
         var statusCode = HttpContext.Response.StatusCode;
-        var eventId = statusCode == HttpStatusCode.OK.ToInt() ? LogEventIds.InternalError : new EventId(statusCode);
+        var eventId = new EventId(LogEventIds.StartId + statusCode);
 
         if (exception != null)
         {
@@ -43,29 +58,21 @@ public sealed class ErrorController : Controller
         }
         else
         {
-            _logger.LogError(eventId, "Unhandled exception");
+            _logger.LogInformation(eventId, "Unhandled exception endpoint hit, but no exception was found");
         }
 
-        var message = exception?.Message ?? string.Empty;
-        return Details(message, (HttpStatusCode)statusCode);
-    }
+        var exceptionName = exception?.GetType().Name ?? "UnknownException";
+        var (statusCodeName, statusCodeDescription) = StatusCodeUtils.GetDetails(statusCode);
 
-    [HttpGet]
-    public IActionResult Details(HttpStatusCode statusCode)
-    {
-        _logger.LogDebug(statusCode.ToEventId(), "Return status page for {StatusCodeName}={StatusCode}", nameof(statusCode), statusCode);
-        return Details(DefaultErrorMessage, statusCode);
-    }
-
-    private IActionResult Details(string? message = null, HttpStatusCode statusCode = HttpStatusCode.OK)
-    {
-        if (string.IsNullOrEmpty(message))
+        var vm = new ExceptionViewModel
         {
-            message = DefaultErrorMessage;
-        }
-        var exception = statusCode == HttpStatusCode.OK
-            ? new HikkabaHttpResponseException(HttpStatusCode.InternalServerError, message)
-            : new HikkabaHttpResponseException(statusCode, message);
-        return View("Details", exception);
+            ExceptionName = exceptionName,
+            StatusCode = statusCode,
+            StatusCodeName = statusCodeName,
+            StatusCodeDescription = statusCodeDescription,
+            TraceId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+        };
+
+        return View(vm);
     }
 }

@@ -64,9 +64,12 @@ internal class Startup
         {
             app.UseDeveloperExceptionPage();
         }
+        else
+        {
+            app.UseExceptionHandler("/error/details");
+        }
 
-        app.UseStatusCodePagesWithReExecute("/Error/Details", "?statusCode={0}");
-        app.UseExceptionHandler("/Error/Exception");
+        app.UseStatusCodePagesWithReExecute("/error", "?statusCode={0}");
 
         app.UseResponseCompression();
         app.UseStaticFiles(new StaticFileOptions
@@ -97,7 +100,6 @@ internal class Startup
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            endpoints.MapFallbackToController("PageNotFound", "Error");
         });
     }
 }
