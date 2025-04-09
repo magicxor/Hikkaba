@@ -1,3 +1,5 @@
+using System;
+using Hikkaba.Tests.Unit.Mocks;
 using Hikkaba.Web.Services.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,6 +10,13 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 internal sealed class MessageToSafeHtmlTests
 {
     private const string FakeActionPath = "/b/23454362";
+    private static readonly FakeUrlHelperParams FakeUrlHelperParams = new()
+    {
+        Action = FakeActionPath,
+        RouteUrlFactory = (routeName, values) => routeName == "ThreadDetails"
+            ? FakeActionPath
+            : throw new ArgumentException("Invalid route name", nameof(routeName)),
+    };
 
     [TestCase("ＳＯＭＥ　ＳＴＲＡＮＧＥ　ＴＥＸＴ，　ｈｕｈ　^^　延凹線艶彙")]
     [TestCase("Ｓ♢ＭΞ░ＳＴＲΛＮＧΞ░ＴΞＸＴ，░ｈｕｈ░^^　（延凹線艶彙）")]
@@ -18,7 +27,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase("Some letters. 1234567890; 987 * 2 - 5 @! | [wow](!wow)[!wow][[ yoy )))) [[[ ]] ] \\ //.")]
     public void MessageToSafeHtml_WhenCalledWithText_ShouldReturnTheSameText(string input)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -34,7 +43,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase("TEXT\n\rWITH LINE BREAKS", "TEXT\n\nWITH LINE BREAKS")]
     public void MessageToSafeHtml_WhenCalledWithLineBreaks_ShouldReturnNormalizedLineBreaks(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -54,7 +63,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase("plain [b][i][u]mix3[/u] mix2[/i] mix1[/b] plain", "plain <b><i><u>mix3</u> mix2</i> mix1</b> plain")]
     public void MessageToSafeHtml_WhenCalledWithBbCode_ShouldReturnHtml(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -74,7 +83,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase("http://example.com/\"bold\"abc", """<a href="http://example.com/" rel="nofollow noopener noreferrer external">http://example.com/</a>"bold"abc""")]
     public void MessageToSafeHtml_WhenCalledWithLinks_ShouldReturnHtmlLinks(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -86,7 +95,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase(">>999", $"""<a href="{FakeActionPath}#999">&gt;&gt;999</a>""")]
     public void MessageToSafeHtml_WhenCalledWithReplyLinks_ShouldReturnHtmlLinks(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -100,7 +109,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase("<nav>test</nav>", "&lt;nav&gt;test&lt;/nav&gt;")]
     public void MessageToSafeHtml_WhenCalledWithUnsafeTags_ShouldReturnHtml(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -134,7 +143,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase("""[url="[url="javascript:alert('XSS')"][/url]"]test[/url]""", """[url="<a href="_xss_alert('XSS')" rel="nofollow noopener noreferrer external"></a>"]test""")]
     public void MessageToSafeHtml_WhenCalledWithMaliciousInput_ShouldSanitizeInput(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -156,7 +165,7 @@ internal sealed class MessageToSafeHtmlTests
     [TestCase("""[code="javascript:alert('XSS')"]text[/code]""", "<pre class=\"code\" data-syntax=\"_xss_alert(XSS)\">text</pre>")]
     public void MessageToSafeHtml_WhenCalledWithPreformattedTag_ShouldReturnHtml(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeActionPath);
+        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 

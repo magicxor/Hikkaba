@@ -34,11 +34,11 @@ namespace Hikkaba.Tests.Unit;
 internal sealed class CustomAppFactory
     : WebApplicationFactory<Web.Program>
 {
-    private readonly string _currentAction;
+    private readonly FakeUrlHelperParams _fakeUrlHelperParams;
 
-    public CustomAppFactory(string currentAction)
+    public CustomAppFactory(FakeUrlHelperParams fakeUrlHelperParams)
     {
-        _currentAction = currentAction;
+        _fakeUrlHelperParams = fakeUrlHelperParams;
         LogManager.Configuration = new XmlLoggingConfiguration("nlog.config");
     }
 
@@ -122,8 +122,8 @@ internal sealed class CustomAppFactory
 
                 services.AddSingleton<TimeProvider>(x => FakeTimeProviderFactory.Create());
 
-                services.AddSingleton<IUrlHelper, FakeUrlHelper>(x => new FakeUrlHelper(_currentAction));
-                services.AddSingleton<IUrlHelperFactory, FakeUrlHelperFactory>(x => new FakeUrlHelperFactory(_currentAction));
+                services.AddSingleton<IUrlHelper, FakeUrlHelper>(x => new FakeUrlHelper(_fakeUrlHelperParams));
+                services.AddSingleton<IUrlHelperFactory, FakeUrlHelperFactory>(x => new FakeUrlHelperFactory(_fakeUrlHelperParams));
                 services.AddSingleton<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
                 services.AddSingleton<IActionContextAccessor, FakeActionContextAccessor>();
             })

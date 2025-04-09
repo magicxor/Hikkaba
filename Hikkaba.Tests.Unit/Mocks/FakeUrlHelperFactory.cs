@@ -5,15 +5,15 @@ namespace Hikkaba.Tests.Unit.Mocks;
 
 internal sealed class FakeUrlHelperFactory : IUrlHelperFactory
 {
-    private readonly string _action;
+    private readonly FakeUrlHelperParams _fakeUrlHelperParams;
 
-    public FakeUrlHelperFactory(string action)
+    public FakeUrlHelperFactory(FakeUrlHelperParams fakeUrlHelperParams)
     {
-        _action = action;
+        _fakeUrlHelperParams = fakeUrlHelperParams;
     }
 
     public IUrlHelper GetUrlHelper(ActionContext context)
     {
-        return new FakeUrlHelper(_action);
+        return new FakeUrlHelper(_fakeUrlHelperParams);
     }
 }

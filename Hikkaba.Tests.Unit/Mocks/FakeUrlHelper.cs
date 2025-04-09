@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using HttpContextMoq;
 using HttpContextMoq.Extensions;
@@ -8,16 +9,18 @@ namespace Hikkaba.Tests.Unit.Mocks;
 
 internal sealed class FakeUrlHelper : IUrlHelper
 {
-    private readonly string _action;
+    private const string BaseUri = "http://localhost";
 
-    public FakeUrlHelper(string action)
+    private readonly FakeUrlHelperParams _fakeUrlHelperParams;
+
+    public FakeUrlHelper(FakeUrlHelperParams fakeUrlHelperParams)
     {
-        _action = action;
+        _fakeUrlHelperParams = fakeUrlHelperParams;
     }
 
     public string? Action(UrlActionContext actionContext)
     {
-        return _action;
+        return _fakeUrlHelperParams.Action;
     }
 
     [return: NotNullIfNotNull(nameof(contentPath))]
@@ -33,16 +36,23 @@ internal sealed class FakeUrlHelper : IUrlHelper
 
     public string? RouteUrl(UrlRouteContext routeContext)
     {
-        return "FakeRouteUrl";
+        return _fakeUrlHelperParams.RouteUrlFactory(routeContext.RouteName, routeContext.Values);
     }
 
     public string? Link(string? routeName, object? values)
     {
-        return "FakeLink";
+        var uri = new Uri(_fakeUrlHelperParams.RouteUrlFactory(routeName, values));
+        var result = uri.IsAbsoluteUri
+            ? uri
+            : Uri.TryCreate(new Uri(BaseUri), uri, out var absoluteUri)
+                ? absoluteUri
+                : null;
+
+        return result?.ToString();
     }
 
-    public ActionContext ActionContext { get; } = new ActionContext(
-        new HttpContextMock().SetupUrl("https://example.com").Mock.Object,
+    public ActionContext ActionContext { get; } = new(
+        new HttpContextMock().SetupUrl(BaseUri).Mock.Object,
         new Microsoft.AspNetCore.Routing.RouteData(),
         new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());
 }
