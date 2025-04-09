@@ -1,9 +1,9 @@
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hikkaba.Web.Extensions;
+namespace Hikkaba.Web.Utils.Url;
 
-internal static class ThreadUrlUtils
+public static class ThreadUrlUtils
 {
     public static string? GetThreadDetailsUri(ThreadDetailsViewModel threadDetailsViewModel, IUrlHelper urlHelper)
     {

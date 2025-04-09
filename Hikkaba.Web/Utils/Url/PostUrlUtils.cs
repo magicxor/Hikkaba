@@ -1,9 +1,9 @@
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hikkaba.Web.Extensions;
+namespace Hikkaba.Web.Utils.Url;
 
-internal static class PostUrlUtils
+public static class PostUrlUtils
 {
     public static string? GetThreadDetailsPostUri(PostDetailsViewModel postDetailsViewModel, IUrlHelper urlHelper)
     {

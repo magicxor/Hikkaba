@@ -3,6 +3,7 @@
 @using Hikkaba.Shared.Extensions
 @using Hikkaba.Shared.Services.Contracts
 @using Hikkaba.Web.Extensions
+@using Hikkaba.Web.Utils.Url
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IUserContext UserContext
@@ -74,7 +75,7 @@
       </div>
     </div>
   </h5>
-  <div class="card-body clearfix">
+  <div class="card-body clearfix overflow-x-auto">
     @if (Context.User.Identity?.IsAuthenticated == true
          && UserContext.GetRequiredUser() is { } user
          && (user.ModeratedCategories.Contains(Model.CategoryId)
