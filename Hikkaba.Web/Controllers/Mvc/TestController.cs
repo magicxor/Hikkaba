@@ -8,10 +8,22 @@ namespace Hikkaba.Web.Controllers.Mvc;
 [Route("test")]
 public sealed class TestController : Controller
 {
-    [HttpGet("status")]
-    public IActionResult StatusCode()
+    [HttpGet("status400")]
+    public IActionResult Status400()
     {
-        return NotFound("blah blah blah");
+        return new BadRequestResult();
+    }
+
+    [HttpGet("status404")]
+    public IActionResult Status404()
+    {
+        return new NotFoundResult();
+    }
+
+    [HttpGet("status500")]
+    public IActionResult Status500()
+    {
+        return new StatusCodeResult(500);
     }
 
     [HttpGet("exception")]
