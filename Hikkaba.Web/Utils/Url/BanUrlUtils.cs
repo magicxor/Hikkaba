@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Extensions;
 
-internal static class BanViewModelExtensions
+internal static class BanUrlUtils
 {
-    public static string? GetUri(this BanViewModel banViewModel, IUrlHelper urlHelper)
+    public static string? GetThreadDetailsPostUri(BanViewModel banViewModel, IUrlHelper urlHelper)
     {
         return urlHelper.RouteUrl(
             "ThreadDetails",

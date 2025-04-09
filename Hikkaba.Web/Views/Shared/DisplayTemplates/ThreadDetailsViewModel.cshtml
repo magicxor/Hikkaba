@@ -15,7 +15,7 @@
           &nbsp;
           @Html.DisplayFor(model => model.CreatedAt)
           &nbsp;
-          <a class="decoration-on-hover" href="@Model.GetUri(Url)">@Model.Id</a>
+          <a class="decoration-on-hover" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, Url)">@Model.Id</a>
           @if (Model.IsPinned)
           {
             <span>&nbsp;</span>
@@ -78,7 +78,7 @@
               {
                 <div class="mt-2 mb-0">
                   <div class="alert alert-light m-0 pt-1 pb-1" role="alert">
-                    @(Model.PostCount - Model.Posts.Count) replies omitted. <a class="alert-link decoration-on-hover" href="@Model.GetUri(Url)">Click here</a> to view.
+                    @(Model.PostCount - Model.Posts.Count) replies omitted. <a class="alert-link decoration-on-hover" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, Url)">Click here</a> to view.
                   </div>
                 </div>
               }

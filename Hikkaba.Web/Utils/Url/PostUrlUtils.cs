@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Extensions;
 
-internal static class PostDetailsViewModelExtensions
+internal static class PostUrlUtils
 {
-    public static string? GetUri(this PostDetailsViewModel postDetailsViewModel, IUrlHelper urlHelper)
+    public static string? GetThreadDetailsPostUri(PostDetailsViewModel postDetailsViewModel, IUrlHelper urlHelper)
     {
         return urlHelper.RouteUrl(
             "ThreadDetails",

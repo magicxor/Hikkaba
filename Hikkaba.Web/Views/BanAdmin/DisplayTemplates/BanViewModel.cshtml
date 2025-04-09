@@ -4,7 +4,7 @@
 <tr class="@(Model.IsDeleted ? "deleted" : "")">
     <td>@Html.DisplayFor(model => model.CreatedAt)</td>
     <td>@(Model.CategoryAlias == null ? "" : "/" + Model.CategoryAlias)</td>
-    <td><a href="@(Model?.RelatedPostId == null ? "#" : Model.GetUri(Url))">@(Model?.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></td>
+    <td><a href="@(Model?.RelatedPostId == null ? "#" : BanUrlUtils.GetThreadDetailsPostUri(Model, Url))">@(Model?.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></td>
     <td>@Html.DisplayFor(model => model.BannedCidrLowerIpAddress)</td>
     <td>@Html.DisplayFor(model => model.BannedCidrUpperIpAddress)</td>
     <td>@Html.DisplayFor(model => model.Reason)</td>

@@ -47,8 +47,12 @@
 
         <!-- Post ID -->
         <div class="post-header-flex-item">
-          <a id="@Html.DisplayFor(model => model.Id)" class="decoration-on-hover post-id-link"
-             href="@Model.GetUri(Url)">@Html.DisplayFor(model => model.Id)</a>
+          <a
+            id="@(Model.Id)"
+            class="decoration-on-hover post-id-link"
+            href="@PostUrlUtils.GetThreadDetailsPostUri(Model, Url)">
+            @Html.DisplayFor(model => model.Id)
+          </a>
         </div>
 
         <!-- Post sequence number in thread -->
