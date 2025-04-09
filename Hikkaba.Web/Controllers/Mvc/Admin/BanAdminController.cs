@@ -198,7 +198,7 @@ public sealed class BanAdminController : BaseMvcController
 
     [HttpPost("{id:int}/delete", Name = "BanDeleteConfirm")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(
+    public async Task<IActionResult> DeleteConfirm(
         [FromRoute][Range(1, int.MaxValue)] int id,
         CancellationToken cancellationToken)
     {

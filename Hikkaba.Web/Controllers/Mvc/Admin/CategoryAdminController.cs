@@ -24,7 +24,7 @@ public class CategoryAdminController : Controller
         [FromRoute] string categoryAlias,
         CancellationToken cancellationToken)
     {
-        return View();
+        return View("AddModerator");
     }
 
     [HttpGet("{categoryAlias}/moderators/remove", Name = "CategoryRemoveModerator")]
@@ -41,7 +41,7 @@ public class CategoryAdminController : Controller
         [FromRoute] string categoryAlias,
         CancellationToken cancellationToken)
     {
-        return View();
+        return View("RemoveModerator");
     }
 
     [HttpGet("{categoryAlias}/create", Name = "CategoryCreate")]
@@ -54,7 +54,7 @@ public class CategoryAdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateConfirm(CancellationToken cancellationToken)
     {
-        return View();
+        return View("Create");
     }
 
     [HttpGet("{categoryAlias}/edit", Name = "CategoryEdit")]
@@ -71,7 +71,7 @@ public class CategoryAdminController : Controller
         [FromRoute] string categoryAlias,
         CancellationToken cancellationToken)
     {
-        return View();
+        return View("Edit");
     }
 
     [HttpGet("{categoryAlias}/delete", Name = "CategoryDelete")]
@@ -88,6 +88,6 @@ public class CategoryAdminController : Controller
         [FromRoute] string categoryAlias,
         CancellationToken cancellationToken)
     {
-        return View();
+        return View("Delete");
     }
 }

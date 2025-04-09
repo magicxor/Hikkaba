@@ -35,6 +35,6 @@ public class BoardAdminController : Controller
     public async Task<IActionResult> EditConfirm(
         CancellationToken cancellationToken)
     {
-        return View();
+        return View("Edit");
     }
 }

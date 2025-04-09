@@ -116,13 +116,13 @@ public sealed class PostController : BaseMvcController
                 if (postCreateRm.MessageText.Length > Defaults.MaxMessageLength)
                 {
                     ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageLength} characters.");
-                    return View(viewModel);
+                    return View("Create", viewModel);
                 }
 
                 if (postCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
                 {
                     ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
-                    return View(viewModel);
+                    return View("Create", viewModel);
                 }
 
                 var postId = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments ?? new FormFileCollection(), cancellationToken);
@@ -150,13 +150,13 @@ public sealed class PostController : BaseMvcController
                     viewModel.Attachments?.Count);
 
                 ViewBag.ErrorMessage = "Error occurred while creating a post. Please try again.";
-                return View(viewModel);
+                return View("Create", viewModel);
             }
         }
         else
         {
             ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
-            return View(viewModel);
+            return View("Create", viewModel);
         }
     }
 

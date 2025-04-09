@@ -122,13 +122,13 @@ public sealed class ThreadController : BaseMvcController
                 if (threadCreateRm.MessageText.Length > Defaults.MaxMessageLength)
                 {
                     ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageLength} characters.");
-                    return View(viewModel);
+                    return View("Create", viewModel);
                 }
 
                 if (threadCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
                 {
                     ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
-                    return View(viewModel);
+                    return View("Create", viewModel);
                 }
 
                 var createThreadResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
@@ -156,13 +156,13 @@ public sealed class ThreadController : BaseMvcController
                     viewModel.Attachments.Count);
 
                 ViewBag.ErrorMessage = "Error occurred while creating a thread. Please try again.";
-                return View(viewModel);
+                return View("Create", viewModel);
             }
         }
         else
         {
             ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
-            return View(viewModel);
+            return View("Create", viewModel);
         }
     }
 }
