@@ -1,0 +1,2 @@
+[*.cs]
+dotnet_naming_rule.async_methods_end_in_async.severity = none

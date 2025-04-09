@@ -46,7 +46,7 @@ public sealed class BanAdminController : BaseMvcController
         var ban = await _banService.GetBanAsync(id, cancellationToken);
         if (ban is null)
         {
-            return NotFound("Ban not found");
+            return new NotFoundResult();
         }
 
         return View(ban.ToViewModel());

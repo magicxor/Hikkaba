@@ -118,10 +118,10 @@ public class EnableAuthenticatorModel : PageModel
             .Replace(" ", string.Empty, StringComparison.Ordinal)
             .Replace("-", string.Empty, StringComparison.Ordinal);
 
-        var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
+        var is2FaTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
             user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
 
-        if (!is2faTokenValid)
+        if (!is2FaTokenValid)
         {
             ModelState.AddModelError("Input.Code", "Verification code is invalid.");
             await LoadSharedKeyAndQrCodeUriAsync(user);
@@ -137,7 +137,7 @@ public class EnableAuthenticatorModel : PageModel
         if (await _userManager.CountRecoveryCodesAsync(user) == 0)
         {
             var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
-            RecoveryCodes = recoveryCodes.ToArray();
+            RecoveryCodes = recoveryCodes?.ToArray() ?? [];
             return RedirectToPage("./ShowRecoveryCodes");
         }
         else

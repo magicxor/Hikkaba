@@ -43,7 +43,7 @@ public class TwoFactorAuthenticationModel : PageModel
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [BindProperty]
-    public bool Is2faEnabled { get; set; }
+    public bool Is2FaEnabled { get; set; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -67,7 +67,7 @@ public class TwoFactorAuthenticationModel : PageModel
         }
 
         HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null;
-        Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
+        Is2FaEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
         IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user);
         RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
 

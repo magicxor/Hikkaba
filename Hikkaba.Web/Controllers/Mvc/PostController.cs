@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
@@ -32,7 +33,6 @@ public sealed class PostController : BaseMvcController
 {
     private readonly ILogger<PostController> _logger;
     private readonly IMessagePostProcessor _messagePostProcessor;
-    private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
     private readonly IPostService _postService;
 
@@ -40,14 +40,12 @@ public sealed class PostController : BaseMvcController
         ILogger<PostController> logger,
         UserManager<ApplicationUser> userManager,
         IMessagePostProcessor messagePostProcessor,
-        ICategoryService categoryService,
         IThreadService threadService,
         IPostService postService)
         : base(userManager)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;
-        _categoryService = categoryService;
         _threadService = threadService;
         _postService = postService;
     }
@@ -60,21 +58,28 @@ public sealed class PostController : BaseMvcController
         long threadId,
         CancellationToken cancellationToken)
     {
-        var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
-        if (category is null)
+        var filter = new CategoryThreadFilter
         {
-            return NotFound();
+            CategoryAlias = categoryAlias,
+            ThreadId = threadId,
+            IncludeDeleted = false,
+        };
+
+        var thread = await _threadService.GetCategoryThreadAsync(filter, cancellationToken);
+
+        if (thread is null)
+        {
+            return new NotFoundResult();
         }
 
-        var thread = await _threadService.GetThreadAsync(threadId);
         var postAnonymousCreateViewModel = new PostAnonymousCreateViewModel
         {
             IsSageEnabled = false,
             Message = string.Empty,
             Attachments = new FormFileCollection(),
-            CategoryAlias = category.Alias,
-            CategoryName = category.Name,
-            ThreadId = thread.Id,
+            CategoryAlias = thread.CategoryAlias,
+            CategoryName = thread.CategoryName,
+            ThreadId = thread.ThreadId,
         };
         return View(postAnonymousCreateViewModel);
     }
@@ -94,21 +99,15 @@ public sealed class PostController : BaseMvcController
         {
             try
             {
-                var category = await _categoryService.GetAsync(viewModel.CategoryAlias, false, cancellationToken);
-                if (category is null)
-                {
-                    return NotFound();
-                }
-
                 var postCreateRm = new PostCreateRequestModel
                 {
                     BlobContainerId = Guid.NewGuid(),
                     IsSageEnabled = viewModel.IsSageEnabled,
-                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, viewModel.ThreadId, viewModel.Message),
+                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, viewModel.ThreadId, viewModel.Message),
                     MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
                     UserIpAddress = UserIpAddressBytes,
                     UserAgent = UserAgent.TryLeft(Defaults.MaxUserAgentLength),
-                    CategoryAlias = categoryAlias,
+                    CategoryAlias = viewModel.CategoryAlias,
                     ThreadId = viewModel.ThreadId,
                     MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
                 };
@@ -169,7 +168,7 @@ public sealed class PostController : BaseMvcController
     {
         if (!ModelState.IsValid)
         {
-            return RedirectToAction("Details", "Error", new { message = ModelState.ModelErrorsToString() });
+            return RedirectToRoute("HomeIndex", new { message = ModelState.ModelErrorsToString() });
         }
         else
         {

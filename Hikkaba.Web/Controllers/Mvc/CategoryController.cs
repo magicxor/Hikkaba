@@ -43,8 +43,7 @@ public sealed class CategoryController : BaseMvcController
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
-            // todo: add 404 page
-            return NotFound();
+            return new NotFoundResult();
         }
 
         var filter = new ThreadPreviewFilter

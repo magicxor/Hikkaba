@@ -12,7 +12,7 @@
     var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
     @if (consentFeature?.CanTrack ?? true)
     {
-        @if (Model.Is2faEnabled)
+        @if (Model.Is2FaEnabled)
         {
             if (Model.RecoveryCodesLeft == 0)
             {

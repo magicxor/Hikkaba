@@ -29,7 +29,7 @@ public sealed class HomeController : Controller
         _postService = postService;
     }
 
-    [HttpGet]
+    [HttpGet("", Name = "HomeIndex")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var postPagingFilter = new PostPagingFilter

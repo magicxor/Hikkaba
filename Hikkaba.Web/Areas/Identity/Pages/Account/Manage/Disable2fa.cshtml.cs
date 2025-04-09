@@ -56,8 +56,8 @@ public class Disable2faModel : PageModel
             return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
 
-        var disable2faResult = await _userManager.SetTwoFactorEnabledAsync(user, false);
-        if (!disable2faResult.Succeeded)
+        var disable2FaResult = await _userManager.SetTwoFactorEnabledAsync(user, false);
+        if (!disable2FaResult.Succeeded)
         {
             throw new InvalidOperationException($"Unexpected error occurred disabling 2FA.");
         }

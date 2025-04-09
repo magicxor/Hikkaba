@@ -6,7 +6,7 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IThreadService
 {
-    Task<ThreadEditRequestModel> GetThreadAsync(long threadId);
+    Task<CategoryThreadModel?> GetCategoryThreadAsync(CategoryThreadFilter filter, CancellationToken cancellationToken);
 
     Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, CancellationToken cancellationToken);
 
@@ -14,11 +14,11 @@ public interface IThreadService
 
     Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel createRequestModel, IFormFileCollection attachments, CancellationToken cancellationToken);
 
-    Task EditThreadAsync(ThreadEditRequestModel editRequestModel);
+    Task EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken);
 
-    Task SetIsPinnedAsync(long threadId, bool isPinned);
+    Task SetIsPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken);
 
-    Task SetIsClosedAsync(long threadId, bool isClosed);
+    Task SetIsClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken);
 
-    Task SetIsDeletedAsync(long threadId, bool isDeleted);
+    Task SetIsDeletedAsync(long threadId, bool isDeleted, CancellationToken cancellationToken);
 }

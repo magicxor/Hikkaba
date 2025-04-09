@@ -39,6 +39,25 @@ public class ThreadRepository : IThreadRepository
         _attachmentRepository = attachmentRepository;
     }
 
+    public async Task<CategoryThreadModel?> GetCategoryThreadAsync(CategoryThreadFilter filter, CancellationToken cancellationToken)
+    {
+        using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
+
+        return await _applicationDbContext.Threads
+            .Include(t => t.Category)
+            .Where(t => (filter.IncludeDeleted || (!t.IsDeleted && !t.Category.IsDeleted))
+                && t.Category.Alias == filter.CategoryAlias
+                && t.Id == filter.ThreadId)
+            .OrderByDescending(t => t.Id)
+            .Select(t => new CategoryThreadModel
+            {
+                ThreadId = t.Id,
+                CategoryAlias = t.Category.Alias,
+                CategoryName = t.Category.Name,
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, bool includeDeleted, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();

@@ -41,9 +41,9 @@ public class ThreadService : IThreadService
         _postMetrics = postMetrics;
     }
 
-    public async Task<ThreadEditRequestModel> GetThreadAsync(long threadId)
+    public async Task<CategoryThreadModel?> GetCategoryThreadAsync(CategoryThreadFilter filter, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _threadRepository.GetCategoryThreadAsync(filter, cancellationToken);
     }
 
     public async Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, CancellationToken cancellationToken)
@@ -119,22 +119,22 @@ public class ThreadService : IThreadService
         }
     }
 
-    public async Task EditThreadAsync(ThreadEditRequestModel editRequestModel)
+    public async Task EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SetIsPinnedAsync(long threadId, bool isPinned)
+    public async Task SetIsPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SetIsClosedAsync(long threadId, bool isClosed)
+    public async Task SetIsClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SetIsDeletedAsync(long threadId, bool isDeleted)
+    public async Task SetIsDeletedAsync(long threadId, bool isDeleted, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

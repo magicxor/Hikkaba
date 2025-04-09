@@ -55,7 +55,7 @@ public sealed class ThreadController : BaseMvcController
 
         if (threadPosts is null)
         {
-            return NotFound();
+            return new NotFoundResult();
         }
 
         var threadDetailsViewModel = threadPosts.ToViewModel();
@@ -71,7 +71,7 @@ public sealed class ThreadController : BaseMvcController
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
-            return NotFound();
+            return new NotFoundResult();
         }
 
         var threadAnonymousCreateViewModel = new ThreadAnonymousCreateViewModel
@@ -97,12 +97,6 @@ public sealed class ThreadController : BaseMvcController
         {
             try
             {
-                var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
-                if (category is null)
-                {
-                    return NotFound();
-                }
-
                 var messagePlainText = _messagePostProcessor.MessageToPlainText(viewModel.Message);
                 var threadTitle = string.IsNullOrWhiteSpace(viewModel.Title)
                     ? messagePlainText.Cut(Defaults.MaxTitleLength)
@@ -110,10 +104,10 @@ public sealed class ThreadController : BaseMvcController
 
                 var threadCreateRm = new ThreadCreateRequestModel
                 {
-                    CategoryAlias = category.Alias,
+                    CategoryAlias = viewModel.CategoryAlias,
                     ThreadTitle = threadTitle,
                     BlobContainerId = Guid.NewGuid(),
-                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(category.Alias, null, viewModel.Message),
+                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, null, viewModel.Message),
                     MessageText = messagePlainText,
                     UserIpAddress = UserIpAddressBytes,
                     UserAgent = UserAgent,
@@ -133,14 +127,14 @@ public sealed class ThreadController : BaseMvcController
 
                 var createThreadResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
 
-                _logger.LogDebug(LogEventIds.ThreadCreated, "Thread created. ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", createThreadResult.ThreadId, category.Alias);
+                _logger.LogDebug(LogEventIds.ThreadCreated, "Thread created. ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", createThreadResult.ThreadId, viewModel.CategoryAlias);
 
                 return RedirectToAction(
                     "Details",
                     "Thread",
                     new
                     {
-                        categoryAlias = category.Alias,
+                        categoryAlias = viewModel.CategoryAlias,
                         threadId = createThreadResult.ThreadId,
                     });
             }
