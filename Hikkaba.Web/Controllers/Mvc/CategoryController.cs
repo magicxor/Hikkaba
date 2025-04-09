@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Mappings;
+using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
@@ -43,7 +45,8 @@ public sealed class CategoryController : BaseMvcController
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
-            return new NotFoundResult();
+            var returnUrl = GetLocalReferrerOrRoute("HomeIndex");
+            return CustomErrorPage(StatusCodes.Status404NotFound, LogEventIds.NotFound, "The requested category was not found.", returnUrl);
         }
 
         var filter = new ThreadPreviewFilter

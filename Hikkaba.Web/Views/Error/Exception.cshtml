@@ -4,11 +4,15 @@
   ViewData["Title"] = $"Error {Model.StatusCode} - {Model.StatusCodeName}";
 }
 
-<div class="jumbotron">
-  <h1>Error @Model.StatusCode</h1>
-  <h2>@Model.StatusCodeName</h2>
-  <h3>@Model.StatusCodeDescription</h3>
-  <p class="lead">
-    Error details: @Model.ExceptionName, @Model.TraceId
-  </p>
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="jumbotron m-3">
+      <h1>Error @Model.StatusCode</h1>
+      <h2>@Model.StatusCodeName</h2>
+      <h3>@Model.StatusCodeDescription</h3>
+      <p class="lead">
+        Error details: @Model.ExceptionName, @Model.TraceId
+      </p>
+    </div>
+  </div>
 </div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
@@ -8,11 +9,14 @@ using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BansViewModels;
+using Hikkaba.Web.ViewModels.ErrorViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,7 +50,8 @@ public sealed class BanAdminController : BaseMvcController
         var ban = await _banService.GetBanAsync(id, cancellationToken);
         if (ban is null)
         {
-            return new NotFoundResult();
+            var returnUrl = GetLocalReferrerOrRoute("BanIndex");
+            return CustomErrorPage(StatusCodes.Status404NotFound, LogEventIds.NotFound, "The requested ban was not found.", returnUrl);
         }
 
         return View(ban.ToViewModel());

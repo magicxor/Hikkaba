@@ -1,0 +1,25 @@
+﻿@model Hikkaba.Web.ViewModels.ErrorViewModels.CustomErrorViewModel
+
+@{
+  ViewData["Title"] = $"Error {Model.StatusCode} - {Model.EventId.Name}";
+}
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="jumbotron m-3">
+      <h1>Error @Model.StatusCode</h1>
+      <h2>@Model.EventId.Name</h2>
+      <h3>@Model.ErrorMessage</h3>
+      <p class="lead">
+        Error details: @Model.TraceId
+      </p>
+
+      @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
+      {
+        <p>
+          <a class="decoration-on-hover" href="@Model.ReturnUrl"><i class="fas fa-angle-left"></i> Go back</a>
+        </p>
+      }
+    </div>
+  </div>
+</div>

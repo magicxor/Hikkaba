@@ -8,12 +8,13 @@ public static class LogEventIds
     public const int StartId = 354210000;
 
     public static readonly EventId Unknown = new(StartId + 0, "Unknown event");
-    public static readonly EventId BadRequest = new(StartId + 400, "Bad request");
-    public static readonly EventId AccessDenied = new(StartId + 403, "Access denied");
-    public static readonly EventId NotFound = new(StartId + 404, "Not found");
-    public static readonly EventId TooManyRequests = new(StartId + 429, "Too many requests");
-    public static readonly EventId UnavailableForLegalReasons = new(StartId + 451, "Unavailable for legal reasons");
-    public static readonly EventId InternalError = new(StartId + 500, "Internal error");
+    public static readonly EventId BadRequest = new(StartId + 400, "Bad Request");
+    public static readonly EventId Unauthorized = new(StartId + 401, "Unauthorized");
+    public static readonly EventId Forbidden = new(StartId + 403, "Forbidden");
+    public static readonly EventId NotFound = new(StartId + 404, "Not Found");
+    public static readonly EventId TooManyRequests = new(StartId + 429, "Too Many Requests");
+    public static readonly EventId UnavailableForLegalReasons = new(StartId + 451, "Unavailable For Legal Reasons");
+    public static readonly EventId InternalServerError = new(StartId + 500, "Internal Server Error");
     public static readonly EventId DbQuery = new(StartId + 1000, "DB query");
     public static readonly EventId UserBanned = new(StartId + 1002, "User banned");
     public static readonly EventId MaintenanceMode = new(StartId + 1003, "Maintenance mode");
