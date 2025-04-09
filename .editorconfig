@@ -360,18 +360,6 @@ dotnet_diagnostic.CA1024.severity = suggestion
 # CA1055: Change the return type of method 'ThreadUrlUtils.GetThreadDetailsUri(ThreadDetailsViewModel, IUrlHelper)' from 'string' to 'System.Uri'
 dotnet_diagnostic.CA1055.severity = suggestion
 
-# Async methods should have "Async" suffix
-dotnet_naming_rule.async_methods_end_in_async.symbols = any_async_methods
-dotnet_naming_rule.async_methods_end_in_async.style = end_in_async
-dotnet_naming_rule.async_methods_end_in_async.severity = error
-
-dotnet_naming_symbols.any_async_methods.applicable_kinds = method
-dotnet_naming_symbols.any_async_methods.applicable_accessibilities = *
-dotnet_naming_symbols.any_async_methods.required_modifiers = async
-
-dotnet_naming_style.end_in_async.required_suffix = Async
-dotnet_naming_style.end_in_async.capitalization = pascal_case
-
 # Function is not convertible to SQL and must not be called in the database context
 # Reason: false positive when using LinqKit
 resharper_entity_framework_unsupported_server_side_function_call_highlighting = none

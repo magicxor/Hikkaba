@@ -1,7 +1,4 @@
-[*.cs]
-## SS003: The operands in the divisive expression SkipCount / PageSize are both integers and result in an implicit rounding.
-dotnet_diagnostic.SS003.severity = none
-
+﻿[*.cs]
 # Async methods should have "Async" suffix
 dotnet_naming_rule.async_methods_end_in_async.symbols = any_async_methods
 dotnet_naming_rule.async_methods_end_in_async.style = end_in_async
