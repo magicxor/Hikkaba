@@ -259,7 +259,7 @@
       "destination": "wwwroot/lib/tempus-dominus"
     },
     {
-      "library": "@fortawesome/fontawesome-free@5.15.4",
+      "library": "@fortawesome/fontawesome-free@6.7.2",
       "destination": "wwwroot/lib/fontawesome",
       "files": [
         "css/all.css",
@@ -274,23 +274,20 @@
         "css/solid.min.css",
         "css/svg-with-js.css",
         "css/svg-with-js.min.css",
+        "css/v4-font-face.css",
+        "css/v4-font-face.min.css",
         "css/v4-shims.css",
         "css/v4-shims.min.css",
-        "webfonts/fa-brands-400.eot",
-        "webfonts/fa-brands-400.svg",
+        "css/v5-font-face.css",
+        "css/v5-font-face.min.css",
         "webfonts/fa-brands-400.ttf",
-        "webfonts/fa-brands-400.woff",
         "webfonts/fa-brands-400.woff2",
-        "webfonts/fa-regular-400.eot",
-        "webfonts/fa-regular-400.svg",
         "webfonts/fa-regular-400.ttf",
-        "webfonts/fa-regular-400.woff",
         "webfonts/fa-regular-400.woff2",
-        "webfonts/fa-solid-900.eot",
-        "webfonts/fa-solid-900.svg",
         "webfonts/fa-solid-900.ttf",
-        "webfonts/fa-solid-900.woff",
-        "webfonts/fa-solid-900.woff2"
+        "webfonts/fa-solid-900.woff2",
+        "webfonts/fa-v4compatibility.ttf",
+        "webfonts/fa-v4compatibility.woff2"
       ]
     },
     {

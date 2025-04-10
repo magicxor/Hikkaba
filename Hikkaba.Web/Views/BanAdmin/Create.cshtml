@@ -9,15 +9,15 @@
 
 <div class="row">
   <div class="col-md-8 offset-md-2">
-    <h2 class="text-center">@ViewData["Title"]</h2>
+    <h2 class="text-center m-3">@ViewData["Title"]</h2>
 
     <div class="m-3">
       <a class="decoration-on-hover" href="@Url.RouteUrl("CategoryDetails", new { categoryAlias = Model.PostDetails.CategoryAlias })">
-        <i class="fas fa-angle-left"></i> Back to category
+        <i class="fa-solid fa-angle-left"></i> Back to category
       </a>
       |
       <a class="decoration-on-hover" href="@Url.RouteUrl("ThreadDetails", new { categoryAlias = Model.PostDetails.CategoryAlias, threadId = Model.PostDetails.Id })">
-        <i class="fas fa-angle-left"></i> Back to thread
+        <i class="fa-solid fa-angle-left"></i> Back to thread
       </a>
     </div>
 

@@ -10,7 +10,7 @@
     "del-wwwroot-css": "del-cli _output/css-bundle/* ../wwwroot/css/* -force",
     "copy-wwwroot-js": "cpy _output/js-bundle/* ../wwwroot/js",
     "copy-wwwroot-css": "cpy _output/css-bundle/* ../wwwroot/css",
-    "build": "npm run del-wwwroot-js && webpack --config webpack.config.js --mode=production && npm run copy-wwwroot-js",
+    "build-scripts": "npm run del-wwwroot-js && webpack --config webpack.config.js --mode=production && npm run copy-wwwroot-js",
     "build-styles": "npm run del-wwwroot-css && gulp styles && npm run copy-wwwroot-css"
   },
   "keywords": [],

@@ -10,13 +10,7 @@ window.navigationFn = {
 };
 
 window.getSelectionText = function getSelectionText() {
-    let text = "";
-    if (window.getSelection) {
-        text = window.getSelection().toString();
-    } else if (document.selection && document.selection.type !== "Control") {
-        text = document.selection.createRange().text;
-    }
-    return text;
+    return window.getSelection ? window.getSelection().toString() : "";
 };
 
 window.writeSelectionLineToInput = function writeSelectionLineToInput(inputId) {
@@ -81,6 +75,7 @@ window.insertTag = function insertTag(inputId, markupButtonId) {
 };
 
 $(function () {
+    // convert UTC datetime to local datetime
     $("time.time-localizable").each(function () {
         const thisElement = $(this);
         const dateTimeControl = moment(thisElement.attr("datetime"));
@@ -99,15 +94,64 @@ $(function () {
             navigationFn.goToSection(inputId);
         });
     }
+});
 
-    $(".datetimepicker-enabled").each(function () {
-        const dateFormatDateOnly = 'YYYY-MM-DD';
-        const dateFormatFull = dateFormatDateOnly + ' HH:mm';
-        const thisElement = $(this);
-        thisElement.datetimepicker({
-            format: dateFormatFull,
-            minDate: moment().format(dateFormatDateOnly),
-            defaultDate: moment().format(dateFormatDateOnly)
-        });
+const processedForms = new Set();
+const allUtcInputs = document.querySelectorAll('.datetimepicker-utc');
+
+const handleSubmit = (event) => {
+    const formElement = event.target; // The form that was submitted
+
+    // Find all relevant inputs *within this specific form*
+    const localInputsInForm = formElement.querySelectorAll('.datetimepicker-utc');
+
+    localInputsInForm.forEach(localInput => {
+        const originalName = localInput.name;
+        if (!originalName) {
+            // Skip if the input has no name (might happen if script runs unexpectedly)
+            return;
+        }
+
+        const localValue = localInput.value;
+
+        if (localValue) {
+            const dateObject = new Date(localValue);
+
+            if (!isNaN(dateObject.getTime())) {
+                // Date is valid: convert, create hidden input, swap name
+                const utcString = dateObject.toISOString();
+
+                const utcInput = document.createElement('input');
+                utcInput.type = 'hidden';
+                utcInput.value = utcString;
+                utcInput.name = originalName;
+
+                formElement.appendChild(utcInput); // Add hidden input to the form
+                localInput.removeAttribute('name'); // Remove name from original input
+
+                console.log(`JS Info: Created hidden input named "${utcInput.name}" with UTC value "${utcString}". Original input "${originalName}" name removed.`);
+            } else {
+                // Date is invalid: do nothing, let the original input submit
+                console.warn(`JS Warning: Invalid date for field named "${originalName}". Submitting original value.`);
+            }
+        } else {
+            // Input is empty: do nothing, let the original input submit
+            console.log(`JS Info: Field "${originalName}" is empty. Submitting as is.`);
+        }
     });
+    // Form submission continues after this function finishes
+};
+
+// Iterate through all found UTC inputs to identify their forms
+allUtcInputs.forEach(input => {
+    const form = input.closest('form'); // Find the parent form of the input
+
+    // If the input is inside a form, and we haven't processed this form yet
+    if (form && !processedForms.has(form)) {
+        // Add the single submit event listener to this form
+        form.addEventListener('submit', handleSubmit);
+        // Mark this form as processed so we don't add the listener again
+        processedForms.add(form);
+        console.log(`JS Setup: Attached UTC date handler to form#${form.id || '[no id]'}.`);
+    }
 });
