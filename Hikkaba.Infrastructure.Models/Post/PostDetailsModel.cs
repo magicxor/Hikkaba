@@ -49,4 +49,6 @@ public class PostDetailsModel
     public required int CategoryId { get; set; }
 
     public required IReadOnlyList<long> Replies { get; set; }
+
+    // public required bool IsBannedForThisPost { get; init; } /* todo: add */
 }

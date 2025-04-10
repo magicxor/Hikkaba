@@ -18,11 +18,5 @@ internal static partial class PostMapper
     [MapperIgnoreTarget(nameof(PostDetailsViewModel.ShowCategoryAlias))]
     public static partial PostDetailsViewModel ToViewModel(this PostDetailsModel model);
 
-    [MapperIgnoreSource(nameof(PostPreviewModel.CreatedBy))]
-    [MapperIgnoreSource(nameof(PostPreviewModel.ModifiedBy))]
-    [MapperIgnoreTarget(nameof(PostDetailsViewModel.ShowCategoryAlias))]
-    [MapProperty(nameof(PostPreviewModel.ThreadLocalUserHash), nameof(PostDetailsViewModel.ThreadLocalUserHash), Use = nameof(BytesToString))]
-    public static partial PostDetailsViewModel ToViewModel(this PostPreviewModel model);
-
     public static partial IReadOnlyList<PostDetailsViewModel> ToViewModels(this IReadOnlyList<PostDetailsModel> models);
 }

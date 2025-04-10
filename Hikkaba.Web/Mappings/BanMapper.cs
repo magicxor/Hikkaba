@@ -10,8 +10,6 @@ namespace Hikkaba.Web.Mappings;
 [UseStaticMapper(typeof(Hikkaba.Infrastructure.Mappings.IpAddressMapper))]
 internal static partial class BanMapper
 {
-    public static partial ViewModels.BansViewModels.BanPreviewModel ToViewModel(this BanPreviewModel model);
-
     [MapperIgnoreSource(nameof(BanDetailsModel.CategoryId))]
     [MapperIgnoreSource(nameof(BanDetailsModel.CreatedById))]
     [MapperIgnoreSource(nameof(BanDetailsModel.ModifiedById))]

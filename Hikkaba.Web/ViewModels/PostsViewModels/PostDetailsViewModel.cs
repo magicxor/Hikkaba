@@ -77,5 +77,8 @@ public sealed record PostDetailsViewModel
     [Display(Name = @"Replies")]
     public required IReadOnlyList<long> Replies { get; init; }
 
+    // [Display(Name = @"User was banned")]
+    // public required bool IsBannedForThisPost { get; init; } /* todo: add */
+
     public int GetAttachmentCount() => Audio.Count + Documents.Count + Pictures.Count + Video.Count;
 }
