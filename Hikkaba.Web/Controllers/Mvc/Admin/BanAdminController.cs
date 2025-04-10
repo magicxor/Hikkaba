@@ -42,7 +42,7 @@ public sealed class BanAdminController : BaseMvcController
 
     [HttpGet("{id:int}", Name = "BanDetails")]
     public async Task<IActionResult> Details(
-        [FromRoute][Range(1, int.MaxValue)] int id,
+        [FromRoute] [Range(1, int.MaxValue)] int id,
         CancellationToken cancellationToken)
     {
         var ban = await _banService.GetBanAsync(id, cancellationToken);
@@ -57,8 +57,8 @@ public sealed class BanAdminController : BaseMvcController
 
     [HttpGet("", Name = "BanIndex")]
     public async Task<IActionResult> Index(
-        [FromQuery][Range(1, int.MaxValue)] int page = 1,
-        [FromQuery][Range(1, 100)] int size = 10,
+        [FromQuery] [Range(1, int.MaxValue)] int page = 1,
+        [FromQuery] [Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {
         var filter = new BanPagingFilter
@@ -66,7 +66,8 @@ public sealed class BanAdminController : BaseMvcController
             EndsNotBefore = _timeProvider.GetUtcNow().UtcDateTime,
             PageNumber = page,
             PageSize = size,
-            OrderBy = [
+            OrderBy =
+            [
                 new OrderByItem { Field = nameof(BanDetailsModel.CreatedAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(BanDetailsModel.Id), Direction = OrderByDirection.Desc },
             ],
@@ -82,8 +83,8 @@ public sealed class BanAdminController : BaseMvcController
 
     [HttpGet("create", Name = "BanCreate")]
     public async Task<IActionResult> Create(
-        [FromQuery][Range(1, long.MaxValue)] long threadId,
-        [FromQuery][Range(1, long.MaxValue)] long postId,
+        [FromQuery] [Range(1, long.MaxValue)] long threadId,
+        [FromQuery] [Range(1, long.MaxValue)] long postId,
         CancellationToken cancellationToken)
     {
         var prerequisites = await _banCreationPrerequisiteService.GetPrerequisitesAsync(postId, threadId, cancellationToken);
@@ -91,25 +92,64 @@ public sealed class BanAdminController : BaseMvcController
         switch (prerequisites.Status)
         {
             case BanCreationPrerequisiteStatus.PostNotFound:
-                return NotFound("Post not found");
+            {
+                return CustomErrorPage(
+                    StatusCodes.Status404NotFound,
+                    LogEventIds.NotFound,
+                    "The requested post was not found.",
+                    GetLocalReferrerOrNull());
+            }
             case BanCreationPrerequisiteStatus.IpAddressNull:
-                return Problem("User IP address is null");
+            {
+                return CustomErrorPage(
+                    StatusCodes.Status400BadRequest,
+                    LogEventIds.BadRequest,
+                    "Can't retrieve user IP address.",
+                    GetLocalReferrerOrNull());
+            }
             case BanCreationPrerequisiteStatus.ActiveBanFound:
+            {
                 if (prerequisites.ActiveBanId.HasValue)
                 {
                     return RedirectToAction("Details", new { id = prerequisites.ActiveBanId.Value });
                 }
 
-                return Problem("Active ban found but ID is missing.");
+                return CustomErrorPage(
+                    StatusCodes.Status400BadRequest,
+                    LogEventIds.BadRequest,
+                    "An active ban was found, but the ID is missing.",
+                    GetLocalReferrerOrNull());
+            }
             case BanCreationPrerequisiteStatus.Success:
+            {
                 break;
+            }
             default:
-                return Problem("An unexpected error occurred while retrieving ban creation prerequisites.");
+            {
+                return CustomErrorPage(
+                    StatusCodes.Status500InternalServerError,
+                    LogEventIds.InternalServerError,
+                    "An unexpected error occurred while retrieving ban creation prerequisites.",
+                    GetLocalReferrerOrNull());
+            }
         }
 
-        if (prerequisites.Post == null || prerequisites.IpAddressInfo == null)
+        if (prerequisites.Post == null)
         {
-            return Problem("Failed to retrieve necessary post or IP address information.");
+            return CustomErrorPage(
+                StatusCodes.Status500InternalServerError,
+                LogEventIds.InternalServerError,
+                "Failed to retrieve necessary post information.",
+                GetLocalReferrerOrNull());
+        }
+
+        if (prerequisites.IpAddressInfo == null)
+        {
+            return CustomErrorPage(
+                StatusCodes.Status500InternalServerError,
+                LogEventIds.InternalServerError,
+                "Can't retrieve user IP address information.",
+                GetLocalReferrerOrNull());
         }
 
         var postVm = prerequisites.Post.ToViewModel();
@@ -126,7 +166,9 @@ public sealed class BanAdminController : BaseMvcController
 
     [HttpPost("create", Name = "BanCreateConfirm")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateConfirm(BanCreateViewModel viewModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateConfirm(
+        [Required] BanCreateViewModel viewModel,
+        CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
@@ -155,25 +197,64 @@ public sealed class BanAdminController : BaseMvcController
             switch (prerequisites.Status)
             {
                 case BanCreationPrerequisiteStatus.PostNotFound:
-                    return NotFound("Post not found");
+                {
+                    return CustomErrorPage(
+                        StatusCodes.Status404NotFound,
+                        LogEventIds.NotFound,
+                        "The requested post was not found.",
+                        GetLocalReferrerOrNull());
+                }
                 case BanCreationPrerequisiteStatus.IpAddressNull:
-                    return Problem("User IP address is null");
+                {
+                    return CustomErrorPage(
+                        StatusCodes.Status400BadRequest,
+                        LogEventIds.BadRequest,
+                        "Can't retrieve user IP address.",
+                        GetLocalReferrerOrNull());
+                }
                 case BanCreationPrerequisiteStatus.ActiveBanFound:
+                {
                     if (prerequisites.ActiveBanId.HasValue)
                     {
                         return RedirectToAction("Details", new { id = prerequisites.ActiveBanId.Value });
                     }
 
-                    return Problem("Active ban found but ID is missing.");
+                    return CustomErrorPage(
+                        StatusCodes.Status400BadRequest,
+                        LogEventIds.BadRequest,
+                        "An active ban was found, but the ID is missing.",
+                        GetLocalReferrerOrNull());
+                }
                 case BanCreationPrerequisiteStatus.Success:
+                {
                     break;
+                }
                 default:
-                    return Problem("An unexpected error occurred while retrieving ban creation prerequisites.");
+                {
+                    return CustomErrorPage(
+                        StatusCodes.Status500InternalServerError,
+                        LogEventIds.InternalServerError,
+                        "An unexpected error occurred while retrieving ban creation prerequisites.",
+                        GetLocalReferrerOrNull());
+                }
             }
 
-            if (prerequisites.Post == null || prerequisites.IpAddressInfo == null)
+            if (prerequisites.Post == null)
             {
-                return Problem("Failed to retrieve necessary post or IP address information.");
+                return CustomErrorPage(
+                    StatusCodes.Status500InternalServerError,
+                    LogEventIds.InternalServerError,
+                    "Failed to retrieve necessary post information.",
+                    GetLocalReferrerOrNull());
+            }
+
+            if (prerequisites.IpAddressInfo == null)
+            {
+                return CustomErrorPage(
+                    StatusCodes.Status500InternalServerError,
+                    LogEventIds.InternalServerError,
+                    "Can't retrieve user IP address information.",
+                    GetLocalReferrerOrNull());
             }
 
             var postVm = prerequisites.Post.ToViewModel();
@@ -191,7 +272,7 @@ public sealed class BanAdminController : BaseMvcController
 
     [HttpGet("{id:int}/delete", Name = "BanDelete")]
     public async Task<IActionResult> Delete(
-        [FromRoute][Range(1, int.MaxValue)] int id,
+        [FromRoute] [Range(1, int.MaxValue)] int id,
         CancellationToken cancellationToken)
     {
         var ban = await _banService.GetBanAsync(id, cancellationToken);
@@ -202,7 +283,7 @@ public sealed class BanAdminController : BaseMvcController
     [HttpPost("{id:int}/delete", Name = "BanDeleteConfirm")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirm(
-        [FromRoute][Range(1, int.MaxValue)] int id,
+        [FromRoute] [Range(1, int.MaxValue)] int id,
         CancellationToken cancellationToken)
     {
         await _banService.SetBanDeletedAsync(id, true, cancellationToken);
