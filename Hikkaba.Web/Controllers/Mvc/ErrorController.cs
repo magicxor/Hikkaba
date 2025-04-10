@@ -26,7 +26,7 @@ public sealed class ErrorController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [IgnoreAntiforgeryToken]
     [SuppressMessage("Security", "CA5395:Miss HttpVerb attribute for action methods", Justification = "This is acceptable for the error controller.")]
-    public IActionResult Index([Required] int statusCode)
+    public IActionResult Index([Required] [Range(1, 999)] int statusCode)
     {
         var (statusCodeName, statusCodeDescription) = StatusCodeUtils.GetDetails(statusCode);
 

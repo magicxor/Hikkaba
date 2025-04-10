@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
@@ -14,7 +13,6 @@ using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BansViewModels;
-using Hikkaba.Web.ViewModels.ErrorViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

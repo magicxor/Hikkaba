@@ -47,8 +47,10 @@ public sealed class ThreadController : BaseMvcController
 
     [HttpGet("/{categoryAlias}/{threadId:long}", Name = "ThreadDetails")]
     public async Task<IActionResult> Details(
-        [Required][FromRoute][MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
-        [Required][FromRoute][Range(1, long.MaxValue)] long threadId,
+        [Required] [FromRoute] [MaxLength(Defaults.MaxCategoryAliasLength)]
+        string categoryAlias,
+        [Required] [FromRoute] [Range(1, long.MaxValue)]
+        long threadId,
         CancellationToken cancellationToken)
     {
         var threadPosts = await _threadService.GetThreadDetailsAsync(threadId, cancellationToken);
@@ -66,7 +68,8 @@ public sealed class ThreadController : BaseMvcController
 
     [HttpGet("/{categoryAlias}/create", Name = "ThreadCreate")]
     public async Task<IActionResult> Create(
-        [Required][FromRoute][MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
+        [Required] [FromRoute] [MaxLength(Defaults.MaxCategoryAliasLength)]
+        string categoryAlias,
         CancellationToken cancellationToken)
     {
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
@@ -91,7 +94,8 @@ public sealed class ThreadController : BaseMvcController
     [ValidateDNTCaptcha(ErrorMessage = "Please enter the security code as a number")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateConfirm(
-        [Required][FromRoute][MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
+        [Required] [FromRoute] [MaxLength(Defaults.MaxCategoryAliasLength)]
+        string categoryAlias,
         [Required] ThreadAnonymousCreateViewModel viewModel,
         CancellationToken cancellationToken)
     {

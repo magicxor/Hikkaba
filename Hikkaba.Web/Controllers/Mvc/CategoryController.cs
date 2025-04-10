@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Mappings;
 using Microsoft.AspNetCore.Http;
@@ -37,9 +38,9 @@ public sealed class CategoryController : BaseMvcController
 
     [HttpGet("/{categoryAlias}", Name = "CategoryDetails")]
     public async Task<IActionResult> Details(
-        [Required][FromRoute] string categoryAlias,
-        [FromQuery][Range(1, int.MaxValue)] int page = 1,
-        [FromQuery][Range(1, 100)] int size = 10,
+        [Required] [FromRoute] [MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
+        [FromQuery] [Range(1, int.MaxValue)] int page = 1,
+        [FromQuery] [Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {
         var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
@@ -54,7 +55,8 @@ public sealed class CategoryController : BaseMvcController
             CategoryAlias = categoryAlias,
             PageNumber = page,
             PageSize = size,
-            OrderBy = [
+            OrderBy =
+            [
                 new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
