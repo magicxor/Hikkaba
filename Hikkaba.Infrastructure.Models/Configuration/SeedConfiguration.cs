@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Configuration;
 
-public class SeedConfiguration
+public sealed class SeedConfiguration
 {
     [Required]
     [EmailAddress]

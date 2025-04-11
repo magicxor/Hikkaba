@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class ThreadCreateExtendedRequestModel
+public sealed class ThreadCreateExtendedRequestModel
 {
     public required ThreadCreateRequestModel BaseModel { get; set; }
 

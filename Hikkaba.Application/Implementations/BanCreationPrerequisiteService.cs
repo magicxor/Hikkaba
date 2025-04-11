@@ -5,7 +5,7 @@ using Hikkaba.Infrastructure.Models.Post;
 
 namespace Hikkaba.Application.Implementations;
 
-public class BanCreationPrerequisiteService : IBanCreationPrerequisiteService
+public sealed class BanCreationPrerequisiteService : IBanCreationPrerequisiteService
 {
     private readonly IPostService _postService;
     private readonly IBanService _banService;

@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Post;
 
-public class ThreadPostsFilter : SortingFilter
+public sealed class ThreadPostsFilter : SortingFilter
 {
     public long? PostId { get; set; }
     public required long ThreadId { get; set; }

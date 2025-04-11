@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class CategoryThreadModel
+public sealed class CategoryThreadModel
 {
     public required long ThreadId { get; set; }
     public required string CategoryAlias { get; set; }

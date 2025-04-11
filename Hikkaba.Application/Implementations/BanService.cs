@@ -8,7 +8,7 @@ using Hikkaba.Shared.Enums;
 
 namespace Hikkaba.Application.Implementations;
 
-public class BanService : IBanService
+public sealed class BanService : IBanService
 {
     private readonly IGeoIpService _geoIpService;
     private readonly IBanRepository _banRepository;

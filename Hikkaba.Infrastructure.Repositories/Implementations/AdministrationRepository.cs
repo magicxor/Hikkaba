@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class AdministrationRepository : IAdministrationRepository
+public sealed class AdministrationRepository : IAdministrationRepository
 {
     private readonly ApplicationDbContext _context;
 

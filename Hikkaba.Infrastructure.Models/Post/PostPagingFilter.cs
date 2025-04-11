@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Post;
 
-public class PostPagingFilter : PageBasedPagingFilter
+public sealed class PostPagingFilter : PageBasedPagingFilter
 {
     public bool IncludeHidden { get; set; }
     public bool IncludeDeleted { get; set; }

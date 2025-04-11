@@ -3,7 +3,7 @@ using MaxMind.GeoIP2;
 
 namespace Hikkaba.Application.Implementations;
 
-public class GeoIpAsnReader : DatabaseReader
+public sealed class GeoIpAsnReader : DatabaseReader
 {
     public GeoIpAsnReader(string file, FileAccessMode mode = FileAccessMode.MemoryMapped)
         : base(file, mode)

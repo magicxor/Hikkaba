@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Category;
 
-public class CategoryCreateRequestModel
+public sealed class CategoryCreateRequestModel
 {
     public required string Alias { get; set; }
 

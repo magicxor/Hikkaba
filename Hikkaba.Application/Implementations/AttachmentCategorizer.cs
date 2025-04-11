@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Application.Implementations;
 
-public class AttachmentCategorizer : IAttachmentCategorizer
+public sealed class AttachmentCategorizer : IAttachmentCategorizer
 {
     private readonly HikkabaConfiguration _hikkabaConfiguration;
 

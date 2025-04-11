@@ -3,7 +3,7 @@ using Hikkaba.Paging.Models;
 
 namespace Hikkaba.Infrastructure.Models.Ban;
 
-public class BanPagingFilter : PageBasedPagingFilter
+public sealed class BanPagingFilter : PageBasedPagingFilter
 {
     public bool IncludeDeleted { get; set; }
     public DateTime? CreatedNotBefore { get; set; }

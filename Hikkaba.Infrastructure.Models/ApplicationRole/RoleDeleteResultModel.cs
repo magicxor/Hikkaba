@@ -5,7 +5,7 @@ using OneOf.Types;
 namespace Hikkaba.Infrastructure.Models.ApplicationRole;
 
 [GenerateOneOf]
-public partial class RoleDeleteResultModel
+public sealed partial class RoleDeleteResultModel
     : OneOfBase<Success, DomainError>
 {
 }

@@ -4,7 +4,7 @@ using Hikkaba.Infrastructure.Repositories.Contracts;
 
 namespace Hikkaba.Application.Implementations;
 
-public class BoardService : IBoardService
+public sealed class BoardService : IBoardService
 {
     private readonly IBoardRepository _boardRepository;
 

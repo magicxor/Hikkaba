@@ -8,7 +8,7 @@ using TwentyTwenty.Storage;
 
 namespace Hikkaba.Application.Implementations;
 
-public class AdministrationService : IAdministrationService
+public sealed class AdministrationService : IAdministrationService
 {
     private readonly ILogger<AdministrationService> _logger;
     private readonly IStorageProvider _storageProvider;

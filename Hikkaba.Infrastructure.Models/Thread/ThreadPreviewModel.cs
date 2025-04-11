@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class ThreadPreviewModel
+public sealed class ThreadPreviewModel
 {
     public required long Id { get; set; }
 

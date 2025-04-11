@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Application.Implementations;
 
-public class IpAddressCalculator : IIpAddressCalculator
+public sealed class IpAddressCalculator : IIpAddressCalculator
 {
     private readonly ILogger<IpAddressCalculator> _logger;
 

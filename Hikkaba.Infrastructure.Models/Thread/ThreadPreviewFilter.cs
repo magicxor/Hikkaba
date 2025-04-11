@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class ThreadPreviewFilter : PageBasedPagingFilter
+public sealed class ThreadPreviewFilter : PageBasedPagingFilter
 {
     public required string CategoryAlias { get; set; }
     public bool IncludeDeleted { get; set; }

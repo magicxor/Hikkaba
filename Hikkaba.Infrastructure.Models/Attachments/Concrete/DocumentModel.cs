@@ -2,6 +2,6 @@
 
 namespace Hikkaba.Infrastructure.Models.Attachments.Concrete;
 
-public class DocumentModel : FileAttachmentModel
+public sealed class DocumentModel : FileAttachmentModel
 {
 }

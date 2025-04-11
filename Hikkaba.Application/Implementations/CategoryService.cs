@@ -5,7 +5,7 @@ using Hikkaba.Infrastructure.Repositories.Contracts;
 
 namespace Hikkaba.Application.Implementations;
 
-public class CategoryService : ICategoryService
+public sealed class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository _categoryRepository;
 

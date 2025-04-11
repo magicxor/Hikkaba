@@ -5,7 +5,7 @@ using Hikkaba.Application.Telemetry;
 
 namespace Hikkaba.Application.Implementations;
 
-public class HashService : IHashService
+public sealed class HashService : IHashService
 {
     public byte[] GetHashBytes(Stream inputStream)
     {

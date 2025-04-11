@@ -3,7 +3,7 @@ using Hikkaba.Infrastructure.Models.Attachments.Concrete;
 
 namespace Hikkaba.Infrastructure.Models.Post;
 
-public class PostPreviewModel
+public sealed class PostPreviewModel
 {
     public required int Index { get; set; }
     public required long Id { get; set; }

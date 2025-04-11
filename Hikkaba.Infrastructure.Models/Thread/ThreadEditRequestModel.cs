@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class ThreadEditRequestModel
+public sealed class ThreadEditRequestModel
 {
     public required long Id { get; set; }
 

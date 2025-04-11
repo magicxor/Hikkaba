@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Post;
 
-public class PostDetailsModel
+public sealed class PostDetailsModel
 {
     public required long Index { get; set; }
 

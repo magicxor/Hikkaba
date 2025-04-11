@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Category;
 
-public class CategoryEditRequestModel
+public sealed class CategoryEditRequestModel
 {
     public required int Id { get; set; }
 

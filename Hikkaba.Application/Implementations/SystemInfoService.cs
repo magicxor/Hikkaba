@@ -6,7 +6,7 @@ using Hikkaba.Infrastructure.Models.Administration;
 
 namespace Hikkaba.Application.Implementations;
 
-public class SystemInfoService
+public sealed class SystemInfoService
     : ISystemInfoService
 {
     private readonly ApplicationDbContext _applicationDbContext;

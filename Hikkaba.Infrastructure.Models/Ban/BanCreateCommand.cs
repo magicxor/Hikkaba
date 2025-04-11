@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Ban;
 
-public class BanCreateCommand
+public sealed class BanCreateCommand
 {
     public required DateTime? EndsAt { get; set; }
 

@@ -8,7 +8,7 @@ using Hikkaba.Shared.Extensions;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class AttachmentRepository : IAttachmentRepository
+public sealed class AttachmentRepository : IAttachmentRepository
 {
     public AttachmentCollections ToAttachmentEntities(FileAttachmentContainerCollection inputFiles)
     {

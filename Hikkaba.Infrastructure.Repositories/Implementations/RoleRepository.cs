@@ -10,7 +10,7 @@ using OneOf.Types;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class RoleRepository : IRoleRepository
+public sealed class RoleRepository : IRoleRepository
 {
     private readonly RoleManager<ApplicationRole> _roleMgr;
 

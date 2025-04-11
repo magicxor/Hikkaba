@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Ban;
 
-public class IpAddressInfoModel
+public sealed class IpAddressInfoModel
 {
     public IPAddress? NetworkIpAddress { get; set; }
     public int? NetworkPrefixLength { get; set; }

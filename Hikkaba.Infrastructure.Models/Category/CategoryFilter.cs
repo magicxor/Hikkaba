@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Category;
 
-public class CategoryFilter : SortingFilter
+public sealed class CategoryFilter : SortingFilter
 {
     public bool IncludeHidden { get; set; }
     public bool IncludeDeleted { get; set; }

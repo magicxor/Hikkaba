@@ -13,7 +13,7 @@ using TwentyTwenty.Storage;
 
 namespace Hikkaba.Application.Implementations;
 
-public class AttachmentService : IAttachmentService
+public sealed class AttachmentService : IAttachmentService
 {
     private readonly IOptions<HikkabaConfiguration> _settings;
     private readonly IAttachmentCategorizer _attachmentCategorizer;

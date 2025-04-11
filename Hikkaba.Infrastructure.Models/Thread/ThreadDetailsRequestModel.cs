@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class ThreadDetailsRequestModel
+public sealed class ThreadDetailsRequestModel
 {
     public required long Id { get; set; }
 

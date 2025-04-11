@@ -1,5 +1,5 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 
-public class PostingRestrictionsResponseFailureModel : PostingRestrictionsResponseModel
+public sealed class PostingRestrictionsResponseFailureModel : PostingRestrictionsResponseModel
 {
 }

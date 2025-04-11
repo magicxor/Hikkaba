@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 
-public class PostingRestrictionsResponseSuccessModel : PostingRestrictionsResponseModel
+public sealed class PostingRestrictionsResponseSuccessModel : PostingRestrictionsResponseModel
 {
     public required Guid? ThreadSalt { get; set; }
     public required bool IsClosed { get; set; }

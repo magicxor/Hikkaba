@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Application.Implementations;
 
-public class PostService : IPostService
+public sealed class PostService : IPostService
 {
     private readonly ILogger<PostService> _logger;
     private readonly IAttachmentService _attachmentService;

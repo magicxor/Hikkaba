@@ -8,7 +8,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Hikkaba.Application.Implementations;
 
-public class ThumbnailGenerator : IThumbnailGenerator
+public sealed class ThumbnailGenerator : IThumbnailGenerator
 {
     [MustDisposeResource]
     public async Task<ThumbnailStreamContainer> GenerateThumbnailAsync(

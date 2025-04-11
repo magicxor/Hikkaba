@@ -20,7 +20,7 @@ using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class ThreadRepository : IThreadRepository
+public sealed class ThreadRepository : IThreadRepository
 {
     private readonly ILogger<ThreadRepository> _logger;
     private readonly ApplicationDbContext _applicationDbContext;

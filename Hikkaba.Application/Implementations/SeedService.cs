@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Application.Implementations;
 
-public class SeedService : ISeedService
+public sealed class SeedService : ISeedService
 {
     private readonly ILogger<SeedService> _logger;
     private readonly IOptions<HikkabaConfiguration> _options;

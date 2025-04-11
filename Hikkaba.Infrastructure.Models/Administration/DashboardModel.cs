@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Administration;
 
-public class DashboardModel
+public sealed class DashboardModel
 {
     public required IReadOnlyList<CategoryModeratorsModel> CategoriesModerators { get; set; }
 }

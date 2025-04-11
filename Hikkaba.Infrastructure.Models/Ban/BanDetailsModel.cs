@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Ban;
 
-public class BanDetailsModel
+public sealed class BanDetailsModel
 {
     public required int Id { get; set; }
     public required bool IsDeleted { get; set; }

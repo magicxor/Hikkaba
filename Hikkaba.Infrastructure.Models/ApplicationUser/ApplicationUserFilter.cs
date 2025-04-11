@@ -2,6 +2,6 @@
 
 namespace Hikkaba.Infrastructure.Models.ApplicationUser;
 
-public class ApplicationUserFilter : SortingFilter
+public sealed class ApplicationUserFilter : SortingFilter
 {
 }

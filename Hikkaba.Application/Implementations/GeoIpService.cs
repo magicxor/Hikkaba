@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Application.Implementations;
 
-public class GeoIpService : IGeoIpService
+public sealed class GeoIpService : IGeoIpService
 {
     private readonly ILogger<GeoIpService> _logger;
     private readonly GeoIpAsnReader _geoIpAsnReader;

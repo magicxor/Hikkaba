@@ -3,7 +3,7 @@ using Hikkaba.Infrastructure.Models.Attachments.Concrete;
 
 namespace Hikkaba.Infrastructure.Models.Post;
 
-public class PostEditRequestModel
+public sealed class PostEditRequestModel
 {
     public required long Id { get; set; }
 

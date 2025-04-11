@@ -2,7 +2,7 @@ using Hikkaba.Infrastructure.Models.Post;
 
 namespace Hikkaba.Infrastructure.Models.Ban;
 
-public class BanCreationPrerequisitesModel
+public sealed class BanCreationPrerequisitesModel
 {
     public PostDetailsModel? Post { get; init; }
     public IpAddressInfoModel? IpAddressInfo { get; init; }

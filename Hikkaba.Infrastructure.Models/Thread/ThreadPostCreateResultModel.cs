@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class ThreadPostCreateResultModel
+public sealed class ThreadPostCreateResultModel
 {
     public required long ThreadId { get; init; }
     public required long PostId { get; init; }

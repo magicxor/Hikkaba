@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Post;
 
-public class PostCreateExtendedRequestModel
+public sealed class PostCreateExtendedRequestModel
 {
     public required PostCreateRequestModel BaseModel { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Administration;
 
-public class CategoryDashboardModel
+public sealed class CategoryDashboardModel
 {
     public required int Id { get; set; }
 

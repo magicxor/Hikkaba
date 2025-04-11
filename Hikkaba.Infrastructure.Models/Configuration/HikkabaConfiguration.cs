@@ -3,7 +3,7 @@ using Hikkaba.Shared.Constants;
 
 namespace Hikkaba.Infrastructure.Models.Configuration;
 
-public class HikkabaConfiguration
+public sealed class HikkabaConfiguration
 {
     [Required]
     [Range(5, int.MaxValue)]

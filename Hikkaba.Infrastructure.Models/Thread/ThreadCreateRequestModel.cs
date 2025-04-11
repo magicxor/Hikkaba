@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Thread;
 
-public class ThreadCreateRequestModel
+public sealed class ThreadCreateRequestModel
 {
     public required string CategoryAlias { get; set; }
 

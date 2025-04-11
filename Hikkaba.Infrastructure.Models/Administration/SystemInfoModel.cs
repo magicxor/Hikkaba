@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace Hikkaba.Infrastructure.Models.Administration;
 
-public class SystemInfoModel
+public sealed class SystemInfoModel
 {
     public required string DatabaseProvider { get; set; }
     public required string FrameworkDescription { get; set; }

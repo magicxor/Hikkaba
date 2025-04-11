@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models;
 
-public class HikkabaInfrastructureModelsAssemblyInfo : IAssemblyInfo
+public sealed class HikkabaInfrastructureModelsAssemblyInfo : IAssemblyInfo
 {
     public int HierarchyLevel { get; } = 3;
 }

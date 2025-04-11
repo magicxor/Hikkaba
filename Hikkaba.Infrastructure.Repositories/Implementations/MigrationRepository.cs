@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class MigrationRepository : IMigrationRepository
+public sealed class MigrationRepository : IMigrationRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
 

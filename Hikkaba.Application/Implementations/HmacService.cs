@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Application.Implementations;
 
-public class HmacService : IHmacService
+public sealed class HmacService : IHmacService
 {
     private readonly IOptions<HikkabaConfiguration> _options;
 

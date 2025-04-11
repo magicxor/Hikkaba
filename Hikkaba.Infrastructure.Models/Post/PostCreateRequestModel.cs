@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Post;
 
-public class PostCreateRequestModel
+public sealed class PostCreateRequestModel
 {
     public required Guid BlobContainerId { get; set; }
 

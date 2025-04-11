@@ -2,6 +2,6 @@
 
 namespace Hikkaba.Infrastructure.Models.Attachments.Concrete;
 
-public class AudioModel : FileAttachmentModel
+public sealed class AudioModel : FileAttachmentModel
 {
 }

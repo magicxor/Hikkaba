@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class PostRepository : IPostRepository
+public sealed class PostRepository : IPostRepository
 {
     private readonly ILogger<PostRepository> _logger;
     private readonly ApplicationDbContext _applicationDbContext;

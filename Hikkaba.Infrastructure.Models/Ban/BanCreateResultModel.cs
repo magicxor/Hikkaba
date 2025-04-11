@@ -4,7 +4,7 @@ using OneOf;
 namespace Hikkaba.Infrastructure.Models.Ban;
 
 [GenerateOneOf]
-public partial class BanCreateResultModel
+public sealed partial class BanCreateResultModel
     : OneOfBase<BanCreateResultSuccessModel, DomainError>
 {
 }

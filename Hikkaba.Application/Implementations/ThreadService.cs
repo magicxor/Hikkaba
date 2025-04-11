@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Application.Implementations;
 
-public class ThreadService : IThreadService
+public sealed class ThreadService : IThreadService
 {
     private readonly ILogger<ThreadService> _logger;
     private readonly IAttachmentService _attachmentService;

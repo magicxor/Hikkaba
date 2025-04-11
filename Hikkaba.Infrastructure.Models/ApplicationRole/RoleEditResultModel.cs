@@ -5,7 +5,7 @@ using OneOf.Types;
 namespace Hikkaba.Infrastructure.Models.ApplicationRole;
 
 [GenerateOneOf]
-public partial class RoleEditResultModel
+public sealed partial class RoleEditResultModel
     : OneOfBase<Success, DomainError>
 {
 }

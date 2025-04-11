@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public class UserRepository
+public sealed class UserRepository
 {
     private readonly TimeProvider _timeProvider;
     private readonly ApplicationDbContext _applicationDbContext;
@@ -30,12 +30,8 @@ public class UserRepository
 
     public async Task<IReadOnlyList<ApplicationUserDetailsModel>> ListUsersAsync(bool includeDeleted)
     {
-        Expression<Func<ApplicationUser, bool>> filterDeleted = includeDeleted
-            ? x => true
-            : x => !x.IsDeleted;
-
         return await _userMgr.Users
-            .Where(filterDeleted)
+            .Where(x => includeDeleted || !x.IsDeleted)
             .Select(x => new ApplicationUserDetailsModel
             {
                 Id = x.Id,

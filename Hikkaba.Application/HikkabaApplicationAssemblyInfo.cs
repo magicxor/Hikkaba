@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Application;
 
-public class HikkabaApplicationAssemblyInfo : IAssemblyInfo
+public sealed class HikkabaApplicationAssemblyInfo : IAssemblyInfo
 {
     public int HierarchyLevel { get; } = 4;
 }

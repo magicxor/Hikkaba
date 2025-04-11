@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 
-public class PostingRestrictionsRequestModel
+public sealed class PostingRestrictionsRequestModel
 {
     public required string CategoryAlias { get; set; }
 

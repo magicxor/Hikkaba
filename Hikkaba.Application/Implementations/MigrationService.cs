@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Application.Implementations;
 
-public class MigrationService : IMigrationService
+public sealed class MigrationService : IMigrationService
 {
     private readonly ILogger<MigrationService> _logger;
     private readonly IOptions<HikkabaConfiguration> _options;

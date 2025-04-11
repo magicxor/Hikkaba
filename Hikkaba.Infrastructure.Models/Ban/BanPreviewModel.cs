@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.Ban;
 
-public class BanPreviewModel
+public sealed class BanPreviewModel
 {
     public required int Id { get; set; }
 

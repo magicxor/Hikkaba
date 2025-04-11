@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Infrastructure.Models.Administration;
 
-public class CategoryModeratorsModel
+public sealed class CategoryModeratorsModel
 {
     public required CategoryDashboardModel Category { get; set; }
     public required IReadOnlyList<ApplicationUserPreviewModel> Moderators { get; set; }

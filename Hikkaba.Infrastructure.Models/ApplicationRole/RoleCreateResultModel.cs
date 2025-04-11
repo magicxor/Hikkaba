@@ -4,7 +4,7 @@ using OneOf;
 namespace Hikkaba.Infrastructure.Models.ApplicationRole;
 
 [GenerateOneOf]
-public partial class RoleCreateResultModel
+public sealed partial class RoleCreateResultModel
     : OneOfBase<RoleCreateResultSuccessModel, DomainError>
 {
 }

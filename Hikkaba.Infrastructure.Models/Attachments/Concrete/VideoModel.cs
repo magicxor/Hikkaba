@@ -2,6 +2,6 @@
 
 namespace Hikkaba.Infrastructure.Models.Attachments.Concrete;
 
-public class VideoModel : FileAttachmentModel
+public sealed class VideoModel : FileAttachmentModel
 {
 }
