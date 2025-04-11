@@ -1,11 +1,12 @@
 ﻿using System.Globalization;
+using System.Net;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Models;
 using Hikkaba.Infrastructure.Models.ApplicationRole;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Repositories.Contracts;
-using Hikkaba.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OneOf.Types;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
@@ -29,55 +30,69 @@ public class RoleRepository : IRoleRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> CreateRoleAsync(string roleName, CancellationToken cancellationToken)
+    public async Task<RoleCreateResultModel> CreateRoleAsync(RoleCreateRequestModel requestModel, CancellationToken cancellationToken)
     {
-        var result = await _roleMgr.CreateAsync(new ApplicationRole
+        var role = new ApplicationRole
         {
-            Name = roleName,
-        });
+            Name = requestModel.RoleName,
+        };
+        var result = await _roleMgr.CreateAsync(role);
 
-        if (result.Succeeded)
-        {
-            var role = await _roleMgr.FindByNameAsync(roleName);
-            var roleId = role?.Id;
-
-            if (roleId != null)
+        return result.Succeeded
+            ? new RoleCreateResultSuccessModel { RoleId = role.Id }
+            : new DomainError
             {
-                return roleId.Value;
-            }
-            else
-            {
-                throw new HikkabaDomainException("Role not found after creation");
-            }
-        }
-        else
-        {
-            throw new HikkabaDomainException($"Role creation failed: {string.Join(',', result.Errors.Select(x => x.Description))}");
-        }
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                ErrorMessage = $"Role creation failed: {result}",
+            };
     }
 
-    public async Task EditRoleAsync(int roleId, string roleName, CancellationToken cancellationToken)
+    public async Task<RoleEditResultModel> EditRoleAsync(RoleEditRequestModel requestModel, CancellationToken cancellationToken)
+    {
+        var role = await _roleMgr.FindByIdAsync(requestModel.RoleId.ToString(CultureInfo.InvariantCulture));
+
+        if (role == null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = "Role not found",
+            };
+        }
+
+        role.Name = requestModel.RoleName;
+        var result = await _roleMgr.UpdateAsync(role);
+
+        return result.Succeeded
+            ? default(Success)
+            : new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                ErrorMessage = $"Role update failed: {result}",
+            };
+    }
+
+    public async Task<RoleDeleteResultModel> DeleteRoleAsync(int roleId, CancellationToken cancellationToken)
     {
         var role = await _roleMgr.FindByIdAsync(roleId.ToString(CultureInfo.InvariantCulture));
 
         if (role == null)
         {
-            throw new HikkabaDomainException("Role not found");
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = "Role not found",
+            };
         }
 
-        role.Name = roleName;
-        await _roleMgr.UpdateAsync(role);
-    }
+        var result = await _roleMgr.DeleteAsync(role);
 
-    public async Task DeleteRoleAsync(int roleId, CancellationToken cancellationToken)
-    {
-        var role = await _roleMgr.FindByIdAsync(roleId.ToString(CultureInfo.InvariantCulture));
-
-        if (role == null)
-        {
-            throw new HikkabaDomainException("Role not found");
-        }
-
-        await _roleMgr.DeleteAsync(role);
+        return result.Succeeded
+            ? default(Success)
+            : new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                ErrorMessage = $"Role deletion failed: {result}",
+            };
     }
 }
