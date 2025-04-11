@@ -42,7 +42,7 @@ public sealed class CategoryController : BaseMvcController
         [FromQuery] [Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {
-        var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
+        var category = await _categoryService.GetCategoryAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
             var returnUrl = GetLocalReferrerOrRoute("HomeIndex");

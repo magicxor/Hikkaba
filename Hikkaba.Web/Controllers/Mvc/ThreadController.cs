@@ -75,7 +75,7 @@ public sealed class ThreadController : BaseMvcController
         string categoryAlias,
         CancellationToken cancellationToken)
     {
-        var category = await _categoryService.GetAsync(categoryAlias, false, cancellationToken);
+        var category = await _categoryService.GetCategoryAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
             var returnUrl = GetLocalReferrerOrRoute("HomeIndex");

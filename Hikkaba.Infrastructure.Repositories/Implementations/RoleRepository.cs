@@ -29,7 +29,7 @@ public class RoleRepository : IRoleRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> CreateAsync(string roleName, CancellationToken cancellationToken)
+    public async Task<int> CreateRoleAsync(string roleName, CancellationToken cancellationToken)
     {
         var result = await _roleMgr.CreateAsync(new ApplicationRole
         {
@@ -56,7 +56,7 @@ public class RoleRepository : IRoleRepository
         }
     }
 
-    public async Task EditAsync(int roleId, string roleName, CancellationToken cancellationToken)
+    public async Task EditRoleAsync(int roleId, string roleName, CancellationToken cancellationToken)
     {
         var role = await _roleMgr.FindByIdAsync(roleId.ToString(CultureInfo.InvariantCulture));
 
@@ -69,7 +69,7 @@ public class RoleRepository : IRoleRepository
         await _roleMgr.UpdateAsync(role);
     }
 
-    public async Task DeleteAsync(int roleId, CancellationToken cancellationToken)
+    public async Task DeleteRoleAsync(int roleId, CancellationToken cancellationToken)
     {
         var role = await _roleMgr.FindByIdAsync(roleId.ToString(CultureInfo.InvariantCulture));
 

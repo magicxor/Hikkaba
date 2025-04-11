@@ -15,7 +15,7 @@
               [<a class="decoration-on-hover" href="@Url.Action("Index", "Home")">@Defaults.BoardName</a>]
                 [
                 @{
-                    var categories = await CategoryService.ListAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] }, Context.RequestAborted);
+                    var categories = await CategoryService.ListCategoriesAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] }, Context.RequestAborted);
                     for (var index = 0; index < categories.Count; index++)
                     {
                       var category = categories[index];

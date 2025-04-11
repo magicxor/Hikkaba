@@ -14,7 +14,7 @@ public class CategoryService : ICategoryService
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<IReadOnlyList<CategoryDetailsModel>> ListAsync(CategoryFilter filter, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(CategoryFilter filter, CancellationToken cancellationToken)
     {
         return await _categoryRepository.ListCategoriesAsync(filter, cancellationToken);
     }
@@ -24,22 +24,22 @@ public class CategoryService : ICategoryService
         throw new NotImplementedException();
     }
 
-    public async Task<CategoryDetailsModel?> GetAsync(string alias, bool includeDeleted, CancellationToken cancellationToken)
+    public async Task<CategoryDetailsModel?> GetCategoryAsync(string alias, bool includeDeleted, CancellationToken cancellationToken)
     {
         return await _categoryRepository.GetCategoryAsync(alias, includeDeleted, cancellationToken);
     }
 
-    public async Task<int> CreateAsync(CategoryCreateRequestModel categoryCreateRequest, CancellationToken cancellationToken)
+    public async Task<int> CreateCategoryAsync(CategoryCreateRequestModel categoryCreateRequest, CancellationToken cancellationToken)
     {
         return await _categoryRepository.CreateCategoryAsync(categoryCreateRequest, cancellationToken);
     }
 
-    public async Task EditAsync(CategoryEditRequestModel categoryEditRequest, CancellationToken cancellationToken)
+    public async Task EditCategoryAsync(CategoryEditRequestModel categoryEditRequest, CancellationToken cancellationToken)
     {
         await _categoryRepository.EditCategoryAsync(categoryEditRequest, cancellationToken);
     }
 
-    public async Task SetIsDeletedAsync(int id, bool newValue, CancellationToken cancellationToken)
+    public async Task SetCategoryDeletedAsync(int id, bool newValue, CancellationToken cancellationToken)
     {
         await _categoryRepository.SetCategoryDeletedAsync(id, newValue, cancellationToken);
     }

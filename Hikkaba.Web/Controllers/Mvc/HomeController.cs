@@ -44,7 +44,7 @@ public sealed class HomeController : Controller
         {
             OrderBy = [new OrderByItem { Field = nameof(Category.Alias), Direction = OrderByDirection.Asc }],
         };
-        var categories = await _categoryService.ListAsync(categoryFilter, cancellationToken);
+        var categories = await _categoryService.ListCategoriesAsync(categoryFilter, cancellationToken);
         var categoriesVm = categories.ToViewModels();
         var postsVm = posts.Data.ToViewModels()
             .Select(p => p with { ShowCategoryAlias = true })

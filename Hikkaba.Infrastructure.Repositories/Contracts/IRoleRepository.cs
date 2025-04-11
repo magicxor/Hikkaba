@@ -6,7 +6,7 @@ namespace Hikkaba.Infrastructure.Repositories.Contracts;
 public interface IRoleRepository
 {
     Task<IReadOnlyList<ApplicationRoleModel>> ListRolesAsync(CancellationToken cancellationToken);
-    Task<int> CreateAsync(string roleName, CancellationToken cancellationToken);
-    Task EditAsync(int roleId, string roleName, CancellationToken cancellationToken);
-    Task DeleteAsync(int roleId, CancellationToken cancellationToken);
+    Task<int> CreateRoleAsync(string roleName, CancellationToken cancellationToken);
+    Task EditRoleAsync(int roleId, string roleName, CancellationToken cancellationToken);
+    Task DeleteRoleAsync(int roleId, CancellationToken cancellationToken);
 }
