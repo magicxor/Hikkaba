@@ -88,10 +88,28 @@ $(function () {
         const postIdLink = $(".post-id-link");
         postIdLink.attr("onclick", "return false;");
         postIdLink.click(function () {
+            // check if input is empty
+            const textArea = document.getElementById(inputId);
+            if (typeof (textArea) !== "undefined") {
+                const textAreaValue = textArea.value;
+                if (textAreaValue.length > 0) {
+                    // check if the last character is not a new line
+                    const lastChar = textAreaValue.charAt(textAreaValue.length - 1);
+                    if (lastChar !== "\n") {
+                        textArea.value += "\n";
+                    }
+                }
+            }
+
             const thisElement = $(this);
             writeLineToInput(inputId, ">>" + thisElement.text(), "");
             writeSelectionLineToInput(inputId);
             navigationFn.goToSection(inputId);
+
+            // focus on the input
+            if (typeof (textArea) !== "undefined") {
+                textArea.focus();
+            }
         });
     }
 });
