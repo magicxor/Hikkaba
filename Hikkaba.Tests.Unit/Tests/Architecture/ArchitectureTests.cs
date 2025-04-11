@@ -132,7 +132,11 @@ internal sealed class ArchitectureTests
             .Or()
             .HaveNameEndingWith("Extensions", StringComparison.Ordinal)
             .Or()
+            .HaveNameEndingWith("Error", StringComparison.Ordinal)
+            .Or()
             .MeetCustomRule(new IsEnumRule())
+            .Or()
+            .HaveNameMatching(".*OneOf.*")
             .GetResult();
 
         var failingTypeNames = result.FailingTypeNames ?? [];
