@@ -35,12 +35,11 @@ public sealed class AdministrationRepository : IAdministrationRepository
             .ToListAsync(cancellationToken);
 
         var dashboardItemsDto = dashboardItems
-            .Select(categoryModerators => new CategoryModeratorsModel
+            .ConvertAll(categoryModerators => new CategoryModeratorsModel
             {
                 Category = categoryModerators.Category.ToDashboardModel(),
                 Moderators = categoryModerators.Moderators.ToPreviews(),
-            })
-            .ToList();
+            });
 
         return new DashboardModel
         {

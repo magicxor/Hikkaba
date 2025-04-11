@@ -147,7 +147,7 @@ public sealed class PostRepository : IPostRepository
                 .Take(1) /* delete the oldest post */
                 .ToListAsync(cancellationToken);
 
-            deletedBlobContainerIds = postsToBeDeleted.Select(p => p.BlobContainerId).ToList();
+            deletedBlobContainerIds = postsToBeDeleted.ConvertAll(p => p.BlobContainerId);
 
             _logger.LogInformation("Deleting old post(s) in cyclic thread. ThreadId: {ThreadId}, PostCount: {PostCount}, BumpLimit: {BumpLimit}, Blob containers to be deleted: {BlobContainerCount}",
                 requestModel.BaseModel.ThreadId,

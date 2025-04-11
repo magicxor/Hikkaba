@@ -40,8 +40,7 @@ internal sealed class ArchitectureTests
                 HikkabaApplicationAssemblyInfo,
                 HikkabaWebAssemblyInfo,
             }
-            .Select(x => (x, x.GetType().Assembly))
-            .ToList()
+            .ConvertAll(x => (x, x.GetType().Assembly))
             .AsReadOnly();
     }
 
