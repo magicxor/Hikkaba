@@ -473,13 +473,15 @@ public sealed class BanRepository : IBanRepository
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 
-        await _applicationDbContext.Bans
+        var ban = await _applicationDbContext.Bans
             .TagWithCallSite()
-            .Where(ban => ban.Id == banId)
-            .ExecuteUpdateAsync(setProp =>
-                setProp
-                    .SetProperty(ban => ban.IsDeleted, isDeleted)
-                    .SetProperty(ban => ban.ModifiedAt, utcNow)
-                    .SetProperty(ban => ban.ModifiedById, user.Id), cancellationToken);
+            .OrderBy(ban => ban.Id)
+            .FirstAsync(ban => ban.Id == banId, cancellationToken);
+
+        ban.IsDeleted = isDeleted;
+        ban.ModifiedAt = utcNow;
+        ban.ModifiedById = user.Id;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 }

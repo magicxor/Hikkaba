@@ -19,6 +19,7 @@ public sealed class AdministrationRepository : IAdministrationRepository
     public async Task<DashboardModel> GetDashboardAsync(CancellationToken cancellationToken)
     {
         var dashboardItems = await _context.Categories
+            .TagWithCallSite()
             .Include(category => category.CreatedBy)
             .Include(category => category.ModifiedBy)
             .OrderBy(category => category.Alias)

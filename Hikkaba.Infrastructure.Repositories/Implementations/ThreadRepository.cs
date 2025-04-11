@@ -45,6 +45,7 @@ public sealed class ThreadRepository : IThreadRepository
         using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
 
         return await _applicationDbContext.Threads
+            .TagWithCallSite()
             .Include(t => t.Category)
             .Where(t => (filter.IncludeDeleted || (!t.IsDeleted && !t.Category.IsDeleted))
                 && t.Category.Alias == filter.CategoryAlias
