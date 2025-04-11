@@ -28,7 +28,7 @@ public static partial class CategoryMapper
 
     [MapperIgnoreTarget(nameof(Category.Id))]
     [MapperIgnoreTarget(nameof(Category.IsDeleted))]
-    [MapperIgnoreTarget(nameof(Category.CreatedAt))]
+    [MapValue(nameof(Category.CreatedAt), Use = nameof(GetMinDateTime))]
     [MapperIgnoreTarget(nameof(Category.ModifiedAt))]
     [MapperIgnoreTarget(nameof(Category.BoardId))]
     [MapperIgnoreTarget(nameof(Category.CreatedById))]
@@ -52,4 +52,6 @@ public static partial class CategoryMapper
     [MapperIgnoreTarget(nameof(Category.Threads))]
     [MapperIgnoreTarget(nameof(Category.Moderators))]
     public static partial void ApplyUpdate([MappingTarget] this Category entity, CategoryEditRequestModel model);
+
+    private static DateTime GetMinDateTime() => DateTime.MinValue;
 }

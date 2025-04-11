@@ -110,26 +110,33 @@ public sealed class ThreadService : IThreadService
         {
             var createThreadResult = await _threadRepository.CreateThreadAsync(repoRequestModel, uploadedAttachments, cancellationToken);
 
-            _threadMetrics.ThreadCreated(requestModel.CategoryAlias);
-            _postMetrics.PostCreated(requestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
-
-            foreach (var deletedBlobContainerId in createThreadResult.DeletedBlobContainerIds)
+            if (createThreadResult.Value is not ThreadPostCreateSuccessResultModel successResultModel)
             {
-                try
-                {
-                    await _attachmentService.DeleteAttachmentsContainerAsync(deletedBlobContainerId);
-                }
-                catch (Exception deleteBlobContainerException)
-                {
-                    _logger.LogError(deleteBlobContainerException,
-                        "Failed to delete blob container {BlobContainerId} after thread creation. Post Id: {PostId}, Thread Id: {ThreadId}",
-                        deletedBlobContainerId,
-                        createThreadResult.PostId,
-                        createThreadResult.ThreadId);
-                }
+                return createThreadResult;
             }
+            else
+            {
+                _threadMetrics.ThreadCreated(requestModel.CategoryAlias);
+                _postMetrics.PostCreated(requestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
 
-            return createThreadResult;
+                foreach (var deletedBlobContainerId in successResultModel.DeletedBlobContainerIds)
+                {
+                    try
+                    {
+                        await _attachmentService.DeleteAttachmentsContainerAsync(deletedBlobContainerId);
+                    }
+                    catch (Exception deleteBlobContainerException)
+                    {
+                        _logger.LogError(deleteBlobContainerException,
+                            "Failed to delete blob container {BlobContainerId} after thread creation. Post Id: {PostId}, Thread Id: {ThreadId}",
+                            deletedBlobContainerId,
+                            successResultModel.PostId,
+                            successResultModel.ThreadId);
+                    }
+                }
+
+                return successResultModel;
+            }
         }
         catch (Exception e)
         {

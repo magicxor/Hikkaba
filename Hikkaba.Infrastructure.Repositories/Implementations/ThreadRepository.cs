@@ -3,6 +3,7 @@ using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Attachments.Concrete;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -300,7 +301,7 @@ public sealed class ThreadRepository : IThreadRepository
         return new PagedResult<ThreadPreviewModel>(data, filter, totalCount);
     }
 
-    public async Task<ThreadPostCreateSuccessResultModel> CreateThreadAsync(
+    public async Task<ThreadPostCreateResultModel> CreateThreadAsync(
         ThreadCreateExtendedRequestModel createRequestModel,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
@@ -329,7 +330,11 @@ public sealed class ThreadRepository : IThreadRepository
 
         if (category is null)
         {
-            throw new HikkabaHttpResponseException(HttpStatusCode.NotFound, $"Category with alias {createRequestModel.BaseModel.CategoryAlias} not found");
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"Category with alias {createRequestModel.BaseModel.CategoryAlias} not found",
+            };
         }
 
         var deletedBlobContainerIds = new List<Guid>();
