@@ -44,10 +44,10 @@ public class Category
     public bool ShowCountry { get; set; }
 
     [Required]
-    public bool ShowOs { get; init; }
+    public bool ShowOs { get; set; }
 
     [Required]
-    public bool ShowBrowser { get; init; }
+    public bool ShowBrowser { get; set; }
 
     [Required]
     [Range(1, int.MaxValue)]

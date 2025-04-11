@@ -16,9 +16,9 @@ public sealed class CategoryEditRequestModel
 
     public required bool ShowCountry { get; set; }
 
-    public required bool ShowOs { get; init; }
+    public required bool ShowOs { get; set; }
 
-    public required bool ShowBrowser { get; init; }
+    public required bool ShowBrowser { get; set; }
 
     public required int MaxThreadCount { get; set; }
 }

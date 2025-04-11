@@ -1,5 +1,5 @@
 ﻿using Hikkaba.Data.Context;
-using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Mappings;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
@@ -81,22 +81,12 @@ public sealed class CategoryRepository : ICategoryRepository
             .OrderBy(x => x)
             .FirstAsync(cancellationToken);
 
-        var category = new Category
-        {
-            CreatedAt = utcNow,
-            Alias = requestModel.Alias,
-            Name = requestModel.Name,
-            IsHidden = requestModel.IsHidden,
-            DefaultBumpLimit = requestModel.DefaultBumpLimit,
-            ShowThreadLocalUserHash = requestModel.ShowThreadLocalUserHash,
-            ShowCountry = requestModel.ShowCountry,
-            ShowOs = requestModel.ShowOs,
-            ShowBrowser = requestModel.ShowBrowser,
-            MaxThreadCount = requestModel.MaxThreadCount,
-            BoardId = boardId,
-            CreatedById = user.Id,
-        };
-        await _applicationDbContext.Categories.AddAsync(category, cancellationToken);
+        var category = requestModel.ToEntity();
+        category.CreatedAt = utcNow;
+        category.CreatedById = user.Id;
+        category.BoardId = boardId;
+
+        _applicationDbContext.Categories.Add(category);
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return category.Id;
@@ -111,22 +101,15 @@ public sealed class CategoryRepository : ICategoryRepository
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 
-        await _applicationDbContext.Categories
+        var category = await _applicationDbContext.Categories
             .TagWithCallSite()
-            .Where(c => c.Id == requestModel.Id)
-            .ExecuteUpdateAsync(setProp => setProp
-                .SetProperty(c => c.Alias, requestModel.Alias)
-                .SetProperty(c => c.Name, requestModel.Name)
-                .SetProperty(c => c.IsHidden, requestModel.IsHidden)
-                .SetProperty(c => c.DefaultBumpLimit, requestModel.DefaultBumpLimit)
-                .SetProperty(c => c.ShowThreadLocalUserHash, requestModel.ShowThreadLocalUserHash)
-                .SetProperty(c => c.ShowCountry, requestModel.ShowCountry)
-                .SetProperty(c => c.ShowOs, requestModel.ShowOs)
-                .SetProperty(c => c.ShowBrowser, requestModel.ShowBrowser)
-                .SetProperty(c => c.MaxThreadCount, requestModel.MaxThreadCount)
-                .SetProperty(c => c.ModifiedAt, utcNow)
-                .SetProperty(c => c.ModifiedById, user.Id),
-                cancellationToken);
+            .FirstAsync(c => c.Id == requestModel.Id, cancellationToken);
+
+        category.ApplyUpdate(requestModel);
+        category.ModifiedAt = utcNow;
+        category.ModifiedById = user.Id;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task SetCategoryDeletedAsync(int categoryId, bool isDeleted, CancellationToken cancellationToken)
@@ -136,14 +119,14 @@ public sealed class CategoryRepository : ICategoryRepository
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
 
-        await _applicationDbContext.Categories
+        var category = await _applicationDbContext.Categories
             .TagWithCallSite()
-            .Where(category => category.Id == categoryId)
-            .ExecuteUpdateAsync(setProp =>
-                setProp
-                    .SetProperty(ban => ban.IsDeleted, isDeleted)
-                    .SetProperty(ban => ban.ModifiedAt, utcNow)
-                    .SetProperty(ban => ban.ModifiedById, user.Id),
-                cancellationToken);
+            .FirstAsync(c => c.Id == categoryId, cancellationToken);
+
+        category.IsDeleted = isDeleted;
+        category.ModifiedAt = utcNow;
+        category.ModifiedById = user.Id;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 }
