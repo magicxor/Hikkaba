@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Hikkaba.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -37,9 +38,9 @@ public sealed class AttachmentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Any, Duration = Defaults.DefaultAttachmentsCacheDuration)]
     public async Task<IActionResult> Get(
-        [FromRoute] string blobContainerId,
-        [FromRoute] string blobId,
-        [FromQuery] string fileExtension,
+        [Required] [FromRoute] [MaxLength(Defaults.MaxGuidLength)] string blobContainerId,
+        [Required] [FromRoute] [MaxLength(Defaults.MaxGuidLength)] string blobId,
+        [Required] [FromQuery] [MaxLength(Defaults.MaxFileExtensionLength)] string fileExtension,
         [FromQuery] bool getThumbnail)
     {
         HttpContext.Response.Headers[HeaderNames.LastModified] = Defaults.DefaultLastModified;

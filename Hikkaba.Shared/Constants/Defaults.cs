@@ -18,6 +18,7 @@ public static class Defaults
     public const string AdministratorRoleName = "administrator";
     public const string ModeratorRoleName = "moderator";
 
+    public const int MaxGuidLength = 36;
     public const int MaxNameLength = 100;
     public const int MaxEmailLength = 100;
     public const int MinPasswordLength = 8;
