@@ -11,7 +11,7 @@ public static class CategoryQueryableExtensions
         {
             Id = x.Id,
             IsDeleted = x.IsDeleted,
-            CreatedBy = new ApplicationUserPreviewModel
+            CreatedBy = new UserPreviewModel
             {
                 Id = x.CreatedBy.Id,
                 UserName = x.CreatedBy.UserName ?? string.Empty,
@@ -20,7 +20,7 @@ public static class CategoryQueryableExtensions
             },
             ModifiedBy = x.ModifiedBy == null
                 ? null
-                : new ApplicationUserPreviewModel
+                : new UserPreviewModel
                 {
                     Id = x.ModifiedBy.Id,
                     UserName = x.ModifiedBy.UserName ?? string.Empty,

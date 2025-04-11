@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.ApplicationUser;
 
-public sealed class ApplicationUserCreateRequestModel
+public sealed class UserCreateRequestModel
 {
     public required string Email { get; set; }
     public required string UserName { get; set; }

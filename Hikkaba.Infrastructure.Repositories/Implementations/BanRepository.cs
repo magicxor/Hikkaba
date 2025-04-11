@@ -3,7 +3,6 @@ using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
-using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
@@ -11,32 +10,23 @@ using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
-using Hikkaba.Shared.Exceptions;
 using Hikkaba.Shared.Extensions;
 using Hikkaba.Shared.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
 public sealed class BanRepository : IBanRepository
 {
-    private readonly ILogger<BanRepository> _logger;
-    private readonly IOptions<HikkabaConfiguration> _settings;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly TimeProvider _timeProvider;
     private readonly IUserContext _userContext;
 
     public BanRepository(
-        ILogger<BanRepository> logger,
-        IOptions<HikkabaConfiguration> settings,
         ApplicationDbContext applicationDbContext,
         TimeProvider timeProvider,
         IUserContext userContext)
     {
-        _logger = logger;
-        _settings = settings;
         _applicationDbContext = applicationDbContext;
         _timeProvider = timeProvider;
         _userContext = userContext;
@@ -104,12 +94,12 @@ public sealed class BanRepository : IBanRepository
     }
 
     public async Task<PostingRestrictionsResponseModel> GetPostingRestrictionStatusAsync(
-        PostingRestrictionsRequestModel restrictionsRequestModel,
+        PostingRestrictionsRequestModel requestModel,
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
-        var userIp = restrictionsRequestModel.UserIpAddress;
+        var userIp = requestModel.UserIpAddress;
         if (userIp is null)
         {
             return new PostingRestrictionsResponseFailureModel
@@ -120,7 +110,7 @@ public sealed class BanRepository : IBanRepository
 
         var category = await _applicationDbContext.Categories
             .TagWithCallSite()
-            .Where(c => !c.IsDeleted && c.Alias == restrictionsRequestModel.CategoryAlias)
+            .Where(c => !c.IsDeleted && c.Alias == requestModel.CategoryAlias)
             .OrderBy(c => c.Id)
             .Select(c => new { c.Id, c.Alias })
             .FirstOrDefaultAsync(cancellationToken);
@@ -138,13 +128,13 @@ public sealed class BanRepository : IBanRepository
         var threadBumpLimit = 0;
         var threadPostCount = 0;
 
-        if (restrictionsRequestModel.ThreadId is not null)
+        if (requestModel.ThreadId is not null)
         {
             var thread = await _applicationDbContext.Threads
                 .TagWithCallSite()
                 .Include(t => t.Category)
                 .Include(t => t.Posts)
-                .Where(t => !t.Category.IsDeleted && !t.IsDeleted && t.Id == restrictionsRequestModel.ThreadId)
+                .Where(t => !t.Category.IsDeleted && !t.IsDeleted && t.Id == requestModel.ThreadId)
                 .OrderBy(t => t.Id)
                 .Select(t => new
                 {
@@ -187,8 +177,8 @@ public sealed class BanRepository : IBanRepository
         var ban = await FindActiveBanAsync(new ActiveBanFilter
         {
             UserIpAddress = userIp,
-            CategoryAlias = restrictionsRequestModel.CategoryAlias,
-            ThreadId = restrictionsRequestModel.ThreadId,
+            CategoryAlias = requestModel.CategoryAlias,
+            ThreadId = requestModel.ThreadId,
         }, cancellationToken);
 
         if (ban is not null)
@@ -213,7 +203,7 @@ public sealed class BanRepository : IBanRepository
     }
 
     public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(
-        BanPagingFilter banFilter,
+        BanPagingFilter filter,
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
@@ -222,33 +212,33 @@ public sealed class BanRepository : IBanRepository
             .TagWithCallSite()
             .AsQueryable();
 
-        query = banFilter.IncludeDeleted
+        query = filter.IncludeDeleted
             ? query.IgnoreQueryFilters()
             : query.Where(ban => !ban.IsDeleted);
 
-        if (banFilter.CreatedNotBefore != null)
+        if (filter.CreatedNotBefore != null)
         {
-            query = query.Where(ban => ban.CreatedAt >= banFilter.CreatedNotBefore);
+            query = query.Where(ban => ban.CreatedAt >= filter.CreatedNotBefore);
         }
 
-        if (banFilter.CreatedNotAfter != null)
+        if (filter.CreatedNotAfter != null)
         {
-            query = query.Where(ban => ban.CreatedAt <= banFilter.CreatedNotAfter);
+            query = query.Where(ban => ban.CreatedAt <= filter.CreatedNotAfter);
         }
 
-        if (banFilter.EndsNotBefore != null)
+        if (filter.EndsNotBefore != null)
         {
-            query = query.Where(ban => ban.EndsAt >= banFilter.EndsNotBefore);
+            query = query.Where(ban => ban.EndsAt >= filter.EndsNotBefore);
         }
 
-        if (banFilter.EndsNotAfter != null)
+        if (filter.EndsNotAfter != null)
         {
-            query = query.Where(ban => ban.EndsAt <= banFilter.EndsNotAfter);
+            query = query.Where(ban => ban.EndsAt <= filter.EndsNotAfter);
         }
 
-        if (banFilter.IpAddress != null)
+        if (filter.IpAddress != null)
         {
-            var filterIpAddress = banFilter.IpAddress.GetAddressBytes();
+            var filterIpAddress = filter.IpAddress.GetAddressBytes();
             query = query.Where(ban => ban.BannedIpAddress == filterIpAddress
                                        || (ban.BannedCidrLowerIpAddress != null
                                            && ban.BannedCidrUpperIpAddress != null
@@ -256,37 +246,37 @@ public sealed class BanRepository : IBanRepository
                                            && ban.BannedCidrUpperIpAddress.Compare(filterIpAddress) >= 0));
         }
 
-        if (!string.IsNullOrEmpty(banFilter.CountryIsoCode))
+        if (!string.IsNullOrEmpty(filter.CountryIsoCode))
         {
-            query = query.Where(ban => ban.CountryIsoCode == banFilter.CountryIsoCode);
+            query = query.Where(ban => ban.CountryIsoCode == filter.CountryIsoCode);
         }
 
-        if (banFilter.AutonomousSystemNumber != null)
+        if (filter.AutonomousSystemNumber != null)
         {
-            query = query.Where(ban => ban.AutonomousSystemNumber == banFilter.AutonomousSystemNumber);
+            query = query.Where(ban => ban.AutonomousSystemNumber == filter.AutonomousSystemNumber);
         }
 
-        if (!string.IsNullOrEmpty(banFilter.AutonomousSystemOrganization))
+        if (!string.IsNullOrEmpty(filter.AutonomousSystemOrganization))
         {
             query = query.Where(ban => ban.AutonomousSystemOrganization != null
-                                       && ban.AutonomousSystemOrganization.Contains(banFilter.AutonomousSystemOrganization));
+                                       && ban.AutonomousSystemOrganization.Contains(filter.AutonomousSystemOrganization));
         }
 
-        if (banFilter.RelatedPostId != null)
+        if (filter.RelatedPostId != null)
         {
-            query = query.Where(ban => ban.RelatedPostId == banFilter.RelatedPostId);
+            query = query.Where(ban => ban.RelatedPostId == filter.RelatedPostId);
         }
 
-        if (banFilter.CategoryId != null)
+        if (filter.CategoryId != null)
         {
-            query = query.Where(ban => ban.CategoryId == banFilter.CategoryId);
+            query = query.Where(ban => ban.CategoryId == filter.CategoryId);
         }
-
-        query = query.ApplyOrderByAndPaging(banFilter, x => x.CreatedAt);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
-        var data = await query.Select(ban => new BanDetailsModel
+        var data = await query
+            .ApplyOrderByAndPaging(filter, x => x.CreatedAt)
+            .Select(ban => new BanDetailsModel
             {
                 Id = ban.Id,
                 IsDeleted = ban.IsDeleted,
@@ -310,7 +300,7 @@ public sealed class BanRepository : IBanRepository
             })
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<BanDetailsModel>(data, banFilter, totalCount);
+        return new PagedResult<BanDetailsModel>(data, filter, totalCount);
     }
 
     public async Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken)
@@ -349,15 +339,15 @@ public sealed class BanRepository : IBanRepository
     }
 
     public async Task<BanCreateResultModel> CreateBanAsync(
-        BanCreateRequestModel banCreateRequest,
+        BanCreateRequestModel requestModel,
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.BanSource.StartActivity();
 
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
-        var relatedPostId = banCreateRequest.RelatedPostId;
-        var isBannedBySubnet = banCreateRequest is { BannedCidrLowerIpAddress: not null, BannedCidrUpperIpAddress: not null };
+        var relatedPostId = requestModel.RelatedPostId;
+        var isBannedBySubnet = requestModel is { BannedCidrLowerIpAddress: not null, BannedCidrUpperIpAddress: not null };
 
         // user can't be banned twice for one post
         if (relatedPostId != null)
@@ -377,7 +367,7 @@ public sealed class BanRepository : IBanRepository
 
         var categoryId = await _applicationDbContext.Categories
             .TagWithCallSite()
-            .Where(c => c.Alias == banCreateRequest.CategoryAlias)
+            .Where(c => c.Alias == requestModel.CategoryAlias)
             .Select(c => c.Id)
             .OrderBy(id => id)
             .FirstOrDefaultAsync(cancellationToken);
@@ -385,42 +375,42 @@ public sealed class BanRepository : IBanRepository
         var ban = new Ban
         {
             CreatedAt = utcNow,
-            EndsAt = banCreateRequest.EndsAt,
-            IpAddressType = banCreateRequest.IpAddressType,
-            BannedIpAddress = banCreateRequest.BannedIpAddress,
-            BannedCidrLowerIpAddress = banCreateRequest.BannedCidrLowerIpAddress,
-            BannedCidrUpperIpAddress = banCreateRequest.BannedCidrUpperIpAddress,
-            CountryIsoCode = banCreateRequest.CountryIsoCode,
-            AutonomousSystemNumber = banCreateRequest.AutonomousSystemNumber,
-            AutonomousSystemOrganization = banCreateRequest.AutonomousSystemOrganization,
-            Reason = banCreateRequest.Reason,
-            RelatedPostId = banCreateRequest.RelatedPostId,
-            CategoryId = banCreateRequest.BanInAllCategories ? null : categoryId,
+            EndsAt = requestModel.EndsAt,
+            IpAddressType = requestModel.IpAddressType,
+            BannedIpAddress = requestModel.BannedIpAddress,
+            BannedCidrLowerIpAddress = requestModel.BannedCidrLowerIpAddress,
+            BannedCidrUpperIpAddress = requestModel.BannedCidrUpperIpAddress,
+            CountryIsoCode = requestModel.CountryIsoCode,
+            AutonomousSystemNumber = requestModel.AutonomousSystemNumber,
+            AutonomousSystemOrganization = requestModel.AutonomousSystemOrganization,
+            Reason = requestModel.Reason,
+            RelatedPostId = requestModel.RelatedPostId,
+            CategoryId = requestModel.BanInAllCategories ? null : categoryId,
             CreatedById = user.Id,
         };
 
         List<Post> postsToBeDeleted = [];
 
-        if (banCreateRequest is { AdditionalAction: BanAdditionalAction.DeletePost, RelatedPostId: not null })
+        if (requestModel is { AdditionalAction: BanAdditionalAction.DeletePost, RelatedPostId: not null })
         {
             postsToBeDeleted = await _applicationDbContext.Posts
-                .Where(p => p.ThreadId == banCreateRequest.RelatedThreadId
-                            && p.Id == banCreateRequest.RelatedPostId)
+                .Where(p => p.ThreadId == requestModel.RelatedThreadId
+                            && p.Id == requestModel.RelatedPostId)
                 .ToListAsync(cancellationToken);
         }
-        else if (banCreateRequest.AdditionalAction == BanAdditionalAction.DeleteAllPostsInThread && !isBannedBySubnet)
+        else if (requestModel.AdditionalAction == BanAdditionalAction.DeleteAllPostsInThread && !isBannedBySubnet)
         {
             postsToBeDeleted = await _applicationDbContext.Posts
-                .Where(p => p.ThreadId == banCreateRequest.RelatedThreadId
-                            && (p.Id == banCreateRequest.RelatedPostId
-                                || p.UserIpAddress == banCreateRequest.BannedIpAddress))
+                .Where(p => p.ThreadId == requestModel.RelatedThreadId
+                            && (p.Id == requestModel.RelatedPostId
+                                || p.UserIpAddress == requestModel.BannedIpAddress))
                 .ToListAsync(cancellationToken);
         }
-        else if (banCreateRequest.AdditionalAction == BanAdditionalAction.DeleteAllPostsInThread && isBannedBySubnet)
+        else if (requestModel.AdditionalAction == BanAdditionalAction.DeleteAllPostsInThread && isBannedBySubnet)
         {
             postsToBeDeleted = await _applicationDbContext.Posts
-                .Where(p => p.ThreadId == banCreateRequest.RelatedThreadId
-                            && (p.Id == banCreateRequest.RelatedPostId
+                .Where(p => p.ThreadId == requestModel.RelatedThreadId
+                            && (p.Id == requestModel.RelatedPostId
                                 || (ban.BannedCidrLowerIpAddress != null
                                    && ban.BannedCidrUpperIpAddress != null
                                    && p.UserIpAddress != null
@@ -428,19 +418,19 @@ public sealed class BanRepository : IBanRepository
                                    && ban.BannedCidrUpperIpAddress.Compare(p.UserIpAddress) >= 0)))
                 .ToListAsync(cancellationToken);
         }
-        else if (banCreateRequest.AdditionalAction == BanAdditionalAction.DeleteAllPostsInCategory && !isBannedBySubnet)
+        else if (requestModel.AdditionalAction == BanAdditionalAction.DeleteAllPostsInCategory && !isBannedBySubnet)
         {
             postsToBeDeleted = await _applicationDbContext.Posts
                 .Where(p => p.Thread.CategoryId == categoryId
-                            && (p.Id == banCreateRequest.RelatedPostId
-                                || p.UserIpAddress == banCreateRequest.BannedIpAddress))
+                            && (p.Id == requestModel.RelatedPostId
+                                || p.UserIpAddress == requestModel.BannedIpAddress))
                 .ToListAsync(cancellationToken);
         }
-        else if (banCreateRequest.AdditionalAction == BanAdditionalAction.DeleteAllPostsInCategory && isBannedBySubnet)
+        else if (requestModel.AdditionalAction == BanAdditionalAction.DeleteAllPostsInCategory && isBannedBySubnet)
         {
             postsToBeDeleted = await _applicationDbContext.Posts
                 .Where(p => p.Thread.CategoryId == categoryId
-                            && (p.Id == banCreateRequest.RelatedPostId
+                            && (p.Id == requestModel.RelatedPostId
                                 || (ban.BannedCidrLowerIpAddress != null
                                    && ban.BannedCidrUpperIpAddress != null
                                    && p.UserIpAddress != null
@@ -448,13 +438,13 @@ public sealed class BanRepository : IBanRepository
                                    && ban.BannedCidrUpperIpAddress.Compare(p.UserIpAddress) >= 0)))
                 .ToListAsync(cancellationToken);
         }
-        else if (banCreateRequest.AdditionalAction == BanAdditionalAction.DeleteAllPosts && !isBannedBySubnet)
+        else if (requestModel.AdditionalAction == BanAdditionalAction.DeleteAllPosts && !isBannedBySubnet)
         {
             postsToBeDeleted = await _applicationDbContext.Posts
-                .Where(p => p.UserIpAddress == banCreateRequest.BannedIpAddress)
+                .Where(p => p.UserIpAddress == requestModel.BannedIpAddress)
                 .ToListAsync(cancellationToken);
         }
-        else if (banCreateRequest.AdditionalAction == BanAdditionalAction.DeleteAllPosts && isBannedBySubnet)
+        else if (requestModel.AdditionalAction == BanAdditionalAction.DeleteAllPosts && isBannedBySubnet)
         {
             postsToBeDeleted = await _applicationDbContext.Posts
                 .Where(p => ban.BannedCidrLowerIpAddress != null

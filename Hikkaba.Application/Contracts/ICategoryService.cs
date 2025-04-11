@@ -11,9 +11,9 @@ public interface ICategoryService
 
     Task<CategoryDetailsModel?> GetCategoryAsync(string alias, bool includeDeleted, CancellationToken cancellationToken);
 
-    Task<int> CreateCategoryAsync(CategoryCreateRequestModel categoryCreateRequest, CancellationToken cancellationToken);
+    Task<int> CreateCategoryAsync(CategoryCreateRequestModel requestModel, CancellationToken cancellationToken);
 
-    Task EditCategoryAsync(CategoryEditRequestModel categoryEditRequest, CancellationToken cancellationToken);
+    Task EditCategoryAsync(CategoryEditRequestModel requestModel, CancellationToken cancellationToken);
 
     Task SetCategoryDeletedAsync(int id, bool newValue, CancellationToken cancellationToken);
 }

@@ -1,38 +1,36 @@
-﻿using System.Linq.Expressions;
+﻿using System.Net;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.ApplicationUser;
-using Hikkaba.Shared.Exceptions;
-using Hikkaba.Shared.Services.Contracts;
+using Hikkaba.Infrastructure.Models.Error;
+using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Paging.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
-public sealed class UserRepository
+public sealed class UserRepository : IUserRepository
 {
     private readonly TimeProvider _timeProvider;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly UserManager<ApplicationUser> _userMgr;
-    private readonly IUserContext _userContext;
 
     public UserRepository(
         TimeProvider timeProvider,
         ApplicationDbContext applicationDbContext,
-        UserManager<ApplicationUser> userMgr,
-        IUserContext userContext)
+        UserManager<ApplicationUser> userMgr)
     {
         _timeProvider = timeProvider;
         _applicationDbContext = applicationDbContext;
         _userMgr = userMgr;
-        _userContext = userContext;
     }
 
-    public async Task<IReadOnlyList<ApplicationUserDetailsModel>> ListUsersAsync(bool includeDeleted)
+    public async Task<IReadOnlyList<UserDetailsModel>> ListUsersAsync(UserFilter filter, CancellationToken cancellationToken)
     {
         return await _userMgr.Users
-            .Where(x => includeDeleted || !x.IsDeleted)
-            .Select(x => new ApplicationUserDetailsModel
+            .Where(x => filter.IncludeDeleted || !x.IsDeleted)
+            .Select(x => new UserDetailsModel
             {
                 Id = x.Id,
                 IsDeleted = x.IsDeleted,
@@ -47,34 +45,36 @@ public sealed class UserRepository
                 PhoneNumberConfirmed = x.PhoneNumberConfirmed,
                 TwoFactorEnabled = x.TwoFactorEnabled,
             })
-            .ToListAsync();
+            .ApplyOrderBy(filter, x => x.UserName)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> CreateAsync(ApplicationUserCreateRequestModel applicationUserCreateRequestModel)
+    public async Task<UserCreateResultModel> CreateUserAsync(UserCreateRequestModel requestModel, CancellationToken cancellationToken)
     {
         var user = new ApplicationUser
         {
-            UserName = applicationUserCreateRequestModel.UserName,
-            Email = applicationUserCreateRequestModel.Email,
+            UserName = requestModel.UserName,
+            Email = requestModel.Email,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
         };
-        var result = await _userMgr.CreateAsync(user, applicationUserCreateRequestModel.Password);
-        if (result.Succeeded)
-        {
-            return user.Id;
-        }
-        else
-        {
-            throw new HikkabaDomainException($"User creation failed: {string.Join(',', result.Errors.Select(x => x.Description))}");
-        }
+        var result = await _userMgr.CreateAsync(user, requestModel.Password);
+
+        return result.Succeeded
+            ? new UserCreateResultSuccessModel { UserId = user.Id }
+            : new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                ErrorMessage = $"User creation failed: {result}",
+            };
     }
 
-    public async Task SetUserDeletedAsync(int userId, bool isDeleted)
+    public async Task SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken)
     {
         await _applicationDbContext.Users
             .TagWithCallSite()
             .Where(user => user.Id == userId)
             .ExecuteUpdateAsync(setProp =>
-                setProp.SetProperty(user => user.IsDeleted, isDeleted));
+                setProp.SetProperty(user => user.IsDeleted, isDeleted),
+                cancellationToken);
     }
 }

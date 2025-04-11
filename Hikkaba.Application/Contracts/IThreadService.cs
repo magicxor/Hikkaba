@@ -12,9 +12,9 @@ public interface IThreadService
 
     Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken);
 
-    Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel createRequestModel, IFormFileCollection attachments, CancellationToken cancellationToken);
+    Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel requestModel, IFormFileCollection attachments, CancellationToken cancellationToken);
 
-    Task EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken);
+    Task EditThreadAsync(ThreadEditRequestModel requestModel, CancellationToken cancellationToken);
 
     Task SetIsPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken);
 

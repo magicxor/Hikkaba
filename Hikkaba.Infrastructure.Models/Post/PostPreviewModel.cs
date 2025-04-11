@@ -10,9 +10,9 @@ public sealed class PostPreviewModel
 
     public required bool IsDeleted { get; set; }
 
-    public required ApplicationUserPreviewModel CreatedBy { get; set; }
+    public required UserPreviewModel CreatedBy { get; set; }
 
-    public required ApplicationUserPreviewModel ModifiedBy { get; set; }
+    public required UserPreviewModel ModifiedBy { get; set; }
 
     public required DateTime CreatedAt { get; set; }
 

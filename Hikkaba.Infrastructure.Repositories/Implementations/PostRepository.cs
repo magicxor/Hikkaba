@@ -120,27 +120,27 @@ public sealed class PostRepository : IPostRepository
     }
 
     public async Task<PostCreateResultModel> CreatePostAsync(
-        PostCreateExtendedRequestModel createRequestModel,
+        PostCreateExtendedRequestModel requestModel,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.PostSource.StartActivity();
         _logger.LogInformation("Creating post in category {CategoryAlias}. ThreadId: {ThreadId}, Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
-            createRequestModel.BaseModel.CategoryAlias,
-            createRequestModel.BaseModel.ThreadId,
+            requestModel.BaseModel.CategoryAlias,
+            requestModel.BaseModel.ThreadId,
             inputFiles.Count,
-            createRequestModel.BaseModel.BlobContainerId);
+            requestModel.BaseModel.BlobContainerId);
 
         var attachments = _attachmentRepository.ToAttachmentEntities(inputFiles);
 
         var deletedBlobContainerIds = new List<Guid>();
 
-        if (createRequestModel is { IsCyclic: true, BumpLimit: > 0, PostCount: > 0 }
-            && createRequestModel.PostCount >= createRequestModel.BumpLimit)
+        if (requestModel is { IsCyclic: true, BumpLimit: > 0, PostCount: > 0 }
+            && requestModel.PostCount >= requestModel.BumpLimit)
         {
             var postsToBeDeleted = await _applicationDbContext.Posts
                 .TagWithCallSite()
-                .Where(p => p.ThreadId == createRequestModel.BaseModel.ThreadId)
+                .Where(p => p.ThreadId == requestModel.BaseModel.ThreadId)
                 .OrderBy(p => p.CreatedAt)
                 .ThenBy(p => p.Id)
                 .Skip(1) /* skip the original post */
@@ -150,9 +150,9 @@ public sealed class PostRepository : IPostRepository
             deletedBlobContainerIds = postsToBeDeleted.Select(p => p.BlobContainerId).ToList();
 
             _logger.LogInformation("Deleting old post(s) in cyclic thread. ThreadId: {ThreadId}, PostCount: {PostCount}, BumpLimit: {BumpLimit}, Blob containers to be deleted: {BlobContainerCount}",
-                createRequestModel.BaseModel.ThreadId,
-                createRequestModel.PostCount,
-                createRequestModel.BumpLimit,
+                requestModel.BaseModel.ThreadId,
+                requestModel.PostCount,
+                requestModel.BumpLimit,
                 deletedBlobContainerIds.Count);
 
             _applicationDbContext.Posts.RemoveRange(postsToBeDeleted);
@@ -160,15 +160,15 @@ public sealed class PostRepository : IPostRepository
 
         var post = new Post
         {
-            BlobContainerId = createRequestModel.BaseModel.BlobContainerId,
+            BlobContainerId = requestModel.BaseModel.BlobContainerId,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            IsSageEnabled = createRequestModel.BaseModel.IsSageEnabled,
-            MessageText = createRequestModel.BaseModel.MessageText,
-            MessageHtml = createRequestModel.BaseModel.MessageHtml,
-            UserIpAddress = createRequestModel.BaseModel.UserIpAddress,
-            UserAgent = createRequestModel.BaseModel.UserAgent,
-            ThreadLocalUserHash = createRequestModel.ThreadLocalUserHash,
-            ThreadId = createRequestModel.BaseModel.ThreadId,
+            IsSageEnabled = requestModel.BaseModel.IsSageEnabled,
+            MessageText = requestModel.BaseModel.MessageText,
+            MessageHtml = requestModel.BaseModel.MessageHtml,
+            UserIpAddress = requestModel.BaseModel.UserIpAddress,
+            UserAgent = requestModel.BaseModel.UserAgent,
+            ThreadLocalUserHash = requestModel.ThreadLocalUserHash,
+            ThreadId = requestModel.BaseModel.ThreadId,
             Audios = attachments.Audios,
             Documents = attachments.Documents,
             Pictures = attachments.Pictures,
@@ -177,8 +177,8 @@ public sealed class PostRepository : IPostRepository
 
         var postsToReply = await _applicationDbContext.Posts
             .TagWithCallSite()
-            .Where(p => p.ThreadId == createRequestModel.BaseModel.ThreadId
-                        && createRequestModel.BaseModel.MentionedPosts.Contains(p.Id))
+            .Where(p => p.ThreadId == requestModel.BaseModel.ThreadId
+                        && requestModel.BaseModel.MentionedPosts.Contains(p.Id))
             .Select(p => new PostToReply
             {
                 Post = p,

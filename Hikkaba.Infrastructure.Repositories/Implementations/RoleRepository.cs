@@ -4,6 +4,7 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.ApplicationRole;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Paging.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OneOf.Types;
@@ -19,14 +20,15 @@ public sealed class RoleRepository : IRoleRepository
         _roleMgr = roleMgr;
     }
 
-    public async Task<IReadOnlyList<ApplicationRoleModel>> ListRolesAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<RoleModel>> ListRolesAsync(RoleFilter filter, CancellationToken cancellationToken)
     {
         return await _roleMgr.Roles
-            .Select(x => new ApplicationRoleModel
+            .Select(x => new RoleModel
             {
                 Id = x.Id,
                 NormalizedName = x.NormalizedName ?? string.Empty,
             })
+            .ApplyOrderBy(filter, x => x.NormalizedName)
             .ToListAsync(cancellationToken);
     }
 

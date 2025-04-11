@@ -12,17 +12,6 @@ namespace Hikkaba.Web.Controllers.Mvc.Admin;
 [Route("admin/board")]
 public class BoardAdminController : Controller
 {
-    private readonly ILogger<BoardAdminController> _logger;
-    private readonly IBoardService _boardService;
-
-    public BoardAdminController(
-        ILogger<BoardAdminController> logger,
-        IBoardService boardService)
-    {
-        _logger = logger;
-        _boardService = boardService;
-    }
-
     [HttpGet("edit", Name = "BoardEdit")]
     public async Task<IActionResult> Edit(
         CancellationToken cancellationToken)

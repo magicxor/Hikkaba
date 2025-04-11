@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.ApplicationUser;
 
-public sealed class ApplicationUserPreviewModel
+public sealed class UserPreviewModel
 {
     public required int Id { get; set; }
     public required string? UserName { get; set; }

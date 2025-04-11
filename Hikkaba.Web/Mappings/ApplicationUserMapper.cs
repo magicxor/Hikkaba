@@ -7,5 +7,5 @@ namespace Hikkaba.Web.Mappings;
 [Mapper]
 internal static partial class ApplicationUserMapper
 {
-    public static partial ApplicationUserViewModel ToViewModel(this ApplicationUserPreviewModel model);
+    public static partial ApplicationUserViewModel ToViewModel(this UserPreviewModel model);
 }

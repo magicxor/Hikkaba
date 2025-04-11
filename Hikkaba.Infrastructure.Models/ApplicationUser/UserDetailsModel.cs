@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.ApplicationUser;
 
-public sealed class ApplicationUserDetailsModel
+public sealed class UserDetailsModel
 {
     public required int Id { get; set; }
     public required bool IsDeleted { get; set; }

@@ -29,14 +29,14 @@ public sealed class CategoryService : ICategoryService
         return await _categoryRepository.GetCategoryAsync(alias, includeDeleted, cancellationToken);
     }
 
-    public async Task<int> CreateCategoryAsync(CategoryCreateRequestModel categoryCreateRequest, CancellationToken cancellationToken)
+    public async Task<int> CreateCategoryAsync(CategoryCreateRequestModel requestModel, CancellationToken cancellationToken)
     {
-        return await _categoryRepository.CreateCategoryAsync(categoryCreateRequest, cancellationToken);
+        return await _categoryRepository.CreateCategoryAsync(requestModel, cancellationToken);
     }
 
-    public async Task EditCategoryAsync(CategoryEditRequestModel categoryEditRequest, CancellationToken cancellationToken)
+    public async Task EditCategoryAsync(CategoryEditRequestModel requestModel, CancellationToken cancellationToken)
     {
-        await _categoryRepository.EditCategoryAsync(categoryEditRequest, cancellationToken);
+        await _categoryRepository.EditCategoryAsync(requestModel, cancellationToken);
     }
 
     public async Task SetCategoryDeletedAsync(int id, bool newValue, CancellationToken cancellationToken)

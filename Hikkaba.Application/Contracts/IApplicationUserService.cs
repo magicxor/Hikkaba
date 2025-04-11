@@ -4,13 +4,13 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IApplicationUserService
 {
-    Task<ApplicationUserDetailsModel> GetUserAsync(int id);
+    Task<UserDetailsModel> GetUserAsync(int userId);
 
-    Task<IReadOnlyList<ApplicationUserDetailsModel>> ListUsersAsync(ApplicationUserFilter filter);
+    Task<IReadOnlyList<UserDetailsModel>> ListUsersAsync(UserFilter filter);
 
-    Task<int> CreateUserAsync(ApplicationUserDetailsModel detailsModel);
+    Task<int> CreateUserAsync(UserDetailsModel detailsModel);
 
-    Task EditUserAsync(ApplicationUserDetailsModel detailsModel);
+    Task EditUserAsync(UserDetailsModel detailsModel);
 
     Task SetUserDeletedAsync(int id, bool newValue);
 }

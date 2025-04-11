@@ -29,7 +29,7 @@ public static partial class ApplicationUserMapper
     [MapperIgnoreSource(nameof(ApplicationUser.ModifiedCategories))]
     [MapperIgnoreSource(nameof(ApplicationUser.ModifiedPosts))]
     [MapperIgnoreSource(nameof(ApplicationUser.ModerationCategories))]
-    public static partial ApplicationUserPreviewModel ToPreview(this ApplicationUser entity);
+    public static partial UserPreviewModel ToPreview(this ApplicationUser entity);
 
-    public static partial IReadOnlyList<ApplicationUserPreviewModel> ToPreviews(this IReadOnlyList<ApplicationUser> entities);
+    public static partial IReadOnlyList<UserPreviewModel> ToPreviews(this IReadOnlyList<ApplicationUser> entities);
 }

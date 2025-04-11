@@ -8,9 +8,9 @@ public sealed class ThreadEditRequestModel
 
     public required bool IsDeleted { get; set; }
 
-    public required ApplicationUserDetailsModel CreatedBy { get; set; }
+    public required UserDetailsModel CreatedBy { get; set; }
 
-    public required ApplicationUserDetailsModel ModifiedBy { get; set; }
+    public required UserDetailsModel ModifiedBy { get; set; }
 
     public required DateTime CreatedAt { get; set; }
 

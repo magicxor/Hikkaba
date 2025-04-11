@@ -1,23 +1,14 @@
 ﻿using Hikkaba.Application.Contracts;
-using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
-using Microsoft.Extensions.Options;
 
 namespace Hikkaba.Application.Implementations;
 
 public sealed class AttachmentCategorizer : IAttachmentCategorizer
 {
-    private readonly HikkabaConfiguration _hikkabaConfiguration;
-
-    public AttachmentCategorizer(IOptions<HikkabaConfiguration> settings)
-    {
-        _hikkabaConfiguration = settings.Value;
-    }
-
     public bool IsPictureExtensionSupported(string extension)
     {
-        return Defaults.SupportedPictureExtensions.Any(ext => ext.Equals(extension, System.StringComparison.OrdinalIgnoreCase));
+        return Defaults.SupportedPictureExtensions.Any(ext => ext.Equals(extension, StringComparison.OrdinalIgnoreCase));
     }
 
     public AttachmentType GetAttachmentType(string extension)

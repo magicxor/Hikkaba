@@ -27,7 +27,7 @@ public sealed class CategoryRepository : ICategoryRepository
     }
 
     public async Task<IReadOnlyList<CategoryDetailsModel>> ListCategoriesAsync(
-        CategoryFilter categoryFilter,
+        CategoryFilter filter,
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
@@ -38,18 +38,18 @@ public sealed class CategoryRepository : ICategoryRepository
             .Include(category => category.ModifiedBy)
             .AsQueryable();
 
-        if (!categoryFilter.IncludeHidden)
+        if (!filter.IncludeHidden)
         {
             query = query.Where(category => !category.IsHidden);
         }
 
-        query = categoryFilter.IncludeDeleted
+        query = filter.IncludeDeleted
             ? query.IgnoreQueryFilters()
             : query.Where(category => !category.IsDeleted);
 
         var result = await query
             .GetDetailsModel()
-            .ApplyOrderBy(categoryFilter, x => x.Name)
+            .ApplyOrderBy(filter, x => x.Name)
             .ToListAsync(cancellationToken);
 
         return result.AsReadOnly();
@@ -68,7 +68,7 @@ public sealed class CategoryRepository : ICategoryRepository
     }
 
     public async Task<int> CreateCategoryAsync(
-        CategoryCreateRequestModel categoryCreateRequest,
+        CategoryCreateRequestModel requestModel,
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
@@ -84,15 +84,15 @@ public sealed class CategoryRepository : ICategoryRepository
         var category = new Category
         {
             CreatedAt = utcNow,
-            Alias = categoryCreateRequest.Alias,
-            Name = categoryCreateRequest.Name,
-            IsHidden = categoryCreateRequest.IsHidden,
-            DefaultBumpLimit = categoryCreateRequest.DefaultBumpLimit,
-            ShowThreadLocalUserHash = categoryCreateRequest.ShowThreadLocalUserHash,
-            ShowCountry = categoryCreateRequest.ShowCountry,
-            ShowOs = categoryCreateRequest.ShowOs,
-            ShowBrowser = categoryCreateRequest.ShowBrowser,
-            MaxThreadCount = categoryCreateRequest.MaxThreadCount,
+            Alias = requestModel.Alias,
+            Name = requestModel.Name,
+            IsHidden = requestModel.IsHidden,
+            DefaultBumpLimit = requestModel.DefaultBumpLimit,
+            ShowThreadLocalUserHash = requestModel.ShowThreadLocalUserHash,
+            ShowCountry = requestModel.ShowCountry,
+            ShowOs = requestModel.ShowOs,
+            ShowBrowser = requestModel.ShowBrowser,
+            MaxThreadCount = requestModel.MaxThreadCount,
             BoardId = boardId,
             CreatedById = user.Id,
         };
@@ -103,7 +103,7 @@ public sealed class CategoryRepository : ICategoryRepository
     }
 
     public async Task EditCategoryAsync(
-        CategoryEditRequestModel categoryEditRequest,
+        CategoryEditRequestModel requestModel,
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
@@ -113,17 +113,17 @@ public sealed class CategoryRepository : ICategoryRepository
 
         await _applicationDbContext.Categories
             .TagWithCallSite()
-            .Where(c => c.Id == categoryEditRequest.Id)
+            .Where(c => c.Id == requestModel.Id)
             .ExecuteUpdateAsync(setProp => setProp
-                .SetProperty(c => c.Alias, categoryEditRequest.Alias)
-                .SetProperty(c => c.Name, categoryEditRequest.Name)
-                .SetProperty(c => c.IsHidden, categoryEditRequest.IsHidden)
-                .SetProperty(c => c.DefaultBumpLimit, categoryEditRequest.DefaultBumpLimit)
-                .SetProperty(c => c.ShowThreadLocalUserHash, categoryEditRequest.ShowThreadLocalUserHash)
-                .SetProperty(c => c.ShowCountry, categoryEditRequest.ShowCountry)
-                .SetProperty(c => c.ShowOs, categoryEditRequest.ShowOs)
-                .SetProperty(c => c.ShowBrowser, categoryEditRequest.ShowBrowser)
-                .SetProperty(c => c.MaxThreadCount, categoryEditRequest.MaxThreadCount)
+                .SetProperty(c => c.Alias, requestModel.Alias)
+                .SetProperty(c => c.Name, requestModel.Name)
+                .SetProperty(c => c.IsHidden, requestModel.IsHidden)
+                .SetProperty(c => c.DefaultBumpLimit, requestModel.DefaultBumpLimit)
+                .SetProperty(c => c.ShowThreadLocalUserHash, requestModel.ShowThreadLocalUserHash)
+                .SetProperty(c => c.ShowCountry, requestModel.ShowCountry)
+                .SetProperty(c => c.ShowOs, requestModel.ShowOs)
+                .SetProperty(c => c.ShowBrowser, requestModel.ShowBrowser)
+                .SetProperty(c => c.MaxThreadCount, requestModel.MaxThreadCount)
                 .SetProperty(c => c.ModifiedAt, utcNow)
                 .SetProperty(c => c.ModifiedById, user.Id),
                 cancellationToken);

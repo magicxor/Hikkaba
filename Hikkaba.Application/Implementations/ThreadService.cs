@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Telemetry.Metrics;
-using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -57,15 +56,15 @@ public sealed class ThreadService : IThreadService
     }
 
     public async Task<ThreadPostCreateResultModel> CreateThreadAsync(
-        ThreadCreateRequestModel createRequestModel,
+        ThreadCreateRequestModel requestModel,
         IFormFileCollection attachments,
         CancellationToken cancellationToken)
     {
         var postingRestrictionStatus = await _banRepository.GetPostingRestrictionStatusAsync(new PostingRestrictionsRequestModel
         {
-            CategoryAlias = createRequestModel.CategoryAlias,
+            CategoryAlias = requestModel.CategoryAlias,
             ThreadId = null,
-            UserIpAddress = createRequestModel.UserIpAddress,
+            UserIpAddress = requestModel.UserIpAddress,
         }, cancellationToken);
 
         if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
@@ -75,23 +74,23 @@ public sealed class ThreadService : IThreadService
         }
 
         var threadSalt = Guid.NewGuid();
-        var userIp = createRequestModel.UserIpAddress ?? [];
+        var userIp = requestModel.UserIpAddress ?? [];
         var threadLocalUserHash = _hashService.GetHashBytes(threadSalt, userIp);
         var repoRequestModel = new ThreadCreateExtendedRequestModel
         {
-            BaseModel = createRequestModel,
+            BaseModel = requestModel,
             ThreadSalt = threadSalt,
             ThreadLocalUserHash = threadLocalUserHash,
         };
 
-        await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(createRequestModel.BlobContainerId, attachments, cancellationToken);
+        await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(requestModel.BlobContainerId, attachments, cancellationToken);
 
         try
         {
             var createThreadResult = await _threadRepository.CreateThreadAsync(repoRequestModel, uploadedAttachments, cancellationToken);
 
-            _threadMetrics.ThreadCreated(createRequestModel.CategoryAlias);
-            _postMetrics.PostCreated(createRequestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
+            _threadMetrics.ThreadCreated(requestModel.CategoryAlias);
+            _postMetrics.PostCreated(requestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
 
             foreach (var deletedBlobContainerId in createThreadResult.DeletedBlobContainerIds)
             {
@@ -114,12 +113,12 @@ public sealed class ThreadService : IThreadService
         catch (Exception e)
         {
             _logger.LogWarning(e, "Failed to create post with attachments; deleting uploaded attachments");
-            await _attachmentService.DeleteAttachmentsContainerAsync(createRequestModel.BlobContainerId);
+            await _attachmentService.DeleteAttachmentsContainerAsync(requestModel.BlobContainerId);
             throw;
         }
     }
 
-    public async Task EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken)
+    public async Task EditThreadAsync(ThreadEditRequestModel requestModel, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
