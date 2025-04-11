@@ -5,7 +5,6 @@ using Hikkaba.Web.ViewModels.ErrorViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Web.Controllers.Mvc.Base;
 
@@ -45,11 +44,10 @@ public abstract class BaseMvcController : Controller
 
     protected IActionResult CustomErrorPage(
         int statusCode,
-        EventId eventId,
         string errorMessage,
         string? returnUrl)
     {
-        var (statusCodeName, statusCodeDescription) = StatusCodeUtils.GetDetails(statusCode);
+        var (statusCodeName, statusCodeDescription, eventId) = StatusCodeUtils.GetDetails(statusCode);
         var vm = new CustomErrorViewModel
         {
             EventId = eventId,

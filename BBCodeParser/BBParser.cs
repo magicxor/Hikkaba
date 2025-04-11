@@ -83,7 +83,7 @@ public class BBParser : IBBParser
                         treeDepth++;
                         if (treeDepth > _treeMaxDepth)
                         {
-                            throw new BBParserException("Tree is too deep");
+                            throw new BBParserException($"Tree is too deep. Max depth is {_treeMaxDepth}.");
                         }
 
                         break;

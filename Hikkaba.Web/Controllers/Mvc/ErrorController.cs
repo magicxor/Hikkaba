@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.ErrorViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +27,7 @@ public sealed class ErrorController : Controller
     [SuppressMessage("Security", "CA5395:Miss HttpVerb attribute for action methods", Justification = "This is acceptable for the error controller.")]
     public IActionResult Index([Required] [Range(1, 999)] int statusCode)
     {
-        var (statusCodeName, statusCodeDescription) = StatusCodeUtils.GetDetails(statusCode);
+        var (statusCodeName, statusCodeDescription, _) = StatusCodeUtils.GetDetails(statusCode);
 
         var vm = new StatusCodeViewModel
         {
@@ -50,7 +49,7 @@ public sealed class ErrorController : Controller
         var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
         var exception = feature?.Error;
         var statusCode = HttpContext.Response.StatusCode;
-        var eventId = new EventId(LogEventIds.StartId + statusCode);
+        var (statusCodeName, statusCodeDescription, eventId) = StatusCodeUtils.GetDetails(statusCode);
 
         if (exception != null)
         {
@@ -62,7 +61,6 @@ public sealed class ErrorController : Controller
         }
 
         var exceptionName = exception?.GetType().Name ?? "UnknownException";
-        var (statusCodeName, statusCodeDescription) = StatusCodeUtils.GetDetails(statusCode);
 
         var vm = new ExceptionViewModel
         {

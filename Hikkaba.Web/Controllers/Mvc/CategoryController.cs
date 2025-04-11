@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Shared.Constants;
-using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Mappings;
 using Microsoft.AspNetCore.Http;
 
@@ -47,7 +46,10 @@ public sealed class CategoryController : BaseMvcController
         if (category is null)
         {
             var returnUrl = GetLocalReferrerOrRoute("HomeIndex");
-            return CustomErrorPage(StatusCodes.Status404NotFound, LogEventIds.NotFound, "The requested category was not found.", returnUrl);
+            return CustomErrorPage(
+                StatusCodes.Status404NotFound,
+                "The requested category was not found.",
+                returnUrl);
         }
 
         var filter = new ThreadPreviewFilter

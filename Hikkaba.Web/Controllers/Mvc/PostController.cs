@@ -70,7 +70,10 @@ public sealed class PostController : BaseMvcController
         if (thread is null)
         {
             var returnUrl = GetLocalReferrerOrRoute("CategoryDetails", new { categoryAlias });
-            return CustomErrorPage(StatusCodes.Status404NotFound, LogEventIds.NotFound, "The requested thread was not found.", returnUrl);
+            return CustomErrorPage(
+                StatusCodes.Status404NotFound,
+                "The requested thread was not found.",
+                returnUrl);
         }
 
         var postAnonymousCreateViewModel = new PostAnonymousCreateViewModel

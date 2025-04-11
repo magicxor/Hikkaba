@@ -58,7 +58,10 @@ public sealed class ThreadController : BaseMvcController
         if (threadPosts is null)
         {
             var returnUrl = GetLocalReferrerOrRoute("CategoryDetails", new { categoryAlias });
-            return CustomErrorPage(StatusCodes.Status404NotFound, LogEventIds.NotFound, "The requested thread was not found.", returnUrl);
+            return CustomErrorPage(
+                StatusCodes.Status404NotFound,
+                "The requested thread was not found.",
+                returnUrl);
         }
 
         var threadDetailsViewModel = threadPosts.ToViewModel();
@@ -76,7 +79,10 @@ public sealed class ThreadController : BaseMvcController
         if (category is null)
         {
             var returnUrl = GetLocalReferrerOrRoute("HomeIndex");
-            return CustomErrorPage(StatusCodes.Status404NotFound, LogEventIds.NotFound, "The requested category was not found.", returnUrl);
+            return CustomErrorPage(
+                StatusCodes.Status404NotFound,
+                "The requested category was not found.",
+                returnUrl);
         }
 
         var threadAnonymousCreateViewModel = new ThreadAnonymousCreateViewModel

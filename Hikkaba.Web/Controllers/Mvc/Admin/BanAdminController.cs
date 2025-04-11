@@ -49,7 +49,10 @@ public sealed class BanAdminController : BaseMvcController
         if (ban is null)
         {
             var returnUrl = GetLocalReferrerOrRoute("BanIndex");
-            return CustomErrorPage(StatusCodes.Status404NotFound, LogEventIds.NotFound, "The requested ban was not found.", returnUrl);
+            return CustomErrorPage(
+                StatusCodes.Status404NotFound,
+                "The requested ban was not found.",
+                returnUrl);
         }
 
         return View(ban.ToViewModel());
@@ -95,7 +98,6 @@ public sealed class BanAdminController : BaseMvcController
             {
                 return CustomErrorPage(
                     StatusCodes.Status404NotFound,
-                    LogEventIds.NotFound,
                     "The requested post was not found.",
                     GetLocalReferrerOrNull());
             }
@@ -103,7 +105,6 @@ public sealed class BanAdminController : BaseMvcController
             {
                 return CustomErrorPage(
                     StatusCodes.Status400BadRequest,
-                    LogEventIds.BadRequest,
                     "Can't retrieve user IP address.",
                     GetLocalReferrerOrNull());
             }
@@ -116,7 +117,6 @@ public sealed class BanAdminController : BaseMvcController
 
                 return CustomErrorPage(
                     StatusCodes.Status400BadRequest,
-                    LogEventIds.BadRequest,
                     "An active ban was found, but the ID is missing.",
                     GetLocalReferrerOrNull());
             }
@@ -128,7 +128,6 @@ public sealed class BanAdminController : BaseMvcController
             {
                 return CustomErrorPage(
                     StatusCodes.Status500InternalServerError,
-                    LogEventIds.InternalServerError,
                     "An unexpected error occurred while retrieving ban creation prerequisites.",
                     GetLocalReferrerOrNull());
             }
@@ -138,7 +137,6 @@ public sealed class BanAdminController : BaseMvcController
         {
             return CustomErrorPage(
                 StatusCodes.Status500InternalServerError,
-                LogEventIds.InternalServerError,
                 "Failed to retrieve necessary post information.",
                 GetLocalReferrerOrNull());
         }
@@ -147,7 +145,6 @@ public sealed class BanAdminController : BaseMvcController
         {
             return CustomErrorPage(
                 StatusCodes.Status500InternalServerError,
-                LogEventIds.InternalServerError,
                 "Can't retrieve user IP address information.",
                 GetLocalReferrerOrNull());
         }
@@ -200,7 +197,6 @@ public sealed class BanAdminController : BaseMvcController
                 {
                     return CustomErrorPage(
                         StatusCodes.Status404NotFound,
-                        LogEventIds.NotFound,
                         "The requested post was not found.",
                         GetLocalReferrerOrNull());
                 }
@@ -208,7 +204,6 @@ public sealed class BanAdminController : BaseMvcController
                 {
                     return CustomErrorPage(
                         StatusCodes.Status400BadRequest,
-                        LogEventIds.BadRequest,
                         "Can't retrieve user IP address.",
                         GetLocalReferrerOrNull());
                 }
@@ -221,7 +216,6 @@ public sealed class BanAdminController : BaseMvcController
 
                     return CustomErrorPage(
                         StatusCodes.Status400BadRequest,
-                        LogEventIds.BadRequest,
                         "An active ban was found, but the ID is missing.",
                         GetLocalReferrerOrNull());
                 }
@@ -233,7 +227,6 @@ public sealed class BanAdminController : BaseMvcController
                 {
                     return CustomErrorPage(
                         StatusCodes.Status500InternalServerError,
-                        LogEventIds.InternalServerError,
                         "An unexpected error occurred while retrieving ban creation prerequisites.",
                         GetLocalReferrerOrNull());
                 }
@@ -243,7 +236,6 @@ public sealed class BanAdminController : BaseMvcController
             {
                 return CustomErrorPage(
                     StatusCodes.Status500InternalServerError,
-                    LogEventIds.InternalServerError,
                     "Failed to retrieve necessary post information.",
                     GetLocalReferrerOrNull());
             }
@@ -252,7 +244,6 @@ public sealed class BanAdminController : BaseMvcController
             {
                 return CustomErrorPage(
                     StatusCodes.Status500InternalServerError,
-                    LogEventIds.InternalServerError,
                     "Can't retrieve user IP address information.",
                     GetLocalReferrerOrNull());
             }
