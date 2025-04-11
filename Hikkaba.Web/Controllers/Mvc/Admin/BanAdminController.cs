@@ -181,9 +181,13 @@ public sealed class BanAdminController : BaseMvcController
                 RelatedThreadId = viewModel.RelatedThreadId,
                 CategoryAlias = viewModel.CategoryAlias,
             };
-            var id = await _banService.CreateBanAsync(command, cancellationToken);
+            var resultModel = await _banService.CreateBanAsync(command, cancellationToken);
 
-            return RedirectToAction("Details", new { id = id });
+            var result = resultModel.Match(
+                success => RedirectToAction("Details", new { id = success.BanId }),
+                err => CustomErrorPage(err.StatusCode, err.ErrorMessage, GetLocalReferrerOrNull()));
+
+            return result;
         }
         else
         {

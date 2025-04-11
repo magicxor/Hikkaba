@@ -10,6 +10,6 @@ public interface IBanRepository
     Task<PostingRestrictionsResponseModel> GetPostingRestrictionStatusAsync(PostingRestrictionsRequestModel restrictionsRequestModel, CancellationToken cancellationToken);
     Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter banFilter, CancellationToken cancellationToken);
     Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken);
-    Task<int> CreateBanAsync(BanCreateRequestModel banCreateRequest, CancellationToken cancellationToken);
+    Task<BanCreateResultModel> CreateBanAsync(BanCreateRequestModel banCreateRequest, CancellationToken cancellationToken);
     Task SetBanDeletedAsync(int banId, bool isDeleted, CancellationToken cancellationToken);
 }

@@ -36,10 +36,9 @@ public class BanService : IBanService
         return await _banRepository.GetBanAsync(banId, cancellationToken);
     }
 
-    public async Task<int> CreateBanAsync(BanCreateCommand banCreateCommand, CancellationToken cancellationToken)
+    public async Task<BanCreateResultModel> CreateBanAsync(BanCreateCommand banCreateCommand, CancellationToken cancellationToken)
     {
-        var bannedIpAddress = IPAddress.Parse(banCreateCommand.BannedIpAddress)
-                              ?? throw new ArgumentException("Invalid IP address");
+        var bannedIpAddress = IPAddress.Parse(banCreateCommand.BannedIpAddress);
         var bannedIpAddressType = bannedIpAddress.AddressFamily switch
         {
             AddressFamily.InterNetwork => IpAddressType.IpV4,

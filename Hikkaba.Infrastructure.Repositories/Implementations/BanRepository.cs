@@ -4,6 +4,7 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Infrastructure.Models.Configuration;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
@@ -347,7 +348,7 @@ public sealed class BanRepository : IBanRepository
         return ban;
     }
 
-    public async Task<int> CreateBanAsync(
+    public async Task<BanCreateResultModel> CreateBanAsync(
         BanCreateRequestModel banCreateRequest,
         CancellationToken cancellationToken)
     {
@@ -366,7 +367,11 @@ public sealed class BanRepository : IBanRepository
                 .AnyAsync(ban => !ban.IsDeleted && ban.RelatedPostId == relatedPostId, cancellationToken);
             if (banExists)
             {
-                throw new HikkabaDomainException("User was already banned for this post");
+                return new DomainError
+                {
+                    StatusCode = (int)HttpStatusCode.Conflict,
+                    ErrorMessage = "User was already banned for this post",
+                };
             }
         }
 
@@ -468,7 +473,7 @@ public sealed class BanRepository : IBanRepository
         await _applicationDbContext.Bans.AddAsync(ban, cancellationToken);
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-        return ban.Id;
+        return new BanCreateResultSuccessModel { BanId = ban.Id };
     }
 
     public async Task SetBanDeletedAsync(int banId, bool isDeleted, CancellationToken cancellationToken)
