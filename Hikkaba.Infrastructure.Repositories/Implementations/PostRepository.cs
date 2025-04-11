@@ -119,7 +119,7 @@ public sealed class PostRepository : IPostRepository
         return new PagedResult<PostDetailsModel>(data, filter, totalCount);
     }
 
-    public async Task<PostCreateResultModel> CreatePostAsync(
+    public async Task<PostCreateResultSuccessModel> CreatePostAsync(
         PostCreateExtendedRequestModel requestModel,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
@@ -191,7 +191,7 @@ public sealed class PostRepository : IPostRepository
 
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-        return new PostCreateResultModel
+        return new PostCreateResultSuccessModel
         {
             PostId = post.Id,
             DeletedBlobContainerIds = deletedBlobContainerIds,

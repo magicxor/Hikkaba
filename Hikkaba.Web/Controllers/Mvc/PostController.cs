@@ -128,18 +128,41 @@ public sealed class PostController : BaseMvcController
                     return View("Create", viewModel);
                 }
 
-                var postId = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments ?? new FormFileCollection(), cancellationToken);
+                var postCreateResult = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments ?? new FormFileCollection(), cancellationToken);
 
-                _logger.LogDebug(LogEventIds.PostCreated, "Post created. PostId: {PostId}, ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", postId, viewModel.ThreadId, viewModel.CategoryAlias);
+                var actionResult = postCreateResult.Match<IActionResult>(
+                    success =>
+                    {
+                        _logger.LogDebug(
+                            LogEventIds.PostCreated,
+                            "Post created. ThreadId: {ThreadId}, PostId: {PostId}, CategoryAlias: {CategoryAlias}",
+                            viewModel.ThreadId,
+                            success,
+                            viewModel.CategoryAlias);
 
-                return Redirect(
-                    Url.RouteUrl(
-                        "ThreadDetails",
-                        new
-                        {
-                            categoryAlias = viewModel.CategoryAlias,
-                            threadId = viewModel.ThreadId,
-                        }) + "#" + postId);
+                        return Redirect(
+                            Url.RouteUrl(
+                                "ThreadDetails",
+                                new
+                                {
+                                    categoryAlias = viewModel.CategoryAlias,
+                                    threadId = viewModel.ThreadId,
+                                }) + "#" + success);
+                    },
+                    err =>
+                    {
+                        _logger.LogError(
+                            LogEventIds.PostCreateError,
+                            "Error creating post. CategoryAlias: {CategoryAlias}, ThreadId: {ThreadId}, Error: {Error}",
+                            viewModel.CategoryAlias,
+                            viewModel.ThreadId,
+                            err.ErrorMessage);
+
+                        ViewBag.ErrorMessage = err.ErrorMessage;
+                        return View("Create", viewModel);
+                    });
+
+                return actionResult;
             }
             catch (Exception e)
             {

@@ -12,5 +12,5 @@ public interface IPostRepository
 
     Task<PagedResult<PostDetailsModel>> ListPostsPaginatedAsync(PostPagingFilter filter, CancellationToken cancellationToken);
 
-    Task<PostCreateResultModel> CreatePostAsync(PostCreateExtendedRequestModel requestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
+    Task<PostCreateResultSuccessModel> CreatePostAsync(PostCreateExtendedRequestModel requestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
 }

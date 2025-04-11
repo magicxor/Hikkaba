@@ -14,7 +14,7 @@ public interface IPostService
 
     Task<PagedResult<PostDetailsModel>> ListPostsPaginatedAsync(PostPagingFilter filter, CancellationToken cancellationToken);
 
-    Task<long> CreatePostAsync(PostCreateRequestModel requestModel, IFormFileCollection attachments, CancellationToken cancellationToken);
+    Task<PostCreateResultModel> CreatePostAsync(PostCreateRequestModel requestModel, IFormFileCollection attachments, CancellationToken cancellationToken);
 
     Task EditPostAsync(PostEditRequestModel requestModel);
 

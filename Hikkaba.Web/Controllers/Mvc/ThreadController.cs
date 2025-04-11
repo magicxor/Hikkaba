@@ -7,6 +7,7 @@ using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Extensions;
 using Hikkaba.Web.Controllers.Mvc.Base;
@@ -137,18 +138,39 @@ public sealed class ThreadController : BaseMvcController
                     return View("Create", viewModel);
                 }
 
-                var createThreadResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
+                var threadCreateResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
 
-                _logger.LogDebug(LogEventIds.ThreadCreated, "Thread created. ThreadId: {ThreadId}, CategoryAlias: {CategoryAlias}", createThreadResult.ThreadId, viewModel.CategoryAlias);
-
-                return RedirectToAction(
-                    "Details",
-                    "Thread",
-                    new
+                var actionResult = threadCreateResult.Match<IActionResult>(
+                    success =>
                     {
-                        categoryAlias = viewModel.CategoryAlias,
-                        threadId = createThreadResult.ThreadId,
+                        _logger.LogDebug(
+                            LogEventIds.ThreadCreated,
+                            "Thread created. ThreadId: {ThreadId}, PostId: {PostId}, CategoryAlias: {CategoryAlias}",
+                            success.ThreadId,
+                            success.PostId,
+                            viewModel.CategoryAlias);
+
+                        return RedirectToRoute(
+                            "ThreadDetails",
+                            new
+                            {
+                                categoryAlias = viewModel.CategoryAlias,
+                                threadId = success.ThreadId,
+                            });
+                    },
+                    err =>
+                    {
+                        _logger.LogError(
+                            LogEventIds.ThreadCreateError,
+                            "Error creating thread. CategoryAlias: {CategoryAlias}, Error: {Error}",
+                            viewModel.CategoryAlias,
+                            err.ErrorMessage);
+
+                        ViewBag.ErrorMessage = err.ErrorMessage;
+                        return View("Create", viewModel);
                     });
+
+                return actionResult;
             }
             catch (Exception ex)
             {

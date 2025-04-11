@@ -1,8 +1,10 @@
-﻿namespace Hikkaba.Infrastructure.Models.Thread;
+﻿using Hikkaba.Infrastructure.Models.Error;
+using OneOf;
 
-public sealed class ThreadPostCreateResultModel
+namespace Hikkaba.Infrastructure.Models.Thread;
+
+[GenerateOneOf]
+public sealed partial class ThreadPostCreateResultModel
+    : OneOfBase<ThreadPostCreateSuccessResultModel, DomainError>
 {
-    public required long ThreadId { get; init; }
-    public required long PostId { get; init; }
-    public required IReadOnlyList<Guid> DeletedBlobContainerIds { get; init; }
 }

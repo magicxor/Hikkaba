@@ -1,7 +1,10 @@
-﻿namespace Hikkaba.Infrastructure.Models.Post;
+﻿using Hikkaba.Infrastructure.Models.Error;
+using OneOf;
 
-public sealed class PostCreateResultModel
+namespace Hikkaba.Infrastructure.Models.Post;
+
+[GenerateOneOf]
+public sealed partial class PostCreateResultModel
+    : OneOfBase<long, DomainError>
 {
-    public required long PostId { get; init; }
-    public required IReadOnlyList<Guid> DeletedBlobContainerIds { get; init; }
 }

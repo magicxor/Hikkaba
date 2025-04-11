@@ -112,7 +112,7 @@ public sealed class BanAdminController : BaseMvcController
             {
                 if (prerequisites.ActiveBanId.HasValue)
                 {
-                    return RedirectToAction("Details", new { id = prerequisites.ActiveBanId.Value });
+                    return RedirectToRoute("BanDetails", new { id = prerequisites.ActiveBanId.Value });
                 }
 
                 return CustomErrorPage(
@@ -184,7 +184,7 @@ public sealed class BanAdminController : BaseMvcController
             var resultModel = await _banService.CreateBanAsync(command, cancellationToken);
 
             var result = resultModel.Match(
-                success => RedirectToAction("Details", new { id = success.BanId }),
+                success => RedirectToRoute("BanDetails", new { id = success.BanId }),
                 err => CustomErrorPage(err.StatusCode, err.ErrorMessage, GetLocalReferrerOrNull()));
 
             return result;
@@ -215,7 +215,7 @@ public sealed class BanAdminController : BaseMvcController
                 {
                     if (prerequisites.ActiveBanId.HasValue)
                     {
-                        return RedirectToAction("Details", new { id = prerequisites.ActiveBanId.Value });
+                        return RedirectToRoute("BanDetails", new { id = prerequisites.ActiveBanId.Value });
                     }
 
                     return CustomErrorPage(
@@ -282,6 +282,6 @@ public sealed class BanAdminController : BaseMvcController
         CancellationToken cancellationToken)
     {
         await _banService.SetBanDeletedAsync(id, true, cancellationToken);
-        return RedirectToAction("Index");
+        return RedirectToRoute("BanIndex");
     }
 }

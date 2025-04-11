@@ -300,7 +300,7 @@ public sealed class ThreadRepository : IThreadRepository
         return new PagedResult<ThreadPreviewModel>(data, filter, totalCount);
     }
 
-    public async Task<ThreadPostCreateResultModel> CreateThreadAsync(
+    public async Task<ThreadPostCreateSuccessResultModel> CreateThreadAsync(
         ThreadCreateExtendedRequestModel createRequestModel,
         FileAttachmentContainerCollection inputFiles,
         CancellationToken cancellationToken)
@@ -387,7 +387,7 @@ public sealed class ThreadRepository : IThreadRepository
 
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-        return new ThreadPostCreateResultModel
+        return new ThreadPostCreateSuccessResultModel
         {
             ThreadId = thread.Id,
             PostId = post.Id,

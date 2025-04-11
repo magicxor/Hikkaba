@@ -2,6 +2,7 @@
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Telemetry.Metrics;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Models;
@@ -57,7 +58,7 @@ public sealed class PostService : IPostService
         return await _postRepository.ListPostsPaginatedAsync(filter, cancellationToken);
     }
 
-    public async Task<long> CreatePostAsync(
+    public async Task<PostCreateResultModel> CreatePostAsync(
         PostCreateRequestModel requestModel,
         IFormFileCollection attachments,
         CancellationToken cancellationToken)
@@ -69,52 +70,74 @@ public sealed class PostService : IPostService
             UserIpAddress = requestModel.UserIpAddress,
         }, cancellationToken);
 
-        if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
-            || postingRestrictionStatus is not PostingRestrictionsResponseSuccessModel successModel
-            || successModel.ThreadSalt is null)
+        if (postingRestrictionStatus is PostingRestrictionsResponseFailureModel failurePostingRestrictionsModel)
         {
-            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Posting is restricted: {Enum.GetName(postingRestrictionStatus.RestrictionType)}");
-        }
-
-        var threadSalt = successModel.ThreadSalt.Value;
-        var userIp = requestModel.UserIpAddress ?? [];
-        var threadLocalUserHash = _hashService.GetHashBytes(threadSalt, userIp);
-        var repoRequestModel = new PostCreateExtendedRequestModel
-        {
-            BaseModel = requestModel,
-            ThreadLocalUserHash = threadLocalUserHash,
-            IsCyclic = successModel.IsCyclic,
-            BumpLimit = successModel.BumpLimit,
-            PostCount = successModel.PostCount,
-        };
-
-        await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(requestModel.BlobContainerId, attachments, cancellationToken);
-
-        try
-        {
-            var createPostResult = await _postRepository.CreatePostAsync(repoRequestModel, uploadedAttachments, cancellationToken);
-
-            _postMetrics.PostCreated(requestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
-
-            foreach (var deletedBlobContainerId in createPostResult.DeletedBlobContainerIds)
+            return new DomainError
             {
-                try
-                {
-                    await _attachmentService.DeleteAttachmentsContainerAsync(deletedBlobContainerId);
-                }
-                catch (Exception deleteBlobContainerException)
-                {
-                    _logger.LogError(deleteBlobContainerException, "Failed to delete blob container {BlobContainerId} after post creation. Post Id: {PostId}", deletedBlobContainerId, createPostResult.PostId);
-                }
-            }
-
-            return createPostResult.PostId;
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                ErrorMessage = "Error processing request",
+            };
         }
-        catch (Exception e)
+        else if (postingRestrictionStatus is PostingRestrictionsResponseBanModel banPostingRestrictionsModel)
         {
-            _logger.LogWarning(e, "Failed to create post with attachments. Deleting uploaded attachments within blob container {BlobContainerId}", requestModel.BlobContainerId);
-            await _attachmentService.DeleteAttachmentsContainerAsync(requestModel.BlobContainerId);
-            throw;
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                ErrorMessage = $"Posting is restricted. Reason: {banPostingRestrictionsModel.RestrictionReason}, expires: {banPostingRestrictionsModel.RestrictionEndsAt}",
+            };
+        }
+        else if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
+                 || postingRestrictionStatus is not PostingRestrictionsResponseSuccessModel noPostingRestrictionsModel
+                 || noPostingRestrictionsModel.ThreadSalt is null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                ErrorMessage = "Posting is restricted.",
+            };
+        }
+        else
+        {
+            var threadSalt = noPostingRestrictionsModel.ThreadSalt.Value;
+            var userIp = requestModel.UserIpAddress ?? [];
+            var threadLocalUserHash = _hashService.GetHashBytes(threadSalt, userIp);
+            var repoRequestModel = new PostCreateExtendedRequestModel
+            {
+                BaseModel = requestModel,
+                ThreadLocalUserHash = threadLocalUserHash,
+                IsCyclic = noPostingRestrictionsModel.IsCyclic,
+                BumpLimit = noPostingRestrictionsModel.BumpLimit,
+                PostCount = noPostingRestrictionsModel.PostCount,
+            };
+
+            await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(requestModel.BlobContainerId, attachments, cancellationToken);
+
+            try
+            {
+                var createPostResult = await _postRepository.CreatePostAsync(repoRequestModel, uploadedAttachments, cancellationToken);
+
+                _postMetrics.PostCreated(requestModel.CategoryAlias, uploadedAttachments.Count, uploadedAttachments.Sum(x => x.FileSize));
+
+                foreach (var deletedBlobContainerId in createPostResult.DeletedBlobContainerIds)
+                {
+                    try
+                    {
+                        await _attachmentService.DeleteAttachmentsContainerAsync(deletedBlobContainerId);
+                    }
+                    catch (Exception deleteBlobContainerException)
+                    {
+                        _logger.LogError(deleteBlobContainerException, "Failed to delete blob container {BlobContainerId} after post creation. Post Id: {PostId}", deletedBlobContainerId, createPostResult.PostId);
+                    }
+                }
+
+                return createPostResult.PostId;
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(e, "Failed to create post with attachments. Deleting uploaded attachments within blob container {BlobContainerId}", requestModel.BlobContainerId);
+                await _attachmentService.DeleteAttachmentsContainerAsync(requestModel.BlobContainerId);
+                throw;
+            }
         }
     }
 

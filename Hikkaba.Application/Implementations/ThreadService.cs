@@ -2,6 +2,7 @@
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Telemetry.Metrics;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Models;
@@ -67,10 +68,30 @@ public sealed class ThreadService : IThreadService
             UserIpAddress = requestModel.UserIpAddress,
         }, cancellationToken);
 
-        if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
-            || postingRestrictionStatus is not PostingRestrictionsResponseSuccessModel successModel)
+        if (postingRestrictionStatus is PostingRestrictionsResponseFailureModel failurePostingRestrictionsModel)
         {
-            throw new HikkabaHttpResponseException(HttpStatusCode.Forbidden, $"Posting is restricted: {Enum.GetName(postingRestrictionStatus.RestrictionType)}");
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                ErrorMessage = "Error processing request",
+            };
+        }
+        else if (postingRestrictionStatus is PostingRestrictionsResponseBanModel banPostingRestrictionsModel)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                ErrorMessage = $"Posting is restricted. Reason: {banPostingRestrictionsModel.RestrictionReason}, expires: {banPostingRestrictionsModel.RestrictionEndsAt}",
+            };
+        }
+        else if (postingRestrictionStatus.RestrictionType != PostingRestrictionType.NoRestriction
+                 || postingRestrictionStatus is not PostingRestrictionsResponseSuccessModel noPostingRestrictionsModel)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                ErrorMessage = "Posting is restricted.",
+            };
         }
 
         var threadSalt = Guid.NewGuid();
