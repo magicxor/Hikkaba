@@ -4,6 +4,7 @@ public enum BanCreationPrerequisiteStatus
 {
     Success,
     PostNotFound,
+    IpAddressIsLocalOrPrivate,
     IpAddressNull,
     ActiveBanFound,
 }

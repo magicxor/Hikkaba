@@ -10,15 +10,18 @@ public sealed class BanCreationPrerequisiteService : IBanCreationPrerequisiteSer
     private readonly IPostService _postService;
     private readonly IBanService _banService;
     private readonly IGeoIpService _geoIpService;
+    private readonly IIpAddressCalculator _ipAddressCalculator;
 
     public BanCreationPrerequisiteService(
         IPostService postService,
         IBanService banService,
-        IGeoIpService geoIpService)
+        IGeoIpService geoIpService,
+        IIpAddressCalculator ipAddressCalculator)
     {
         _postService = postService;
         _banService = banService;
         _geoIpService = geoIpService;
+        _ipAddressCalculator = ipAddressCalculator;
     }
 
     public async Task<BanCreationPrerequisitesModel> GetPrerequisitesAsync(long? postId, long threadId, CancellationToken cancellationToken)
@@ -42,6 +45,13 @@ public sealed class BanCreationPrerequisiteService : IBanCreationPrerequisiteSer
             return new BanCreationPrerequisitesModel { Status = BanCreationPrerequisiteStatus.IpAddressNull };
         }
 
+        var userIpAddress = new IPAddress(threadPost.UserIpAddress);
+
+        if (_ipAddressCalculator.IsPrivate(userIpAddress))
+        {
+            return new BanCreationPrerequisitesModel { Status = BanCreationPrerequisiteStatus.IpAddressIsLocalOrPrivate };
+        }
+
         var activeBan = await _banService.FindActiveBan(new ActiveBanFilter
         {
             UserIpAddress = threadPost.UserIpAddress,
@@ -55,7 +65,7 @@ public sealed class BanCreationPrerequisiteService : IBanCreationPrerequisiteSer
         }
 
         // Use IP from the fetched post
-        var ipAddressInfo = _geoIpService.GetIpAddressInfo(new IPAddress(threadPost.UserIpAddress));
+        var ipAddressInfo = _geoIpService.GetIpAddressInfo(userIpAddress);
 
         return new BanCreationPrerequisitesModel
         {
