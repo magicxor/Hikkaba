@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.AdministrationViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Hikkaba.Web.Controllers.Mvc.Admin;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("admin")]
-public sealed class AdminController : Controller
+public sealed class AdminController : BaseMvcController
 {
     private readonly IAdministrationService _administrationService;
     private readonly IBoardService _boardService;

@@ -17,5 +17,5 @@ public interface ICategoryService
 
     Task SetCategoryModeratorsAsync(string alias, IReadOnlyList<int> moderators, CancellationToken cancellationToken);
 
-    Task SetCategoryDeletedAsync(string alias, bool newValue, CancellationToken cancellationToken);
+    Task SetCategoryDeletedAsync(string alias, bool isDeleted, CancellationToken cancellationToken);
 }

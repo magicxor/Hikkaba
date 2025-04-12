@@ -44,8 +44,8 @@ public sealed class CategoryService : ICategoryService
         await _categoryRepository.SetCategoryModeratorsAsync(alias, moderators, cancellationToken);
     }
 
-    public async Task SetCategoryDeletedAsync(string alias, bool newValue, CancellationToken cancellationToken)
+    public async Task SetCategoryDeletedAsync(string alias, bool isDeleted, CancellationToken cancellationToken)
     {
-        await _categoryRepository.SetCategoryDeletedAsync(alias, newValue, cancellationToken);
+        await _categoryRepository.SetCategoryDeletedAsync(alias, isDeleted, cancellationToken);
     }
 }

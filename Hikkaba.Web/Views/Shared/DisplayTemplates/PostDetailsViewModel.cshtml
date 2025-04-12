@@ -86,9 +86,10 @@
                 @("Edit")
               </button>
             </form>
-            <form asp-route="PostSetIsDeleted" method="post" class="display-inline">
-              <input name="postId" type="hidden" value="@Model.Id"/>
+            <form asp-route="PostSetDeleted" asp-route-postId="@Model.Id" method="post" class="display-inline">
               <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
+              <input name="categoryAlias" type="hidden" value="@Model.CategoryAlias"/>
+              <input name="threadId" type="hidden" value="@Model.ThreadId"/>
               <button type="submit" class="btn btn-outline-danger">
                 <i class="@(Model.IsDeleted ? "bi bi-arrow-clockwise" : "bi bi-trash")" aria-hidden="true"></i>
                 @(Model.IsDeleted ? "Restore" : "Delete")

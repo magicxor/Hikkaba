@@ -6,7 +6,7 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IPostService
 {
-    Task<PostDetailsModel> GetPostAsync(long id);
+    Task<PostDetailsModel> GetPostAsync(long id, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<PostDetailsModel>> ListThreadPostsAsync(ThreadPostsFilter filter, CancellationToken cancellationToken);
 
@@ -16,7 +16,7 @@ public interface IPostService
 
     Task<PostCreateResultModel> CreatePostAsync(PostCreateRequestModel requestModel, IFormFileCollection attachments, CancellationToken cancellationToken);
 
-    Task EditPostAsync(PostEditRequestModel requestModel);
+    Task EditPostAsync(PostEditRequestModel requestModel, CancellationToken cancellationToken);
 
-    Task SetPostDeletedAsync(long postId, bool isDeleted);
+    Task SetPostDeletedAsync(long postId, bool isDeleted, CancellationToken cancellationToken);
 }

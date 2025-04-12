@@ -7,6 +7,7 @@ using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -18,17 +19,20 @@ public sealed class PostRepository : IPostRepository
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly TimeProvider _timeProvider;
     private readonly IAttachmentRepository _attachmentRepository;
+    private readonly IUserContext _userContext;
 
     public PostRepository(
         ILogger<PostRepository> logger,
         ApplicationDbContext applicationDbContext,
         TimeProvider timeProvider,
-        IAttachmentRepository attachmentRepository)
+        IAttachmentRepository attachmentRepository,
+        IUserContext userContext)
     {
         _logger = logger;
         _applicationDbContext = applicationDbContext;
         _timeProvider = timeProvider;
         _attachmentRepository = attachmentRepository;
+        _userContext = userContext;
     }
 
     public async Task<IReadOnlyList<PostDetailsModel>> ListThreadPostsAsync(
@@ -196,5 +200,22 @@ public sealed class PostRepository : IPostRepository
             PostId = post.Id,
             DeletedBlobContainerIds = deletedBlobContainerIds,
         };
+    }
+
+    public async Task SetPostDeletedAsync(long postId, bool isDeleted, CancellationToken cancellationToken)
+    {
+        using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+
+        var post = await _applicationDbContext.Posts
+            .TagWithCallSite()
+            .FirstAsync(p => p.Id == postId, cancellationToken);
+        var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
+        var user = _userContext.GetUser();
+
+        post.IsDeleted = isDeleted;
+        post.ModifiedAt = utcNow;
+        post.ModifiedById = user?.Id;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 }

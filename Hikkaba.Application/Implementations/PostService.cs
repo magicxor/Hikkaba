@@ -38,7 +38,7 @@ public sealed class PostService : IPostService
         _postMetrics = postMetrics;
     }
 
-    public async Task<PostDetailsModel> GetPostAsync(long id)
+    public async Task<PostDetailsModel> GetPostAsync(long id, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
@@ -141,13 +141,13 @@ public sealed class PostService : IPostService
         }
     }
 
-    public async Task EditPostAsync(PostEditRequestModel requestModel)
+    public async Task EditPostAsync(PostEditRequestModel requestModel, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SetPostDeletedAsync(long postId, bool isDeleted)
+    public async Task SetPostDeletedAsync(long postId, bool isDeleted, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await _postRepository.SetPostDeletedAsync(postId, isDeleted, cancellationToken);
     }
 }

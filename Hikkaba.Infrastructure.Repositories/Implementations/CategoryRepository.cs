@@ -137,7 +137,7 @@ public sealed class CategoryRepository : ICategoryRepository
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task SetCategoryDeletedAsync(string alias, bool newValue, CancellationToken cancellationToken)
+    public async Task SetCategoryDeletedAsync(string alias, bool isDeleted, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
@@ -149,7 +149,7 @@ public sealed class CategoryRepository : ICategoryRepository
             .OrderBy(c => c.Id)
             .FirstAsync(c => c.Alias == alias, cancellationToken);
 
-        category.IsDeleted = newValue;
+        category.IsDeleted = isDeleted;
         category.ModifiedAt = utcNow;
         category.ModifiedById = user.Id;
 

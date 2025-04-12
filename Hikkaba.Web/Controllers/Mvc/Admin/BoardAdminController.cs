@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Web.Controllers.Mvc.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace Hikkaba.Web.Controllers.Mvc.Admin;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("admin/board")]
-public class BoardAdminController : Controller
+public class BoardAdminController : BaseMvcController
 {
     [HttpGet("edit", Name = "BoardEdit")]
     public async Task<IActionResult> Edit(

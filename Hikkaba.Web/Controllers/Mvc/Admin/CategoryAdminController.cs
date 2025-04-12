@@ -174,7 +174,7 @@ public class CategoryAdminController : BaseMvcController
 
     [HttpPost("{categoryAlias}/set-deleted", Name = "CategorySetDeleted")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetDeletedAsync(
+    public async Task<IActionResult> SetDeleted(
         [Required] [FromRoute] string categoryAlias,
         [Required] [FromForm] bool isDeleted,
         CancellationToken cancellationToken)

@@ -9,5 +9,5 @@ public interface ICategoryRepository
     Task<int> CreateCategoryAsync(CategoryCreateRequestModel requestModel, CancellationToken cancellationToken);
     Task EditCategoryAsync(CategoryEditRequestModel requestModel, CancellationToken cancellationToken);
     Task SetCategoryModeratorsAsync(string alias, IReadOnlyList<int> moderators, CancellationToken cancellationToken);
-    Task SetCategoryDeletedAsync(string alias, bool newValue, CancellationToken cancellationToken);
+    Task SetCategoryDeletedAsync(string alias, bool isDeleted, CancellationToken cancellationToken);
 }

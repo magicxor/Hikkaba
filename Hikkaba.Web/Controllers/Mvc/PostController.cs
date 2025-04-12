@@ -137,7 +137,7 @@ public sealed class PostController : BaseMvcController
                             success,
                             viewModel.CategoryAlias);
 
-                        return Redirect(
+                        return LocalRedirect(
                             Url.RouteUrl(
                                 "ThreadDetails",
                                 new

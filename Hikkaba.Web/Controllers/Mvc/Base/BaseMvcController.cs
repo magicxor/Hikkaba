@@ -24,12 +24,12 @@ public abstract class BaseMvcController : Controller
         return refererUrl;
     }
 
-    protected string? GetLocalReferrerOrRoute(string fallbackRoute, object? fallbackRouteValues = null)
+    protected string? GetLocalReferrerOrRoute(string fallbackRoute, object? fallbackRouteValues = null, string? fragment = null)
     {
         var referrerUrl = GetLocalReferrerOrNull();
 
         return string.IsNullOrEmpty(referrerUrl)
-            ? Url.RouteUrl(fallbackRoute, fallbackRouteValues)
+            ? Url.RouteUrl(fallbackRoute, fallbackRouteValues, null, null, fragment)
             : referrerUrl;
     }
 
