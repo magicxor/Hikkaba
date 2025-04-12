@@ -360,6 +360,9 @@ dotnet_diagnostic.CA1024.severity = suggestion
 # CA1055: Change the return type of method 'ThreadUrlUtils.GetThreadDetailsUri(ThreadDetailsViewModel, IUrlHelper)' from 'string' to 'System.Uri'
 dotnet_diagnostic.CA1055.severity = suggestion
 
+# SS018: Missing enum member in switched cases.
+dotnet_diagnostic.SS018.severity = error
+
 # Function is not convertible to SQL and must not be called in the database context
 # Reason: false positive when using LinqKit
 resharper_entity_framework_unsupported_server_side_function_call_highlighting = none

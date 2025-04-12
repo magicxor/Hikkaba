@@ -206,6 +206,13 @@ public sealed class BanAdminController : BaseMvcController
                         "The requested post was not found.",
                         GetLocalReferrerOrNull());
                 }
+                case BanCreationPrerequisiteStatus.IpAddressIsLocalOrPrivate:
+                {
+                    return CustomErrorPage(
+                        StatusCodes.Status400BadRequest,
+                        "The IP address is local or private.",
+                        GetLocalReferrerOrNull());
+                }
                 case BanCreationPrerequisiteStatus.IpAddressNull:
                 {
                     return CustomErrorPage(
