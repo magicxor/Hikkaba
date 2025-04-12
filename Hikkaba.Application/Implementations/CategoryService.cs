@@ -39,8 +39,13 @@ public sealed class CategoryService : ICategoryService
         await _categoryRepository.EditCategoryAsync(requestModel, cancellationToken);
     }
 
-    public async Task SetCategoryDeletedAsync(int id, bool newValue, CancellationToken cancellationToken)
+    public async Task SetCategoryModeratorsAsync(string alias, IReadOnlyList<int> moderators, CancellationToken cancellationToken)
     {
-        await _categoryRepository.SetCategoryDeletedAsync(id, newValue, cancellationToken);
+        await _categoryRepository.SetCategoryModeratorsAsync(alias, moderators, cancellationToken);
+    }
+
+    public async Task SetCategoryDeletedAsync(string alias, bool newValue, CancellationToken cancellationToken)
+    {
+        await _categoryRepository.SetCategoryDeletedAsync(alias, newValue, cancellationToken);
     }
 }

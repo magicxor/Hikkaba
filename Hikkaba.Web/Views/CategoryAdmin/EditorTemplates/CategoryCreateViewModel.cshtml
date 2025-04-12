@@ -2,42 +2,12 @@
 
 <div asp-validation-summary="All" class="text-danger"></div>
 
-<div class="form-group">
-    <label asp-for="Alias" class="col-md-8 control-label"></label>
-    <div class="col-md-4">
-        <input asp-for="Alias" class="form-control" />
-        <span asp-validation-for="Alias" class="text-danger"></span>
-    </div>
-</div>
-
-<div class="form-group">
-    <label asp-for="Name" class="col-md-8 control-label"></label>
-    <div class="col-md-4">
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-</div>
-
-<div class="form-group">
-    <label asp-for="IsHidden" class="col-md-8 control-label"></label>
-    <div class="col-md-4">
-        <input asp-for="IsHidden" class="form-control" />
-        <span asp-validation-for="IsHidden" class="text-danger"></span>
-    </div>
-</div>
-
-<div class="form-group">
-    <label asp-for="DefaultBumpLimit" class="col-md-8 control-label"></label>
-    <div class="col-md-4">
-        <input asp-for="DefaultBumpLimit" class="form-control" />
-        <span asp-validation-for="DefaultBumpLimit" class="text-danger"></span>
-    </div>
-</div>
-
-<div class="form-group">
-    <label asp-for="DefaultShowThreadLocalUserHash" class="col-md-8 control-label"></label>
-    <div class="col-md-4">
-        <input asp-for="DefaultShowThreadLocalUserHash" class="form-control" />
-        <span asp-validation-for="DefaultShowThreadLocalUserHash" class="text-danger"></span>
-    </div>
-</div>
+@Html.EditorFor(m => m.Alias, "StringEditViewModel")
+@Html.EditorFor(m => m.Name, "StringEditViewModel")
+@Html.EditorFor(m => m.IsHidden, "BooleanCheckbox")
+@Html.EditorFor(m => m.DefaultBumpLimit, "IntEditViewModel")
+@Html.EditorFor(m => m.ShowThreadLocalUserHash, "BooleanCheckbox")
+@Html.EditorFor(m => m.ShowCountry, "BooleanCheckbox")
+@Html.EditorFor(m => m.ShowOs, "BooleanCheckbox")
+@Html.EditorFor(m => m.ShowBrowser, "BooleanCheckbox")
+@Html.EditorFor(m => m.MaxThreadCount, "IntEditViewModel")

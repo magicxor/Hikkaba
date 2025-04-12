@@ -8,5 +8,6 @@ public interface ICategoryRepository
     Task<CategoryDetailsModel?> GetCategoryAsync(string categoryAlias, bool includeDeleted, CancellationToken cancellationToken);
     Task<int> CreateCategoryAsync(CategoryCreateRequestModel requestModel, CancellationToken cancellationToken);
     Task EditCategoryAsync(CategoryEditRequestModel requestModel, CancellationToken cancellationToken);
-    Task SetCategoryDeletedAsync(int categoryId, bool isDeleted, CancellationToken cancellationToken);
+    Task SetCategoryModeratorsAsync(string alias, IReadOnlyList<int> moderators, CancellationToken cancellationToken);
+    Task SetCategoryDeletedAsync(string alias, bool newValue, CancellationToken cancellationToken);
 }

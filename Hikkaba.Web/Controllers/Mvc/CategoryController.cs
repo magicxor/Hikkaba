@@ -1,14 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.CategoriesViewModels;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
@@ -26,10 +24,8 @@ public sealed class CategoryController : BaseMvcController
     private readonly IThreadService _threadService;
 
     public CategoryController(
-        UserManager<ApplicationUser> userManager,
         ICategoryService categoryService,
         IThreadService threadService)
-        : base(userManager)
     {
         _categoryService = categoryService;
         _threadService = threadService;

@@ -10,7 +10,6 @@ using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
 using Hikkaba.Application.Contracts;
@@ -38,11 +37,9 @@ public sealed class PostController : BaseMvcController
 
     public PostController(
         ILogger<PostController> logger,
-        UserManager<ApplicationUser> userManager,
         IMessagePostProcessor messagePostProcessor,
         IThreadService threadService,
         IPostService postService)
-        : base(userManager)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;

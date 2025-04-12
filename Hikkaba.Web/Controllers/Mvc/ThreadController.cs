@@ -4,10 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using DNTCaptcha.Core;
 using Hikkaba.Shared.Enums;
-using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Application.Contracts;
-using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Extensions;
 using Hikkaba.Web.Controllers.Mvc.Base;
@@ -17,7 +15,6 @@ using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -34,11 +31,9 @@ public sealed class ThreadController : BaseMvcController
 
     public ThreadController(
         ILogger<ThreadController> logger,
-        UserManager<ApplicationUser> userManager,
         IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
         IThreadService threadService)
-        : base(userManager)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;

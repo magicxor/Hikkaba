@@ -89,6 +89,7 @@ internal static class DependencyInjection
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IThreadRepository, ThreadRepository>();
         services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }
@@ -123,6 +124,7 @@ internal static class DependencyInjection
         services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
         services.AddScoped<IAttachmentService, AttachmentService>();
         services.AddScoped<IBanCreationPrerequisiteService, BanCreationPrerequisiteService>();
+        services.AddScoped<IUserService, UserService>();
 
         // file storage
         services.AddScoped<FileExtensionContentTypeProvider>();

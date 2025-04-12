@@ -28,7 +28,16 @@ public sealed class UserRepository : IUserRepository
 
     public async Task<IReadOnlyList<UserDetailsModel>> ListUsersAsync(UserFilter filter, CancellationToken cancellationToken)
     {
-        return await _userMgr.Users
+        var query = _applicationDbContext.Users
+            .TagWithCallSite()
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(filter.ExcludeModeratorsOfCategoryAlias))
+        {
+            query = query.Where(user => !user.ModerationCategories.Any(cm => cm.Category.Alias == filter.ExcludeModeratorsOfCategoryAlias));
+        }
+
+        return await query
             .Where(x => filter.IncludeDeleted || !x.IsDeleted)
             .Select(x => new UserDetailsModel
             {
@@ -44,6 +53,24 @@ public sealed class UserRepository : IUserRepository
                 PhoneNumber = x.PhoneNumber,
                 PhoneNumberConfirmed = x.PhoneNumberConfirmed,
                 TwoFactorEnabled = x.TwoFactorEnabled,
+            })
+            .ApplyOrderBy(filter, x => x.UserName)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<CategoryModeratorModel>> ListCategoryModerators(CategoryModeratorFilter filter, CancellationToken cancellationToken)
+    {
+        return await _applicationDbContext.Users
+            .TagWithCallSite()
+            .Where(user => filter.IncludeDeleted || !user.IsDeleted)
+            .Select(user => new CategoryModeratorModel
+            {
+                Id = user.Id,
+                LastLogin = user.LastLoginAt,
+                Email = user.Email,
+                UserName = user.UserName,
+                IsCategoryModerator = user.ModerationCategories
+                    .Any(mc => mc.Category.Alias == filter.CategoryAlias),
             })
             .ApplyOrderBy(filter, x => x.UserName)
             .ToListAsync(cancellationToken);

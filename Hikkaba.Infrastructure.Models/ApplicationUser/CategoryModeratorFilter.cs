@@ -2,8 +2,8 @@
 
 namespace Hikkaba.Infrastructure.Models.ApplicationUser;
 
-public sealed class UserFilter : SortingFilter
+public sealed class CategoryModeratorFilter : SortingFilter
 {
     public required bool IncludeDeleted { get; set; }
-    public required string? ExcludeModeratorsOfCategoryAlias { get; set; }
+    public required string CategoryAlias { get; set; }
 }

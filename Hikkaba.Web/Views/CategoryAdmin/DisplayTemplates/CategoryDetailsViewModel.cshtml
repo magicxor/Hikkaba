@@ -1,0 +1,36 @@
+﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryDetailsViewModel
+
+@{
+  var colorClass = Model switch
+  {
+    { IsDeleted: true } => "table-danger",
+    { IsHidden: true } => "table-warning",
+    { ShowThreadLocalUserHash: true } => "table-info",
+    _ => "",
+  };
+}
+
+<tr class="@(colorClass)">
+    <td class="text-center">@Html.DisplayFor(model => model.Alias)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.Name)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.DefaultBumpLimit)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.MaxThreadCount)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.ShowThreadLocalUserHash, "BooleanCheckbox")</td>
+    <td class="text-center">@Html.DisplayFor(model => model.ShowCountry, "BooleanCheckbox")</td>
+    <td class="text-center">@Html.DisplayFor(model => model.ShowOs, "BooleanCheckbox")</td>
+    <td class="text-center">@Html.DisplayFor(model => model.ShowBrowser, "BooleanCheckbox")</td>
+    <td class="text-center">@Html.DisplayFor(model => model.IsHidden, "BooleanCheckbox")</td>
+    <td class="text-center">@Html.DisplayFor(model => model.IsDeleted, "BooleanCheckbox")</td>
+    <td>
+      <div class="text-nowrap">
+        <a class="btn btn-outline-primary" title="Set moderators" href="@Url.RouteUrl("CategorySetModerators", new { categoryAlias = Model.Alias })"><i class="bi bi-person-plus"></i></a>
+        <a class="btn btn-outline-secondary" title="Edit" href="@Url.RouteUrl("CategoryEdit", new { categoryAlias = Model.Alias })"><i class="bi bi-pencil"></i></a>
+        <form asp-route="CategorySetDeleted" asp-route-categoryAlias="@Model.Alias" method="post" class="display-inline">
+          <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
+          <button class="btn @(Model.IsDeleted ? "btn-outline-primary" : "btn-outline-danger")" title="@(Model.IsDeleted ? "Restore" : "Delete")" type="submit">
+            <i class="@(Model.IsDeleted ? "bi bi-arrow-clockwise" : "bi bi-trash")" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+    </td>
+</tr>

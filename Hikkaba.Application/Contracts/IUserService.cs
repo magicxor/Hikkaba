@@ -1,8 +1,8 @@
 ﻿using Hikkaba.Infrastructure.Models.ApplicationUser;
 
-namespace Hikkaba.Infrastructure.Repositories.Contracts;
+namespace Hikkaba.Application.Contracts;
 
-public interface IUserRepository
+public interface IUserService
 {
     Task<IReadOnlyList<UserDetailsModel>> ListUsersAsync(UserFilter filter, CancellationToken cancellationToken);
     Task<IReadOnlyList<CategoryModeratorModel>> ListCategoryModerators(CategoryModeratorFilter filter, CancellationToken cancellationToken);

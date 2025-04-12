@@ -1,0 +1,7 @@
+﻿@model bool?
+
+<div class="form-check">
+  <input asp-for="@Model" class="form-check-input" type="checkbox" />
+  <label asp-for="@Model" class="form-label"></label>
+  <span asp-validation-for="@Model" class="text-danger"></span>
+</div>

@@ -1,4 +1,5 @@
 ﻿using Hikkaba.Data.Context;
+using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Mappings;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -112,7 +113,31 @@ public sealed class CategoryRepository : ICategoryRepository
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task SetCategoryDeletedAsync(int categoryId, bool isDeleted, CancellationToken cancellationToken)
+    public async Task SetCategoryModeratorsAsync(string alias, IReadOnlyList<int> moderators, CancellationToken cancellationToken)
+    {
+        using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
+
+        var category = await _applicationDbContext.Categories
+            .TagWithCallSite()
+            .Include(c => c.Moderators)
+            .FirstAsync(c => c.Alias == alias, cancellationToken);
+
+        _applicationDbContext.RemoveRange(category.Moderators);
+
+        var newCategoryModerators = moderators
+            .Select(moderatorId => new CategoryToModerator
+            {
+                CategoryId = category.Id,
+                ModeratorId = moderatorId,
+            })
+            .ToList();
+
+        _applicationDbContext.AddRange(newCategoryModerators);
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task SetCategoryDeletedAsync(string alias, bool newValue, CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.CategorySource.StartActivity();
 
@@ -121,9 +146,10 @@ public sealed class CategoryRepository : ICategoryRepository
 
         var category = await _applicationDbContext.Categories
             .TagWithCallSite()
-            .FirstAsync(c => c.Id == categoryId, cancellationToken);
+            .OrderBy(c => c.Id)
+            .FirstAsync(c => c.Alias == alias, cancellationToken);
 
-        category.IsDeleted = isDeleted;
+        category.IsDeleted = newValue;
         category.ModifiedAt = utcNow;
         category.ModifiedById = user.Id;
 

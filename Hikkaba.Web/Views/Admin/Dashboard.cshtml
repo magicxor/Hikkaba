@@ -23,42 +23,20 @@
   </tbody>
 </table>
 
-<h2 class="text-center">Categories</h2>
+<h2 class="text-center m-3">
+  @Html.RouteLink("Categories", "CategoryIndex", new {}, new { @class = "decoration-on-hover" })
+</h2>
+<hr />
 
-<div class="mb-2">
-  @Html.RouteLink("Create new category", "CategoryCreate", new {}, new { @class = "decoration-on-hover" })
-</div>
-
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Alias)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Name)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.DefaultBumpLimit)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.MaxThreadCount)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowThreadLocalUserHash)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowCountry)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowOs)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowBrowser)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.IsHidden)</th>
-            <th class="text-center">@Html.DisplayNameForInnerType((DashboardViewModel dashboard) => dashboard.CategoriesModerators)</th>
-            <th class="text-center">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @Html.DisplayFor(model => model.CategoriesModerators)
-    </tbody>
-</table>
-
-<h2 class="text-center">
+<h2 class="text-center m-3">
   @Html.RouteLink("Users", "UserIndex", new {}, new { @class = "decoration-on-hover" })
 </h2>
 <hr />
 
-<h2 class="text-center">
+<h2 class="text-center m-3">
   @Html.RouteLink("Bans", "BanIndex", new {}, new { @class = "decoration-on-hover" })
 </h2>
 <hr />
 
-<h2 class="text-center">@Html.DisplayNameFor(model => model.SystemInfo)</h2>
+<h2 class="text-center m-3">@Html.DisplayNameFor(model => model.SystemInfo)</h2>
 @Html.DisplayFor(model => model.SystemInfo)

@@ -3,19 +3,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
-using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
-using Hikkaba.Shared.Enums;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
 using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc.Admin;
@@ -29,11 +26,9 @@ public sealed class BanAdminController : BaseMvcController
     private readonly TimeProvider _timeProvider;
 
     public BanAdminController(
-        UserManager<ApplicationUser> userManager,
         IBanService banService,
         IBanCreationPrerequisiteService banCreationPrerequisiteService,
         TimeProvider timeProvider)
-        : base(userManager)
     {
         _banService = banService;
         _banCreationPrerequisiteService = banCreationPrerequisiteService;
