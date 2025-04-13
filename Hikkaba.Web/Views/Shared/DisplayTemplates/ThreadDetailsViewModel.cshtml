@@ -10,7 +10,7 @@
     <div class="card">
       <div class="card-body">
         <h4>
-          <b>@Model.Title</b>
+          <a class="decoration-on-hover inherit-color" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, Url)"><b>@Model.Title</b></a>
           &nbsp;
           @Model.PostCount posts
           &nbsp;
@@ -20,17 +20,17 @@
           @if (Model.IsPinned)
           {
             <span>&nbsp;</span>
-            <i class="bi bi-pin"></i>
+            <i class="bi bi-pin" title="@Html.DisplayNameFor(model => model.IsPinned)"></i>
           }
           @if (Model.IsClosed)
           {
             <span>&nbsp;</span>
-            <i class="bi bi-lock"></i>
+            <i class="bi bi-lock" title="@Html.DisplayNameFor(model => model.IsClosed)"></i>
           }
           @if (Model.IsCyclic)
           {
             <span>&nbsp;</span>
-            <i class="bi bi-infinity"></i>
+            <i class="bi bi-infinity" title="@Html.DisplayNameFor(model => model.IsCyclic)"></i>
           }
         </h4>
         @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))
