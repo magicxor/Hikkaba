@@ -1,4 +1,4 @@
 @using Hikkaba.Shared.Constants
 @model DateTime?
-<!-- DO NOT FORMAT THIS CODE: extra whitespace occurs -->
+@*DO NOT FORMAT THIS CODE: extra whitespace occurs*@
 @if (Model.HasValue){<time class="time-localizable" datetime="@Model.Value.ToString(Defaults.CsharpGlobalDateTimeFormatString)">@Model.Value.ToString(Defaults.CsharpGlobalDateTimeFormatString)</time>}else{@("—")}

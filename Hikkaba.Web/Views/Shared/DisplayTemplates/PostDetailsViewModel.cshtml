@@ -12,12 +12,12 @@
   <h5 class="card-header">
     <div class="container">
       <div class="d-flex flex-wrap gap-2">
-        <!-- User name -->
+        @*User name*@
         <div class="post-header-flex-item">
           @(Defaults.AnonymousUserName)
         </div>
 
-        <!-- User unique hash in this thread -->
+        @*User unique hash in this thread*@
         @if (Model.ShowThreadLocalUserHash)
         {
           <div class="post-header-flex-item">
@@ -25,7 +25,7 @@
           </div>
         }
 
-        <!-- Sage -->
+        @*Sage*@
         @if (Model.IsSageEnabled)
         {
           <div class="post-header-flex-item">
@@ -33,12 +33,12 @@
           </div>
         }
 
-        <!-- Post created at -->
+        @*Post created at*@
         <div class="post-header-flex-item">
           @Html.DisplayFor(model => model.CreatedAt)
         </div>
 
-        <!-- Post modified at -->
+        @*Post modified at*@
         @if (Model.ModifiedAt.HasValue)
         {
           <div class="post-header-flex-item">
@@ -46,13 +46,13 @@
           </div>
         }
 
-        <!-- Post ID -->
+        @*Post ID*@
         <div class="post-header-flex-item">
-          <!-- no extra spaces inside a -->
+          @*no extra spaces inside a*@
           <a id="@(Model.Id)" class="decoration-on-hover post-id-link" href="@PostUrlUtils.GetThreadDetailsPostUri(Model, Url)">@Html.DisplayFor(model => model.Id)</a>
         </div>
 
-        <!-- Post sequence number in thread -->
+        @*Post sequence number in thread*@
         @if (Model.Index > 0)
         {
           <div class="post-header-flex-item">
