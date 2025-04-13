@@ -1,4 +1,4 @@
-﻿namespace Hikkaba.Infrastructure.Models.ApplicationRole;
+﻿namespace Hikkaba.Infrastructure.Models.Role;
 
 public sealed class RoleEditRequestModel
 {

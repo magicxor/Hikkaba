@@ -1,5 +1,5 @@
 ﻿using Hikkaba.Application.Contracts;
-using Hikkaba.Infrastructure.Models.ApplicationUser;
+using Hikkaba.Infrastructure.Models.User;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 
 namespace Hikkaba.Application.Implementations;
@@ -23,9 +23,19 @@ public class UserService : IUserService
         return await _userRepository.ListCategoryModerators(filter, cancellationToken);
     }
 
+    public async Task<UserDetailsModel?> GetUserAsync(int userId, CancellationToken cancellationToken)
+    {
+        return await _userRepository.GetUserAsync(userId, cancellationToken);
+    }
+
     public async Task<UserCreateResultModel> CreateUserAsync(UserCreateRequestModel requestModel, CancellationToken cancellationToken)
     {
         return await _userRepository.CreateUserAsync(requestModel, cancellationToken);
+    }
+
+    public async Task<UserEditResultModel> EditUserAsync(UserEditRequestModel requestModel, CancellationToken cancellationToken)
+    {
+        return await _userRepository.EditUserAsync(requestModel, cancellationToken);
     }
 
     public async Task SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken)

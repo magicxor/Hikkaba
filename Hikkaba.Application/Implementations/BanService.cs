@@ -21,7 +21,7 @@ public sealed class BanService : IBanService
         _banRepository = banRepository;
     }
 
-    public async Task<BanPreviewModel?> FindActiveBan(ActiveBanFilter filter, CancellationToken cancellationToken)
+    public async Task<BanSlimModel?> FindActiveBan(ActiveBanFilter filter, CancellationToken cancellationToken)
     {
         return await _banRepository.FindActiveBanAsync(filter, cancellationToken);
     }

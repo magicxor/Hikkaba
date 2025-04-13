@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Web.ViewModels.BansViewModels;
 using Riok.Mapperly.Abstractions;
-using BanPreviewModel = Hikkaba.Infrastructure.Models.Ban.BanPreviewModel;
 
 namespace Hikkaba.Web.Mappings;
 

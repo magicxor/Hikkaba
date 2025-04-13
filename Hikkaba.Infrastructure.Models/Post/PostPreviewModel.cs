@@ -1,5 +1,5 @@
-﻿using Hikkaba.Infrastructure.Models.ApplicationUser;
-using Hikkaba.Infrastructure.Models.Attachments.Concrete;
+﻿using Hikkaba.Infrastructure.Models.Attachments.Concrete;
+using Hikkaba.Infrastructure.Models.User;
 
 namespace Hikkaba.Infrastructure.Models.Post;
 

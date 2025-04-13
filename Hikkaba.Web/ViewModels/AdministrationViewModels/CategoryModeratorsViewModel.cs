@@ -6,5 +6,5 @@ namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
 public class CategoryModeratorsViewModel
 {
     public required CategoryDetailsViewModel Category { get; set; }
-    public required IReadOnlyList<ApplicationUserViewModel> Moderators { get; set; }
+    public required IReadOnlyList<UserDetailsViewModel> Moderators { get; set; }
 }

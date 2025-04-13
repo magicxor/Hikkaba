@@ -1,4 +1,4 @@
-﻿namespace Hikkaba.Infrastructure.Models.ApplicationUser;
+﻿namespace Hikkaba.Infrastructure.Models.User;
 
 public sealed class UserCreateResultSuccessModel
 {

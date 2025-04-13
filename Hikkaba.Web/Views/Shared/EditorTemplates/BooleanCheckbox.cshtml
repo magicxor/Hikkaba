@@ -1,7 +1,11 @@
 ﻿@model bool?
 
+@{
+  var label = ViewData["Label"] as string;
+}
+
 <div class="form-check">
   <input asp-for="@Model" class="form-check-input" type="checkbox" />
-  <label asp-for="@Model" class="form-label"></label>
+  <label asp-for="@Model" class="form-label">@(label)</label>
   <span asp-validation-for="@Model" class="text-danger"></span>
 </div>

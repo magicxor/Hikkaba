@@ -7,9 +7,9 @@ namespace Hikkaba.Infrastructure.Mappings;
 [Mapper]
 public static partial class BanMapper
 {
-    [MapProperty(nameof(Ban.Id), nameof(BanPreviewModel.Id))]
-    [MapProperty(nameof(Ban.EndsAt), nameof(BanPreviewModel.EndsAt))]
-    [MapProperty(nameof(Ban.Reason), nameof(BanPreviewModel.Reason))]
+    [MapProperty(nameof(Ban.Id), nameof(BanSlimModel.Id))]
+    [MapProperty(nameof(Ban.EndsAt), nameof(BanSlimModel.EndsAt))]
+    [MapProperty(nameof(Ban.Reason), nameof(BanSlimModel.Reason))]
     [MapperIgnoreSource(nameof(Ban.IsDeleted))]
     [MapperIgnoreSource(nameof(Ban.CreatedAt))]
     [MapperIgnoreSource(nameof(Ban.ModifiedAt))]
@@ -28,5 +28,5 @@ public static partial class BanMapper
     [MapperIgnoreSource(nameof(Ban.Category))]
     [MapperIgnoreSource(nameof(Ban.CreatedBy))]
     [MapperIgnoreSource(nameof(Ban.ModifiedBy))]
-    public static partial BanPreviewModel ToPreview(this Ban entity);
+    public static partial BanSlimModel ToPreview(this Ban entity);
 }

@@ -1,17 +1,25 @@
-﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.ApplicationUserViewModel
+﻿@model Hikkaba.Web.ViewModels.UserViewModels.UserEditViewModel
 @{
-    ViewData["Title"] = $"Edit ban";
+    ViewData["Title"] = $"Edit user";
 }
 
-<form asp-route="UserEditConfirm" method="post" class="form-horizontal" enctype="multipart/form-data">
-    <h4>@ViewData["Title"]</h4>
-    <hr />
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="UserEditConfirm" method="post" class="form-horizontal" enctype="multipart/form-data">
+      <h4 class="m-3">@ViewData["Title"]</h4>
 
-    @Html.EditorFor(model => model)
+      <hr/>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default">Save</button>
-        </div>
-    </div>
-</form>
+      <div asp-validation-summary="All" class="text-danger"></div>
+
+      <input asp-for="Id" type="hidden" />
+
+      @Html.EditorFor(m => m.Email, "StringEditViewModel", new { Label = "Email" })
+      @Html.EditorFor(m => m.UserName, "StringEditViewModel", new { Label = "Username" })
+      @Html.EditorFor(m => m.LockoutEndDate, "DateTimeNullableEditViewModel", new { Label = "Lockout end date" })
+      @Html.EditorFor(m => m.TwoFactorEnabled, "BooleanCheckbox", new { Label = "2FA enabled" })
+
+      <button type="submit" class="w-100 btn btn-primary btn-lg">Save</button>
+    </form>
+  </div>
+</div>

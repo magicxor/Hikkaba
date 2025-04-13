@@ -6,7 +6,7 @@ namespace Hikkaba.Infrastructure.Repositories.Contracts;
 
 public interface IBanRepository
 {
-    Task<BanPreviewModel?> FindActiveBanAsync(ActiveBanFilter filter, CancellationToken cancellationToken);
+    Task<BanSlimModel?> FindActiveBanAsync(ActiveBanFilter filter, CancellationToken cancellationToken);
     Task<PostingRestrictionsResponseModel> GetPostingRestrictionStatusAsync(PostingRestrictionsRequestModel requestModel, CancellationToken cancellationToken);
     Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter filter, CancellationToken cancellationToken);
     Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken);

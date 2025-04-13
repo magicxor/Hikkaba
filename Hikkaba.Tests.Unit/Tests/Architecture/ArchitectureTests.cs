@@ -104,6 +104,26 @@ internal sealed class ArchitectureTests
     }
 
     [Test]
+    public void ViewModels_ShouldHaveNameEndingWith_Suffix()
+    {
+        var webAssembly = typeof(HikkabaWebAssemblyInfo).Assembly;
+
+        var result = Types
+            .InAssembly(webAssembly)
+            .That()
+            .AreClasses()
+            .And()
+            .ResideInNamespaceStartingWith("Hikkaba.Web.ViewModels")
+            .Should()
+            .HaveNameEndingWith("ViewModel", StringComparison.Ordinal)
+            .GetResult();
+
+        var failingTypeNames = result.FailingTypeNames ?? [];
+
+        Assert.That(result.IsSuccessful, Is.True, $"Some classes in {webAssembly.GetName().Name} do not follow the naming convention: {string.Join(", ", failingTypeNames)}");
+    }
+
+    [Test]
     public void InfrastructureModels_ShouldHaveNameEndingWith_Suffix()
     {
         var infrastructureModelsAssembly = typeof(HikkabaInfrastructureModelsAssemblyInfo).Assembly;
@@ -136,6 +156,24 @@ internal sealed class ArchitectureTests
             .MeetCustomRule(new IsEnumRule())
             .Or()
             .HaveNameMatching(".*OneOf.*")
+            .GetResult();
+
+        var failingTypeNames = result.FailingTypeNames ?? [];
+
+        Assert.That(result.IsSuccessful, Is.True, $"Some classes in {infrastructureModelsAssembly.GetName().Name} do not follow the naming convention: {string.Join(", ", failingTypeNames)}");
+    }
+
+    [Test]
+    public void InfrastructureModels_ShouldNotHaveNameEndingWith_Suffix()
+    {
+        var infrastructureModelsAssembly = typeof(HikkabaInfrastructureModelsAssemblyInfo).Assembly;
+
+        var result = Types
+            .InAssembly(infrastructureModelsAssembly)
+            .That()
+            .AreClasses()
+            .Should()
+            .NotHaveNameEndingWith("ViewModel", StringComparison.Ordinal)
             .GetResult();
 
         var failingTypeNames = result.FailingTypeNames ?? [];

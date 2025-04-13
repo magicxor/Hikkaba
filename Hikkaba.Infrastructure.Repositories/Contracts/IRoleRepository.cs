@@ -1,4 +1,4 @@
-﻿using Hikkaba.Infrastructure.Models.ApplicationRole;
+﻿using Hikkaba.Infrastructure.Models.Role;
 
 namespace Hikkaba.Infrastructure.Repositories.Contracts;
 

@@ -1,23 +1,35 @@
-﻿@model IEnumerable<Hikkaba.Web.ViewModels.AdministrationViewModels.ApplicationUserViewModel>
+﻿@model IReadOnlyList<Hikkaba.Web.ViewModels.AdministrationViewModels.UserDetailsViewModel>
+
 @{
-    ViewData["Title"] = $"Users";
+  ViewData["Title"] = "Users";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
-<hr />
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.UserName)</th>
-            <th>@Html.DisplayNameFor(model => model.Email)</th>
-            <th>@Html.DisplayNameFor(model => model.LastLoginAt)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            @Html.DisplayFor(model => item)
-        }
-    </tbody>
+<h2 class="text-center m-3">@ViewData["Title"]</h2>
+
+<div class="m-2">
+  @Html.RouteLink("Create new user", "UserCreate", new {}, new { @class = "decoration-on-hover" })
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <th class="text-center">Id</th>
+    <th class="text-center">Is deleted</th>
+    <th class="text-center">Access failed</th>
+    <th class="text-center">Email confirmed</th>
+    <th class="text-center">Last login</th>
+    <th class="text-center">Lockout</th>
+    <th class="text-center">Lockout end</th>
+    <th class="text-center">Email</th>
+    <th class="text-center">UserName</th>
+    <th class="text-center">2FA</th>
+    <th class="text-center">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  @foreach (var user in Model)
+  {
+    @Html.DisplayFor(model => user)
+  }
+  </tbody>
 </table>

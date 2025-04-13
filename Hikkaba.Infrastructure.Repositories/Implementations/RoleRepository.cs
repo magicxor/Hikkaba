@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Net;
 using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Models.ApplicationRole;
 using Hikkaba.Infrastructure.Models.Error;
+using Hikkaba.Infrastructure.Models.Role;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Extensions;
 using Microsoft.AspNetCore.Identity;

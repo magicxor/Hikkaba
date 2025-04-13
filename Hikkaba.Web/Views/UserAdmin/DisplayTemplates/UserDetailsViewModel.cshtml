@@ -1,0 +1,26 @@
+﻿@model Hikkaba.Web.ViewModels.AdministrationViewModels.UserDetailsViewModel
+
+<tr>
+  <td>@Html.DisplayFor(m => m.Id)</td>
+  <td>@Html.DisplayFor(m => m.IsDeleted)</td>
+  <td>@Html.DisplayFor(m => m.AccessFailedCount)</td>
+  <td>@Html.DisplayFor(m => m.EmailConfirmed)</td>
+  <td>@Html.DisplayFor(m => m.LastLogin)</td>
+  <td>@Html.DisplayFor(m => m.LockoutEnabled)</td>
+  <td>@Html.DisplayFor(m => m.LockoutEnd)</td>
+  <td>@Html.DisplayFor(m => m.Email)</td>
+  <td>@Html.DisplayFor(m => m.UserName)</td>
+  <td>@Html.DisplayFor(m => m.TwoFactorEnabled)</td>
+
+  <td>
+    <div class="text-nowrap">
+      <a class="btn btn-outline-secondary" title="Edit" href="@Url.RouteUrl("UserEdit", new { userId = Model.Id })"><i class="bi bi-pencil"></i></a>
+      <form asp-route="UserSetDeleted" asp-route-userId="@Model.Id" method="post" class="display-inline">
+        <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
+        <button class="btn @(Model.IsDeleted ? "btn-outline-primary" : "btn-outline-danger")" title="@(Model.IsDeleted ? "Restore" : "Delete")" type="submit">
+          <i class="@(Model.IsDeleted ? "bi bi-arrow-clockwise" : "bi bi-trash")" aria-hidden="true"></i>
+        </button>
+      </form>
+    </div>
+  </td>
+</tr>

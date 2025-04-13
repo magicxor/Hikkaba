@@ -9,9 +9,6 @@ public class DashboardViewModel
     [Display(Name = @"Board")]
     public required BoardViewModel Board { get; set; }
 
-    [Display(Name = @"Moderators")]
-    public required IReadOnlyList<CategoryModeratorsViewModel> CategoriesModerators { get; set; }
-
     [Display(Name = @"System info")]
     public required SystemInfoViewModel SystemInfo { get; set; }
 }

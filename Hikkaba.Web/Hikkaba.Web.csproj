@@ -56,7 +56,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Views\PostAdmin\" />
     <Folder Include="WwwRootSources\" />
   </ItemGroup>
 
@@ -76,6 +75,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\CategoryAnon\EditorTemplates\CategoryCreateViewModel.cshtml" />
     <_ContentIncludedByDefault Remove="Views\CategoryAnon\EditorTemplates\CategoryEditViewModel.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\UserAdmin\EditorTemplates\UserEditViewModel.cshtml" />
   </ItemGroup>
 
 

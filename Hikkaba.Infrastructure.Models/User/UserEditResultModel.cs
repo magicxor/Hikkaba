@@ -2,10 +2,10 @@
 using OneOf;
 using OneOf.Types;
 
-namespace Hikkaba.Infrastructure.Models.ApplicationRole;
+namespace Hikkaba.Infrastructure.Models.User;
 
 [GenerateOneOf]
-public sealed partial class RoleEditResultModel
+public sealed partial class UserEditResultModel
     : OneOfBase<Success, DomainError>
 {
 }

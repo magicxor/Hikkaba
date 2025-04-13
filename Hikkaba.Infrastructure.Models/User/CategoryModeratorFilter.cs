@@ -1,6 +1,6 @@
 ﻿using Hikkaba.Paging.Models;
 
-namespace Hikkaba.Infrastructure.Models.ApplicationUser;
+namespace Hikkaba.Infrastructure.Models.User;
 
 public sealed class CategoryModeratorFilter : SortingFilter
 {

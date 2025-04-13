@@ -32,7 +32,7 @@ public sealed class BanRepository : IBanRepository
         _userContext = userContext;
     }
 
-    public async Task<BanPreviewModel?> FindActiveBanAsync(
+    public async Task<BanSlimModel?> FindActiveBanAsync(
         ActiveBanFilter filter,
         CancellationToken cancellationToken)
     {
@@ -82,7 +82,7 @@ public sealed class BanRepository : IBanRepository
                                && ban.BannedCidrLowerIpAddress.Compare(userIp) <= 0
                                && ban.BannedCidrUpperIpAddress.Compare(userIp) >= 0)))
             .OrderByDescending(ban => ban.EndsAt)
-            .Select(ban => new BanPreviewModel
+            .Select(ban => new BanSlimModel
             {
                 Id = ban.Id,
                 EndsAt = ban.EndsAt,

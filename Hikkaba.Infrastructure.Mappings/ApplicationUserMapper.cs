@@ -1,5 +1,5 @@
 ﻿using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Models.ApplicationUser;
+using Hikkaba.Infrastructure.Models.User;
 using Riok.Mapperly.Abstractions;
 
 namespace Hikkaba.Infrastructure.Mappings;

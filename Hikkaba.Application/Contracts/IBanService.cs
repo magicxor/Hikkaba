@@ -5,7 +5,7 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IBanService
 {
-    Task<BanPreviewModel?> FindActiveBan(ActiveBanFilter filter, CancellationToken cancellationToken);
+    Task<BanSlimModel?> FindActiveBan(ActiveBanFilter filter, CancellationToken cancellationToken);
     Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter filter, CancellationToken cancellationToken);
     Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken);
     Task<BanCreateResultModel> CreateBanAsync(BanCreateCommand banCreateCommand, CancellationToken cancellationToken);

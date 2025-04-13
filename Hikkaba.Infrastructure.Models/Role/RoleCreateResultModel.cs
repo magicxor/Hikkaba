@@ -1,7 +1,7 @@
 ﻿using Hikkaba.Infrastructure.Models.Error;
 using OneOf;
 
-namespace Hikkaba.Infrastructure.Models.ApplicationRole;
+namespace Hikkaba.Infrastructure.Models.Role;
 
 [GenerateOneOf]
 public sealed partial class RoleCreateResultModel
