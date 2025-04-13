@@ -1,3 +1,4 @@
+@using System.Globalization
 @using Hikkaba.Shared.Enums
 @using Hikkaba.Web.ViewModels.BansViewModels
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -16,7 +17,7 @@
         <i class="fa-solid fa-angle-left"></i> Back to category
       </a>
       |
-      <a class="decoration-on-hover" href="@Url.RouteUrl("ThreadDetails", new { categoryAlias = Model.PostDetails.CategoryAlias, threadId = Model.PostDetails.Id })">
+      <a class="decoration-on-hover" href="@Url.RouteUrl("ThreadDetails", new { categoryAlias = Model.PostDetails.CategoryAlias, threadId = Model.PostDetails.ThreadId }, null, null, Model.PostDetails.Id.ToString(CultureInfo.InvariantCulture))">
         <i class="fa-solid fa-angle-left"></i> Back to thread
       </a>
     </div>
