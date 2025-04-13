@@ -1,8 +1,6 @@
-@using Azure.Core
 @using Hikkaba.Shared.Constants
 @using Hikkaba.Shared.Extensions
 @using Hikkaba.Shared.Services.Contracts
-@using Hikkaba.Web.Extensions
 @using Hikkaba.Web.Utils.Url
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
@@ -29,7 +27,7 @@
         @if (Model.IsSageEnabled)
         {
           <div class="post-header-flex-item">
-            <i class="bi bi-caret-down-fill"></i>
+            <i class="bi bi-caret-down-fill" title="@Html.DisplayNameFor(model => model.IsSageEnabled)"></i>
           </div>
         }
 
@@ -42,7 +40,7 @@
         @if (Model.ModifiedAt.HasValue)
         {
           <div class="post-header-flex-item">
-            <span class="font-monospace">[</span><i class="bi bi-pencil" aria-hidden="true"></i>@Html.DisplayFor(model => model.ModifiedAt)<span class="font-monospace">]</span>
+            <span class="font-monospace">[</span><i class="bi bi-pencil" title="@Html.DisplayNameFor(model => model.ModifiedAt)" aria-hidden="true"></i> @Html.DisplayFor(model => model.ModifiedAt)<span class="font-monospace">]</span>
           </div>
         }
 
