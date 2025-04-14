@@ -1,4 +1,4 @@
-# Hikkaba [Pre-alpha]
+# Hikkaba [pre-alpha]
 
 Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, designed with minimal JavaScript usage.
 
@@ -51,10 +51,10 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 
 ### Moderation & Administration
 - [x] **Captcha:** Protects against automated posting ([DNTCaptcha.Core](https://github.com/VahidN/DNTCaptcha.Core))
-- [x] Administration panel (In Progress)
-- [x] Per-category moderator assignments (In Progress)
-- [x] Moderation functions (In Progress)
-- [x] **Ban system:** Supports banning by IP address or range (In Progress)
+- [x] Administration panel
+- [x] Per-category moderator assignments
+- [x] Moderation functions
+- [x] **Ban system:** Supports banning by IP address or range
   * Board-wide or category-specific bans
   * Options for post deletion upon banning: single post, all posts in the category, or all posts board-wide
 - [x] **Thread locking:** Prevents further replies
