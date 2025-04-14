@@ -1,30 +1,26 @@
 ﻿@using Hikkaba.Application.Implementations
-@using Microsoft.AspNetCore.Identity
-@using Hikkaba.Data.Entities
+@using Hikkaba.Shared.Constants
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-
 @inject ApplicationSignInManager SignInManager
-@inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
+[
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="display-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-        </form>
-    </li>
+  <a class="decoration-on-hover" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity?.Name</a>
+  @if (User.IsInRole(Defaults.AdministratorRoleName))
+  {
+    @("|")
+    <a class="decoration-on-hover" asp-route="AdminDashboard" title="Administration">Manage</a>
+  }
+  @("|")
+  <form class="display-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+    <button type="submit" class="btn btn-link button-link-inline p-0 align-baseline link-primary decoration-on-hover">Logout</button>
+  </form>
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
+  <a class="decoration-on-hover" asp-area="Identity" asp-page="/Account/Register">Register</a>
+  @("|")
+  <a class="decoration-on-hover" asp-area="Identity" asp-page="/Account/Login">Login</a>
 }
-</ul>
+]
