@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Authentication;
@@ -20,10 +21,10 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
 public class LoginModel : PageModel
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly ILogger<LoginModel> _logger;
 
-    public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+    public LoginModel(ApplicationSignInManager signInManager, ILogger<LoginModel> logger)
     {
         _signInManager = signInManager;
         _logger = logger;

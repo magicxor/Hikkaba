@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Hikkaba.Data.Entities;
@@ -24,7 +25,7 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 [AllowAnonymous]
 public class ExternalLoginModel : PageModel
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserStore<ApplicationUser> _userStore;
     private readonly IUserEmailStore<ApplicationUser> _emailStore;
@@ -32,7 +33,7 @@ public class ExternalLoginModel : PageModel
     private readonly ILogger<ExternalLoginModel> _logger;
 
     public ExternalLoginModel(
-        SignInManager<ApplicationUser> signInManager,
+        ApplicationSignInManager signInManager,
         UserManager<ApplicationUser> userManager,
         IUserStore<ApplicationUser> userStore,
         ILogger<ExternalLoginModel> logger,

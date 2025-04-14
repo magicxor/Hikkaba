@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,11 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 public class SetPasswordModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
 
     public SetPasswordModel(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        ApplicationSignInManager signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;

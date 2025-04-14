@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -15,12 +16,12 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
 public class LoginWithRecoveryCodeModel : PageModel
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
     public LoginWithRecoveryCodeModel(
-        SignInManager<ApplicationUser> signInManager,
+        ApplicationSignInManager signInManager,
         UserManager<ApplicationUser> userManager,
         ILogger<LoginWithRecoveryCodeModel> logger)
     {

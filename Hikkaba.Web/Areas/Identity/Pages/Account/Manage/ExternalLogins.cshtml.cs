@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -18,12 +19,12 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 public class ExternalLoginsModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly IUserStore<ApplicationUser> _userStore;
 
     public ExternalLoginsModel(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
+        ApplicationSignInManager signInManager,
         IUserStore<ApplicationUser> userStore)
     {
         _userManager = userManager;

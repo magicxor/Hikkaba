@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -15,10 +16,10 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
 public class LogoutModel : PageModel
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly ILogger<LogoutModel> _logger;
 
-    public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
+    public LogoutModel(ApplicationSignInManager signInManager, ILogger<LogoutModel> logger)
     {
         _signInManager = signInManager;
         _logger = logger;

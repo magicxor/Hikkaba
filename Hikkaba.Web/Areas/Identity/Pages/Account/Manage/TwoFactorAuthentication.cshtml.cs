@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,11 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 public class TwoFactorAuthenticationModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
     public TwoFactorAuthenticationModel(
-        UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
+        UserManager<ApplicationUser> userManager, ApplicationSignInManager signInManager, ILogger<TwoFactorAuthenticationModel> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;

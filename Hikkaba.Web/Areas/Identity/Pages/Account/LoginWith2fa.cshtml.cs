@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,12 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 
 public class LoginWith2FaModel : PageModel
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<LoginWith2FaModel> _logger;
 
     public LoginWith2FaModel(
-        SignInManager<ApplicationUser> signInManager,
+        ApplicationSignInManager signInManager,
         UserManager<ApplicationUser> userManager,
         ILogger<LoginWith2FaModel> logger)
     {

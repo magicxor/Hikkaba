@@ -5,6 +5,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -17,9 +18,9 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 public class ConfirmEmailChangeModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
 
-    public ConfirmEmailChangeModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public ConfirmEmailChangeModel(UserManager<ApplicationUser> userManager, ApplicationSignInManager signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;

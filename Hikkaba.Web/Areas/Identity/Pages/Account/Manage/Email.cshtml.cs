@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Hikkaba.Application.Implementations;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -19,12 +20,12 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
 public class EmailModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationSignInManager _signInManager;
     private readonly IEmailSender _emailSender;
 
     public EmailModel(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
+        ApplicationSignInManager signInManager,
         IEmailSender emailSender)
     {
         _userManager = userManager;

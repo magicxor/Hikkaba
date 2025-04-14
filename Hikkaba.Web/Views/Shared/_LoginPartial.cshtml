@@ -1,7 +1,9 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using Hikkaba.Application.Implementations
+@using Microsoft.AspNetCore.Identity
 @using Hikkaba.Data.Entities
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject ApplicationSignInManager SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
