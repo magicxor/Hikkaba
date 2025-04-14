@@ -229,68 +229,6 @@
       ]
     },
     {
-      "library": "@popperjs/core@2.11.8",
-      "destination": "wwwroot/lib/popperjs",
-      "files": [
-        "dist/umd/enums.js",
-        "dist/umd/enums.js.map",
-        "dist/umd/enums.min.js",
-        "dist/umd/enums.min.js.flow",
-        "dist/umd/enums.min.js.map",
-        "dist/umd/popper-base.js",
-        "dist/umd/popper-base.js.map",
-        "dist/umd/popper-base.min.js",
-        "dist/umd/popper-base.min.js.flow",
-        "dist/umd/popper-base.min.js.map",
-        "dist/umd/popper-lite.js",
-        "dist/umd/popper-lite.js.map",
-        "dist/umd/popper-lite.min.js",
-        "dist/umd/popper-lite.min.js.flow",
-        "dist/umd/popper-lite.min.js.map",
-        "dist/umd/popper.js",
-        "dist/umd/popper.js.map",
-        "dist/umd/popper.min.js",
-        "dist/umd/popper.min.js.flow",
-        "dist/umd/popper.min.js.map"
-      ]
-    },
-    {
-      "library": "@eonasdan/tempus-dominus@6.10.2",
-      "destination": "wwwroot/lib/tempus-dominus"
-    },
-    {
-      "library": "@fortawesome/fontawesome-free@6.7.2",
-      "destination": "wwwroot/lib/fontawesome",
-      "files": [
-        "css/all.css",
-        "css/all.min.css",
-        "css/brands.css",
-        "css/brands.min.css",
-        "css/fontawesome.css",
-        "css/fontawesome.min.css",
-        "css/regular.css",
-        "css/regular.min.css",
-        "css/solid.css",
-        "css/solid.min.css",
-        "css/svg-with-js.css",
-        "css/svg-with-js.min.css",
-        "css/v4-font-face.css",
-        "css/v4-font-face.min.css",
-        "css/v4-shims.css",
-        "css/v4-shims.min.css",
-        "css/v5-font-face.css",
-        "css/v5-font-face.min.css",
-        "webfonts/fa-brands-400.ttf",
-        "webfonts/fa-brands-400.woff2",
-        "webfonts/fa-regular-400.ttf",
-        "webfonts/fa-regular-400.woff2",
-        "webfonts/fa-solid-900.ttf",
-        "webfonts/fa-solid-900.woff2",
-        "webfonts/fa-v4compatibility.ttf",
-        "webfonts/fa-v4compatibility.woff2"
-      ]
-    },
-    {
       "library": "moment@2.30.1",
       "destination": "wwwroot/lib/moment",
       "files": [
