@@ -1,19 +1,14 @@
-﻿@using Hikkaba.Models.Configuration
-@using Hikkaba.Web.Utils
-@using Microsoft.Extensions.Options
+﻿@using Hikkaba.Web.Utils
 @model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.AudioViewModel
-@inject IOptions<HikkabaConfiguration> Settings
 
 @{
-    var fileSizeString = FileSizeStringifier.Stringify(@Model.Size);
+    var fileSizeString = FileSizeUtils.Humanize(Model.FileSize);
     var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
 }
 
-<li>
-    <div>
-        <p><a href="@Url.Action("Get", "Attachments", new { containerName = Model.ThreadId.ToString(), blobName = Model.Id.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.Id.ToString().@Model.FileExtension">@filePropertiesString</a></p>
-        <audio src="@Url.Action("Get", "Attachments", new { containerName = Model.ThreadId.ToString(), blobName = Model.Id.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" controls="controls">
-            Audio (@filePropertiesString)
-        </audio>
-    </div>
-</li>
+<div class="attachment-flex-item">
+  <p><a class="decoration-on-hover" href="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.BlobId.ToString().@Model.FileExtension">@filePropertiesString</a></p>
+  <audio src="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" controls="controls">
+    Audio (@filePropertiesString)
+  </audio>
+</div>

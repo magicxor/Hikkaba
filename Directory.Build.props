@@ -1,0 +1,31 @@
+<!-- see https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory -->
+<!-- see https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview -->
+<Project>
+  <PropertyGroup>
+    <!-- Code analysis -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>9-all</AnalysisLevel>
+
+    <!-- Warnings and errors -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Features>strict</Features>
+
+    <!--
+    CS1591 - Missing XML comment for publicly visible type or member 'Type_or_Member'
+    -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(SolutionDir)BannedSymbols.SolutionWide.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hikkaba.Paging.Tests.Unit" />
+    <InternalsVisibleTo Include="Hikkaba.Tests.Unit" />
+    <InternalsVisibleTo Include="Hikkaba.Tests.Integration" />
+    <InternalsVisibleTo Include="Hikkaba.Tests.Manual.Seed" />
+  </ItemGroup>
+</Project>

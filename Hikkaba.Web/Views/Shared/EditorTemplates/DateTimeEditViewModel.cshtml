@@ -1,0 +1,11 @@
+﻿@model DateTime
+
+@{
+  var label = ViewData["Label"] as string;
+}
+
+<div class="mb-2 form-group">
+  <label asp-for="@Model" class="form-label">@(label)</label>
+  <input asp-for="@Model" class="form-control datetimepicker-utc"/>
+  <span asp-validation-for="@Model" class="text-danger"></span>
+</div>

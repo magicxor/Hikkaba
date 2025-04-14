@@ -1,0 +1,47 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki # Common prefix for Loki data
+  storage:
+    s3:
+      endpoint: hikkaba.minio.dev.local:9000
+      bucketnames: loki-data
+      access_key_id: minioadmin
+      secret_access_key: minioadmin
+      insecure: true
+      s3forcepathstyle: true
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2025-04-06
+      store: tsdb
+      object_store: s3
+      schema: v13
+      index:
+        prefix: loki_tsdb_index_
+        period: 24h
+
+storage_config:
+  tsdb_shipper:
+    active_index_directory: /loki/tsdb-index   # Path for the active TSDB index
+    cache_location: /loki/tsdb-cache       # Path for the TSDB cache
+    cache_ttl: 24h                         # TTL for the cache
+
+compactor:
+  working_directory: /loki/compactor
+
+limits_config:
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  max_query_length: 0
+  max_query_parallelism: 100
+  # allow_structured_metadata: true # Keep enabled by default

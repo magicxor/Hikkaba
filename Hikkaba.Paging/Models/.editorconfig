@@ -1,0 +1,3 @@
+[*.cs]
+# CA1721: The property name 'PageNumber' is confusing given the existence of method 'GetPageNumber'. Rename or remove one of these members
+dotnet_diagnostic.CA1721.severity = suggestion

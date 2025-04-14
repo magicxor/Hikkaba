@@ -1,17 +1,16 @@
-﻿using System;
+using System;
 using System.Security.Cryptography.X509Certificates;
-using Hikkaba.Models.Configuration;
+using Hikkaba.Infrastructure.Models.Configuration;
 
-namespace Hikkaba.Web.Utils
+namespace Hikkaba.Web.Utils;
+
+internal static class CertificateUtils
 {
-    public static class CertificateUtils
+    public static X509Certificate2 LoadCertificate(HikkabaConfiguration configuration)
     {
-        public static X509Certificate2 LoadCertificate(HikkabaConfiguration configuration)
-        {
-            var certBase64 = configuration.AuthCertificateBase64;
-            var certPass = configuration.AuthCertificatePassword;
-            var certBytes = Convert.FromBase64String(certBase64);
-            return new X509Certificate2(certBytes, certPass, X509KeyStorageFlags.MachineKeySet);
-        }
+        var certBase64 = configuration.AuthCertificateBase64;
+        var certPass = configuration.AuthCertificatePassword;
+        var certBytes = Convert.FromBase64String(certBase64);
+        return X509CertificateLoader.LoadPkcs12(certBytes, certPass, X509KeyStorageFlags.EphemeralKeySet);
     }
 }

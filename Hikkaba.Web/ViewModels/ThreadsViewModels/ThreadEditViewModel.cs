@@ -1,39 +1,37 @@
-﻿using TPrimaryKey = System.Guid;
 using System.ComponentModel.DataAnnotations;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 
-namespace Hikkaba.Web.ViewModels.ThreadsViewModels
+namespace Hikkaba.Web.ViewModels.ThreadsViewModels;
+
+public sealed class ThreadEditViewModel
 {
-    public class ThreadEditViewModel
-    {
-        [Required]
-        public TPrimaryKey Id { get; set; }
+    [Required]
+    public required long Id { get; set; }
 
-        [Required]
-        [MinLength(Defaults.MinTitleLength)]
-        [MaxLength(Defaults.MaxTitleLength)]
-        [Display(Name = @"Title")]
-        public string Title { get; set; }
+    [Required]
+    [MinLength(Defaults.MinTitleLength)]
+    [MaxLength(Defaults.MaxTitleLength)]
+    [Display(Name = @"Title")]
+    public required string Title { get; set; }
 
-        [Required]
-        [Display(Name = @"Is pinned")]
-        public bool IsPinned { get; set; }
+    [Required]
+    [Display(Name = @"Is pinned")]
+    public required bool IsPinned { get; set; }
 
-        [Required]
-        [Display(Name = @"Is closed")]
-        public bool IsClosed { get; set; }
+    [Required]
+    [Display(Name = @"Is closed")]
+    public required bool IsClosed { get; set; }
 
-        [Required]
-        [Display(Name = @"Bump limit")]
-        [Range(Defaults.MinBumpLimit, Defaults.MaxBumpLimit)]
-        public int BumpLimit { get; set; }
+    [Required]
+    [Display(Name = @"Bump limit")]
+    [Range(Defaults.MinBumpLimit, Defaults.MaxBumpLimit)]
+    public required int BumpLimit { get; set; }
 
-        [Required]
-        [Display(Name = @"Show thread-local user hash")]
-        public bool ShowThreadLocalUserHash { get; set; }
-        
-        [Required]
-        [Display(Name = @"Category alias")]
-        public string CategoryAlias { get; set; }
-    }
+    [Required]
+    [Display(Name = @"Show thread-local user hash")]
+    public required bool ShowThreadLocalUserHash { get; set; }
+
+    [Required]
+    [Display(Name = @"Category alias")]
+    public required string CategoryAlias { get; set; }
 }

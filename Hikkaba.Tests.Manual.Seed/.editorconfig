@@ -1,0 +1,3 @@
+﻿[*.cs]
+# CA5394: Random is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security
+dotnet_diagnostic.CA5394.severity = suggestion

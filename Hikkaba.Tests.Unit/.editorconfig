@@ -1,0 +1,13 @@
+# see https://www.jetbrains.com/help/resharper/EditorConfig_Index.html
+[*.cs]
+# CA1707: Remove the underscores from member name
+dotnet_diagnostic.CA1707.severity = none
+
+# MA0132: Do not convert implicitly to DateTimeOffset
+dotnet_diagnostic.MA0132.severity = none
+
+# CA1861: Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array
+dotnet_diagnostic.CA1861.severity = none
+
+# VSTHRD200: Use "Async" suffix in names of methods that return an awaitable type
+dotnet_diagnostic.VSTHRD200.severity = none

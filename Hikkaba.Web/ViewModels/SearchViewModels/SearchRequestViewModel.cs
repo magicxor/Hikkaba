@@ -1,13 +1,15 @@
-﻿using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 using System.ComponentModel.DataAnnotations;
 
-namespace Hikkaba.Web.ViewModels.SearchViewModels
+namespace Hikkaba.Web.ViewModels.SearchViewModels;
+
+public sealed class SearchRequestViewModel
 {
-    public class SearchRequestViewModel
-    {
-        [Required]
-        [MinLength(Defaults.MinSearchTermLength)]
-        [MaxLength(Defaults.MaxSearchTermLength)]
-        public string Query { get; set; }
-    }
+    [MaxLength(Defaults.MaxCategoryAliasLength)]
+    public string? CategoryAlias { get; set; }
+
+    [Required]
+    [MinLength(Defaults.MinSearchTermLength)]
+    [MaxLength(Defaults.MaxSearchTermLength)]
+    public required string Query { get; set; }
 }

@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hikkaba.Web.ViewModels.UserViewModels.UserCreateViewModel
+@{
+    ViewData["Title"] = "Create new user";
+}
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="UserCreateConfirm" method="post" class="form-horizontal" enctype="multipart/form-data">
+      <h4 class="m-3">@ViewData["Title"]</h4>
+
+      <hr/>
+
+      <div asp-validation-summary="All" class="text-danger"></div>
+
+      @Html.EditorFor(m => m.Email, "StringEditViewModel", new { Label = "Email" })
+      @Html.EditorFor(m => m.UserName, "StringEditViewModel", new { Label = "Username" })
+      @Html.EditorFor(m => m.Password, "PasswordEditViewModel", new { Label = "Password" })
+
+      @Html.ListBoxFor(
+        m => m.UserRoleIds,
+        Model.AllExistingRoles,
+        new { @class = "form-select mb-3", size = "10" })
+
+      <button type="submit" class="w-100 btn btn-primary btn-lg">Create</button>
+    </form>
+  </div>
+</div>

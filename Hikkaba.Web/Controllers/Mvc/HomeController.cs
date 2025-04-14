@@ -1,72 +1,61 @@
-using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using Hikkaba.Models.Dto;
-using Hikkaba.Models.Enums;
-using Hikkaba.Services;
-using Hikkaba.Services.Base.Generic;
-using Hikkaba.Web.ViewModels.CategoriesViewModels;
+using Hikkaba.Data.Entities;
+using Hikkaba.Infrastructure.Models.Category;
+using Hikkaba.Infrastructure.Models.Post;
+using Hikkaba.Paging.Enums;
+using Hikkaba.Paging.Models;
+using Hikkaba.Application.Contracts;
+using Hikkaba.Web.Mappings;
 using Hikkaba.Web.ViewModels.HomeViewModels;
 using Hikkaba.Web.ViewModels.PostsViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-namespace Hikkaba.Web.Controllers.Mvc
+namespace Hikkaba.Web.Controllers.Mvc;
+
+[AllowAnonymous]
+public sealed class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ICategoryService _categoryService;
+    private readonly IPostService _postService;
+
+    public HomeController(
+        ICategoryService categoryService,
+        IPostService postService)
     {
-        private readonly ILogger _logger;
-        private readonly IMapper _mapper;
-        private readonly ICategoryService _categoryService;
-        private readonly IThreadService _threadService;
-        private readonly IPostService _postService;
+        _categoryService = categoryService;
+        _postService = postService;
+    }
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            IMapper mapper,
-            ICategoryService categoryService, 
-            IThreadService threadService, 
-            IPostService postService)
+    [HttpGet("", Name = "HomeIndex")]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        var postPagingFilter = new PostPagingFilter
         {
-            _logger = logger;
-            _mapper = mapper;
-            _categoryService = categoryService;
-            _threadService = threadService;
-            _postService = postService;
-        }
+            PageSize = 10,
+            PageNumber = 1,
+            OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+        };
+        var posts = await _postService.ListPostsPaginatedAsync(postPagingFilter, cancellationToken);
 
-        public async Task<IActionResult> Index()
+        var categoryFilter = new CategoryFilter
         {
-            var page = new PageDto();
-            var latestPostsDtoList = await _postService
-                                        .PagedListAsync(
-                                            post => (!post.IsDeleted) && (!post.Thread.IsDeleted) && (!post.Thread.Category.IsHidden),
-                                            post => post.Created,
-                                            AdditionalRecordType.None,
-                                            true,
-                                            page);
-            var latestPostDetailsViewModels = _mapper.Map<List<PostDetailsViewModel>>(latestPostsDtoList.CurrentPageItems);
-            foreach (var latestPostDetailsViewModel in latestPostDetailsViewModels)
-            {
-                var threadDto = await _threadService.GetAsync(latestPostDetailsViewModel.ThreadId);
-                var categoryDto = await _categoryService.GetAsync(threadDto.CategoryId);
-                latestPostDetailsViewModel.ThreadShowThreadLocalUserHash = threadDto.ShowThreadLocalUserHash;
-                latestPostDetailsViewModel.CategoryAlias = categoryDto.Alias;
-                latestPostDetailsViewModel.CategoryId = categoryDto.Id;
-            }
-            var categoriesDtoList = await _categoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
-            var categoryViewModels = _mapper.Map<List<CategoryDetailsViewModel>>(categoriesDtoList);
-            var homeIndexViewModel = new HomeIndexViewModel
-            {
-                Categories = categoryViewModels,
-                Posts = new BasePagedList<PostDetailsViewModel>
-                {
-                    CurrentPage = page,
-                    CurrentPageItems = latestPostDetailsViewModels,
-                    TotalItemsCount = latestPostsDtoList.TotalItemsCount,
-                },
-            };
-            return View(homeIndexViewModel);
-        }
+            OrderBy = [new OrderByItem { Field = nameof(Category.Alias), Direction = OrderByDirection.Asc }],
+        };
+        var categories = await _categoryService.ListCategoriesAsync(categoryFilter, cancellationToken);
+        var categoriesVm = categories.ToViewModels();
+        var postsVm = posts.Data.ToViewModels()
+            .Select(p => p with { ShowCategoryAlias = true })
+            .ToList()
+            .AsReadOnly();
+
+        var homeIndexViewModel = new HomeIndexViewModel
+        {
+            Categories = categoriesVm,
+            Posts = new PagedResult<PostDetailsViewModel>(postsVm, postPagingFilter),
+        };
+        return View(homeIndexViewModel);
     }
 }

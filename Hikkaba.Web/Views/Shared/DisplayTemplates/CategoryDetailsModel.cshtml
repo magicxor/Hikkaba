@@ -1,0 +1,3 @@
+﻿@model Hikkaba.Infrastructure.Models.Category.CategoryDetailsModel
+
+@Html.RouteLink($"/{Model.Alias}", "CategoryDetails", new { categoryAlias = Model.Alias }, new { @class = "decoration-on-hover" })

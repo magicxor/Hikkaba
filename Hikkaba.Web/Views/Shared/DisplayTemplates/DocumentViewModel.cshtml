@@ -2,12 +2,10 @@
 @model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.DocumentViewModel
 
 @{
-    var fileSizeString = FileSizeStringifier.Stringify(@Model.Size);
+    var fileSizeString = FileSizeUtils.Humanize(Model.FileSize);
     var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
 }
 
-<li>
-    <div>
-        <a href="@Url.Action("Get", "Attachments", new { containerName = Model.ThreadId.ToString(), blobName = Model.Id.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.Id.ToString().@Model.FileExtension" class="btn btn-default">Document (@filePropertiesString)</a>
-    </div>
-</li>
+<div class="attachment-flex-item">
+  <a class="decoration-on-hover" href="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.BlobId.ToString().@Model.FileExtension" class="btn btn-default">Document @(filePropertiesString)</a>
+</div>

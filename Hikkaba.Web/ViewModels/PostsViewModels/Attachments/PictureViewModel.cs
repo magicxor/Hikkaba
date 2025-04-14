@@ -1,17 +1,19 @@
-﻿using TPrimaryKey = System.Guid;
+using System;
 
-namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments
+namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
+
+public sealed class PictureViewModel
 {
-    public class PictureViewModel
-    {
-        public TPrimaryKey Id { get; set; }
-        public TPrimaryKey PostId { get; set; }
-        public TPrimaryKey ThreadId { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string FileName { get; set; }
-        public string FileExtension { get; set; }
-        public long Size { get; set; }
-        public string Hash { get; set; }
-    }
+    public required long Id { get; set; }
+    public required long PostId { get; set; }
+    public required long ThreadId { get; set; }
+    public required Guid BlobContainerId { get; set; }
+    public required Guid BlobId { get; set; }
+    public required int Width { get; set; }
+    public required int Height { get; set; }
+    public required string FileName { get; set; }
+    public required string FileExtension { get; set; }
+    public required long FileSize { get; set; }
+    public required string FileContentType { get; set; }
+    public required string FileHash { get; set; }
 }

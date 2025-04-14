@@ -1,0 +1,4 @@
+M:NLog.LogManager.GetCurrentClassLogger;Use ILogger<T> or ILogger. Don't use LogManager.GetCurrentClassLogger to prevent creation of empty AWS log streams
+P:System.DateTime.UtcNow;Use TimeProvider instead. In unit tests, use either a fixed DateTime or TimeProvider
+P:System.DateTime.Now;Use TimeProvider instead. In unit tests, use either a fixed DateTime or TimeProvider
+P:System.DateTime.Today;Use TimeProvider instead. In unit tests, use either a fixed DateTime or TimeProvider

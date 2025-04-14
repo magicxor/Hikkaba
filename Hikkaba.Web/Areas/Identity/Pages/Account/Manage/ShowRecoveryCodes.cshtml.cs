@@ -1,24 +1,46 @@
-﻿using Microsoft.AspNetCore.Mvc;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+#nullable disable
+
+using Hikkaba.Data.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 
-namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage
+namespace Hikkaba.Web.Areas.Identity.Pages.Account.Manage;
+
+/// <summary>
+///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+///     directly from your code. This API may change or be removed in future releases.
+/// </summary>
+public class ShowRecoveryCodesModel : PageModel
 {
-    public class ShowRecoveryCodesModel : PageModel
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    [TempData]
+    public string[] RecoveryCodes { get; set; }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    [TempData]
+    public string StatusMessage { get; set; }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    public IActionResult OnGet()
     {
-        [TempData]
-        public string[] RecoveryCodes { get; set; }
-
-        [TempData]
-        public string StatusMessage { get; set; }
-
-        public IActionResult OnGet()
+        if (RecoveryCodes == null || RecoveryCodes.Length == 0)
         {
-            if (RecoveryCodes == null || RecoveryCodes.Length == 0)
-            {
-                return RedirectToPage("./TwoFactorAuthentication");
-            }
-
-            return Page();
+            return RedirectToPage("./TwoFactorAuthentication");
         }
+
+        return Page();
     }
 }

@@ -1,0 +1,30 @@
+﻿@model Hikkaba.Web.ViewModels.UserViewModels.UserEditViewModel
+@{
+    ViewData["Title"] = $"Edit user";
+}
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="UserEditConfirm" method="post" class="form-horizontal" enctype="multipart/form-data">
+      <h4 class="m-3">@ViewData["Title"]</h4>
+
+      <hr/>
+
+      <div asp-validation-summary="All" class="text-danger"></div>
+
+      <input asp-for="Id" type="hidden" />
+
+      @Html.EditorFor(m => m.Email, "StringEditViewModel", new { Label = "Email" })
+      @Html.EditorFor(m => m.UserName, "StringEditViewModel", new { Label = "Username" })
+      @Html.EditorFor(m => m.LockoutEndDate, "DateTimeNullableEditViewModel", new { Label = "Lockout end date" })
+      @Html.EditorFor(m => m.TwoFactorEnabled, "BooleanCheckbox", new { Label = "2FA enabled" })
+
+      @Html.ListBoxFor(
+        m => m.UserRoleIds,
+        Model.AllExistingRoles,
+        new { @class = "form-select mb-3", size = "10" })
+
+      <button type="submit" class="w-100 btn btn-primary btn-lg">Save</button>
+    </form>
+  </div>
+</div>

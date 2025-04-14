@@ -1,4 +1,6 @@
-﻿@inject SignInManager<ApplicationUser> SignInManager
+﻿@using Hikkaba.Application.Implementations
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject ApplicationSignInManager SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

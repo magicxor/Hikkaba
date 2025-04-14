@@ -1,0 +1,36 @@
+﻿@using Hikkaba.Web.ViewModels.CategoriesViewModels
+@model IReadOnlyList<CategoryDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<h2 class="text-center m-3">@ViewData["Title"]</h2>
+
+<div class="m-2">
+  @Html.RouteLink("Create new category", "CategoryCreate", new {}, new { @class = "decoration-on-hover" })
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Alias)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.Name)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.DefaultBumpLimit)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.MaxThreadCount)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowThreadLocalUserHash)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowCountry)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowOs)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.ShowBrowser)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.IsHidden)</th>
+    <th class="text-center">@Html.DisplayNameForInnerType((CategoryDetailsViewModel category) => category.IsDeleted)</th>
+    <th class="text-center">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+    @foreach (var category in Model)
+    {
+      @Html.DisplayFor(model => category)
+    }
+  </tbody>
+</table>

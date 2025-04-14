@@ -1,0 +1,37 @@
+﻿@using Hikkaba.Web.ViewModels
+@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryThreadsViewModel
+@{
+  ViewData["Title"] = $"/{Model.Category.Alias} - {Model.Category.Name}";
+}
+
+<h2 class="text-center m-3">@ViewData["Title"]</h2>
+
+<hr/>
+
+@Html.RouteLink("Create new thread", "ThreadCreate", new { categoryAlias = Model.Category.Alias }, new { @class = "decoration-on-hover" })
+
+<div class="row">
+  <div class="col-md-12">
+    @if (Model.Threads is { TotalItemCount: > 0, PageNumber: > 0, Data.Count: > 0 })
+    {
+      <div class="container">
+        @for (var i = 0; i < Model.Threads.Data.Count; i++)
+        {
+          <div class="mt-4 mb-4">
+            @Html.DisplayFor(m => m.Threads.Data[i])
+          </div>
+        }
+      </div>
+
+      <partial name="_PagerPartial" model="@(new PageInfoViewModel
+                                           {
+                                             CurrentPageNumber = Model.Threads.PageNumber,
+                                             TotalPageCount = Model.Threads.TotalPageCount ?? 0,
+                                           })"/>
+    }
+    else
+    {
+      <p class="text-center">There are no threads yet.</p>
+    }
+  </div>
+</div>

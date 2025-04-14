@@ -1,9 +1,7 @@
-﻿using TPrimaryKey = System.Guid;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
-namespace Hikkaba.Data.Entities
+namespace Hikkaba.Data.Entities;
+
+public class ApplicationRole : IdentityRole<int>
 {
-    public class ApplicationRole : IdentityRole<TPrimaryKey>
-    {
-    }
 }

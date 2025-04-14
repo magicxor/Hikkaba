@@ -1,0 +1,17 @@
+﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryEditViewModel
+@{
+  ViewData["Title"] = $"Edit category /{Model.Alias} - {Model.Name}";
+}
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="CategoryEditConfirm" method="post" class="form-horizontal mt-3">
+      <h4>@ViewData["Title"]</h4>
+      <hr/>
+
+      @Html.EditorFor(model => model)
+
+      <button type="submit" class="w-100 btn btn-primary btn-lg">Save</button>
+    </form>
+  </div>
+</div>

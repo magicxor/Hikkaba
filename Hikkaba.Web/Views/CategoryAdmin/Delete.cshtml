@@ -1,0 +1,78 @@
+﻿@using Hikkaba.Web.ViewModels.CategoriesViewModels
+@model CategoryDetailsViewModel
+
+@{
+  ViewData["Title"] = "Categories";
+}
+
+<div class="row">
+  <div class="col-lg-6 offset-lg-3
+              col-md-8 offset-md-2
+              col-sm-10 offset-sm-1
+              col-xs-12 offset-xs-0
+              mt-3 mb-3">
+    <table class="table table-borderless">
+      <thead>
+      <tr>
+        <th scope="col">Property</th>
+        <th scope="col">Value</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.Alias)</td>
+        <td>/@Html.DisplayFor(model => model.Alias)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.Name)</td>
+        <td>@Html.DisplayFor(model => model.Name)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.IsHidden)</td>
+        <td>@Html.DisplayFor(model => model.IsHidden)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.DefaultBumpLimit)</td>
+        <td>@Html.DisplayFor(model => model.DefaultBumpLimit)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.ShowThreadLocalUserHash)</td>
+        <td>@Html.DisplayFor(model => model.ShowThreadLocalUserHash)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.ShowCountry)</td>
+        <td>@Html.DisplayFor(model => model.ShowCountry)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.ShowOs)</td>
+        <td>@Html.DisplayFor(model => model.ShowOs)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.ShowBrowser)</td>
+        <td>@Html.DisplayFor(model => model.ShowBrowser)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.MaxThreadCount)</td>
+        <td>@Html.DisplayFor(model => model.MaxThreadCount)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.CreatedAt)</td>
+        <td>@Html.DisplayFor(model => model.CreatedAt)</td>
+      </tr>
+      <tr>
+        <td>@Html.DisplayNameFor(model => model.ModifiedAt)</td>
+        <td>@Html.DisplayFor(model => model.ModifiedAt)</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div>
+      <form asp-route="CategoryDeleteConfirm" asp-route-categoryAlias="@Model.Alias" method="post" class="display-inline">
+        <button type="submit" class="btn btn-danger">
+          <i class="bi bi-trash"></i>
+          @("Delete")
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

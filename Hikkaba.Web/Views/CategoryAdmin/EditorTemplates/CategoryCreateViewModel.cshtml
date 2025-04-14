@@ -1,0 +1,13 @@
+﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryCreateViewModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+@Html.EditorFor(m => m.Alias, "StringEditViewModel")
+@Html.EditorFor(m => m.Name, "StringEditViewModel")
+@Html.EditorFor(m => m.IsHidden, "BooleanCheckbox")
+@Html.EditorFor(m => m.DefaultBumpLimit, "IntEditViewModel")
+@Html.EditorFor(m => m.ShowThreadLocalUserHash, "BooleanCheckbox")
+@Html.EditorFor(m => m.ShowCountry, "BooleanCheckbox")
+@Html.EditorFor(m => m.ShowOs, "BooleanCheckbox")
+@Html.EditorFor(m => m.ShowBrowser, "BooleanCheckbox")
+@Html.EditorFor(m => m.MaxThreadCount, "IntEditViewModel")

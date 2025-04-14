@@ -1,13 +1,34 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Hikkaba.Data.Entities.Base.Current;
+using Hikkaba.Shared.Enums;
 
-namespace Hikkaba.Data.Entities.Attachments.Base
+namespace Hikkaba.Data.Entities.Attachments.Base;
+
+[Table("Attachments")]
+public abstract class Attachment
 {
-    [Table("Attachments")]
-    public abstract class Attachment: BaseEntity
+    [Key]
+    public long Id { get; set; }
+
+    [Required]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public required Guid BlobId { get; set; }
+
+    public AttachmentType AttachmentType { get; set; }
+
+    // FK id
+    [ForeignKey(nameof(Post))]
+    public long PostId { get; set; }
+
+    // FK models
+    [Required]
+    public virtual Post Post
     {
-        [Required]
-        public virtual Post Post { get; set; }
+        get => _post
+               ?? throw new InvalidOperationException("Uninitialized property: " + nameof(Post));
+        set => _post = value;
     }
+
+    private Post? _post;
 }

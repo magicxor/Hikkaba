@@ -1,152 +1,144 @@
-﻿using TPrimaryKey = System.Guid;
-using Hikkaba.Common.Attributes;
+﻿using System;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Hikkaba.Common.Extensions;
-using Hikkaba.Data.Entities.Base.Current;
-using Hikkaba.Data.Services;
 using Hikkaba.Data.Entities.Attachments.Base;
 using Hikkaba.Data.Extensions;
+using Hikkaba.Data.Utils;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Thread = Hikkaba.Data.Entities.Thread;
 
-namespace Hikkaba.Data.Context
+namespace Hikkaba.Data.Context;
+
+public sealed class ApplicationDbContext
+    : IdentityDbContext<ApplicationUser, ApplicationRole, int>, IDataProtectionKeyContext
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, TPrimaryKey>
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
-        private readonly IAuthenticatedUserService _authenticatedUserService;
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IAuthenticatedUserService authenticatedUserService)
-            : base(options)
-        {
-            _authenticatedUserService = authenticatedUserService;
-        }
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-
-            // DateTimeKind
-            var dateTimeOfKindValueConverterFactory = new DateTimeOfKindValueConverterFactory();
-            foreach (var entityType in builder.Model.GetEntityTypes())
-            {
-                foreach (var property in entityType.GetProperties().Where(p => p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?)))
-                {
-                    var dateTimeKindAttribute = property.FieldInfo.GetCustomAttribute<DateTimeKindAttribute>();
-                    if (dateTimeKindAttribute != null)
-                    {
-                        var dateTimeKind = dateTimeKindAttribute.Kind;
-                        if (property.ClrType == typeof(DateTime))
-                        {
-                            property.SetValueConverter(dateTimeOfKindValueConverterFactory.GetDateTimeValueConverter(dateTimeKind));
-                        }
-                        else if (property.ClrType == typeof(DateTime?))
-                        {
-                            property.SetValueConverter(dateTimeOfKindValueConverterFactory.GetNullableDateTimeValueConverter(dateTimeKind));
-                        }
-                    }
-                }
-            }
-            
-            builder.Entity<Attachment>()
-                .HasDiscriminator<int>("AttachmentType")
-                .HasValue<Audio>(AttachmentTypes.Audio.ToInt())
-                .HasValue<Document>(AttachmentTypes.Document.ToInt())
-                .HasValue<Notice>(AttachmentTypes.Notice.ToInt())
-                .HasValue<Picture>(AttachmentTypes.Picture.ToInt())
-                .HasValue<Video>(AttachmentTypes.Video.ToInt());
-
-            // many-to-many keys
-            builder.Entity<CategoryToModerator>().HasKey(e => new { e.CategoryId, e.ApplicationUserId });
-
-            // indices
-            builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
-            builder.Entity<Category>().HasIndex(e => e.Name).IsUnique();
-            
-            builder.Entity<ApplicationUser>().HasIndex(e => e.UserName).IsUnique();
-            builder.Entity<ApplicationUser>().HasIndex(e => e.NormalizedUserName).IsUnique();
-            builder.Entity<ApplicationUser>().HasIndex(e => e.Email).IsUnique();
-            builder.Entity<ApplicationUser>().HasIndex(e => e.NormalizedEmail).IsUnique();
-            builder.Entity<ApplicationUser>().HasIndex(e => e.PhoneNumber).IsUnique();
-            
-            builder.Entity<ApplicationRole>().HasIndex(e => e.Name).IsUnique();
-            builder.Entity<ApplicationRole>().HasIndex(e => e.NormalizedName).IsUnique();
-        }
-
-        private void OnSaveChangesAction()
-        {
-            ChangeTracker.DetectChanges();
-
-            var authorId = _authenticatedUserService?.ApplicationUserClaims?.Id;
-
-            if (authorId.HasValue)
-            {
-                {
-                    var addedEntries = ChangeTracker.Entries().Where(x => x.State == EntityState.Added);
-                    foreach (var addedEntry in addedEntries)
-                    {
-                        if (addedEntry.Entity is IBaseMutableEntity)
-                        {
-                            addedEntry.CurrentValues[nameof(IBaseMutableEntity.Created)] = DateTime.UtcNow;
-                            addedEntry.Reference(nameof(IBaseMutableEntity.CreatedBy)).CurrentValue = this.GetLocalOrAttach<ApplicationUser>(authorId.Value);
-                        }
-                    } 
-                }
-
-                {
-                    var modifiedEntries = ChangeTracker.Entries().Where(x => x.State == EntityState.Modified);
-                    foreach (var modifiedEntry in modifiedEntries)
-                    {
-                        if (modifiedEntry.Entity is IBaseMutableEntity)
-                        {
-                            modifiedEntry.CurrentValues[nameof(IBaseMutableEntity.Modified)] = DateTime.UtcNow;
-                            modifiedEntry.Reference(nameof(IBaseMutableEntity.ModifiedBy)).CurrentValue = this.GetLocalOrAttach<ApplicationUser>(authorId.Value);
-                        }
-                    }
-                }
-            }
-        }
-        
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            OnSaveChangesAction();
-            return base.SaveChanges(acceptAllChangesOnSuccess);
-        }
-
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
-        {
-            OnSaveChangesAction();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-        {
-            OnSaveChangesAction();
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        public override int SaveChanges()
-        {
-            OnSaveChangesAction();
-            return base.SaveChanges();
-        }
-        
-        public DbSet<Ban> Bans { get; set; }
-        public DbSet<Board> Boards { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<CategoryToModerator> CategoriesToModerators { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<Thread> Threads { get; set; }
-        public DbSet<Audio> Audio { get; set; }
-        public DbSet<Document> Documents { get; set; }
-        public DbSet<Notice> Notices { get; set; }
-        public DbSet<Picture> Pictures { get; set; }
-        public DbSet<Video> Video { get; set; }
     }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ContextConfigurationUtils.SetValueConverters(builder);
+        builder.AddEfFunctions();
+
+        base.OnModelCreating(builder);
+
+        builder.Entity<Attachment>()
+            .HasDiscriminator<AttachmentType>(nameof(Attachment.AttachmentType))
+            .HasValue<Audio>(AttachmentType.Audio)
+            .HasValue<Document>(AttachmentType.Document)
+            .HasValue<Notice>(AttachmentType.Notice)
+            .HasValue<Picture>(AttachmentType.Picture)
+            .HasValue<Video>(AttachmentType.Video);
+
+        builder.Entity<Ban>()
+            .Property(e => e.BannedIpAddress)
+            .HasConversion<byte[]>();
+
+        builder.Entity<Ban>()
+            .Property(e => e.BannedCidrLowerIpAddress)
+            .HasConversion<byte[]>();
+
+        builder.Entity<Ban>()
+            .Property(e => e.BannedCidrUpperIpAddress)
+            .HasConversion<byte[]>();
+
+        builder.Entity<Post>()
+            .Property(e => e.UserIpAddress)
+            .HasConversion<byte[]>();
+
+        builder.Entity<CategoryToModerator>()
+            .HasOne(e => e.Category)
+            .WithMany(e => e.Moderators)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CategoryToModerator>()
+            .HasOne(e => e.Moderator)
+            .WithMany(e => e.ModerationCategories)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Thread>()
+            .HasOne(e => e.Category)
+            .WithMany(e => e.Threads)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Post>()
+            .HasOne(e => e.Thread)
+            .WithMany(e => e.Posts)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Audio>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Audios)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Document>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Documents)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Notice>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Notices)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Picture>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Pictures)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Video>()
+            .HasOne(e => e.Post)
+            .WithMany(e => e.Videos)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Post>()
+            .HasMany(e => e.Replies)
+            .WithMany(e => e.MentionedPosts)
+            .UsingEntity<PostToReply>(
+                l => l.HasOne<Post>(nameof(PostToReply.Post)).WithMany(x => x.RepliesToThisMentionedPost).OnDelete(DeleteBehavior.Cascade),
+                r => r.HasOne<Post>(nameof(PostToReply.Reply)).WithMany(x => x.MentionedPostsToThisReply).OnDelete(DeleteBehavior.Restrict));
+
+        // indices
+        builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
+        builder.Entity<Category>().HasIndex(e => e.Name).IsUnique();
+        builder.Entity<Category>().HasIndex(e => e.IsDeleted);
+
+        builder.Entity<Thread>().HasIndex(e => e.CreatedAt);
+        builder.Entity<Thread>().HasIndex(e => e.IsPinned);
+        builder.Entity<Thread>().HasIndex(e => e.IsDeleted);
+
+        builder.Entity<Post>().HasIndex(e => e.BlobContainerId).IsUnique();
+        builder.Entity<Post>().HasIndex(e => e.CreatedAt);
+        builder.Entity<Post>().HasIndex(e => e.IsSageEnabled);
+        builder.Entity<Post>().HasIndex(p => p.IsDeleted).IncludeProperties(p => p.ThreadId);
+
+        builder.Entity<Attachment>().HasIndex(e => e.BlobId).IsUnique();
+
+        builder.Entity<Ban>().HasIndex(e => e.EndsAt);
+        builder.Entity<Ban>().HasIndex(e => e.BannedIpAddress);
+        builder.Entity<Ban>().HasIndex(e => e.BannedCidrLowerIpAddress);
+        builder.Entity<Ban>().HasIndex(e => e.BannedCidrUpperIpAddress);
+        builder.Entity<Ban>().HasIndex(e => e.CountryIsoCode);
+        builder.Entity<Ban>().HasIndex(e => e.IsDeleted);
+    }
+
+    public DbSet<Ban> Bans { get; set; } = null!;
+    public DbSet<Board> Boards { get; set; } = null!;
+    public DbSet<Category> Categories { get; set; } = null!;
+    public DbSet<CategoryToModerator> CategoriesToModerators { get; set; } = null!;
+    public DbSet<Post> Posts { get; set; } = null!;
+    public DbSet<PostToReply> PostsToReplies { get; set; } = null!;
+    public DbSet<Thread> Threads { get; set; } = null!;
+    public DbSet<Audio> Audios { get; set; } = null!;
+    public DbSet<Document> Documents { get; set; } = null!;
+    public DbSet<Notice> Notices { get; set; } = null!;
+    public DbSet<Picture> Pictures { get; set; } = null!;
+    public DbSet<Video> Videos { get; set; } = null!;
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 }

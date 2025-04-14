@@ -1,0 +1,62 @@
+@using System.Globalization
+@using Hikkaba.Shared.Enums
+@using Hikkaba.Web.ViewModels.BansViewModels
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model BanCreateDataViewModel
+@inject TimeProvider TimeProvider
+@{
+  ViewData["Title"] = "Create new ban";
+}
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <h2 class="text-center m-3">@ViewData["Title"]</h2>
+
+    <div class="m-3">
+      <a class="decoration-on-hover" href="@Url.RouteUrl("CategoryDetails", new { categoryAlias = Model.PostDetails.CategoryAlias })">
+        <i class="fa-solid fa-angle-left"></i> Back to category
+      </a>
+      |
+      <a class="decoration-on-hover" href="@Url.RouteUrl("ThreadDetails", new { categoryAlias = Model.PostDetails.CategoryAlias, threadId = Model.PostDetails.ThreadId }, null, null, Model.PostDetails.Id.ToString(CultureInfo.InvariantCulture))">
+        <i class="fa-solid fa-angle-left"></i> Back to thread
+      </a>
+    </div>
+
+    <hr />
+
+    <dl class="dl-horizontal">
+      <dt>@Html.DisplayNameFor(model => model.PostDetails.CategoryAlias)</dt>
+      <dd>/@Html.DisplayFor(model => model.PostDetails.CategoryAlias)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.PostDetails.MessageHtml)</dt>
+      <dd class="post-msg-text visible-line-breaks">@Html.Raw(Model.PostDetails.MessageHtml)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.PostDetails.CreatedAt)</dt>
+      <dd>@Html.DisplayFor(model => model.PostDetails.CreatedAt)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.IpAddressDetails.CountryIsoCode)</dt>
+      <dd>@Html.DisplayFor(model => model.IpAddressDetails.CountryIsoCode)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.IpAddressDetails.AutonomousSystemNumber)</dt>
+      <dd>@Html.DisplayFor(model => model.IpAddressDetails.AutonomousSystemNumber)</dd>
+
+      <dt>@Html.DisplayNameFor(model => model.IpAddressDetails.AutonomousSystemOrganization)</dt>
+      <dd>@Html.DisplayFor(model => model.IpAddressDetails.AutonomousSystemOrganization)</dd>
+    </dl>
+  </div>
+</div>
+
+<partial name="_CreateBanForm" model="@(new BanCreateViewModel
+                                      {
+                                        EndsAt = TimeProvider.GetUtcNow()
+                                          .UtcDateTime.AddDays(1),
+                                        BanByNetwork = false,
+                                        BanInAllCategories = false,
+                                        AdditionalAction = BanAdditionalAction.None,
+                                        Reason = string.Empty,
+                                        BannedIpAddress = Model.PostDetails.UserIpAddress?.ToString() ?? string.Empty,
+                                        AutonomousSystemNumber = Model.IpAddressDetails.AutonomousSystemNumber,
+                                        CategoryAlias = Model.PostDetails.CategoryAlias,
+                                        RelatedThreadId = Model.PostDetails.ThreadId,
+                                        RelatedPostId = Model.PostDetails.Id,
+                                      })"/>

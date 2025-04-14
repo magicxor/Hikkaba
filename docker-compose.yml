@@ -1,18 +1,18 @@
-version: '3.4'
-
 services:
   hikkaba.web:
     image: ${DOCKER_REGISTRY-}hikkabaweb
     build:
       context: .
-      dockerfile: Hikkaba.Web/Dockerfile
+      dockerfile: ./Hikkaba.Web/Dockerfile
     container_name: hikkaba.web.dev.local
     domainname: hikkaba.web.dev.local
     hostname: hikkaba.web.dev.local
     ports:
-      - "35443:443"
+      - "35080:8080"
+    volumes:
+      - "hikkaba_storage:/var/hikkaba/storage"
     env_file:
-      - Hikkaba.Web/Development.env
+      - ./Hikkaba.Web/Development.env
     depends_on:
       - db
       - mailhog
@@ -21,7 +21,7 @@ services:
     container_name: hikkaba.db.dev.local
     domainname: hikkaba.db.dev.local
     hostname: hikkaba.db.dev.local
-    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    image: "magicxor/mssql-fts:2022-latest"
     user: root
     environment:
       MSSQL_SA_PASSWORD: "dev_passworD@4568919"
@@ -34,6 +34,114 @@ services:
       - "hikkaba_mssql:/var/opt/mssql"
       - "C:/docker-linux/hikkaba/db_backups:/var/db_backups"
 
+  otel_collector:
+    container_name: hikkaba.otel_collector.dev.local
+    domainname: hikkaba.otel_collector.dev.local
+    hostname: hikkaba.otel_collector.dev.local
+    image: "otel/opentelemetry-collector-contrib:0.123.0"
+    ports:
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP http receiver
+      - "55679:55679" # zpages extension
+    volumes:
+      - ./Components/OpentelemetryCollector/collector-config.yaml:/etc/otelcol-contrib/config.yaml
+
+  prometheus:
+    container_name: hikkaba.prometheus.dev.local
+    domainname: hikkaba.prometheus.dev.local
+    hostname: hikkaba.prometheus.dev.local
+    image: "prom/prometheus:v2.53.4"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./Components/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle' # config reload
+      - '--web.enable-remote-write-receiver' # enable remote write receiver (OTLP)
+
+  # dashboard
+  # 19105 - Prometheus
+  # 19924 - ASP.NET Core
+  # 19925 - ASP.NET Core Endpoint
+  # 23179 - Dotnet Runtime Metrics
+  # 23178 - Kestrel Metrics
+  grafana:
+    container_name: hikkaba.grafana.dev.local
+    domainname: hikkaba.grafana.dev.local
+    hostname: hikkaba.grafana.dev.local
+    image: "grafana/grafana:11.6.0"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./Components/Grafana/provisioning:/etc/grafana/provisioning
+      - ./Components/Grafana/dashboards:/etc/grafana/provisioning/dashboards_json
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=kjln3uiIKJHOsdjka@l234
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-exploretraces-app/grafana-exploretraces-app-latest.zip;grafana-traces-app
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-04-03T14-56-28Z
+    container_name: hikkaba.minio.dev.local
+    hostname: hikkaba.minio.dev.local
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # UI
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  loki:
+    image: grafana/loki:3
+    container_name: hikkaba.loki.dev.local
+    hostname: hikkaba.loki.dev.local
+    ports:
+      - "3100:3100" # HTTP port for API and UI
+      # - "9096:9096" # gRPC
+    volumes:
+      - ./Components/Loki/loki-config.yaml:/etc/loki/config.yaml
+      # Loki with BoltDB-Shipper requires storage for index
+      - loki_data:/loki
+    command: -config.file=/etc/loki/config.yaml
+    depends_on:
+      minio:
+        condition: service_healthy
+
+  tempo:
+    image: grafana/tempo:r195-4a113b0
+    container_name: hikkaba.tempo.dev.local
+    hostname: hikkaba.tempo.dev.local
+    ports:
+      # - "4317" # OTLP gRPC
+      # - "4318" # OTLP HTTP
+      # - "9411:9411" # Zipkin
+      # - "14250:14250" # Jaeger gRPC
+      # - "14268:14268" # Jaeger HTTP
+      - "3200:3200"   # Tempo HTTP API (for Grafana)
+    volumes:
+      - ./Components/Tempo/tempo-config.yaml:/etc/tempo/tempo.yaml
+      # Tempo with S3 storage usually doesn't require large local storage,
+      # but can use WAL (Write Ahead Log) for better performance
+      - tempo_data:/var/tempo
+    command: -config.file=/etc/tempo/tempo.yaml
+    depends_on:
+      minio:
+        condition: service_healthy
+
   mailhog:
     container_name: hikkaba.mailhog.dev.local
     domainname: hikkaba.mailhog.dev.local
@@ -42,3 +150,9 @@ services:
 
 volumes:
   hikkaba_mssql:
+  hikkaba_storage:
+  prometheus_data:
+  grafana_data:
+  minio_data:
+  loki_data:
+  tempo_data:

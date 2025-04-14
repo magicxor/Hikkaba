@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hikkaba.Web.ViewModels.CategoriesViewModels.SetModeratorsViewModel
+
+@{
+  var title = $"Select who moderates /{Model.CategoryAlias}";
+  ViewData["Title"] = title;
+}
+
+<h2 class="text-center m-3">@(title)</h2>
+
+<hr/>
+
+<form asp-route="CategorySetModeratorsConfirm" asp-route-categoryAlias="@Model.CategoryAlias" method="post">
+  @Html.ListBoxFor(
+    m => m.ModeratorIds,
+    Model.Users,
+    new { @class = "form-select mb-3", size = "10" })
+
+  <button type="submit" class="w-100 btn btn-primary btn-lg">Save</button>
+</form>

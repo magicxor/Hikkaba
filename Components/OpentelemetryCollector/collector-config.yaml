@@ -1,0 +1,41 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+exporters:
+  debug:
+    verbosity: basic
+
+  prometheusremotewrite:
+    endpoint: http://hikkaba.prometheus.dev.local:9090/api/v1/write
+    tls:
+      insecure: true
+
+  loki:
+    endpoint: http://hikkaba.loki.dev.local:3100/loki/api/v1/push
+
+  otlphttp/tempo:
+    endpoint: http://hikkaba.tempo.dev.local:4318
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug, otlphttp/tempo]
+    metrics:
+      receivers: [otlp]
+      exporters: [debug, prometheusremotewrite]
+    logs:
+      receivers: [otlp]
+      exporters: [debug, loki]

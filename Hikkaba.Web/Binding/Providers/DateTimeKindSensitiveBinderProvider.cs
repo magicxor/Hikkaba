@@ -3,32 +3,26 @@ using Hikkaba.Web.Binding.Binders;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 
-namespace Hikkaba.Web.Binding.Providers
+namespace Hikkaba.Web.Binding.Providers;
+
+internal class DateTimeKindSensitiveBinderProvider : IModelBinderProvider
 {
-    public class DateTimeKindSensitiveBinderProvider : IModelBinderProvider
+    private readonly ILoggerFactory _loggerFactory;
+
+    public DateTimeKindSensitiveBinderProvider(ILoggerFactory loggerFactory)
     {
-        private readonly ILoggerFactory _loggerFactory;
+        _loggerFactory = loggerFactory;
+    }
 
-        public DateTimeKindSensitiveBinderProvider(ILoggerFactory loggerFactory)
+    /// <inheritdoc />
+    public IModelBinder? GetBinder(ModelBinderProviderContext context)
+    {
+        if (!context.Metadata.IsComplexType
+            && (context.Metadata.ModelType == typeof(DateTime) || context.Metadata.ModelType == typeof(DateTime?)))
         {
-            _loggerFactory = loggerFactory;
+            return new DateTimeKindSensitiveBinder(context.Metadata.ModelType, _loggerFactory);
         }
 
-        /// <inheritdoc />
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            else if ((!context.Metadata.IsComplexType) && (context.Metadata.ModelType == typeof(DateTime) || context.Metadata.ModelType == typeof(DateTime?)))
-            {
-                return new DateTimeKindSensitiveBinder(context.Metadata.ModelType, _loggerFactory);
-            }
-            else
-            {
-                return null;
-            }
-        }
+        return null;
     }
 }

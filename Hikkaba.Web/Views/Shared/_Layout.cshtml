@@ -1,39 +1,43 @@
-@using Hikkaba.Common.Constants
+@using Hikkaba.Shared.Constants
+@inject TimeProvider TimeProvider
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - @Defaults.BoardName</title>
-        
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" integrity="sha512-aEe/ZxePawj0+G2R+AaIxgrQuKT68I28qh+wgLrcAJOz3rxCP+TwrK5SPN+E5I+1IQjNtcfvb96HDagwrKRdBw==" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
-    <link rel="icon" href="~/favicon.ico" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>@ViewData["Title"] - @Defaults.BoardName</title>
+  <link href="~/favicon.ico" rel="icon" />
 
-    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+  @*https://github.com/VahidN/DNTCaptcha.Core/blob/master/src/DNTCaptcha.TestWebApp/Views/Shared/_Layout.cshtml*@
+  <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true"/>
+  <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" asp-append-version="true"/>
+
+  @*https://docs.fontawesome.com/v5/web/setup/host-font-awesome-yourself#using-web-fonts-with-css*@
+  <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" asp-append-version="true"/>
+
+  <link href="~/css/site.min.css" rel="stylesheet" asp-append-version="true"/>
 </head>
 <body>
-    <partial name="_NavbarPartial" />
-    <div class="container body-content">
-        <partial name="_ErrorMessagePartial" />
-        @RenderBody()
-        <hr />
-        <footer>
-            <p class="text-center">&copy; @DateTime.UtcNow.Year - @Defaults.BoardName</p>
-        </footer>
-    </div>
+<partial name="_NavbarPartial"/>
+<div class="container body-content">
+  <partial name="_ErrorMessagePartial"/>
+  @RenderBody()
+  <hr/>
+  <partial name="_FooterPartial" />
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js" integrity="sha512-GDey37RZAxFkpFeJorEUwNoIbkTwsyC736KNSYucu1WJWFK9qTdzYub8ATxktr6Dwke7nbFaioypzbDOQykoRg==" crossorigin="anonymous"></script>
+@*https://github.com/VahidN/DNTCaptcha.Core/blob/master/src/DNTCaptcha.TestWebApp/Views/Shared/_Layout.cshtml*@
+<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript" asp-append-version="true"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js" type="text/javascript" asp-append-version="true"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js" type="text/javascript" asp-append-version="true"></script>
+<script src="~/lib/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.min.js" type="text/javascript" asp-append-version="true"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js" type="text/javascript" asp-append-version="true"></script>
 
-    <partial name="_ValidationScriptsPartial" />
+@*https://momentjs.com/docs/#/use-it/*@
+<script src="~/lib/moment/min/moment.min.js" type="text/javascript" asp-append-version="true"></script>
 
-    <script src="~/js/site.min.js" asp-append-version="true"></script>
+<script src="~/js/site.min.js" type="text/javascript" asp-append-version="true"></script>
 
-    @RenderSection("scripts", required: false)
+@await RenderSectionAsync("scripts", required: false)
 </body>
 </html>

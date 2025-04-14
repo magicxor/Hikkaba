@@ -1,55 +1,51 @@
-﻿using TPrimaryKey = System.Guid;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Hikkaba.Web.ViewModels.PostsViewModels;
 
-namespace Hikkaba.Web.ViewModels.ThreadsViewModels
+namespace Hikkaba.Web.ViewModels.ThreadsViewModels;
+
+public sealed class ThreadDetailsViewModel
 {
-    public class ThreadDetailsViewModel
-    {
-        public TPrimaryKey Id { get; set; }
+    public required long Id { get; set; }
 
-        [Display(Name = @"Is deleted")]
-        public bool IsDeleted { get; set; }
+    [Display(Name = @"Is deleted")]
+    public required bool IsDeleted { get; set; }
 
-        [Display(Name = @"Creation date and time")]
-        public DateTime Created { get; set; }
+    [Display(Name = @"Created at")]
+    public required DateTime CreatedAt { get; set; }
 
-        [Display(Name = @"Modification date and time")]
-        public DateTime? Modified { get; set; }
+    [Display(Name = @"Modified at")]
+    public required DateTime? ModifiedAt { get; set; }
 
+    [Display(Name = @"Title")]
+    public required string Title { get; set; }
 
-        [Display(Name = @"Title")]
-        public string Title { get; set; }
+    [Display(Name = @"Is pinned")]
+    public required bool IsPinned { get; set; }
 
-        [Display(Name = @"Is pinned")]
-        public bool IsPinned { get; set; }
+    [Display(Name = @"Is closed")]
+    public required bool IsClosed { get; set; }
 
-        [Display(Name = @"Is closed")]
-        public bool IsClosed { get; set; }
+    [Display(Name = @"Is cyclic")]
+    public required bool IsCyclic { get; set; }
 
-        [Display(Name = @"Bump limit")]
-        public int BumpLimit { get; set; }
+    [Display(Name = @"Bump limit")]
+    public required int BumpLimit { get; set; }
 
-        [Display(Name = @"Show thread-local user hashes")]
-        public bool ShowThreadLocalUserHash { get; set; }
+    [Display(Name = @"Show thread-local user hashes")]
+    public required bool ShowThreadLocalUserHash { get; set; }
 
+    public required int CategoryId { get; set; }
 
-        public TPrimaryKey CategoryId { get; set; }
+    [Display(Name = @"Category alias")]
+    public required string CategoryAlias { get; set; }
 
+    [Display(Name = @"Category name")]
+    public required string CategoryName { get; set; }
 
-        [Display(Name = @"Category alias")]
-        public string CategoryAlias { get; set; }
+    [Display(Name = @"Post count")]
+    public required int PostCount { get; set; }
 
-        [Display(Name = @"Category name")]
-        public string CategoryName { get; set; }
-
-        [Display(Name = @"Post count")]
-        public int PostCount { get; set; }
-
-
-        [Display(Name = @"Posts")]
-        public IList<PostDetailsViewModel> Posts { get; set; }
-    }
+    public required IReadOnlyList<PostDetailsViewModel> Posts { get; set; }
 }

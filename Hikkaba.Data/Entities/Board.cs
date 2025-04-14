@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Hikkaba.Common.Constants;
-using Hikkaba.Data.Entities.Base.Current;
+using Hikkaba.Shared.Constants;
 
-namespace Hikkaba.Data.Entities
+namespace Hikkaba.Data.Entities;
+
+[Table("Boards")]
+public class Board
 {
-    [Table("Boards")]
-    public class Board: BaseEntity
-    {
-        [Required]
-        [MinLength(Defaults.MinCategoryAndBoardNameLength)]
-        [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
-        public string Name { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-        public virtual ICollection<Category> Categories { get; set; }
-    }
+    [Required]
+    [MinLength(Defaults.MinCategoryAndBoardNameLength)]
+    [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
+    public required string Name { get; set; }
+
+    // Relations
+    public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 }

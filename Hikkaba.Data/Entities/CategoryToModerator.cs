@@ -1,15 +1,40 @@
-﻿using TPrimaryKey = System.Guid;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hikkaba.Data.Entities
-{
-    [Table("CategoriesToModerators")]
-    public class CategoryToModerator
-    {
-        public TPrimaryKey CategoryId { get; set; }
-        public TPrimaryKey ApplicationUserId { get; set; }
+namespace Hikkaba.Data.Entities;
 
-        public virtual Category Category { get; set; }
-        public virtual ApplicationUser ApplicationUser { get; set; }
+[Table("CategoriesToModerators")]
+public class CategoryToModerator
+{
+    [Key]
+    public int Id { get; set; }
+
+    // FK id
+    [ForeignKey(nameof(Category))]
+    public int CategoryId { get; set; }
+
+    [ForeignKey(nameof(Moderator))]
+    public int ModeratorId { get; set; }
+
+    // FK models
+    [Required]
+    public Category Category
+    {
+        get => _category
+               ?? throw new InvalidOperationException("Uninitialized property: " + nameof(Category));
+        set => _category = value;
     }
+
+    private Category? _category;
+
+    [Required]
+    public ApplicationUser Moderator
+    {
+        get => _moderator
+               ?? throw new InvalidOperationException("Uninitialized property: " + nameof(Moderator));
+        set => _moderator = value;
+    }
+
+    private ApplicationUser? _moderator;
 }

@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Hikkaba.Services.Base.Generic;
+using System.ComponentModel.DataAnnotations;
+using Hikkaba.Paging.Models;
+
 using Hikkaba.Web.ViewModels.ThreadsViewModels;
 
-namespace Hikkaba.Web.ViewModels.CategoriesViewModels
-{
-    public class CategoryThreadsViewModel
-    {
-        [Display(Name = @"Category")]
-        public CategoryDetailsViewModel Category { get; set; }
+namespace Hikkaba.Web.ViewModels.CategoriesViewModels;
 
-        [Display(Name = @"Threads")]
-        public BasePagedList<ThreadDetailsViewModel> Threads { get; set; }
-    }
+public sealed class CategoryThreadsViewModel
+{
+    [Display(Name = @"Category")]
+    public required CategoryDetailsViewModel Category { get; set; }
+
+    [Display(Name = @"Threads")]
+    public required PagedResult<ThreadDetailsViewModel> Threads { get; set; }
 }

@@ -1,0 +1,3 @@
+[*.cs]
+# CA2227: Change 'CreatedBans' to be read-only by removing the property setter
+dotnet_diagnostic.CA2227.severity = suggestion

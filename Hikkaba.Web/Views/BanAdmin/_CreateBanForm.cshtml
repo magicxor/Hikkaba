@@ -1,0 +1,54 @@
+﻿@using Hikkaba.Shared.Enums
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hikkaba.Web.ViewModels.BansViewModels.BanCreateViewModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="BanCreateConfirm" method="post" class="form-horizontal" enctype="multipart/form-data">
+      <h4 class="m-3">Ban details</h4>
+
+      <hr/>
+
+      <div asp-validation-summary="All" class="text-danger"></div>
+
+      <input asp-for="BannedIpAddress" type="hidden"/>
+      <input asp-for="CategoryAlias" type="hidden"/>
+      <input asp-for="RelatedThreadId" type="hidden"/>
+      <input asp-for="RelatedPostId" type="hidden"/>
+
+      <div class="mb-2 form-group">
+        <label asp-for="EndsAt" class="form-label"></label>
+        <input asp-for="EndsAt" class="form-control datetimepicker-utc"/>
+        <span asp-validation-for="EndsAt" class="text-danger"></span>
+      </div>
+
+      <div class="mb-2 form-group">
+        <label asp-for="BanByNetwork" class="form-label"></label>
+        <input asp-for="BanByNetwork" class="form-check-input" type="checkbox"/>
+        <span asp-validation-for="BanByNetwork" class="text-danger"></span>
+      </div>
+
+      <div class="mb-2 form-group">
+        <label asp-for="BanInAllCategories" class="form-label"></label>
+        <input asp-for="BanInAllCategories" class="form-check-input" type="checkbox"/>
+        <span asp-validation-for="BanInAllCategories" class="text-danger"></span>
+      </div>
+
+      <div class="mb-2 form-group">
+        <label asp-for="AdditionalAction" class="form-label"></label>
+        @Html.DropDownListFor(m => m.AdditionalAction, Html.GetEnumSelectList<BanAdditionalAction>(), new { @class = "form-control" })
+        <span asp-validation-for="AdditionalAction" class="text-danger"></span>
+      </div>
+
+      <div class="mb-2 form-group">
+        <label asp-for="Reason" class="form-label"></label>
+        <input asp-for="Reason" class="form-control"/>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg mt-2">Create</button>
+    </form>
+  </div>
+</div>

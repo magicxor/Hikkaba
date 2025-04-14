@@ -1,34 +1,37 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Hikkaba.Common.Constants;
+using System.ComponentModel.DataAnnotations;
+using Hikkaba.Shared.Constants;
+using Hikkaba.Web.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace Hikkaba.Web.ViewModels.ThreadsViewModels
+namespace Hikkaba.Web.ViewModels.ThreadsViewModels;
+
+public sealed class ThreadAnonymousCreateViewModel
 {
-    public class ThreadAnonymousCreateViewModel
-    {
-        [Required]
-        [MinLength(Defaults.MinTitleLength)]
-        [MaxLength(Defaults.MaxTitleLength)]
-        [Display(Name = @"Title")]
-        public string Title { get; set; }
+    [MinLength(Defaults.MinTitleLength)]
+    [MaxLength(Defaults.MaxTitleLength)]
+    [Display(Name = @"Title")]
+    public required string? Title { get; set; }
 
-        [Required]
-        [DataType(DataType.MultilineText)]
-        [MinLength(Defaults.MinMessageLength)]
-        [MaxLength(Defaults.MaxMessageLength)]
-        [Display(Name = @"Message")]
-        public string Message { get; set; }
+    [Required]
+    [DataType(DataType.MultilineText)]
+    [MinLength(1)]
+    [MaxLength(Defaults.MaxMessageHtmlLength)]
+    [Display(Name = @"Message")]
+    public required string Message { get; set; }
 
-        [Required]
-        [DataType(DataType.Upload)]
-        [Display(Name = @"Attachments")]
-        public IFormFileCollection Attachments { get; set; }
+    [Required]
+    [Display(Name = @"Attachments")]
+    [AllowedExtensions(Defaults.AllAllowedExtensions)]
+    [MaxFileSize(Defaults.MaxAttachmentSize)]
+    [MaxFileCollectionSize(Defaults.MaxAttachmentsTotalSize)]
+    [MinFileCount(1)]
+    [MaxFileCount(Defaults.MaxAttachmentsCount)]
+    public required IFormFileCollection Attachments { get; set; }
 
-        [Required]
-        public string CategoryAlias { get; set; }
-        public string CategoryName { get; set; }
+    [Required]
+    [MaxLength(Defaults.MaxCategoryAliasLength)]
+    public required string CategoryAlias { get; set; }
 
-        [Range(minimum: 0, maximum: Defaults.MaxAttachmentsCount, ErrorMessage = "Maximum {2} attachments allowed")]
-        public int AttachmentsCount => Attachments?.Count ?? 0;
-    }
+    [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
+    public required string CategoryName { get; set; }
 }

@@ -1,0 +1,17 @@
+﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryCreateViewModel
+@{
+    ViewData["Title"] = "Create new category";
+}
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="CategoryCreateConfirm" method="post" class="form-horizontal mt-3">
+      <h4>@ViewData["Title"]</h4>
+      <hr />
+
+      @Html.EditorFor(model => model)
+
+      <button type="submit" class="w-100 btn btn-primary btn-lg">Create</button>
+    </form>
+  </div>
+</div>

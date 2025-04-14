@@ -1,56 +1,70 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using TwentyTwenty.Storage;
 
-namespace Hikkaba.Web.Controllers.Api
+namespace Hikkaba.Web.Controllers.Api;
+
+[ApiController]
+[AllowAnonymous]
+[Route("api/v1/attachments")]
+public sealed class AttachmentsController : ControllerBase
 {
-    public class AttachmentsController : Controller
+    private readonly IStorageProvider _storageProvider;
+    private readonly FileExtensionContentTypeProvider _contentTypeProvider;
+
+    public AttachmentsController(
+        IStorageProvider storageProvider,
+        FileExtensionContentTypeProvider contentTypeProvider)
     {
-        private readonly IStorageProvider _storageProvider;
-        private readonly FileExtensionContentTypeProvider _contentTypeProvider;
+        _storageProvider = storageProvider;
+        _contentTypeProvider = contentTypeProvider;
+    }
 
-        public AttachmentsController(IStorageProvider storageProvider,
-            FileExtensionContentTypeProvider contentTypeProvider)
+    private string GetContentTypeByFileName(string fileName)
+    {
+        return _contentTypeProvider.TryGetContentType(fileName, out var contentType) ? contentType : Defaults.DefaultMimeType;
+    }
+
+    [HttpGet("{blobContainerId}/{blobId}", Name = "AttachmentsGet")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status304NotModified)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Any, Duration = Defaults.DefaultAttachmentsCacheDuration)]
+    public async Task<IActionResult> Get(
+        [Required] [FromRoute] [MaxLength(Defaults.MaxGuidLength)] string blobContainerId,
+        [Required] [FromRoute] [MaxLength(Defaults.MaxGuidLength)] string blobId,
+        [Required] [FromQuery] [MaxLength(Defaults.MaxFileExtensionLength)] string fileExtension,
+        [FromQuery] bool getThumbnail)
+    {
+        HttpContext.Response.Headers[HeaderNames.LastModified] = Defaults.DefaultLastModified;
+
+        if (HttpContext.Request.Headers.ContainsKey(HeaderNames.IfModifiedSince))
         {
-            _storageProvider = storageProvider;
-            _contentTypeProvider = contentTypeProvider;
+            return StatusCode(StatusCodes.Status304NotModified);
         }
-
-        private string GetContentTypeByFileName(string fileName)
+        else
         {
-            return _contentTypeProvider.TryGetContentType(fileName, out var contentType) ? contentType : Defaults.DefaultMimeType;
-        }
-
-        [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Any, Duration = Defaults.DefaultAttachmentsCacheDuration)]
-        public async Task<IActionResult> Get(string containerName, string blobName, string fileExtension, bool getThumbnail)
-        {
-            HttpContext.Response.Headers[HeaderNames.LastModified] = Defaults.DefaultLastModified;
-
-            if (HttpContext.Request.Headers.ContainsKey(HeaderNames.IfModifiedSince))
+            var fileName = blobId + "." + fileExtension;
+            if (getThumbnail)
             {
-                return StatusCode(StatusCodes.Status304NotModified);
+                blobId += Defaults.ThumbnailPostfix;
             }
-            else
-            {
-                var fileName = blobName + "." + fileExtension;
-                if (getThumbnail)
-                {
-                    containerName = containerName + Defaults.ThumbnailPostfix;
-                }
-                var contentType = GetContentTypeByFileName(fileName);
-                var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(containerName, blobName);
-                var blobStream = await _storageProvider.GetBlobStreamAsync(containerName, blobName);
+            var contentType = GetContentTypeByFileName(fileName);
+            var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(blobContainerId, blobId);
+            var blobStream = await _storageProvider.GetBlobStreamAsync(blobContainerId, blobId);
 
-                HttpContext.Response.Headers[HeaderNames.ContentDisposition] = "inline; filename=" + fileName;
-                HttpContext.Response.ContentType = contentType;
-                HttpContext.Response.ContentLength = blobDescriptor.Length;
+            HttpContext.Response.Headers[HeaderNames.ContentDisposition] = "inline; filename=" + fileName;
+            HttpContext.Response.ContentType = contentType;
+            HttpContext.Response.ContentLength = blobDescriptor.Length;
 
-                return new FileStreamResult(blobStream, contentType);
-            }
+            return new FileStreamResult(blobStream, contentType);
         }
     }
 }

@@ -1,0 +1,7 @@
+T:Hikkaba.Data.Context.ApplicationDbContext;Please move DB access code to repositories
+T:System.Linq.IQueryable`1;Please move DB access code to repositories
+M:System.Linq.Queryable.FirstOrDefault``1(System.Linq.IQueryable{``0});Please move DB access code to repositories
+N:Microsoft.EntityFrameworkCore;Please move DB access code to repositories
+T:Microsoft.EntityFrameworkCore.DbSet`1;Please move DB access code to repositories
+M:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include``2(System.Linq.IQueryable{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}});Please move DB access code to repositories
+M:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync``1(System.Linq.IQueryable{``0},System.Threading.CancellationToken);Please move DB access code to repositories

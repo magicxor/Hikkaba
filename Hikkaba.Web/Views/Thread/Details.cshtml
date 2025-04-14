@@ -1,0 +1,30 @@
+﻿@using Hikkaba.Web.ViewModels.PostsViewModels
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadDetailsViewModel
+@{
+    ViewData["Title"] = $"{Model.Title} - {Model.CategoryName}";
+}
+
+<h2 class="text-center m-3">
+  @Html.RouteLink(
+    $"/{Model.CategoryAlias} - {Model.CategoryName}",
+    "CategoryDetails",
+    new { categoryAlias = Model.CategoryAlias },
+    new { @class = "inherit-color decoration-on-hover" })
+</h2>
+
+@Html.DisplayFor(model => model)
+
+@if (!Model.IsClosed)
+{
+    <partial name="_ReplyForm" model="@(new PostAnonymousCreateViewModel
+    {
+      IsSageEnabled = false,
+      Message = string.Empty,
+      Attachments = new FormFileCollection(),
+      ThreadId = Model.Id,
+      CategoryAlias = Model.CategoryAlias,
+      CategoryName = Model.CategoryName,
+    })"/>
+}

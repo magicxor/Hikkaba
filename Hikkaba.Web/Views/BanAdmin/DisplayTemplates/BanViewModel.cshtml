@@ -1,0 +1,17 @@
+@using Hikkaba.Web.Utils.Url
+@model Hikkaba.Web.ViewModels.BansViewModels.BanViewModel
+
+<tr class="@(Model.IsDeleted ? "deleted" : "")">
+    <td>@Html.DisplayFor(model => model.CreatedAt)</td>
+    <td>@(Model.CategoryAlias == null ? "" : "/" + Model.CategoryAlias)</td>
+    <td><a href="@(Model?.RelatedPostId == null ? "#" : BanUrlUtils.GetThreadDetailsPostUri(Model, Url))">@(Model?.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></td>
+    <td>@Html.DisplayFor(model => model.BannedIpAddress)</td>
+    <td>@Html.DisplayFor(model => model.BannedCidrLowerIpAddress)</td>
+    <td>@Html.DisplayFor(model => model.BannedCidrUpperIpAddress)</td>
+    <td>@Html.DisplayFor(model => model.Reason)</td>
+    <td>@Html.DisplayFor(model => model.EndsAt)</td>
+    <td>
+      @Html.RouteLink("Delete", "BanDelete", new { id = Model?.Id }, new { @class = "decoration-on-hover" })
+      | @Html.RouteLink("Details", "BanDetails", new { id = Model?.Id }, new { @class = "decoration-on-hover" })
+    </td>
+</tr>

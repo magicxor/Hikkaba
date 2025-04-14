@@ -1,0 +1,14 @@
+﻿@model bool?
+
+@if (Model.HasValue && Model.Value)
+{
+  <i class="bi bi-check-square"></i>
+}
+else if (Model.HasValue && !Model.Value)
+{
+  <i class="bi bi-square"></i>
+}
+else
+{
+  <i class="bi bi-question-square"></i>
+}

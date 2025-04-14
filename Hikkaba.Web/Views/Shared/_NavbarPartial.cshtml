@@ -1,53 +1,34 @@
-﻿@using Hikkaba.Common.Constants
+﻿@using Hikkaba.Application.Contracts
+@using Hikkaba.Shared.Constants
 @using Hikkaba.Data.Entities
-@using Hikkaba.Services
+@using Hikkaba.Infrastructure.Models.Category
 @using Hikkaba.Web.ViewModels.SearchViewModels
-@using Microsoft.AspNetCore.Identity
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject ICategoryService CategoryService
 
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <div class="lead">
-                [@Html.ActionLink(Defaults.BoardName, "Index", "Home")]
+            <span style="font-size: 21px" class="h5">
+              [<a class="decoration-on-hover" href="@Url.Action("Index", "Home")">@Defaults.BoardName</a>]
                 [
                 @{
-                    var categories = await CategoryService.ListAsync(category => !category.IsHidden && !category.IsDeleted, category => category.Alias);
-                    foreach (var category in categories)
+                    var categories = await CategoryService.ListCategoriesAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] }, Context.RequestAborted);
+                    for (var index = 0; index < categories.Count; index++)
                     {
-                        @("/")
-                        <a href="@Url.Action("Details", "Categories", new {categoryAlias = category.Alias})">@category.Alias</a>
+                      var category = categories[index];
+                      @if (index > 0)
+                      {
+                        @(" / ")
+                      }
+                      @Html.RouteLink(category.Alias, "CategoryDetails", new { categoryAlias = category.Alias }, new { @class = "decoration-on-hover" })
                     }
                 }
                 ]
-
-                [
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity.Name</a>
-                    @if (User.IsInRole(Defaults.AdministratorRoleName))
-                    {
-                        @("|")
-                        <a class="nav-link text-dark" asp-action="Index" asp-controller="Administration" title="Administration">Administration</a>
-                    }
-                    @("|")
-                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                        <button type="submit" class="nav-link btn-link text-dark">Logout</button>
-                    </form>
-                }
-                else
-                {
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-                    @("|")
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-                }
-                ]
-            </div>
+            </span>
         </div>
         <div class="col-md-4">
-            <partial name="_SearchPartial" , model="new SearchRequestViewModel()" />
+            <partial name="_SearchPartial" model="@(new SearchRequestViewModel { Query = string.Empty })" />
         </div>
     </div>
 </div>

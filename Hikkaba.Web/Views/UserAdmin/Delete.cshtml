@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hikkaba.Web.ViewModels.UserViewModels.UserDetailsViewModel
+@{
+    ViewData["Title"] = "Delete user";
+}
+
+<form asp-route="UserDeleteConfirm" method="post" class="form-horizontal" enctype="multipart/form-data">
+    <h4>@ViewData["Title"]</h4>
+    <hr />
+
+    @Html.DisplayFor(model => model.UserName)
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="w-100 btn btn-lg btn-danger">Delete</button>
+        </div>
+    </div>
+</form>

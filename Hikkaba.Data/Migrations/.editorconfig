@@ -1,0 +1,18 @@
+[*.cs]
+# SA1413: Use trailing comma in multi-line initializers
+dotnet_diagnostic.SA1413.severity = suggestion
+
+# SA1300: Element 'init' should begin with an uppercase letter
+dotnet_diagnostic.SA1300.severity = suggestion
+
+# CA1861: Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array
+dotnet_diagnostic.CA1861.severity = suggestion
+
+# CA1825: Avoid unnecessary zero-length array allocations. Use Array.Empty<byte>() instead
+dotnet_diagnostic.CA1825.severity = suggestion
+
+# IDE0161: Convert to file-scoped namespace
+dotnet_diagnostic.IDE0161.severity = suggestion
+
+# CA1062: In externally visible method 'void AddPostMessageFulltextIndex.Up(MigrationBuilder migrationBuilder)', validate parameter 'migrationBuilder' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'.
+dotnet_diagnostic.CA1062.severity = suggestion

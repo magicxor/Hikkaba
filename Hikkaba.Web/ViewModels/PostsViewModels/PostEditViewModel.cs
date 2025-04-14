@@ -1,21 +1,21 @@
-﻿using TPrimaryKey = System.Guid;
 using System.ComponentModel.DataAnnotations;
-using Hikkaba.Common.Constants;
+using Hikkaba.Shared.Constants;
 
-namespace Hikkaba.Web.ViewModels.PostsViewModels
+namespace Hikkaba.Web.ViewModels.PostsViewModels;
+
+public sealed class PostEditViewModel
 {
-    public class PostEditViewModel
-    {
-        [Required]
-        public TPrimaryKey Id { get; set; }
+    [Required]
+    public required long Id { get; set; }
 
-        [DataType(DataType.MultilineText)]
-        [MaxLength(Defaults.MaxMessageLength)]
-        [Display(Name = @"Message")]
-        public string Message { get; set; }
+    [DataType(DataType.MultilineText)]
+    [MaxLength(Defaults.MaxMessageHtmlLength)]
+    [Display(Name = @"Message")]
+    public required string MessageOriginalMarkup { get; set; }
 
-        [Required]
-        public string CategoryAlias { get; set; }
-        public TPrimaryKey ThreadId { get; set; }
-    }
+    [Required]
+    public required string CategoryAlias { get; set; }
+
+    [Required]
+    public required long ThreadId { get; set; }
 }

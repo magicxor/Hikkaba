@@ -1,36 +1,55 @@
-﻿using TPrimaryKey = System.Guid;
-using System.Net;
-using Hikkaba.Common.Constants;
-using Hikkaba.Data.Entities;
-using Hikkaba.Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Diagnostics;
+using Hikkaba.Web.Utils;
+using Hikkaba.Web.ViewModels.ErrorViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hikkaba.Web.Controllers.Mvc.Base
+namespace Hikkaba.Web.Controllers.Mvc.Base;
+
+public abstract class BaseMvcController : Controller
 {
-    public class BaseMvcController: Controller
+    protected string UserAgent => Request.Headers.UserAgent.ToString();
+
+    protected byte[]? UserIpAddressBytes => Request.HttpContext.Connection.RemoteIpAddress?.GetAddressBytes();
+
+    protected string? GetLocalReferrerOrNull()
     {
-        private UserManager<ApplicationUser> UserManager { get; set; }
+        var refererUrl = Request.GetTypedHeaders().Referer?.ToString();
 
-        public BaseMvcController(UserManager<ApplicationUser> userManager)
+        if (string.IsNullOrEmpty(refererUrl) || !Url.IsLocalUrl(refererUrl))
         {
-            UserManager = userManager;
+            refererUrl = null;
         }
 
-        public TPrimaryKey GetCurrentUserId()
+        return refererUrl;
+    }
+
+    protected string? GetLocalReferrerOrRoute(string fallbackRoute, object? fallbackRouteValues = null, string? fragment = null)
+    {
+        var referrerUrl = GetLocalReferrerOrNull();
+
+        return string.IsNullOrEmpty(referrerUrl)
+            ? Url.RouteUrl(fallbackRoute, fallbackRouteValues, null, null, fragment)
+            : referrerUrl;
+    }
+
+    protected IActionResult CustomErrorPage(
+        int statusCode,
+        string errorMessage,
+        string? returnUrl)
+    {
+        var (statusCodeName, statusCodeDescription, eventId) = StatusCodeUtils.GetDetails(statusCode);
+        var vm = new CustomErrorViewModel
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return TPrimaryKey.Parse(UserManager.GetUserId(User));
-            }
-            else
-            {
-                throw new HttpResponseException(HttpStatusCode.Unauthorized, "User is not authenticated");
-            }
-        }
-
-        protected string UserAgent => Request.Headers.ContainsKey("User-Agent") ? Request.Headers["User-Agent"].ToString() : "";
-
-        protected IPAddress UserIpAddress => Request.HttpContext.Connection.RemoteIpAddress;
+            EventId = eventId,
+            ErrorMessage = errorMessage,
+            ReturnUrl = returnUrl,
+            StatusCode = statusCode,
+            StatusCodeName = statusCodeName,
+            StatusCodeDescription = statusCodeDescription,
+            TraceId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+        };
+        Response.StatusCode = vm.StatusCode;
+        return View("CustomError", vm);
     }
 }
