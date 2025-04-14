@@ -1,5 +1,7 @@
 # Hikkaba [pre-alpha]
 
+![Coverage Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fmagicxor%2F45e3ca73a0c4dcf8685dce0bf047c5b1%2Fraw%2FHikkaba-cobertura-coverage.json)
+
 Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, designed with minimal JavaScript usage.
 
 ## Features
