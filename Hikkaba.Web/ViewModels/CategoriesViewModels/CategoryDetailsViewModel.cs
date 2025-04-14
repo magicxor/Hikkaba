@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.CategoriesViewModels;
 
-public class CategoryDetailsViewModel
+public sealed class CategoryDetailsViewModel
 {
     [Display(Name = @"Id")]
     public required int Id { get; set; }

@@ -20,7 +20,7 @@ namespace Hikkaba.Web.Controllers.Mvc.Admin;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("admin/categories")]
-public class CategoryAdminController : BaseMvcController
+public sealed class CategoryAdminController : BaseMvcController
 {
     private readonly ICategoryService _categoryService;
     private readonly IUserService _userService;

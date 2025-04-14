@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.StaticFiles;
@@ -125,6 +126,7 @@ internal static class DependencyInjection
         services.AddScoped<IAttachmentService, AttachmentService>();
         services.AddScoped<IBanCreationPrerequisiteService, BanCreationPrerequisiteService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRoleService, RoleService>();
 
         // file storage
         services.AddScoped<FileExtensionContentTypeProvider>();
@@ -220,6 +222,27 @@ internal static class DependencyInjection
         });
 
         return services;
+    }
+
+    internal static IServiceCollection ConfigureHikkabaIdentity(this IServiceCollection services)
+    {
+        return services
+            .Configure<IdentityOptions>(o =>
+            {
+                o.SignIn.RequireConfirmedAccount = true;
+                o.SignIn.RequireConfirmedEmail = true;
+                o.SignIn.RequireConfirmedPhoneNumber = false;
+
+                o.User.RequireUniqueEmail = true;
+                o.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789_";
+
+                o.Password.RequireLowercase = true;
+                o.Password.RequireUppercase = true;
+                o.Password.RequireDigit = true;
+                o.Password.RequireNonAlphanumeric = true;
+                o.Password.RequiredUniqueChars = 4;
+                o.Password.RequiredLength = Defaults.MinUserPasswordLength;
+            });
     }
 
     internal static IServiceCollection AddHikkabaMvc(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)

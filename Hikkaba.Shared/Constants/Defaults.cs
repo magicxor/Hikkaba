@@ -14,15 +14,20 @@ public static class Defaults
 
     public const string AnonymousUserName = "Anonymous";
 
-    public const string AdministratorUserName = "Administrator";
+    public const string AdministratorUserName = "admin";
     public const string AdministratorRoleName = "administrator";
     public const string ModeratorRoleName = "moderator";
 
+    public const string DeniedCategoryNameAll = "all";
+    public const string DeniedCategoryNameAdmin = "admin";
+
+    public const int MinUserPasswordLength = 8;
+    public const int MaxUserPasswordLength = 100;
     public const int MaxGuidLength = 36;
     public const int MaxNameLength = 100;
     public const int MaxEmailLength = 100;
-    public const int MinPasswordLength = 8;
-    public const int MaxPasswordLength = 100;
+    public const int MinTripCodePasswordLength = 8;
+    public const int MaxTripCodePasswordLength = 100;
     public const int MaxIpAddressStringLength = 50;
     public const int MaxIpAddressBytesLength = 16;
     public const int MaxUserAgentLength = 500;

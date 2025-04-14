@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Web.ViewModels.ErrorViewModels;
 
-public class ExceptionViewModel
+public sealed class ExceptionViewModel
 {
     public required string ExceptionName { get; set; }
     public required int StatusCode { get; set; }

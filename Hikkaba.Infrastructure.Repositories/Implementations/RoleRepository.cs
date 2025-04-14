@@ -26,6 +26,7 @@ public sealed class RoleRepository : IRoleRepository
             .Select(x => new RoleModel
             {
                 Id = x.Id,
+                Name = x.Name ?? string.Empty,
                 NormalizedName = x.NormalizedName ?? string.Empty,
             })
             .ApplyOrderBy(filter, x => x.NormalizedName)

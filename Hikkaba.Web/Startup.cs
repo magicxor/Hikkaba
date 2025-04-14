@@ -1,3 +1,4 @@
+using Hikkaba.Application.Implementations;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
@@ -11,6 +12,7 @@ using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Models.Extensions;
 using Hikkaba.Web.Extensions;
 using Hikkaba.Web.Middleware;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Hikkaba.Web;
@@ -39,8 +41,9 @@ internal class Startup
 
         services.AddHikkabaDbContext(_configuration, _webHostEnvironment);
 
-        services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddDefaultIdentity<ApplicationUser>()
             .AddRoles<ApplicationRole>()
+            .AddSignInManager<ApplicationSignInManager>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, int>>()
             .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, int>>();
@@ -50,6 +53,7 @@ internal class Startup
             .AddHikkabaRepositories()
             .AddHikkabaServices()
             .AddHikkabaCookieConfig()
+            .ConfigureHikkabaIdentity()
             .AddHikkabaMvc(_configuration, _webHostEnvironment)
             .AddHikkabaObservabilityTools(_configuration, _webHostEnvironment)
             .AddHikkabaMetrics();

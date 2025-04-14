@@ -19,6 +19,11 @@
       @Html.EditorFor(m => m.LockoutEndDate, "DateTimeNullableEditViewModel", new { Label = "Lockout end date" })
       @Html.EditorFor(m => m.TwoFactorEnabled, "BooleanCheckbox", new { Label = "2FA enabled" })
 
+      @Html.ListBoxFor(
+        m => m.UserRoleIds,
+        Model.AllExistingRoles,
+        new { @class = "form-select mb-3", size = "10" })
+
       <button type="submit" class="w-100 btn btn-primary btn-lg">Save</button>
     </form>
   </div>

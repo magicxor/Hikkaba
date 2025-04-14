@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels;
 
-public class PostAnonymousCreateViewModel
+public sealed class PostAnonymousCreateViewModel
 {
     [Required]
     [Display(Name = @"Sage")]

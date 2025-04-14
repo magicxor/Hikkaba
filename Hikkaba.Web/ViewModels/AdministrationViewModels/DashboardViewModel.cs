@@ -4,7 +4,7 @@ using Hikkaba.Web.ViewModels.BoardViewModels;
 
 namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
 
-public class DashboardViewModel
+public sealed class DashboardViewModel
 {
     [Display(Name = @"Board")]
     public required BoardViewModel Board { get; set; }

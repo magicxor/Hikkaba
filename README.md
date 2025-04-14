@@ -13,13 +13,11 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 - [x] **SAGE support:** Prevents thread bumping on reply
 - [x] **Search:** Allows full-text searching through posts
 - [x] **Server-side paging:** Efficiently handles navigation through category indexes ([Sakura.AspNetCore.PagedList](https://github.com/sgjsakura/AspNetCore))
-- [x] **Thread-local user hashes:** Option to display unique user identifiers per thread ([Blake3.NET](https://github.com/xoofx/Blake3.NET))
-- [x] **Timezone display:** Shows post datetimes adjusted to the current user's timezone ([Moment.js](http://momentjs.com/))
+- [x] **Thread-local user hashes:** Option to display unique user identifiers ([Blake3.NET](https://github.com/xoofx/Blake3.NET))
 - [x] **Docker support:** Ready for containerized deployment
 - [ ] Archive old threads
 - [ ] API for third-party integration
-- [ ] Localization (multi-language support)
-- [ ] Fetch new replies automatically
+- [ ] Internationalization (multi-language support)
 - [ ] User-created boards
 - [ ] Virtual `/all` category (shows threads from all non-hidden categories)
 - [ ] Tor and I2P network support
@@ -30,6 +28,7 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
    * `[b]`, `[i]`, `[u]`, `[s]`, `[code]`, `[sub]`, `[sup]`, `[spoiler]`, `[quote]`
    * `>>postId` - Creates a link to another post within the same thread
 - [x] **URI detection:** Automatically converts `http://`, `https://`, and `ftp://` links
+- [x] **Timezone display:** Shows post datetimes adjusted to the current user's timezone ([Moment.js](http://momentjs.com/))
 - [x] Post backlink display (shows replies to a post)
 - [ ] Media gallery view
 - [ ] Embedding content from YouTube, Vimeo, Coub, Twitter, Instagram, etc.
@@ -39,8 +38,9 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 - [ ] Post reactions (e.g., likes, dislikes, etc.)
 - [ ] Display country flags for posters (using GeoIP)
 - [ ] Display user agent icons (e.g. browser type or OS type)
-- [ ] Post highlighting via unique ID click
+- [ ] Post highlighting via user hash click
 - [ ] Truncate long messages by line count
+- [ ] Fetch new replies automatically
 
 ### Storage
 - [x] **Multiple storage backends:** Flexible file storage options ([20|20 Storage](https://github.com/2020IP/TwentyTwenty.Storage)):
@@ -68,7 +68,6 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 - [ ] Move threads between boards
 - [ ] Modlog (audit trail for staff actions)
 - [ ] Wordfilter (regex support, configurable actions: replace, hide, deny)
-- [ ] Checksum-based attachment filter
 
 ### Limits & Configuration
 - [x] Custom attachment count limit per post

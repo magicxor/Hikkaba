@@ -5,7 +5,7 @@ using Hikkaba.Web.ViewModels.PostsViewModels;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels;
 
-public class ThreadDetailsViewModel
+public sealed class ThreadDetailsViewModel
 {
     public required long Id { get; set; }
 

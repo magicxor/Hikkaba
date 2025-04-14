@@ -2,7 +2,7 @@ using System;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
 
-public class AudioViewModel
+public sealed class AudioViewModel
 {
     public required long Id { get; set; }
     public required long PostId { get; set; }

@@ -9,7 +9,7 @@ namespace Hikkaba.Web.Controllers.Mvc.Admin;
 
 [Authorize(Roles = Defaults.AdministratorRoleName)]
 [Route("admin/board")]
-public class BoardAdminController : BaseMvcController
+public sealed class BoardAdminController : BaseMvcController
 {
     [HttpGet("edit", Name = "BoardEdit")]
     public async Task<IActionResult> Edit(

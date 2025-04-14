@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 
-public class IpAddressDetailsViewModel
+public sealed class IpAddressDetailsViewModel
 {
     [Display(Name = @"ASN")]
     public long? AutonomousSystemNumber { get; set; }

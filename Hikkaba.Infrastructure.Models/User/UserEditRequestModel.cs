@@ -7,4 +7,5 @@ public sealed class UserEditRequestModel
     public required string UserName { get; set; }
     public required DateTime? LockoutEndDate { get; set; }
     public required bool TwoFactorEnabled { get; set; }
+    public required IReadOnlyList<int> UserRoleIds { get; set; }
 }

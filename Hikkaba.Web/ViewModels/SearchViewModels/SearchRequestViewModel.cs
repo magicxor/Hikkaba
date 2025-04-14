@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.SearchViewModels;
 
-public class SearchRequestViewModel
+public sealed class SearchRequestViewModel
 {
     [MaxLength(Defaults.MaxCategoryAliasLength)]
     public string? CategoryAlias { get; set; }

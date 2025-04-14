@@ -7,7 +7,7 @@ using Hikkaba.Web.ViewModels.PostsViewModels;
 
 namespace Hikkaba.Web.ViewModels.HomeViewModels;
 
-public class HomeIndexViewModel
+public sealed class HomeIndexViewModel
 {
     [Display(Name = @"Categories")]
     public required IReadOnlyList<CategoryDetailsViewModel> Categories { get; set; }

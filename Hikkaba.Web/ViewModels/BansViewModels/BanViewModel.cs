@@ -6,7 +6,7 @@ using Hikkaba.Shared.Enums;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 
-public class BanViewModel
+public sealed class BanViewModel
 {
     [Display(Name = @"Id")]
     public required int Id { get; set; }

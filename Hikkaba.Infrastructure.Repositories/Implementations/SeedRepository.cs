@@ -101,17 +101,17 @@ public sealed class SeedRepository : ISeedRepository
         return adminUser;
     }
 
-    private async Task<ApplicationRole> GetOrCreateAdminRoleAsync()
+    private async Task<ApplicationRole> GetOrCreateAdminRoleAsync(string roleName)
     {
-        var adminRole = await _roleMgr.FindByNameAsync(Defaults.AdministratorRoleName);
+        var adminRole = await _roleMgr.FindByNameAsync(roleName);
 
         if (adminRole == null)
         {
-            adminRole = new ApplicationRole { Name = Defaults.AdministratorRoleName };
+            adminRole = new ApplicationRole { Name = roleName };
             var roleCreateResult = await _roleMgr.CreateAsync(adminRole);
             if (!roleCreateResult.Succeeded)
             {
-                throw new HikkabaDataException($"Can't create role {Defaults.AdministratorRoleName}: {string.Join(", ", roleCreateResult.Errors.Select(e => $"{e.Code}:{e.Description}"))}");
+                throw new HikkabaDataException($"Can't create role {roleName}: {string.Join(", ", roleCreateResult.Errors.Select(e => $"{e.Code}:{e.Description}"))}");
             }
         }
 
@@ -123,7 +123,8 @@ public sealed class SeedRepository : ISeedRepository
         _logger.LogInformation("Seeding database...");
 
         var adminUser = await GetOrCreateAdminUserAsync();
-        var adminRole = await GetOrCreateAdminRoleAsync();
+        var adminRole = await GetOrCreateAdminRoleAsync(Defaults.AdministratorRoleName);
+        await GetOrCreateAdminRoleAsync(Defaults.ModeratorRoleName);
 
         var hasAdminRole = await _userMgr.IsInRoleAsync(adminUser, adminRole.Name ?? Defaults.AdministratorRoleName);
         if (!hasAdminRole)

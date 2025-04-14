@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Models.User;
 
-public class CategoryModeratorModel
+public sealed class CategoryModeratorModel
 {
     public required int Id { get; set; }
     public required DateTime? LastLogin { get; set; }

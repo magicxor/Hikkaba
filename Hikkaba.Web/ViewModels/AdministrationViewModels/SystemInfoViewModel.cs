@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
 
-public class SystemInfoViewModel
+public sealed class SystemInfoViewModel
 {
     [Display(Name = @"Database provider")]
     public required string DatabaseProvider { get; set; }

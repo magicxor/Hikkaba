@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels;
 
-public class ThreadAnonymousCreateViewModel
+public sealed class ThreadAnonymousCreateViewModel
 {
     [MinLength(Defaults.MinTitleLength)]
     [MaxLength(Defaults.MaxTitleLength)]

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.BansViewModels;
 
-public class BanEditViewModel : BanCreateViewModel
+public sealed class BanEditViewModel : BanCreateViewModel
 {
     [Display(Name = @"Id")]
     public int Id { get; set; }

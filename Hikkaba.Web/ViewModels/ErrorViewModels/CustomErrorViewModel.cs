@@ -2,7 +2,7 @@
 
 namespace Hikkaba.Web.ViewModels.ErrorViewModels;
 
-public class CustomErrorViewModel
+public sealed class CustomErrorViewModel
 {
     public required EventId EventId { get; set; }
     public required string ErrorMessage { get; set; }

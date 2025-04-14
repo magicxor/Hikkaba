@@ -3,7 +3,7 @@ using Hikkaba.Shared.Constants;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels;
 
-public class PostEditViewModel
+public sealed class PostEditViewModel
 {
     [Required]
     public required long Id { get; set; }

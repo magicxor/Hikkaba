@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hikkaba.Web.ViewModels.BoardViewModels;
 
-public class BoardViewModel
+public sealed class BoardViewModel
 {
     [Required]
     public required int Id { get; set; }

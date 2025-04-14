@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
+using Hikkaba.Web.ViewModels.RoleViewModels;
 
-namespace Hikkaba.Web.ViewModels.AdministrationViewModels;
+namespace Hikkaba.Web.ViewModels.UserViewModels;
 
-public class UserDetailsViewModel
+public sealed class UserDetailsViewModel
 {
     public required int Id { get; set; }
     public required bool IsDeleted { get; set; }
@@ -16,4 +18,5 @@ public class UserDetailsViewModel
     public required string? PhoneNumber { get; set; }
     public required bool PhoneNumberConfirmed { get; set; }
     public required bool TwoFactorEnabled { get; set; }
+    public required IReadOnlyList<RoleSlimViewModel> UserRoles { get; set; }
 }

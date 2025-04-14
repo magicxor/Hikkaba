@@ -3,9 +3,11 @@ using System.Net;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Error;
+using Hikkaba.Infrastructure.Models.Role;
 using Hikkaba.Infrastructure.Models.User;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Extensions;
+using Hikkaba.Shared.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OneOf.Types;
@@ -17,39 +19,57 @@ public sealed class UserRepository : IUserRepository
     private readonly TimeProvider _timeProvider;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly UserManager<ApplicationUser> _userMgr;
+    private readonly RoleManager<ApplicationRole> _roleMgr;
 
     public UserRepository(
         TimeProvider timeProvider,
         ApplicationDbContext applicationDbContext,
-        UserManager<ApplicationUser> userMgr)
+        UserManager<ApplicationUser> userMgr,
+        RoleManager<ApplicationRole> roleMgr)
     {
         _timeProvider = timeProvider;
         _applicationDbContext = applicationDbContext;
         _userMgr = userMgr;
+        _roleMgr = roleMgr;
     }
 
     public async Task<IReadOnlyList<UserDetailsModel>> ListUsersAsync(UserFilter filter, CancellationToken cancellationToken)
     {
-        var query = _applicationDbContext.Users
+        return await _applicationDbContext.Users
             .TagWithCallSite()
-            .AsQueryable();
-
-        return await query
             .Where(x => filter.IncludeDeleted || !x.IsDeleted)
-            .Select(x => new UserDetailsModel
+            .GroupJoin(
+                _applicationDbContext.UserRoles
+                    .Join(
+                        _applicationDbContext.Roles,
+                        role => role.RoleId,
+                        role => role.Id,
+                        (userRole, role) => new { UserRole = userRole, Role = role }),
+                user => user.Id,
+                userRole => userRole.UserRole.UserId,
+                (user, userRoles) => new { User = user, Roles = userRoles.Select(ur => ur.Role) })
+            .Select(gj => new UserDetailsModel
             {
-                Id = x.Id,
-                IsDeleted = x.IsDeleted,
-                AccessFailedCount = x.AccessFailedCount,
-                EmailConfirmed = x.EmailConfirmed,
-                LastLogin = x.LastLoginAt,
-                LockoutEnabled = x.LockoutEnabled,
-                LockoutEnd = x.LockoutEnd,
-                Email = x.Email,
-                UserName = x.UserName,
-                PhoneNumber = x.PhoneNumber,
-                PhoneNumberConfirmed = x.PhoneNumberConfirmed,
-                TwoFactorEnabled = x.TwoFactorEnabled,
+                Id = gj.User.Id,
+                IsDeleted = gj.User.IsDeleted,
+                AccessFailedCount = gj.User.AccessFailedCount,
+                EmailConfirmed = gj.User.EmailConfirmed,
+                LastLogin = gj.User.LastLoginAt,
+                LockoutEnabled = gj.User.LockoutEnabled,
+                LockoutEnd = gj.User.LockoutEnd,
+                Email = gj.User.Email,
+                UserName = gj.User.UserName,
+                PhoneNumber = gj.User.PhoneNumber,
+                PhoneNumberConfirmed = gj.User.PhoneNumberConfirmed,
+                TwoFactorEnabled = gj.User.TwoFactorEnabled,
+                UserRoles = gj.Roles
+                    .Select(role => new RoleModel
+                    {
+                        Id = role.Id,
+                        Name = role.Name,
+                        NormalizedName = role.NormalizedName,
+                    })
+                    .ToList(),
             })
             .ApplyOrderBy(filter, x => x.UserName)
             .ToListAsync(cancellationToken);
@@ -57,8 +77,20 @@ public sealed class UserRepository : IUserRepository
 
     public async Task<IReadOnlyList<CategoryModeratorModel>> ListCategoryModerators(CategoryModeratorFilter filter, CancellationToken cancellationToken)
     {
-        return await _applicationDbContext.Users
+        return await _applicationDbContext.UserRoles
             .TagWithCallSite()
+            .Join(
+                _applicationDbContext.Roles,
+                role => role.RoleId,
+                role => role.Id,
+                (userRole, role) => new { UserRole = userRole, Role = role })
+            .Join(
+                _applicationDbContext.Users,
+                joinResult => joinResult.UserRole.UserId,
+                user => user.Id,
+                (joinResult, user) => new { joinResult.UserRole, joinResult.Role, User = user })
+            .Where(j => j.Role.Name == Defaults.ModeratorRoleName || j.Role.Name == Defaults.AdministratorRoleName)
+            .Select(j => j.User)
             .Where(user => filter.IncludeDeleted || !user.IsDeleted)
             .Select(user => new CategoryModeratorModel
             {
@@ -78,21 +110,40 @@ public sealed class UserRepository : IUserRepository
         return await _applicationDbContext.Users
             .TagWithCallSite()
             .Where(x => x.Id == userId)
-            .Select(x => new UserDetailsModel
+            .GroupJoin(
+                _applicationDbContext.UserRoles
+                    .Join(
+                        _applicationDbContext.Roles,
+                        role => role.RoleId,
+                        role => role.Id,
+                        (userRole, role) => new { UserRole = userRole, Role = role }),
+                user => user.Id,
+                userRole => userRole.UserRole.UserId,
+                (user, userRoles) => new { User = user, Roles = userRoles.Select(ur => ur.Role) })
+            .Select(gj => new UserDetailsModel
             {
-                Id = x.Id,
-                IsDeleted = x.IsDeleted,
-                AccessFailedCount = x.AccessFailedCount,
-                EmailConfirmed = x.EmailConfirmed,
-                LastLogin = x.LastLoginAt,
-                LockoutEnabled = x.LockoutEnabled,
-                LockoutEnd = x.LockoutEnd,
-                Email = x.Email,
-                UserName = x.UserName,
-                PhoneNumber = x.PhoneNumber,
-                PhoneNumberConfirmed = x.PhoneNumberConfirmed,
-                TwoFactorEnabled = x.TwoFactorEnabled,
+                Id = gj.User.Id,
+                IsDeleted = gj.User.IsDeleted,
+                AccessFailedCount = gj.User.AccessFailedCount,
+                EmailConfirmed = gj.User.EmailConfirmed,
+                LastLogin = gj.User.LastLoginAt,
+                LockoutEnabled = gj.User.LockoutEnabled,
+                LockoutEnd = gj.User.LockoutEnd,
+                Email = gj.User.Email,
+                UserName = gj.User.UserName,
+                PhoneNumber = gj.User.PhoneNumber,
+                PhoneNumberConfirmed = gj.User.PhoneNumberConfirmed,
+                TwoFactorEnabled = gj.User.TwoFactorEnabled,
+                UserRoles = gj.Roles
+                    .Select(role => new RoleModel
+                    {
+                        Id = role.Id,
+                        Name = role.Name,
+                        NormalizedName = role.NormalizedName,
+                    })
+                    .ToList(),
             })
+            .OrderBy(user => user.Id)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -132,6 +183,25 @@ public sealed class UserRepository : IUserRepository
         await _userMgr.SetEmailAsync(user, requestModel.Email);
         await _userMgr.SetLockoutEndDateAsync(user, requestModel.LockoutEndDate);
         await _userMgr.SetTwoFactorEnabledAsync(user, requestModel.TwoFactorEnabled);
+
+        var currentUserRoles = await _applicationDbContext.UserRoles
+            .TagWithCallSite()
+            .Where(ur => ur.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+
+        _applicationDbContext.RemoveRange(currentUserRoles);
+
+        var newUserRoles = await _applicationDbContext.Roles
+            .TagWithCallSite()
+            .Where(role => requestModel.UserRoleIds.Contains(role.Id))
+            .Select(role => new IdentityUserRole<int>
+            {
+                UserId = requestModel.Id,
+                RoleId = role.Id,
+            })
+            .ToListAsync(cancellationToken);
+
+        _applicationDbContext.AddRange(newUserRoles);
 
         return default(Success);
     }

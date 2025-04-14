@@ -12,7 +12,7 @@ namespace Hikkaba.Web.Controllers.Mvc.Admin;
 
 [Authorize(Roles = Defaults.AdministratorRoleName + "," + Defaults.ModeratorRoleName)]
 [Route("admin/posts")]
-public class PostAdminController : BaseMvcController
+public sealed class PostAdminController : BaseMvcController
 {
     private readonly IPostService _postService;
 

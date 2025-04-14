@@ -47,14 +47,14 @@ public sealed class HmacService : IHmacService
             throw new ArgumentException("Password part cannot be empty", nameof(input));
         }
 
-        if (password.Length < Defaults.MinPasswordLength)
+        if (password.Length < Defaults.MinTripCodePasswordLength)
         {
-            throw new ArgumentException($"Password must be at least {Defaults.MinPasswordLength} characters", nameof(input));
+            throw new ArgumentException($"Password must be at least {Defaults.MinTripCodePasswordLength} characters", nameof(input));
         }
 
-        if (password.Length > Defaults.MaxPasswordLength)
+        if (password.Length > Defaults.MaxTripCodePasswordLength)
         {
-            throw new ArgumentException($"Password part cannot exceed {Defaults.MaxPasswordLength} characters", nameof(input));
+            throw new ArgumentException($"Password part cannot exceed {Defaults.MaxTripCodePasswordLength} characters", nameof(input));
         }
 
         if (name.Length > Defaults.MaxNameLength)

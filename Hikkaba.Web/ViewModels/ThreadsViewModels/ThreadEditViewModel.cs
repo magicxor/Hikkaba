@@ -3,7 +3,7 @@ using Hikkaba.Shared.Constants;
 
 namespace Hikkaba.Web.ViewModels.ThreadsViewModels;
 
-public class ThreadEditViewModel
+public sealed class ThreadEditViewModel
 {
     [Required]
     public required long Id { get; set; }

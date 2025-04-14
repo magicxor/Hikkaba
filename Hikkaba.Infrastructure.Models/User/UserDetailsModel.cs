@@ -1,4 +1,6 @@
-﻿namespace Hikkaba.Infrastructure.Models.User;
+﻿using Hikkaba.Infrastructure.Models.Role;
+
+namespace Hikkaba.Infrastructure.Models.User;
 
 public sealed class UserDetailsModel
 {
@@ -14,4 +16,5 @@ public sealed class UserDetailsModel
     public required string? PhoneNumber { get; set; }
     public required bool PhoneNumberConfirmed { get; set; }
     public required bool TwoFactorEnabled { get; set; }
+    public required IReadOnlyList<RoleModel> UserRoles { get; set; }
 }

@@ -5,7 +5,7 @@ using Hikkaba.Web.ViewModels.ThreadsViewModels;
 
 namespace Hikkaba.Web.ViewModels.CategoriesViewModels;
 
-public class CategoryThreadsViewModel
+public sealed class CategoryThreadsViewModel
 {
     [Display(Name = @"Category")]
     public required CategoryDetailsViewModel Category { get; set; }

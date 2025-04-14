@@ -3,12 +3,13 @@ using Hikkaba.Shared.Constants;
 
 namespace Hikkaba.Web.ViewModels.CategoriesViewModels;
 
-public class CategoryCreateViewModel
+public sealed class CategoryCreateViewModel
 {
     [Required]
-    [RegularExpression("^[A-Za-z]+$")]
+    [RegularExpression(ValidationRegularExpressions.LowercaseLatinChars)]
     [MinLength(Defaults.MinCategoryAliasLength)]
     [MaxLength(Defaults.MaxCategoryAliasLength)]
+    [DeniedValues(Defaults.DeniedCategoryNameAll, Defaults.DeniedCategoryNameAdmin)]
     [Display(Name = @"Alias")]
     public required string Alias { get; set; }
 

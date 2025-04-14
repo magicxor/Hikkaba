@@ -1,6 +1,6 @@
 namespace Hikkaba.Web.ViewModels.PostsViewModels.Attachments;
 
-public class NoticeViewModel
+public sealed class NoticeViewModel
 {
     public required long Id { get; set; }
     public required long PostId { get; set; }
