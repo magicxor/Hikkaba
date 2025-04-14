@@ -92,19 +92,23 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 ## Screenshots
 
 ### Home page
-![Home page](http://i.imgur.com/VSqxCqE.png)
+
+<img width="874" alt="home" src="https://github.com/user-attachments/assets/0dd07e15-ae78-4705-821e-6ac6be2bf6e6" />
 
 ---
 
 ### Reply form
-![Reply form](http://i.imgur.com/aVO3paD.png)
+
+<img width="614" alt="reply form" src="https://github.com/user-attachments/assets/0272dca0-3296-4c39-bb24-00b9e4025020" />
 
 ---
 
-### Thread
-![Thread](http://i.imgur.com/OLJ8YS6.png)
+### Board category
+
+<img width="871" alt="category" src="https://github.com/user-attachments/assets/db35e1c5-4667-410d-b83a-17d2b8fb14d5" />
 
 ---
 
 ### Search
-![Search](http://i.imgur.com/wkp4WoR.png)
+
+<img width="878" alt="search" src="https://github.com/user-attachments/assets/44781cfd-2198-43c3-b0bb-a0d1ee68432f" />
