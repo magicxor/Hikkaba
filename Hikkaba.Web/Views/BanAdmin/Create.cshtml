@@ -14,11 +14,11 @@
 
     <div class="m-3">
       <a class="decoration-on-hover" href="@Url.RouteUrl("CategoryDetails", new { categoryAlias = Model.PostDetails.CategoryAlias })">
-        <i class="fa-solid fa-angle-left"></i> Back to category
+        <i class="bi bi-chevron-left"></i> Back to category
       </a>
       |
       <a class="decoration-on-hover" href="@Url.RouteUrl("ThreadDetails", new { categoryAlias = Model.PostDetails.CategoryAlias, threadId = Model.PostDetails.ThreadId }, null, null, Model.PostDetails.Id.ToString(CultureInfo.InvariantCulture))">
-        <i class="fa-solid fa-angle-left"></i> Back to thread
+        <i class="bi bi-chevron-left"></i> Back to thread
       </a>
     </div>
 

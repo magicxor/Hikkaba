@@ -41,7 +41,7 @@
                   <input name="threadId" type="hidden" value="@Model.Id"/>
                   <input name="isPinned" type="hidden" value="@((!Model.IsPinned).ToString())"/>
                   <button type="submit" class="btn btn-primary">
-                    <i class="@(Model.IsPinned ? "fa-solid fa-arrow-down" : "fa-solid fa-thumbtack")" aria-hidden="true"></i>
+                    <i class="@(Model.IsPinned ? "bi bi-arrow-down" : "bi bi-pin")" aria-hidden="true"></i>
                     @(Model.IsPinned ? "Unpin" : "Pin")
                   </button>
                 </form>
@@ -49,7 +49,7 @@
                   <input name="threadId" type="hidden" value="@Model.Id"/>
                   <input name="isClosed" type="hidden" value="@((!Model.IsClosed).ToString())"/>
                   <button type="submit" class="btn btn-warning">
-                    <i class="@(Model.IsClosed ? "fa-solid fa-unlock" : "fa-solid fa-lock")" aria-hidden="true"></i>
+                    <i class="@(Model.IsClosed ? "bi bi-unlock" : "bi bi-lock")" aria-hidden="true"></i>
                     @(Model.IsClosed ? "Open" : "Close")
                   </button>
                 </form>
@@ -57,7 +57,7 @@
                   <input name="threadId" type="hidden" value="@Model.Id"/>
                   <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
                   <button type="submit" class="btn btn-danger">
-                    <i class="@(Model.IsDeleted ? "fa-solid fa-clock-rotate-left" : "fa-solid fa-trash")" aria-hidden="true"></i>
+                    <i class="@(Model.IsDeleted ? "bi bi-arrow-counterclockwise" : "bi bi-trash")" aria-hidden="true"></i>
                     @(Model.IsDeleted ? "Restore" : "Delete")
                   </button>
                 </form>
