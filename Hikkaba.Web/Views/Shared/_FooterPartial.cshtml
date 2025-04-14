@@ -5,11 +5,16 @@
   <div class="container">
     <div class="row align-items-center">
       <div class="col text-center">
-        &copy; @TimeProvider.GetUtcNow().UtcDateTime.Year - @Defaults.BoardName
       </div>
 
       <div class="col-auto">
         <partial name="_LoginPartial" />
+      </div>
+    </div>
+
+    <div class="row align-items-center">
+      <div class="col text-center">
+        &copy; @TimeProvider.GetUtcNow().UtcDateTime.Year - @Defaults.BoardName
       </div>
     </div>
   </div>

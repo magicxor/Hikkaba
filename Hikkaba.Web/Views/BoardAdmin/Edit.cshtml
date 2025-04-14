@@ -8,7 +8,9 @@
     <h4>@ViewData["Title"]</h4>
     <hr />
 
-    @Html.EditorFor(model => model)
+    <div class="mb-3">
+      @Html.EditorFor(model => model)
+    </div>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
