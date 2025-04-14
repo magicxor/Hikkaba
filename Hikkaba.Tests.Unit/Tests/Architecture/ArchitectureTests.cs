@@ -132,6 +132,8 @@ internal sealed class ArchitectureTests
             .InAssembly(infrastructureModelsAssembly)
             .That()
             .AreClasses()
+            .And()
+            .DoNotResideInNamespaceStartingWith("Coverlet.")
             .Should()
             .HaveNameEndingWith("Model", StringComparison.Ordinal)
             .Or()
@@ -172,6 +174,8 @@ internal sealed class ArchitectureTests
             .InAssembly(infrastructureModelsAssembly)
             .That()
             .AreClasses()
+            .And()
+            .DoNotResideInNamespaceStartingWith("Coverlet.")
             .Should()
             .NotHaveNameEndingWith("ViewModel", StringComparison.Ordinal)
             .GetResult();
