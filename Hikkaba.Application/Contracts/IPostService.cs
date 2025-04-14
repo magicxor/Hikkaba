@@ -6,7 +6,7 @@ namespace Hikkaba.Application.Contracts;
 
 public interface IPostService
 {
-    Task<PostDetailsModel> GetPostAsync(long id, CancellationToken cancellationToken);
+    Task<PostDetailsModel?> GetPostAsync(long id, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<PostDetailsModel>> ListThreadPostsAsync(ThreadPostsFilter filter, CancellationToken cancellationToken);
 

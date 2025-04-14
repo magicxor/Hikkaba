@@ -38,7 +38,7 @@ public sealed class PostService : IPostService
         _postMetrics = postMetrics;
     }
 
-    public async Task<PostDetailsModel> GetPostAsync(long id, CancellationToken cancellationToken)
+    public async Task<PostDetailsModel?> GetPostAsync(long id, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
@@ -143,7 +143,7 @@ public sealed class PostService : IPostService
 
     public async Task EditPostAsync(PostEditRequestModel requestModel, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await _postRepository.EditPostAsync(requestModel, cancellationToken);
     }
 
     public async Task SetPostDeletedAsync(long postId, bool isDeleted, CancellationToken cancellationToken)

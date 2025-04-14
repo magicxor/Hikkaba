@@ -274,6 +274,7 @@ public sealed class ThreadRepository : IThreadRepository
                         CategoryAlias = g.Category.Alias,
                         CategoryId = g.Category.Id,
                         Replies = post.RepliesToThisMentionedPost
+                            .Where(r => !r.Post.IsDeleted && !r.Reply.IsDeleted)
                             .Select(r => r.ReplyId)
                             .ToList(),
                     })

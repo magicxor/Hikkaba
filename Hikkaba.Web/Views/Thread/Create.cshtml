@@ -37,7 +37,7 @@
 
       <div class="mb-2 form-group">
         <label asp-for="Message" class="form-label"></label>
-        <textarea asp-for="Message" class="form-control" rows="5" maxlength="@(Defaults.MaxMessageLength)"></textarea>
+        <textarea asp-for="Message" class="form-control" rows="5" maxlength="@(Defaults.MaxMessageTextLength)"></textarea>
         <span asp-validation-for="Message" class="text-danger"></span>
       </div>
 
@@ -49,16 +49,16 @@
 
       <div class="mb-2 form-group">
         <label class="form-label">Security code</label>
-        <dnt-captcha asp-captcha-generator-max="9000"
+        <dnt-captcha asp-captcha-generator-max="9999"
                      asp-captcha-generator-min="100"
                      asp-captcha-generator-language="English"
-                     asp-captcha-generator-display-mode="ShowDigits"
+                     asp-captcha-generator-display-mode="NumberToWord"
                      asp-use-relative-urls="false"
                      asp-placeholder="Security code as a number"
                      asp-validation-error-message="Please enter the security code as a number."
                      asp-too-many-requests-error-message="Too many requests. Please wait a moment and try again."
                      asp-font-name="Tahoma"
-                     asp-font-size="60"
+                     asp-font-size="40"
                      asp-fore-color="black"
                      asp-back-color="#ccc"
                      asp-text-box-class="form-control"

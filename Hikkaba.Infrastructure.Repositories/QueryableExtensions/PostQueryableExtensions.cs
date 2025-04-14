@@ -103,6 +103,7 @@ public static class PostQueryableExtensions
             CategoryAlias = post.Thread.Category.Alias,
             CategoryId = post.Thread.CategoryId,
             Replies = post.RepliesToThisMentionedPost
+                .Where(r => !r.Post.IsDeleted && !r.Reply.IsDeleted)
                 .Select(r => r.ReplyId)
                 .ToList(),
         });

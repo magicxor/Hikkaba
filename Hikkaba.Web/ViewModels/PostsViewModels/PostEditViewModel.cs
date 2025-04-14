@@ -9,11 +9,13 @@ public sealed class PostEditViewModel
     public required long Id { get; set; }
 
     [DataType(DataType.MultilineText)]
-    [MaxLength(Defaults.MaxMessageLength)]
+    [MaxLength(Defaults.MaxMessageHtmlLength)]
     [Display(Name = @"Message")]
-    public required string Message { get; set; }
+    public required string MessageOriginalMarkup { get; set; }
 
     [Required]
     public required string CategoryAlias { get; set; }
+
+    [Required]
     public required long ThreadId { get; set; }
 }

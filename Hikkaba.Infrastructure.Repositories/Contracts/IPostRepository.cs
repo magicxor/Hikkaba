@@ -14,5 +14,7 @@ public interface IPostRepository
 
     Task<PostCreateResultSuccessModel> CreatePostAsync(PostCreateExtendedRequestModel requestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
 
+    Task EditPostAsync(PostEditRequestModel requestModel, CancellationToken cancellationToken);
+
     Task SetPostDeletedAsync(long postId, bool isDeleted, CancellationToken cancellationToken);
 }

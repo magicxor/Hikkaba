@@ -129,6 +129,7 @@ public sealed class PostRepository : IPostRepository
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+
         _logger.LogInformation("Creating post in category {CategoryAlias}. ThreadId: {ThreadId}, Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
             requestModel.BaseModel.CategoryAlias,
             requestModel.BaseModel.ThreadId,
@@ -200,6 +201,22 @@ public sealed class PostRepository : IPostRepository
             PostId = post.Id,
             DeletedBlobContainerIds = deletedBlobContainerIds,
         };
+    }
+
+    public async Task EditPostAsync(
+        PostEditRequestModel requestModel,
+        CancellationToken cancellationToken)
+    {
+        using var activity = RepositoriesTelemetry.PostSource.StartActivity();
+
+        var post = await _applicationDbContext.Posts
+            .TagWithCallSite()
+            .FirstAsync(p => p.Id == requestModel.Id, cancellationToken);
+
+        post.MessageText = requestModel.MessageText;
+        post.MessageHtml = requestModel.MessageHtml;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task SetPostDeletedAsync(long postId, bool isDeleted, CancellationToken cancellationToken)

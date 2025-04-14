@@ -47,7 +47,7 @@ public static class Defaults
     public const int MaxCategoryAliasLength = 10;
     public const int MinCategoryAndBoardNameLength = 2;
     public const int MaxCategoryAndBoardNameLength = 100;
-    public const int MaxMessageLength = 4000;
+    public const int MaxMessageTextLength = 4000;
     public const int MaxMessageHtmlLength = 8192;
     public const int MinTitleLength = 2;
     public const int MaxTitleLength = 100;

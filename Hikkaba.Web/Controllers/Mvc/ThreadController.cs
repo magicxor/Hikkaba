@@ -121,9 +121,9 @@ public sealed class ThreadController : BaseMvcController
                     UserAgent = UserAgent,
                 };
 
-                if (threadCreateRm.MessageText.Length > Defaults.MaxMessageLength)
+                if (threadCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)
                 {
-                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageLength} characters.");
+                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageTextLength} characters.");
                     return View("Create", viewModel);
                 }
 

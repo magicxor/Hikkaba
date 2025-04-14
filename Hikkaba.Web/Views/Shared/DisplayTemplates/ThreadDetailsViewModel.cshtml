@@ -8,7 +8,7 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-body">
-        <h4>
+        <span class="fs-5">
           <a class="decoration-on-hover inherit-color" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, Url)"><b>@Model.Title</b></a>
           &nbsp;
           @Model.PostCount posts
@@ -31,7 +31,7 @@
             <span>&nbsp;</span>
             <i class="bi bi-infinity" title="@Html.DisplayNameFor(model => model.IsCyclic)"></i>
           }
-        </h4>
+        </span>
         @if (Context.User.Identity?.IsAuthenticated == true && UserContext.GetRequiredUser().ModeratedCategories.Contains(Model.CategoryId))
         {
           <div class="row">

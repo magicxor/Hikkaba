@@ -113,9 +113,9 @@ public sealed class PostController : BaseMvcController
                     MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
                 };
 
-                if (postCreateRm.MessageText.Length > Defaults.MaxMessageLength)
+                if (postCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)
                 {
-                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageLength} characters.");
+                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageTextLength} characters.");
                     return View("Create", viewModel);
                 }
 

@@ -28,7 +28,7 @@ public class Post
     [Required]
     public bool IsSageEnabled { get; set; }
 
-    [MaxLength(Defaults.MaxMessageLength)]
+    [MaxLength(Defaults.MaxMessageTextLength)]
     public required string MessageText { get; set; }
 
     [MaxLength(Defaults.MaxMessageHtmlLength)]

@@ -7,7 +7,7 @@
 @inject IUserContext UserContext
 
 <div class="card @(Model.IsDeleted ? "bg-light" : "")">
-  <h5 class="card-header">
+  <span class="card-header fs-5">
     <div class="container">
       <div class="d-flex flex-wrap gap-2">
         @*User name*@
@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-  </h5>
+  </span>
   <div class="card-body clearfix overflow-x-auto">
     @if (Context.User.Identity?.IsAuthenticated == true
          && UserContext.GetRequiredUser() is { } user
@@ -78,12 +78,14 @@
       <div class="row">
         <div class="col-md-12">
           <div class="d-grid gap-2 d-md-block thread-moderation-panel" role="group">
+            @*todo: implement post edit*@
+            @*
             <form asp-route="PostEdit" asp-route-categoryAlias="@Model.CategoryAlias" asp-route-threadId="@Model.ThreadId" asp-route-postId="@Model.Id" method="get" class="display-inline">
               <button type="submit" class="btn btn-outline-primary">
                 <i class="bi bi-pencil" aria-hidden="true"></i>
                 @("Edit")
               </button>
-            </form>
+            </form>*@
             <form asp-route="PostSetDeleted" asp-route-postId="@Model.Id" method="post" class="display-inline">
               <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
               <input name="categoryAlias" type="hidden" value="@Model.CategoryAlias"/>
