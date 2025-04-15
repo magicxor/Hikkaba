@@ -17,7 +17,7 @@ export default defineConfig({
         chunkFileNames: 'js/[name]-[hash].min.js', // Chunks if any
         assetFileNames: (assetInfo) => {
           // Check if the original asset name corresponds to our CSS entry point
-          if (assetInfo.name === 'site_css.css') {
+          if (assetInfo.names.some(name => name === 'site_css.css')) {
             // Force the CSS output name
             return 'css/site.min.css'; // Output CSS to wwwroot/css/site.min.css
           }
@@ -29,7 +29,7 @@ export default defineConfig({
     minify: 'terser', // Use terser for minification (default)
     terserOptions: {
         // Vite enables these by default usually, but explicitly setting for clarity
-        keep_classnames: true, 
+        keep_classnames: true,
         keep_fnames: true,
         output: {
             comments: false, // Remove comments
@@ -37,5 +37,5 @@ export default defineConfig({
     },
   },
   // Ensure assets paths are relative to the server root in dev mode if needed
-  // base: '/', 
+  // base: '/',
 });
