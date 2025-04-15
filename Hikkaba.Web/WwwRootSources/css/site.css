@@ -1,75 +1,79 @@
 ﻿/* set some basic padding to keep content from hitting the edges */
 body {
-    padding-top: 10px;
-    padding-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 /* inline elements */
 .display-inline {
-    display: inline;
+  display: inline;
 }
 
 .button-link-inline {
-    display: inline;
-    padding: 0;
-    border: 0;
-    vertical-align: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    font-family: inherit;
-    font-weight: inherit;
-    color: inherit
+  display: inline;
+  padding: 0;
+  border: 0;
+  vertical-align: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
 }
 
 /* other stuff */
 span.visible-line-breaks {
-    white-space: pre-line;
+  white-space: pre-line;
 }
 
 /* fix PRE tag in post body */
 span.visible-line-breaks pre {
-    margin-top: 10px;
-    display: inline-block;
+  margin-top: 10px;
+  display: inline-block;
 }
 
 /* spoiler */
 .censored {
-    color: black;
-    background-color: black;
+  color: black;
+  background-color: black;
 }
 
 .censored a {
-    color: black;
-    text-decoration: underline;
+  color: black;
+  text-decoration: underline;
 }
 
 .censored:hover {
-    color: inherit;
-    background-color: inherit !important;
+  color: inherit;
+  background-color: inherit !important;
 }
 
-.decoration-on-hover, .post-msg-text > a {
-    text-decoration: none;
+.decoration-on-hover,
+.post-msg-text > a {
+  text-decoration: none;
 }
 
-.decoration-on-hover:hover, .decoration-on-hover:focus, .post-msg-text > a:hover, .post-msg-text > a:focus {
-    text-decoration: underline;
+.decoration-on-hover:hover,
+.decoration-on-hover:focus,
+.post-msg-text > a:hover,
+.post-msg-text > a:focus {
+  text-decoration: underline;
 }
 
 .thread-moderation-panel {
-    margin: 0.5em;
+  margin: 0.5em;
 }
 
 .search-input {
-    width: 100%;
-    max-width: 100%;
+  width: 100%;
+  max-width: 100%;
 }
 
 .inherit-color {
-    color: inherit;
+  color: inherit;
 }
