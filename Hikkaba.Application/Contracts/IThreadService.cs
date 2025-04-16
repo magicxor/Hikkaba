@@ -16,9 +16,9 @@ public interface IThreadService
 
     Task EditThreadAsync(ThreadEditRequestModel requestModel, CancellationToken cancellationToken);
 
-    Task SetIsPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken);
+    Task<ThreadPatchResultModel> SetThreadPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken);
 
-    Task SetIsClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken);
+    Task<ThreadPatchResultModel> SetThreadClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken);
 
-    Task SetIsDeletedAsync(long threadId, bool isDeleted, CancellationToken cancellationToken);
+    Task<ThreadPatchResultModel> SetThreadDeletedAsync(long threadId, bool isDeleted, CancellationToken cancellationToken);
 }

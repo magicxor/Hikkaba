@@ -151,18 +151,18 @@ public sealed class ThreadService : IThreadService
         throw new NotImplementedException();
     }
 
-    public async Task SetIsPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken)
+    public async Task<ThreadPatchResultModel> SetThreadPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _threadRepository.SetThreadPinnedAsync(threadId, isPinned, cancellationToken);
     }
 
-    public async Task SetIsClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken)
+    public async Task<ThreadPatchResultModel> SetThreadClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _threadRepository.SetThreadClosedAsync(threadId, isClosed, cancellationToken);
     }
 
-    public async Task SetIsDeletedAsync(long threadId, bool isDeleted, CancellationToken cancellationToken)
+    public async Task<ThreadPatchResultModel> SetThreadDeletedAsync(long threadId, bool isDeleted, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _threadRepository.SetThreadDeletedAsync(threadId, isDeleted, cancellationToken);
     }
 }

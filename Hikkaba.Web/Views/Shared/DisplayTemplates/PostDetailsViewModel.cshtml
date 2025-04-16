@@ -72,8 +72,7 @@
   <div class="card-body clearfix overflow-x-auto">
     @if (Context.User.Identity?.IsAuthenticated == true
          && UserContext.GetRequiredUser() is { } user
-         && (user.ModeratedCategories.Contains(Model.CategoryId)
-             || user.Roles.Contains(Defaults.AdministratorRoleName)))
+         && (user.Roles.Contains(Defaults.AdministratorRoleName) || user.ModeratedCategories.Contains(Model.CategoryId)))
     {
       <div class="row">
         <div class="col-md-12">
