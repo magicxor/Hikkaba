@@ -128,6 +128,7 @@ public sealed class AttachmentService : IAttachmentService
             FileSize = attachmentInfo.FileSize,
             FileContentType = attachmentInfo.FileContentType,
             FileStream = fileStream,
+            Title = audioTrack.Title,
             Album = audioTrack.Album ?? audioTrack.OriginalAlbum,
             Artist = audioTrack.Artist ?? audioTrack.AlbumArtist ?? audioTrack.OriginalArtist,
             DurationSeconds = audioTrack.Duration,

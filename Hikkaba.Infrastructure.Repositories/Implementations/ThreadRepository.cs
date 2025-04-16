@@ -207,6 +207,10 @@ public sealed class ThreadRepository : IThreadRepository
                                 FileSize = attachment.FileSize,
                                 FileContentType = attachment.FileContentType,
                                 FileHash = attachment.FileHash,
+                                Title = attachment.Title,
+                                Album = attachment.Album,
+                                Artist = attachment.Artist,
+                                DurationSeconds = attachment.DurationSeconds,
                             })
                             .ToList(),
                         Documents = post.Documents
@@ -248,6 +252,9 @@ public sealed class ThreadRepository : IThreadRepository
                                 FileHash = attachment.FileHash,
                                 Width = attachment.Width,
                                 Height = attachment.Height,
+                                ThumbnailExtension = attachment.ThumbnailExtension,
+                                ThumbnailWidth = attachment.ThumbnailWidth,
+                                ThumbnailHeight = attachment.ThumbnailHeight,
                             })
                             .ToList(),
                         Video = post.Videos

@@ -16,4 +16,7 @@ public sealed class PictureViewModel
     public required long FileSize { get; set; }
     public required string FileContentType { get; set; }
     public required string FileHash { get; set; }
+    public required string ThumbnailExtension { get; set; }
+    public required int ThumbnailWidth { get; set; }
+    public required int ThumbnailHeight { get; set; }
 }

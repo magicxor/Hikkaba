@@ -148,14 +148,20 @@ internal sealed class ThreadRepositoryTests
             Thread = thread,
             Audios = new List<Audio>
             {
-                new Audio
+                new()
                 {
                     BlobId = new Guid("6D3CD116-6336-47BC-BBE7-5DB289AC6C51"),
                     FileNameWithoutExtension = "Extended electric guitar solo",
                     FileExtension = "mp3",
                     FileSize = 3671469,
                     FileContentType = "audio/mpeg",
-                    FileHash = Hasher.Hash("f61d4fbb-4cbd-4d4e-8df1-6c22c58de9cf"u8).AsSpan().ToArray(),
+                    FileHash = Hasher.Hash("f61d4fbb-4cbd-4d4e-8df1-6c22c58de9cf"u8)
+                        .AsSpan()
+                        .ToArray(),
+                    Title = "Extended electric guitar solo",
+                    Album = "My Album",
+                    Artist = "AI Generated Music",
+                    DurationSeconds = 120,
                 },
             },
         };

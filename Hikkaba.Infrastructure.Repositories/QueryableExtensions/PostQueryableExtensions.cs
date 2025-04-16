@@ -36,6 +36,10 @@ public static class PostQueryableExtensions
                     FileSize = a.FileSize,
                     FileContentType = a.FileContentType,
                     FileHash = a.FileHash,
+                    Title = a.Title,
+                    Album = a.Album,
+                    Artist = a.Artist,
+                    DurationSeconds = a.DurationSeconds,
                 })
                 .ToList(),
             Documents = post.Documents
@@ -77,6 +81,9 @@ public static class PostQueryableExtensions
                     FileHash = p.FileHash,
                     Width = p.Width,
                     Height = p.Height,
+                    ThumbnailExtension = p.ThumbnailExtension,
+                    ThumbnailWidth = p.ThumbnailWidth,
+                    ThumbnailHeight = p.ThumbnailHeight,
                 })
                 .ToList(),
             Video = post.Videos

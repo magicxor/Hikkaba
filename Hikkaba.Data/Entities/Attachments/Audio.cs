@@ -8,16 +8,16 @@ namespace Hikkaba.Data.Entities.Attachments;
 public class Audio : FileAttachment
 {
     [MaxLength(Defaults.MaxAudioMetadataLength)]
-    public string? Title { get; set; }
+    public required string? Title { get; set; }
 
     [MaxLength(Defaults.MaxAudioMetadataLength)]
-    public string? Album { get; set; }
+    public required string? Album { get; set; }
 
     [MaxLength(Defaults.MaxAudioMetadataLength)]
-    public string? Artist { get; set; }
+    public required string? Artist { get; set; }
 
     [Range(0, int.MaxValue)]
-    public int? DurationSeconds { get; set; }
+    public required int? DurationSeconds { get; set; }
 
     public Audio()
     {

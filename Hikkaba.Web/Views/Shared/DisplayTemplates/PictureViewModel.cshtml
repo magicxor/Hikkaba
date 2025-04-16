@@ -18,7 +18,9 @@
       <p>@filePropertiesString</p>
       <img
         style="max-width: @(Settings.Value.ThumbnailsMaxWidth)px; max-height: @(Settings.Value.ThumbnailsMaxHeight)px"
-        src="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = true })"
+        width="@Model.ThumbnailWidth"
+        height="@Model.ThumbnailHeight"
+        src="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.ThumbnailExtension, getThumbnail = true })"
         alt="Attached image (@filePropertiesString)"/>
     </div>
   </a>
