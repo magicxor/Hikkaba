@@ -7,6 +7,7 @@ using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Shared.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -130,7 +131,9 @@ public sealed class PostRepository : IPostRepository
     {
         using var activity = RepositoriesTelemetry.PostSource.StartActivity();
 
-        _logger.LogInformation("Creating post in category {CategoryAlias}. ThreadId: {ThreadId}, Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
+        _logger.LogInformation(
+            LogEventIds.CreatingPost,
+            "Creating post in category {CategoryAlias}. ThreadId: {ThreadId}, Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
             requestModel.BaseModel.CategoryAlias,
             requestModel.BaseModel.ThreadId,
             inputFiles.Count,
@@ -154,7 +157,9 @@ public sealed class PostRepository : IPostRepository
 
             deletedBlobContainerIds = postsToBeDeleted.ConvertAll(p => p.BlobContainerId);
 
-            _logger.LogInformation("Deleting old post(s) in cyclic thread. ThreadId: {ThreadId}, PostCount: {PostCount}, BumpLimit: {BumpLimit}, Blob containers to be deleted: {BlobContainerCount}",
+            _logger.LogInformation(
+                LogEventIds.DeletingOldPosts,
+                "Deleting old post(s) in cyclic thread. ThreadId: {ThreadId}, PostCount: {PostCount}, BumpLimit: {BumpLimit}, Blob containers to be deleted: {BlobContainerCount}",
                 requestModel.BaseModel.ThreadId,
                 requestModel.PostCount,
                 requestModel.BumpLimit,

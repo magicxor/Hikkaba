@@ -134,7 +134,11 @@ public sealed class PostService : IPostService
             }
             catch (Exception e)
             {
-                _logger.LogWarning(e, "Failed to create post with attachments. Deleting uploaded attachments within blob container {BlobContainerId}", requestModel.BlobContainerId);
+                _logger.LogWarning(
+                    LogEventIds.DeletingUploadedAttachments,
+                    e,
+                    "Failed to create post with attachments. Deleting uploaded attachments within blob container {BlobContainerId}",
+                    requestModel.BlobContainerId);
                 await _attachmentService.DeleteAttachmentsContainerAsync(requestModel.BlobContainerId);
                 throw;
             }

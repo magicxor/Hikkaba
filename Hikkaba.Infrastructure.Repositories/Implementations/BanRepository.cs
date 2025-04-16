@@ -13,20 +13,24 @@ using Hikkaba.Shared.Enums;
 using Hikkaba.Shared.Extensions;
 using Hikkaba.Shared.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
 public sealed class BanRepository : IBanRepository
 {
+    private readonly ILogger<BanRepository> _logger;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly TimeProvider _timeProvider;
     private readonly IUserContext _userContext;
 
     public BanRepository(
+        ILogger<BanRepository> logger,
         ApplicationDbContext applicationDbContext,
         TimeProvider timeProvider,
         IUserContext userContext)
     {
+        _logger = logger;
         _applicationDbContext = applicationDbContext;
         _timeProvider = timeProvider;
         _userContext = userContext;
@@ -462,6 +466,13 @@ public sealed class BanRepository : IBanRepository
 
         await _applicationDbContext.Bans.AddAsync(ban, cancellationToken);
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation(
+            LogEventIds.UserBanned,
+            "Ban created. BanId: {BanId}, EndsAt: {EndsAt}, Reason: {Reason}",
+            ban.Id,
+            requestModel.EndsAt,
+            requestModel.Reason);
 
         return new BanCreateResultSuccessModel { BanId = ban.Id };
     }

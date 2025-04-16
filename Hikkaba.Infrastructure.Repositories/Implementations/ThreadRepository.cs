@@ -13,6 +13,7 @@ using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OneOf.Types;
@@ -316,7 +317,9 @@ public sealed class ThreadRepository : IThreadRepository
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
-        _logger.LogInformation("Creating thread in category {CategoryAlias}. Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
+        _logger.LogInformation(
+            LogEventIds.CreatingThread,
+            "Creating thread in category {CategoryAlias}. Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
             createRequestModel.BaseModel.CategoryAlias,
             inputFiles.Count,
             createRequestModel.BaseModel.BlobContainerId);
@@ -361,7 +364,9 @@ public sealed class ThreadRepository : IThreadRepository
 
             deletedBlobContainerIds = threadsToBeDeleted.SelectMany(t => t.Posts.Select(p => p.BlobContainerId)).ToList();
 
-            _logger.LogInformation("Deleting old thread(s) in category {CategoryAlias}. Id: {CategoryId}, ThreadCount: {ThreadCount}, MaxThreadCount: {MaxThreadCount}, Blob containers to be deleted: {BlobContainerCount}",
+            _logger.LogInformation(
+                LogEventIds.DeletingOldThreads,
+                "Deleting old thread(s) in category {CategoryAlias}. Id: {CategoryId}, ThreadCount: {ThreadCount}, MaxThreadCount: {MaxThreadCount}, Blob containers to be deleted: {BlobContainerCount}",
                 category.Alias,
                 category.Id,
                 category.ThreadCount,
