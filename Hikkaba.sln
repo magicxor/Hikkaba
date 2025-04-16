@@ -60,6 +60,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Tests.Manual.Seed",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Paging.Tests.Unit", "Hikkaba.Paging.Tests.Unit\Hikkaba.Paging.Tests.Unit.csproj", "{3F51F019-7FEA-4ABD-B2A3-77D5D86F01E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Tests.Manual.LibManOptimizer", "Hikkaba.Tests.Manual.LibManOptimizer\Hikkaba.Tests.Manual.LibManOptimizer.csproj", "{34800F75-A21B-46E3-AC3A-8DEC62B0C958}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,10 @@ Global
 		{3F51F019-7FEA-4ABD-B2A3-77D5D86F01E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F51F019-7FEA-4ABD-B2A3-77D5D86F01E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F51F019-7FEA-4ABD-B2A3-77D5D86F01E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34800F75-A21B-46E3-AC3A-8DEC62B0C958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34800F75-A21B-46E3-AC3A-8DEC62B0C958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34800F75-A21B-46E3-AC3A-8DEC62B0C958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34800F75-A21B-46E3-AC3A-8DEC62B0C958}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +146,7 @@ Global
 		{BB98684B-B0DE-44DE-909B-165749BA722E} = {D8301AAA-D72E-4CF7-8261-A86C856896D4}
 		{A6D4E56D-E6C2-45D5-8F21-6BDF349143CD} = {6859906F-E63D-4594-A9FA-A34425549011}
 		{3F51F019-7FEA-4ABD-B2A3-77D5D86F01E2} = {DC79F6DC-6E87-4B31-9B5C-2171851CEE5F}
+		{34800F75-A21B-46E3-AC3A-8DEC62B0C958} = {6859906F-E63D-4594-A9FA-A34425549011}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C521ACB-EFE8-4776-BB4C-2A3E5FD7C515}
