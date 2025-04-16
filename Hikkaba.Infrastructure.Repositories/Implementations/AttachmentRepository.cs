@@ -51,6 +51,9 @@ public sealed class AttachmentRepository : IAttachmentRepository
                     FileHash = f.FileHash,
                     Width = f.Width,
                     Height = f.Height,
+                    ThumbnailExtension = f.ThumbnailStreamContainer?.Extension ?? string.Empty,
+                    ThumbnailWidth = f.ThumbnailStreamContainer?.Width ?? 0,
+                    ThumbnailHeight = f.ThumbnailStreamContainer?.Height ?? 0,
                 })
                 .ToList(),
             Videos = inputFiles.Where(f => f.AttachmentType == AttachmentType.Video)

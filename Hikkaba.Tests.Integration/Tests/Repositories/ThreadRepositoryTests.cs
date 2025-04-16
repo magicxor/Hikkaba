@@ -172,7 +172,7 @@ internal sealed class ThreadRepositoryTests
             Thread = thread,
             Pictures = new List<Picture>
             {
-                new Picture
+                new()
                 {
                     BlobId = new Guid("668B2737-0540-4DDD-A23E-58FA031A933F"),
                     FileNameWithoutExtension = "photo_2024-10-31_16-20-39",
@@ -182,6 +182,9 @@ internal sealed class ThreadRepositoryTests
                     FileHash = Hasher.Hash("6e84e6b4-5370-44c6-a319-a03a027f3905"u8).AsSpan().ToArray(),
                     Width = 1280,
                     Height = 960,
+                    ThumbnailExtension = "jpg",
+                    ThumbnailWidth = 128,
+                    ThumbnailHeight = 96,
                 },
             },
         };

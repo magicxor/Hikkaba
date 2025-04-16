@@ -60,6 +60,7 @@ public static class Defaults
     public const int MaxAttachmentsBytesPerPost = 20000000;
     public const int LatestPostsCountInThreadPreview = 3;
     public const int MaxPostsFromIpWithin5Minutes = 2;
+    public const int MaxAudioMetadataLength = 100;
 
     public const string DefaultMimeType = "application/octet-stream";
     public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
