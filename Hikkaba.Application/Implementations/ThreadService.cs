@@ -140,7 +140,11 @@ public sealed class ThreadService : IThreadService
         }
         catch (Exception e)
         {
-            _logger.LogWarning(e, "Failed to create post with attachments; deleting uploaded attachments");
+            _logger.LogWarning(
+                LogEventIds.DeletingUploadedAttachments,
+                e,
+                "Failed to create post with attachments; deleting uploaded attachments within blob container {BlobContainerId}",
+                requestModel.BlobContainerId);
             await _attachmentService.DeleteAttachmentsContainerAsync(requestModel.BlobContainerId);
             throw;
         }

@@ -8,29 +8,31 @@ using Hikkaba.Infrastructure.Models.User;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
 
 public sealed class UserRepository : IUserRepository
 {
+    private readonly ILogger<UserRepository> _logger;
     private readonly TimeProvider _timeProvider;
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly UserManager<ApplicationUser> _userMgr;
-    private readonly RoleManager<ApplicationRole> _roleMgr;
 
     public UserRepository(
+        ILogger<UserRepository> logger,
         TimeProvider timeProvider,
         ApplicationDbContext applicationDbContext,
-        UserManager<ApplicationUser> userMgr,
-        RoleManager<ApplicationRole> roleMgr)
+        UserManager<ApplicationUser> userMgr)
     {
+        _logger = logger;
         _timeProvider = timeProvider;
         _applicationDbContext = applicationDbContext;
         _userMgr = userMgr;
-        _roleMgr = roleMgr;
     }
 
     public async Task<IReadOnlyList<UserDetailsModel>> ListUsersAsync(UserFilter filter, CancellationToken cancellationToken)
@@ -157,6 +159,21 @@ public sealed class UserRepository : IUserRepository
         };
         var result = await _userMgr.CreateAsync(user, requestModel.Password);
 
+        if (result.Succeeded)
+        {
+            _logger.LogInformation(
+                LogEventIds.UserCreated,
+                "User with ID {UserId} created",
+                user.Id);
+        }
+        else
+        {
+            _logger.LogWarning(
+                LogEventIds.UserCreateError,
+                "User creation failed: {Errors}",
+                string.Join(", ", result.Errors.Select(e => $"{e.Code}:{e.Description}")));
+        }
+
         return result.Succeeded
             ? new UserCreateResultSuccessModel { UserId = user.Id }
             : new DomainError
@@ -172,6 +189,10 @@ public sealed class UserRepository : IUserRepository
 
         if (user is null)
         {
+            _logger.LogWarning(
+                LogEventIds.UserEditError,
+                "User with ID {UserId} not found",
+                requestModel.Id);
             return new DomainError
             {
                 StatusCode = (int)HttpStatusCode.NotFound,
@@ -203,6 +224,12 @@ public sealed class UserRepository : IUserRepository
 
         _applicationDbContext.AddRange(newUserRoles);
 
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation(
+            LogEventIds.UserEdited,
+            "User with ID {UserId} edited",
+            requestModel.Id);
+
         return default(Success);
     }
 
@@ -214,5 +241,9 @@ public sealed class UserRepository : IUserRepository
             .ExecuteUpdateAsync(setProp =>
                 setProp.SetProperty(user => user.IsDeleted, isDeleted),
                 cancellationToken);
+        _logger.LogInformation(
+            LogEventIds.UserDeleted,
+            "User with ID {UserId} marked as deleted",
+            userId);
     }
 }

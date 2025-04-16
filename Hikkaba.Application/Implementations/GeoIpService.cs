@@ -3,6 +3,7 @@ using System.Net;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Telemetry;
 using Hikkaba.Infrastructure.Models.Ban;
+using Hikkaba.Shared.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Application.Implementations;
@@ -59,7 +60,11 @@ public sealed class GeoIpService : IGeoIpService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while getting ASN information for IP address {IpAddress}", ipAddress);
+            _logger.LogError(
+                LogEventIds.ErrorGettingAsn,
+                e,
+                "Error while getting ASN information for IP address {IpAddress}",
+                ipAddress);
         }
 
         try
@@ -84,7 +89,11 @@ public sealed class GeoIpService : IGeoIpService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while getting country information for IP address {IpAddress}", ipAddress);
+            _logger.LogError(
+                LogEventIds.ErrorGettingCountry,
+                e,
+                "Error while getting country information for IP address {IpAddress}",
+                ipAddress);
         }
 
         return result;
