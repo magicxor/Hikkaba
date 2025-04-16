@@ -1,9 +1,7 @@
 ﻿@model Hikkaba.Web.ViewModels.CategoriesViewModels.CategoryDetailsViewModel
 
 <div class="col">
-  <div class="list-item">
-    <b>
-      @Html.RouteLink($"/{Model.Alias} - {Model.Name}", "CategoryDetails", new { categoryAlias = Model.Alias }, new { @class = "decoration-on-hover" })
-    </b>
+  <div class="list-item fs-5">
+    @Html.RouteLink($"/{Model.Alias} - {Model.Name}", "CategoryDetails", new { categoryAlias = Model.Alias }, new { @class = "decoration-on-hover" })
   </div>
 </div>
