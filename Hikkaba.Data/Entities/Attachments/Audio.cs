@@ -17,7 +17,7 @@ public class Audio : FileAttachment
     public string? Artist { get; set; }
 
     [Range(0, int.MaxValue)]
-    public int? DurationMs { get; set; }
+    public int? DurationSeconds { get; set; }
 
     public Audio()
     {

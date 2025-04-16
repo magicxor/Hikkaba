@@ -17,6 +17,7 @@
     <PackageReference Include="MaxMind.GeoIP2" />
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="TwentyTwenty.Storage" />
+    <PackageReference Include="z440.atl.core" />
   </ItemGroup>
 
   <ItemGroup>
