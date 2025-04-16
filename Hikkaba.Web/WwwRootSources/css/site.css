@@ -1,4 +1,11 @@
-﻿/* set some basic padding to keep content from hitting the edges */
+﻿/* override bootstrap defaults */
+:root {
+  --bs-font-sans-serif: "Helvetica Neue", Helvetica, Arial, "Noto Sans", "Liberation Sans", sans-serif, "Segoe UI", Roboto, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --bs-body-font-family: var(--bs-font-sans-serif);
+}
+
+/* set some basic padding to keep content from hitting the edges */
 body {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -63,10 +70,6 @@ span.visible-line-breaks pre {
 .post-msg-text > a:hover,
 .post-msg-text > a:focus {
   text-decoration: underline;
-}
-
-.thread-moderation-panel {
-  margin: 0.5em;
 }
 
 .search-input {
