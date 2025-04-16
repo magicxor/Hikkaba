@@ -22,7 +22,7 @@ public sealed class ThreadAdminController : BaseMvcController
         _threadService = threadService;
     }
 
-    [HttpPost("{threadId:long}/pin", Name = "ThreadSetPinned")]
+    [HttpPost("{threadId:long}/set-pinned", Name = "ThreadSetPinned")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetPinned(
         [Required] [FromRoute] [Range(1, long.MaxValue)] long threadId,
@@ -43,7 +43,28 @@ public sealed class ThreadAdminController : BaseMvcController
         return LocalRedirect(redirectUrl);
     }
 
-    [HttpPost("{threadId:long}/close", Name = "ThreadSetClosed")]
+    [HttpPost("{threadId:long}/set-cyclic", Name = "ThreadSetCyclic")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetCyclic(
+        [Required] [FromRoute] [Range(1, long.MaxValue)] long threadId,
+        [Required] [FromForm] bool isCyclic,
+        [Required] [FromForm] [MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
+        CancellationToken cancellationToken)
+    {
+        await _threadService.SetThreadCyclicAsync(threadId, isCyclic, cancellationToken);
+
+        var redirectUrl = GetLocalReferrerOrRoute(
+            "ThreadDetails",
+            new
+            {
+                categoryAlias = categoryAlias,
+                threadId = threadId,
+            }) ?? "/";
+
+        return LocalRedirect(redirectUrl);
+    }
+
+    [HttpPost("{threadId:long}/set-closed", Name = "ThreadSetClosed")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetClosed(
         [Required] [FromRoute] [Range(1, long.MaxValue)] long threadId,
@@ -64,7 +85,7 @@ public sealed class ThreadAdminController : BaseMvcController
         return LocalRedirect(redirectUrl);
     }
 
-    [HttpPost("{threadId:long}/delete", Name = "ThreadSetDeleted")]
+    [HttpPost("{threadId:long}/set-deleted", Name = "ThreadSetDeleted")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetDeleted(
         [Required] [FromRoute] [Range(1, long.MaxValue)] long threadId,

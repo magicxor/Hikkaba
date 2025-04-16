@@ -156,6 +156,11 @@ public sealed class ThreadService : IThreadService
         return await _threadRepository.SetThreadPinnedAsync(threadId, isPinned, cancellationToken);
     }
 
+    public async Task<ThreadPatchResultModel> SetThreadCyclicAsync(long threadId, bool isCyclic, CancellationToken cancellationToken)
+    {
+        return await _threadRepository.SetThreadCyclicAsync(threadId, isCyclic, cancellationToken);
+    }
+
     public async Task<ThreadPatchResultModel> SetThreadClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken)
     {
         return await _threadRepository.SetThreadClosedAsync(threadId, isClosed, cancellationToken);

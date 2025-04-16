@@ -44,15 +44,23 @@
                 <form asp-route="ThreadSetPinned" asp-route-threadId="@Model.Id" method="post" class="display-inline">
                   <input name="isPinned" type="hidden" value="@((!Model.IsPinned).ToString())"/>
                   <input name="categoryAlias" type="hidden" value="@(Model.CategoryAlias)"/>
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn @(Model.IsPinned ? "btn-outline-primary" : "btn-outline-dark")">
                     <i class="@(Model.IsPinned ? "bi bi-arrow-down" : "bi bi-pin")" aria-hidden="true"></i>
                     @(Model.IsPinned ? "Unpin" : "Pin")
+                  </button>
+                </form>
+                <form asp-route="ThreadSetCyclic" asp-route-threadId="@Model.Id" method="post" class="display-inline">
+                  <input name="isCyclic" type="hidden" value="@((!Model.IsCyclic).ToString())"/>
+                  <input name="categoryAlias" type="hidden" value="@(Model.CategoryAlias)"/>
+                  <button type="submit" class="btn @(Model.IsCyclic ? "btn-outline-primary" : "btn-outline-dark")">
+                    <i class="@(Model.IsCyclic ? "bi bi-align-center" : "bi bi-infinity")" aria-hidden="true"></i>
+                    @(Model.IsCyclic ? "Make Linear" : "Make Cyclic")
                   </button>
                 </form>
                 <form asp-route="ThreadSetClosed" asp-route-threadId="@Model.Id" method="post" class="display-inline">
                   <input name="isClosed" type="hidden" value="@((!Model.IsClosed).ToString())"/>
                   <input name="categoryAlias" type="hidden" value="@(Model.CategoryAlias)"/>
-                  <button type="submit" class="btn btn-warning">
+                  <button type="submit" class="btn @(Model.IsClosed ? "btn-outline-primary" : "btn-outline-dark")">
                     <i class="@(Model.IsClosed ? "bi bi-unlock" : "bi bi-lock")" aria-hidden="true"></i>
                     @(Model.IsClosed ? "Open" : "Close")
                   </button>
@@ -60,7 +68,7 @@
                 <form asp-route="ThreadSetDeleted" asp-route-threadId="@Model.Id" method="post" class="display-inline">
                   <input name="isDeleted" type="hidden" value="@((!Model.IsDeleted).ToString())"/>
                   <input name="categoryAlias" type="hidden" value="@(Model.CategoryAlias)"/>
-                  <button type="submit" class="btn btn-danger">
+                  <button type="submit" class="btn @(Model.IsDeleted ? "btn-outline-primary" : "btn-outline-danger")">
                     <i class="@(Model.IsDeleted ? "bi bi-arrow-counterclockwise" : "bi bi-trash")" aria-hidden="true"></i>
                     @(Model.IsDeleted ? "Restore" : "Delete")
                   </button>

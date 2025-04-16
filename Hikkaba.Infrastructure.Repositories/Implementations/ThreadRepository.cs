@@ -430,6 +430,27 @@ public sealed class ThreadRepository : IThreadRepository
         return default(Success);
     }
 
+    public async Task<ThreadPatchResultModel> SetThreadCyclicAsync(long threadId, bool isCyclic, CancellationToken cancellationToken)
+    {
+        var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
+            .FirstOrDefaultAsync(t => t.Id == threadId, cancellationToken);
+        if (thread is null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"Thread with id {threadId} not found",
+            };
+        }
+
+        thread.IsCyclic = isCyclic;
+        thread.ModifiedAt = _timeProvider.GetUtcNow().UtcDateTime;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        return default(Success);
+    }
+
     public async Task<ThreadPatchResultModel> SetThreadClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken)
     {
         var thread = await _applicationDbContext.Threads
