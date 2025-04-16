@@ -87,7 +87,7 @@ public sealed class SeedRepository : ISeedRepository
                 PhoneNumberConfirmed = true,
                 SecurityStamp = Guid.NewGuid().ToString("D", CultureInfo.InvariantCulture),
                 CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-                LockoutEnabled = false,
+                LockoutEnabled = true,
                 TwoFactorEnabled = false,
             };
             var userCreateResult = await _userMgr.CreateAsync(adminUser, _seedConfiguration.AdministratorPassword);

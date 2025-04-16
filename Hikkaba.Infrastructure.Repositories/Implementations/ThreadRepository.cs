@@ -13,9 +13,9 @@ using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
-using Hikkaba.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OneOf.Types;
 using Thinktecture;
 using Thread = Hikkaba.Data.Entities.Thread;
 
@@ -407,5 +407,89 @@ public sealed class ThreadRepository : IThreadRepository
             PostId = post.Id,
             DeletedBlobContainerIds = deletedBlobContainerIds,
         };
+    }
+
+    public async Task<ThreadPatchResultModel> SetThreadPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken)
+    {
+        var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
+            .FirstOrDefaultAsync(t => t.Id == threadId, cancellationToken);
+        if (thread is null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"Thread with id {threadId} not found",
+            };
+        }
+
+        thread.IsPinned = isPinned;
+        thread.ModifiedAt = _timeProvider.GetUtcNow().UtcDateTime;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        return default(Success);
+    }
+
+    public async Task<ThreadPatchResultModel> SetThreadCyclicAsync(long threadId, bool isCyclic, CancellationToken cancellationToken)
+    {
+        var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
+            .FirstOrDefaultAsync(t => t.Id == threadId, cancellationToken);
+        if (thread is null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"Thread with id {threadId} not found",
+            };
+        }
+
+        thread.IsCyclic = isCyclic;
+        thread.ModifiedAt = _timeProvider.GetUtcNow().UtcDateTime;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        return default(Success);
+    }
+
+    public async Task<ThreadPatchResultModel> SetThreadClosedAsync(long threadId, bool isClosed, CancellationToken cancellationToken)
+    {
+        var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
+            .FirstOrDefaultAsync(t => t.Id == threadId, cancellationToken);
+        if (thread is null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"Thread with id {threadId} not found",
+            };
+        }
+
+        thread.IsClosed = isClosed;
+        thread.ModifiedAt = _timeProvider.GetUtcNow().UtcDateTime;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        return default(Success);
+    }
+
+    public async Task<ThreadPatchResultModel> SetThreadDeletedAsync(long threadId, bool isDeleted, CancellationToken cancellationToken)
+    {
+        var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
+            .FirstOrDefaultAsync(t => t.Id == threadId, cancellationToken);
+        if (thread is null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"Thread with id {threadId} not found",
+            };
+        }
+
+        thread.IsDeleted = isDeleted;
+        thread.ModifiedAt = _timeProvider.GetUtcNow().UtcDateTime;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        return default(Success);
     }
 }
