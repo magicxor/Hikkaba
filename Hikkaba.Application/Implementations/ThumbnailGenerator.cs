@@ -36,7 +36,7 @@ public sealed class ThumbnailGenerator : IThumbnailGenerator
         var newHeight = (int)(image.Height * ratio);
 
         var thumbnail = image.Clone(img => img.Resize(newWidth, newHeight));
-        activity?.AddEvent(new ActivityEvent("Thumbnail resized"));
+        activity?.AddEvent(new ActivityEvent("Image resized to thumbnail size"));
 
         var thumbnailStream = new MemoryStream();
         string extension;
@@ -54,7 +54,7 @@ public sealed class ThumbnailGenerator : IThumbnailGenerator
         }
 
         thumbnailStream.Position = 0;
-        activity?.AddEvent(new ActivityEvent("Thumbnail saved to memory stream as JPEG"));
+        activity?.AddEvent(new ActivityEvent("Thumbnail saved to stream"));
 
         return new ThumbnailStreamContainer
         {

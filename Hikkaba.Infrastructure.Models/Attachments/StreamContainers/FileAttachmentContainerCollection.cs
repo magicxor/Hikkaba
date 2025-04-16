@@ -18,17 +18,17 @@ public sealed class FileAttachmentContainerCollection : List<FileAttachmentStrea
 
     public void Dispose()
     {
-        foreach (var fileAttachmentSm in this)
+        foreach (var fileAttachment in this)
         {
-            fileAttachmentSm.Dispose();
+            fileAttachment.Dispose();
         }
     }
 
     public async ValueTask DisposeAsync()
     {
-        foreach (var fileAttachmentSm in this)
+        foreach (var fileAttachment in this)
         {
-            await fileAttachmentSm.DisposeAsync();
+            await fileAttachment.DisposeAsync();
         }
     }
 }

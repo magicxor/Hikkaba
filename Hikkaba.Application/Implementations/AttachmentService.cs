@@ -137,7 +137,7 @@ public sealed class AttachmentService : IAttachmentService
     }
 
     [MustDisposeResource]
-    private async Task<FileAttachmentStreamContainer> ConvertToFileAttachmentSmAsync(
+    private async Task<FileAttachmentStreamContainer> ConvertToFileAttachmentAsync(
         IFormFile formFile,
         CancellationToken cancellationToken)
     {
@@ -196,7 +196,7 @@ public sealed class AttachmentService : IAttachmentService
 
         foreach (var formFile in formFileCollection)
         {
-            attachments.Add(await ConvertToFileAttachmentSmAsync(formFile, cancellationToken));
+            attachments.Add(await ConvertToFileAttachmentAsync(formFile, cancellationToken));
         }
 
         var fileUploadTasks = attachments.Select(attachment =>
