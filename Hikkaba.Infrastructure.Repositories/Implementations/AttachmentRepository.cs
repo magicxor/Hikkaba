@@ -14,7 +14,8 @@ public sealed class AttachmentRepository : IAttachmentRepository
     {
         return new AttachmentCollections
         {
-            Audios = inputFiles.Where(f => f.AttachmentType == AttachmentType.Audio)
+            Audios = inputFiles.OfType<AudioFileAttachmentStreamContainer>()
+                .Where(f => f.AttachmentType == AttachmentType.Audio)
                 .Select(f => new Audio
                 {
                     BlobId = f.BlobId,
@@ -24,6 +25,10 @@ public sealed class AttachmentRepository : IAttachmentRepository
                     FileSize = f.FileSize,
                     FileContentType = f.FileContentType.TryLeft(Defaults.MaxFileContentTypeLength),
                     FileHash = f.FileHash,
+                    Title = f.Title,
+                    Album = f.Album,
+                    Artist = f.Artist,
+                    DurationSeconds = f.DurationSeconds,
                 })
                 .ToList(),
             Documents = inputFiles.Where(f => f.AttachmentType == AttachmentType.Document)
@@ -51,6 +56,9 @@ public sealed class AttachmentRepository : IAttachmentRepository
                     FileHash = f.FileHash,
                     Width = f.Width,
                     Height = f.Height,
+                    ThumbnailExtension = f.ThumbnailStreamContainer?.Extension ?? string.Empty,
+                    ThumbnailWidth = f.ThumbnailStreamContainer?.Width ?? 0,
+                    ThumbnailHeight = f.ThumbnailStreamContainer?.Height ?? 0,
                 })
                 .ToList(),
             Videos = inputFiles.Where(f => f.AttachmentType == AttachmentType.Video)

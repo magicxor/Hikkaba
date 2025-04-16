@@ -14,4 +14,12 @@ public sealed class AudioViewModel
     public required long FileSize { get; set; }
     public required string FileContentType { get; set; }
     public required string FileHash { get; set; }
+
+    public required string? Title { get; set; }
+
+    public required string? Album { get; set; }
+
+    public required string? Artist { get; set; }
+
+    public required int? DurationSeconds { get; set; }
 }

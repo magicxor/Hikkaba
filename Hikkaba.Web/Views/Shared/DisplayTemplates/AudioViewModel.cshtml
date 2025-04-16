@@ -1,13 +1,22 @@
-﻿@using Hikkaba.Web.Utils
+﻿@using Hikkaba.Shared.Extensions
+@using Hikkaba.Web.Utils
 @model Hikkaba.Web.ViewModels.PostsViewModels.Attachments.AudioViewModel
 
 @{
     var fileSizeString = FileSizeUtils.Humanize(Model.FileSize);
-    var filePropertiesString = $".{Model.FileExtension}, {fileSizeString}";
+    var trackTitleString = string.Join(" - ", new[] { Model.Artist?.Cut(20), Model.Title?.Cut(20) }.Where(x => !string.IsNullOrEmpty(x)));
+    var filePropertiesString = $"{trackTitleString}.{Model.FileExtension}, {fileSizeString}";
 }
 
 <div class="attachment-flex-item">
-  <p><a class="decoration-on-hover" href="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" download="@Model.BlobId.ToString().@Model.FileExtension">@filePropertiesString</a></p>
+  <p>
+    <a
+      class="decoration-on-hover"
+      href="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })"
+      download="@Model.BlobId.ToString().@Model.FileExtension">
+      @filePropertiesString
+    </a>
+  </p>
   <audio src="@Url.RouteUrl("AttachmentsGet", new { blobContainerId = Model.BlobContainerId.ToString(), blobId = Model.BlobId.ToString(), fileExtension = Model.FileExtension, getThumbnail = false })" controls="controls">
     Audio (@filePropertiesString)
   </audio>

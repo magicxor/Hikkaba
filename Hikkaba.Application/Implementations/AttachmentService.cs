@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using ATL;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Telemetry;
+using Hikkaba.Infrastructure.Models.Attachments;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Shared.Constants;
@@ -35,8 +37,107 @@ public sealed class AttachmentService : IAttachmentService
         _thumbnailGenerator = thumbnailGenerator;
     }
 
+    private FileAttachmentStreamContainer ConvertToGenericFileAttachment(
+        AttachmentInfo attachmentInfo,
+        FileStream fileStream)
+    {
+        return new FileAttachmentStreamContainer
+        {
+            BlobId = attachmentInfo.BlobId,
+            AttachmentType = attachmentInfo.AttachmentType,
+            FileNameWithoutExtension = attachmentInfo.FileNameWithoutExtension,
+            FileExtension = attachmentInfo.FileExtension,
+            FileNameWithExtension = attachmentInfo.FileNameWithExtension,
+            FileSize = attachmentInfo.FileSize,
+            FileContentType = attachmentInfo.FileContentType,
+            FileStream = fileStream,
+            FileHash = attachmentInfo.FileHash,
+        };
+    }
+
+    private PictureFileAttachmentStreamContainer ConvertToUnsupportedPictureAttachment(
+        AttachmentInfo attachmentInfo,
+        FileStream fileStream)
+    {
+        return new PictureFileAttachmentStreamContainer
+        {
+            BlobId = attachmentInfo.BlobId,
+            AttachmentType = attachmentInfo.AttachmentType,
+            FileNameWithoutExtension = attachmentInfo.FileNameWithoutExtension,
+            FileExtension = attachmentInfo.FileExtension,
+            FileNameWithExtension = attachmentInfo.FileNameWithExtension,
+            FileSize = attachmentInfo.FileSize,
+            FileContentType = attachmentInfo.FileContentType,
+            FileStream = fileStream,
+            FileHash = attachmentInfo.FileHash,
+            Width = 0,
+            Height = 0,
+            ThumbnailStreamContainer = null,
+        };
+    }
+
+    private async Task<PictureFileAttachmentStreamContainer> ConvertToPictureAttachmentAsync(
+        AttachmentInfo attachmentInfo,
+        Stream formFileStream,
+        FileStream tempFileStream,
+        CancellationToken cancellationToken)
+    {
+        using var image = await Image.LoadAsync(formFileStream, cancellationToken);
+        var width = image.Width;
+        var height = image.Height;
+
+        var thumbnail = await _thumbnailGenerator.GenerateThumbnailAsync(
+            image,
+            _settings.Value.ThumbnailsMaxWidth,
+            _settings.Value.ThumbnailsMaxHeight,
+            cancellationToken);
+
+        thumbnail.ContentStream.Position = 0;
+        tempFileStream.Position = 0;
+
+        return new PictureFileAttachmentStreamContainer
+        {
+            BlobId = attachmentInfo.BlobId,
+            AttachmentType = attachmentInfo.AttachmentType,
+            FileNameWithoutExtension = attachmentInfo.FileNameWithoutExtension,
+            FileExtension = attachmentInfo.FileExtension,
+            FileNameWithExtension = attachmentInfo.FileNameWithExtension,
+            FileSize = attachmentInfo.FileSize,
+            FileContentType = attachmentInfo.FileContentType,
+            FileStream = tempFileStream,
+            FileHash = attachmentInfo.FileHash,
+            Width = width,
+            Height = height,
+            ThumbnailStreamContainer = thumbnail,
+        };
+    }
+
+    private AudioFileAttachmentStreamContainer ConvertToAudioAttachment(
+        AttachmentInfo attachmentInfo,
+        FileStream fileStream)
+    {
+        var audioTrack = new Track(fileStream);
+
+        return new AudioFileAttachmentStreamContainer
+        {
+            BlobId = attachmentInfo.BlobId,
+            AttachmentType = attachmentInfo.AttachmentType,
+            FileNameWithoutExtension = attachmentInfo.FileNameWithoutExtension,
+            FileExtension = attachmentInfo.FileExtension,
+            FileNameWithExtension = attachmentInfo.FileNameWithExtension,
+            FileSize = attachmentInfo.FileSize,
+            FileContentType = attachmentInfo.FileContentType,
+            FileStream = fileStream,
+            Title = audioTrack.Title,
+            Album = audioTrack.Album ?? audioTrack.OriginalAlbum,
+            Artist = audioTrack.Artist ?? audioTrack.AlbumArtist ?? audioTrack.OriginalArtist,
+            DurationSeconds = audioTrack.Duration,
+            FileHash = attachmentInfo.FileHash,
+        };
+    }
+
     [MustDisposeResource]
-    private async Task<FileAttachmentStreamContainer> ConvertToFileAttachmentSmAsync(
+    private async Task<FileAttachmentStreamContainer> ConvertToFileAttachmentAsync(
         IFormFile formFile,
         CancellationToken cancellationToken)
     {
@@ -54,77 +155,34 @@ public sealed class AttachmentService : IAttachmentService
 
         tempFileStream.Position = 0;
 
-        var blobId = Guid.NewGuid();
-        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(formFile.FileName);
         var fileExtension = Path.GetExtension(formFile.FileName).ToLowerInvariant().TrimStart('.');
-        var fileNameWithExtension = fileNameWithoutExtension + "." + fileExtension;
-        var fileSize = formFile.Length;
-        var fileContentType = formFile.ContentType;
-        var attachmentType = _attachmentCategorizer.GetAttachmentType(fileExtension);
-        var fileHash = _hashService.GetHashBytes(formFile.OpenReadStream());
-
-        if (attachmentType != AttachmentType.Picture)
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(formFile.FileName);
+        var attachmentInfo = new AttachmentInfo
         {
-            return new FileAttachmentStreamContainer
-            {
-                BlobId = blobId,
-                AttachmentType = attachmentType,
-                FileNameWithoutExtension = fileNameWithoutExtension,
-                FileExtension = fileExtension,
-                FileNameWithExtension = fileNameWithExtension,
-                FileSize = fileSize,
-                FileContentType = fileContentType,
-                FileStream = tempFileStream,
-                FileHash = fileHash,
-            };
-        }
-
-        if (!_attachmentCategorizer.IsPictureExtensionSupported(fileExtension))
-        {
-            return new PictureFileAttachmentStreamContainer
-            {
-                BlobId = blobId,
-                AttachmentType = attachmentType,
-                FileNameWithoutExtension = fileNameWithoutExtension,
-                FileExtension = fileExtension,
-                FileNameWithExtension = fileNameWithExtension,
-                FileSize = fileSize,
-                FileContentType = fileContentType,
-                FileStream = tempFileStream,
-                FileHash = fileHash,
-                Width = 0,
-                Height = 0,
-                ThumbnailStreamContainer = null,
-            };
-        }
-
-        using var image = await Image.LoadAsync(formFile.OpenReadStream(), cancellationToken);
-        var width = image.Width;
-        var height = image.Height;
-
-        var thumbnail = await _thumbnailGenerator.GenerateThumbnailAsync(
-            image,
-            _settings.Value.ThumbnailsMaxWidth,
-            _settings.Value.ThumbnailsMaxHeight,
-            cancellationToken);
-
-        thumbnail.ContentStream.Position = 0;
-        tempFileStream.Position = 0;
-
-        return new PictureFileAttachmentStreamContainer
-        {
-            BlobId = blobId,
-            AttachmentType = attachmentType,
+            BlobId = Guid.NewGuid(),
+            AttachmentType = _attachmentCategorizer.GetAttachmentType(fileExtension),
             FileNameWithoutExtension = fileNameWithoutExtension,
             FileExtension = fileExtension,
-            FileNameWithExtension = fileNameWithExtension,
-            FileSize = fileSize,
-            FileContentType = fileContentType,
-            FileStream = tempFileStream,
-            FileHash = fileHash,
-            Width = width,
-            Height = height,
-            ThumbnailStreamContainer = thumbnail,
+            FileNameWithExtension = fileNameWithoutExtension + "." + fileExtension,
+            FileSize = formFile.Length,
+            FileContentType = formFile.ContentType,
+            FileHash = _hashService.GetHashBytes(formFile.OpenReadStream()),
+        };
+
+        return attachmentInfo switch
+        {
+            { AttachmentType: AttachmentType.Picture } when _attachmentCategorizer.IsPictureExtensionSupported(fileExtension) => await ConvertToPictureAttachmentAsync(
+                attachmentInfo,
+                formFile.OpenReadStream(),
+                tempFileStream,
+                cancellationToken),
+            { AttachmentType: AttachmentType.Picture } when !_attachmentCategorizer.IsPictureExtensionSupported(fileExtension) => ConvertToUnsupportedPictureAttachment(
+                attachmentInfo,
+                tempFileStream),
+            { AttachmentType: AttachmentType.Audio } => ConvertToAudioAttachment(attachmentInfo, tempFileStream),
+            _ => ConvertToGenericFileAttachment(
+                attachmentInfo,
+                tempFileStream),
         };
     }
 
@@ -138,7 +196,7 @@ public sealed class AttachmentService : IAttachmentService
 
         foreach (var formFile in formFileCollection)
         {
-            attachments.Add(await ConvertToFileAttachmentSmAsync(formFile, cancellationToken));
+            attachments.Add(await ConvertToFileAttachmentAsync(formFile, cancellationToken));
         }
 
         var fileUploadTasks = attachments.Select(attachment =>
