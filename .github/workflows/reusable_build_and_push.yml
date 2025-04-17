@@ -73,6 +73,7 @@ jobs:
         with:
           push: true
           context: .
+          file: ./Hikkaba.Web/Dockerfile
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
