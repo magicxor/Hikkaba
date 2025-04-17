@@ -16,6 +16,8 @@ EXPOSE 8081
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG ASSEMBLY_VERSION
+ARG PRODUCT_VERSION
 WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
@@ -31,7 +33,16 @@ COPY ["Hikkaba.Application/Hikkaba.Application.csproj", "Hikkaba.Application/"]
 RUN dotnet restore "./Hikkaba.Web/Hikkaba.Web.csproj"
 COPY . .
 WORKDIR "/src/Hikkaba.Web"
-RUN dotnet build "./Hikkaba.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN \
+  BUILD_CMD="dotnet build \"./Hikkaba.Web.csproj\" -c $BUILD_CONFIGURATION -o /app/build"; \
+  if [ -n "$ASSEMBLY_VERSION" ]; then \
+    BUILD_CMD="$BUILD_CMD /p:AssemblyVersion=$ASSEMBLY_VERSION"; \
+  fi; \
+  if [ -n "$PRODUCT_VERSION" ]; then \
+    BUILD_CMD="$BUILD_CMD /p:Version=$PRODUCT_VERSION"; \
+  fi; \
+  # Execute the constructed build command
+  eval $BUILD_CMD
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish

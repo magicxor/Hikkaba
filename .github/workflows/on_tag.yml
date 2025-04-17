@@ -1,0 +1,15 @@
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+
+name: build and push docker image
+
+jobs:
+  call_reusable_run_tests:
+    name: build and push docker image
+    uses: ./.github/workflows/reusable_build_and_push.yml
+    secrets: inherit
