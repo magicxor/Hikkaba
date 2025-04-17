@@ -1,0 +1,86 @@
+# documentation:
+# Environments -> Environment secrets: https://docs.github.com/en/actions/learn-github-actions/contexts#secrets-context
+# Environments -> Environment variables: https://docs.github.com/actions/learn-github-actions/contexts#vars-context
+# Secrets in reusable workflows: https://colinsalmcorner.com/consuming-environment-secrets-in-reusable-workflows/
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        description: environment to deploy to
+        required: false
+
+name: Build and push (reusable workflow)
+
+jobs:
+  build_and_push:
+    name: Build and push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # https://github.com/docker/setup-qemu-action
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine and Validate Git Tag
+        id: get_semver_tag
+        run: |
+          # Extract the tag name from the full git ref (e.g., refs/tags/1.2.3-rc.1 -> 1.2.3-rc.1)
+          FULL_TAG="${GITHUB_REF#refs/tags/}"
+          echo "Detected tag: $FULL_TAG"
+
+          # Define a regex pattern for basic SemVer 2.0 validation (X.Y.Z[-prerelease][+buildmetadata])
+          # This regex checks for MAJOR.MINOR.PATCH, optionally followed by a hyphen and pre-release identifiers,
+          # and optionally followed by a plus sign and build metadata identifiers.
+          # Pre-release and build metadata identifiers are sequences of digits, letters, hyphens, and dots.
+          SEMVER_REGEX='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$'
+
+          # Validate the extracted tag against the SemVer regex
+          if ! echo "$FULL_TAG" | grep -Eq "$SEMVER_REGEX"; then
+            # If the tag does not match the regex, print an error and exit with a non-zero status code
+            echo "Error: Tag '$FULL_TAG' is not a valid SemVer 2.0 format."
+            exit 1
+          fi
+
+          # Extract the core version (X.Y.Z) by removing the shortest suffix starting with '-' or '+'
+          # Example: 1.2.3-rc.1 -> 1.2.3
+          # Example: 1.2.3+build.45 -> 1.2.3
+          # Example: 1.2.3 -> 1.2.3
+          CORE_VERSION="${FULL_TAG%%[-+]*}"
+
+          echo "Validation successful."
+          echo "Full tag: $FULL_TAG"
+          echo "Core version: $CORE_VERSION"
+
+          # Set the outputs for use in subsequent steps in the workflow
+          # Output variable names are conventionally snake_case
+          echo "full_tag=$FULL_TAG" >> $GITHUB_OUTPUT
+          echo "core_version=$CORE_VERSION" >> $GITHUB_OUTPUT
+
+      # https://github.com/docker/build-push-action
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            ASSEMBLY_VERSION=${{ steps.get_semver_tag.outputs.CORE_VERSION }}
+            PRODUCT_VERSION=${{ steps.get_semver_tag.outputs.FULL_TAG }}
+          tags: |
+            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_IMAGE }}:latest
+            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_IMAGE }}:${{ steps.get_semver_tag.outputs.CORE_VERSION }}
+            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_IMAGE }}:${{ steps.get_semver_tag.outputs.FULL_TAG }}
+          platforms: |
+            linux/amd64
