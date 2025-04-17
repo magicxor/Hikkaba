@@ -99,6 +99,7 @@ internal static class DependencyInjection
     {
         // core
         services.AddScoped<IUserContext, UserContext>();
+        services.AddSingleton<IVersionInfoService, VersionInfoService>();
 
         // GeoIP
         services.AddSingleton<GeoIpAsnReader>(x => new GeoIpAsnReader("./GeoIp/GeoLite2-ASN.mmdb"));
