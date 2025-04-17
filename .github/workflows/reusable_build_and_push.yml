@@ -40,9 +40,6 @@ jobs:
           echo "Detected tag: $FULL_TAG"
 
           # Define a regex pattern for basic SemVer 2.0 validation (X.Y.Z[-prerelease][+buildmetadata])
-          # This regex checks for MAJOR.MINOR.PATCH, optionally followed by a hyphen and pre-release identifiers,
-          # and optionally followed by a plus sign and build metadata identifiers.
-          # Pre-release and build metadata identifiers are sequences of digits, letters, hyphens, and dots.
           SEMVER_REGEX='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$'
 
           # Validate the extracted tag against the SemVer regex
@@ -53,19 +50,59 @@ jobs:
           fi
 
           # Extract the core version (X.Y.Z) by removing the shortest suffix starting with '-' or '+'
-          # Example: 1.2.3-rc.1 -> 1.2.3
-          # Example: 1.2.3+build.45 -> 1.2.3
-          # Example: 1.2.3 -> 1.2.3
           CORE_VERSION="${FULL_TAG%%[-+]*}"
+
+          # Determine if the tag is a pre-release or build version (contains '-' or '+')
+          IS_PRE_RELEASE="false"
+          if [[ "$FULL_TAG" != "$CORE_VERSION" ]]; then
+            IS_PRE_RELEASE="true"
+          fi
 
           echo "Validation successful."
           echo "Full tag: $FULL_TAG"
           echo "Core version: $CORE_VERSION"
+          echo "Is pre-release/build: $IS_PRE_RELEASE"
 
           # Set the outputs for use in subsequent steps in the workflow
-          # Output variable names are conventionally snake_case
           echo "full_tag=$FULL_TAG" >> $GITHUB_OUTPUT
           echo "core_version=$CORE_VERSION" >> $GITHUB_OUTPUT
+          echo "is_pre_release=$IS_PRE_RELEASE" >> $GITHUB_OUTPUT
+
+      # This step determines the appropriate Docker tags based on whether it's a pre-release or stable tag
+      - name: Determine Docker Tags
+        id: determine_tags
+        run: |
+          # Retrieve outputs from the previous step
+          FULL_TAG="${{ steps.get_semver_tag.outputs.full_tag }}"
+          IS_PRE_RELEASE="${{ steps.get_semver_tag.outputs.is_pre_release }}"
+          DOCKER_IMAGE_BASE="${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_IMAGE }}"
+
+          # Initialize an empty variable for tags
+          DOCKER_TAGS=""
+
+          if [[ "$IS_PRE_RELEASE" == "true" ]]; then
+            # If it's a pre-release, use :latest-preview and :<full_tag>
+            echo "Pre-release tag detected. Using 'latest-preview' and full tag."
+            DOCKER_TAGS=$(cat <<EOF
+          ${DOCKER_IMAGE_BASE}:latest-preview
+          ${DOCKER_IMAGE_BASE}:${FULL_TAG}
+          EOF
+          )
+          else
+            # If it's a stable release, use :latest and :<full_tag> (which is the same as core_version here)
+            echo "Stable release tag detected. Using 'latest' and full tag."
+            DOCKER_TAGS=$(cat <<EOF
+          ${DOCKER_IMAGE_BASE}:latest
+          ${DOCKER_IMAGE_BASE}:${FULL_TAG}
+          EOF
+          )
+          fi
+
+          # Output the determined tags for the build-push action
+          # Using EOF heredoc for multi-line output
+          echo "docker_tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$DOCKER_TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       # https://github.com/docker/build-push-action
       - name: Build and push
@@ -77,11 +114,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
+            # Pass both versions as build args, applications might need them
             ASSEMBLY_VERSION=${{ steps.get_semver_tag.outputs.CORE_VERSION }}
             PRODUCT_VERSION=${{ steps.get_semver_tag.outputs.FULL_TAG }}
-          tags: |
-            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_IMAGE }}:latest
-            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_IMAGE }}:${{ steps.get_semver_tag.outputs.CORE_VERSION }}
-            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_IMAGE }}:${{ steps.get_semver_tag.outputs.FULL_TAG }}
+          # Use the tags determined in the previous step
+          tags: ${{ steps.determine_tags.outputs.docker_tags }}
           platforms: |
             linux/amd64
