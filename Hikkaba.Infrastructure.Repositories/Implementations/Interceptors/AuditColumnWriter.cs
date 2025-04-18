@@ -50,7 +50,7 @@ public class AuditColumnWriter : SaveChangesInterceptor, IAuditColumnWriter
         {
             var currentUser = _userContext.GetUser();
 
-            foreach (var entry in eventData.Context.ChangeTracker.Entries())
+            foreach (var entry in savedEntries)
             {
                 if (entry.State is EntityState.Added && entry.Entity is IHasCreatedAt hasCreatedAt)
                 {
