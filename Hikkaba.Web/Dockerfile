@@ -9,10 +9,8 @@ RUN mkdir -p /var/hikkaba/storage \
     && apt-get update \
     && apt-get install -y --no-install-recommends libgdiplus \
     && rm -rf /var/lib/apt/lists/*
-# Switch back to the non-root application user
 USER $APP_UID
 WORKDIR /app
-# Expose ports for the application
 EXPOSE 8080
 EXPOSE 8081
 
@@ -31,44 +29,55 @@ COPY ["Hikkaba.Paging/Hikkaba.Paging.csproj", "Hikkaba.Paging/"]
 COPY ["Hikkaba.Infrastructure.Repositories/Hikkaba.Infrastructure.Repositories.csproj", "Hikkaba.Infrastructure.Repositories/"]
 COPY ["Hikkaba.Infrastructure.Mappings/Hikkaba.Infrastructure.Mappings.csproj", "Hikkaba.Infrastructure.Mappings/"]
 COPY ["Hikkaba.Application/Hikkaba.Application.csproj", "Hikkaba.Application/"]
-# Restore dependencies for the main web project
 RUN dotnet restore "./Hikkaba.Web/Hikkaba.Web.csproj"
 # Copy the rest of the source code
 COPY . .
 WORKDIR "/src/Hikkaba.Web"
 ARG BUILD_CONFIGURATION=Release
-ARG ASSEMBLY_VERSION
-ARG PRODUCT_VERSION
-# Build the project, conditionally adding version parameters
+# Copy version files just before build and read them
+COPY ASSEMBLY_VERSION.txt .
+COPY PRODUCT_VERSION.txt .
 RUN \
+  # Read versions from files
+  assembly_version=$(cat ASSEMBLY_VERSION.txt) && \
+  product_version=$(cat PRODUCT_VERSION.txt) && \
+  # Construct the build command
   BUILD_CMD="dotnet build \"./Hikkaba.Web.csproj\" -c $BUILD_CONFIGURATION -o /app/build"; \
-  if [ -n "$ASSEMBLY_VERSION" ]; then \
-    BUILD_CMD="$BUILD_CMD /p:AssemblyVersion=$ASSEMBLY_VERSION"; \
+  # Conditionally add parameters if versions are not empty
+  if [ -n "$assembly_version" ]; then \
+  BUILD_CMD="$BUILD_CMD /p:AssemblyVersion=$assembly_version"; \
   fi; \
-  if [ -n "$PRODUCT_VERSION" ]; then \
-    BUILD_CMD="$BUILD_CMD /p:Version=$PRODUCT_VERSION"; \
+  if [ -n "$product_version" ]; then \
+  BUILD_CMD="$BUILD_CMD /p:Version=$product_version"; \
   fi; \
   # Execute the constructed build command
+  echo "Executing Build Command: $BUILD_CMD" && \
   eval $BUILD_CMD
 
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-# Declare build arguments for versioning again for this stage
-ARG ASSEMBLY_VERSION
-ARG PRODUCT_VERSION
 WORKDIR "/src/Hikkaba.Web"
-# Publish the project, conditionally adding version parameters
+ARG BUILD_CONFIGURATION=Release
+# Copy version files again just before publish and read them
+# Important: Need to copy them again as this stage starts fresh from 'build' WORKDIR
+COPY ASSEMBLY_VERSION.txt .
+COPY PRODUCT_VERSION.txt .
 RUN \
+  # Read versions from files
+  assembly_version=$(cat ASSEMBLY_VERSION.txt) && \
+  product_version=$(cat PRODUCT_VERSION.txt) && \
+  # Construct the publish command
   PUBLISH_CMD="dotnet publish \"./Hikkaba.Web.csproj\" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false"; \
-  if [ -n "$ASSEMBLY_VERSION" ]; then \
-    PUBLISH_CMD="$PUBLISH_CMD /p:AssemblyVersion=$ASSEMBLY_VERSION"; \
+  # Conditionally add parameters if versions are not empty
+  if [ -n "$assembly_version" ]; then \
+  PUBLISH_CMD="$PUBLISH_CMD /p:AssemblyVersion=$assembly_version"; \
   fi; \
-  if [ -n "$PRODUCT_VERSION" ]; then \
-    PUBLISH_CMD="$PUBLISH_CMD /p:Version=$PRODUCT_VERSION"; \
+  if [ -n "$product_version" ]; then \
+  PUBLISH_CMD="$PUBLISH_CMD /p:Version=$product_version"; \
   fi; \
   # Execute the constructed publish command
+  echo "Executing Publish Command: $PUBLISH_CMD" && \
   eval $PUBLISH_CMD
 
 

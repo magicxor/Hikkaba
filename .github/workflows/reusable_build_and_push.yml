@@ -68,6 +68,17 @@ jobs:
           echo "core_version=$CORE_VERSION" >> $GITHUB_OUTPUT
           echo "is_pre_release=$IS_PRE_RELEASE" >> $GITHUB_OUTPUT
 
+      - name: Create version files
+        run: |
+          echo "Writing core version to ASSEMBLY_VERSION.txt"
+          echo "${{ steps.get_semver_tag.outputs.core_version }}" > ASSEMBLY_VERSION.txt
+          echo "Writing full tag to PRODUCT_VERSION.txt"
+          echo "${{ steps.get_semver_tag.outputs.full_tag }}" > PRODUCT_VERSION.txt
+          echo "Contents:"
+          cat ASSEMBLY_VERSION.txt
+          cat PRODUCT_VERSION.txt
+        shell: bash
+
       # This step determines the appropriate Docker tags based on whether it's a pre-release or stable tag
       - name: Determine Docker Tags
         id: determine_tags
