@@ -1,5 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using Hikkaba.Shared.Extensions;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.DataAnnotations;
@@ -38,7 +41,7 @@ internal sealed class MaxFileSizeAttribute : ValidationAttribute
         if (value is IFormFile formFile)
         {
             if (formFile.Length > MaxFileSize)
-                return new ValidationResult($"Maximum allowed file size: {MaxFileSize} bytes. Size of {formFile.FileName}: {formFile.Length}.");
+                return new ValidationResult($"File size exceeds the limit. Maximum: {MaxFileSize.Bytes().Humanize(CultureInfo.InvariantCulture)}. Size of \"{formFile.FileName.Cut(20)}\": {formFile.Length.Bytes().Humanize(CultureInfo.InvariantCulture)}.");
 
             return ValidationResult.Success;
         }
@@ -48,12 +51,12 @@ internal sealed class MaxFileSizeAttribute : ValidationAttribute
             foreach (var collectionItem in formFileCollection)
             {
                 if (collectionItem.Length > MaxFileSize)
-                    return new ValidationResult($"Maximum allowed file size: {MaxFileSize} bytes. Size of {collectionItem.FileName}: {collectionItem.Length}.");
+                    return new ValidationResult($"File size exceeds the limit. Maximum: {MaxFileSize.Bytes().Humanize(CultureInfo.InvariantCulture)}. Size of \"{collectionItem.FileName.Cut(20)}\": {collectionItem.Length.Bytes().Humanize(CultureInfo.InvariantCulture)}.");
             }
 
             return ValidationResult.Success;
         }
 
-        return new ValidationResult($"Unknown type.");
+        return new ValidationResult("Unknown type.");
     }
 }
