@@ -5,18 +5,17 @@ using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.ViewModels.PostsViewModels;
 
+[AtLeastOneProperty(nameof(Attachments), nameof(Message), ErrorMessage = "Message or attachment is required.")]
 public sealed class PostAnonymousCreateViewModel
 {
     [Required]
     [Display(Name = @"Sage")]
     public required bool IsSageEnabled { get; set; }
 
-    [Required]
     [DataType(DataType.MultilineText)]
-    [MinLength(1)]
     [MaxLength(Defaults.MaxMessageHtmlLength)]
     [Display(Name = @"Message")]
-    public required string Message { get; set; }
+    public string? Message { get; set; } = string.Empty;
 
     [Display(Name = @"Attachments")]
     [AllowedExtensions(Defaults.AllAllowedExtensions)]
