@@ -111,8 +111,8 @@ jobs:
           push: true
           context: .
           file: ./Hikkaba.Web/Dockerfile
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=reusable_build_workflow
+          cache-to: type=gha,mode=max,scope=reusable_build_workflow
           build-args: |
             # Pass both versions as build args, applications might need them
             ASSEMBLY_VERSION=${{ steps.get_semver_tag.outputs.CORE_VERSION }}
