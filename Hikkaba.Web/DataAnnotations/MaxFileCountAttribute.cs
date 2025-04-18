@@ -38,7 +38,7 @@ internal sealed class MaxFileCountAttribute : ValidationAttribute
             var fileCount = formFileCollection.Count;
 
             if (fileCount > MaxFileCount)
-                return new ValidationResult($"Maximum allowed file count: {MaxFileCount}. Actual: {fileCount}.");
+                return new ValidationResult($"Too many files selected. Limit: {MaxFileCount}, Selected: {fileCount}.");
 
             return ValidationResult.Success;
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.DataAnnotations;
@@ -44,7 +46,7 @@ internal sealed class MaxFileCollectionSizeAttribute : ValidationAttribute
             var totalSize = formFileCollection.Sum(formFile => formFile.Length);
 
             if (totalSize > MaxFileCollectionSize)
-                return new ValidationResult($"Maximum allowed total file size: {MaxFileCollectionSize} bytes. Actual: {totalSize}.");
+                return new ValidationResult($"Total file size exceeds the limit. Maximum: {MaxFileCollectionSize.Bytes().Humanize(CultureInfo.InvariantCulture)}, Uploaded: {totalSize.Bytes().Humanize(CultureInfo.InvariantCulture)}.");
 
             return ValidationResult.Success;
         }
