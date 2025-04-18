@@ -81,11 +81,17 @@ public sealed class AttachmentService : IAttachmentService
 
     private async Task<PictureFileAttachmentStreamContainer> ConvertToPictureAttachmentAsync(
         AttachmentInfo attachmentInfo,
-        Stream formFileStream,
+        IFormFile formFile,
         FileStream tempFileStream,
         CancellationToken cancellationToken)
     {
-        using var image = await Image.LoadAsync(DecoderOptions, formFileStream, cancellationToken);
+        var imageMetadata = await Image.IdentifyAsync(DecoderOptions, formFile.OpenReadStream(), cancellationToken);
+        if (imageMetadata.Width > Defaults.MaxImageWidth || imageMetadata.Height > Defaults.MaxImageHeight)
+        {
+            throw new InvalidOperationException($"Image is too large: {imageMetadata.Width}x{imageMetadata.Height}. Max: {Defaults.MaxImageWidth}x{Defaults.MaxImageHeight}");
+        }
+
+        using var image = await Image.LoadAsync(DecoderOptions, formFile.OpenReadStream(), cancellationToken);
         var width = image.Width;
         var height = image.Height;
 
@@ -96,7 +102,6 @@ public sealed class AttachmentService : IAttachmentService
             cancellationToken);
 
         thumbnail.ContentStream.Position = 0;
-        tempFileStream.Position = 0;
 
         return new PictureFileAttachmentStreamContainer
         {
@@ -176,7 +181,7 @@ public sealed class AttachmentService : IAttachmentService
         {
             { AttachmentType: AttachmentType.Picture } when _attachmentCategorizer.IsPictureExtensionSupported(fileExtension) => await ConvertToPictureAttachmentAsync(
                 attachmentInfo,
-                formFile.OpenReadStream(),
+                formFile,
                 tempFileStream,
                 cancellationToken),
             { AttachmentType: AttachmentType.Picture } when !_attachmentCategorizer.IsPictureExtensionSupported(fileExtension) => ConvertToUnsupportedPictureAttachment(
