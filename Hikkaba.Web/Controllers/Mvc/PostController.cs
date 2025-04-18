@@ -104,13 +104,13 @@ public sealed class PostController : BaseMvcController
                 {
                     BlobContainerId = Guid.NewGuid(),
                     IsSageEnabled = viewModel.IsSageEnabled,
-                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, viewModel.ThreadId, viewModel.Message),
-                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message),
+                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, viewModel.ThreadId, viewModel.Message ?? string.Empty),
+                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message ?? string.Empty),
                     UserIpAddress = UserIpAddressBytes,
                     UserAgent = UserAgent.TryLeft(Defaults.MaxUserAgentLength),
                     CategoryAlias = viewModel.CategoryAlias,
                     ThreadId = viewModel.ThreadId,
-                    MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message),
+                    MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message ?? string.Empty),
                 };
 
                 if (postCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)
@@ -169,7 +169,7 @@ public sealed class PostController : BaseMvcController
                     "Error creating post in category '{CategoryAlias}'. ThreadId: {ThreadId}, Message length: {MessageLength}, AttachmentsCount: {AttachmentsCount}",
                     categoryAlias,
                     viewModel.ThreadId,
-                    viewModel.Message.Length,
+                    viewModel.Message?.Length ?? 0,
                     viewModel.Attachments?.Count);
 
                 ViewBag.ErrorMessage = "Error occurred while creating a post. Please try again.";
