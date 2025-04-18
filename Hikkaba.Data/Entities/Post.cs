@@ -52,9 +52,6 @@ public class Post
     [ForeignKey(nameof(Thread))]
     public long ThreadId { get; set; }
 
-    [ForeignKey(nameof(CreatedBy))]
-    public int? CreatedById { get; set; }
-
     [ForeignKey(nameof(ModifiedBy))]
     public int? ModifiedById { get; set; }
 
@@ -68,8 +65,6 @@ public class Post
     }
 
     private Thread? _thread;
-
-    public virtual ApplicationUser? CreatedBy { get; set; }
 
     public virtual ApplicationUser? ModifiedBy { get; set; }
 

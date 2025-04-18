@@ -1,0 +1,3 @@
+[*.cs]
+# CA1002: Change 'List<ChangedDbItemSm>' in 'AuditColumnWriter.AuditEntries' to use 'Collection<T>', 'ReadOnlyCollection<T>' or 'KeyedCollection<K,V>
+dotnet_diagnostic.CA1002.severity = suggestion

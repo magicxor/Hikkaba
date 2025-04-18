@@ -119,7 +119,6 @@ internal sealed class PostRepositoryTests
             BumpLimit = 500,
             Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category,
-            CreatedBy = null,
         };
         dbContext.Threads.Add(thread);
 

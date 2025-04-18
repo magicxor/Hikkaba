@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Data.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 
 namespace Hikkaba.Data.Entities;
 
 [Table("Bans")]
-public class Ban
+public class Ban : IHasAuditColumns
 {
     [Key]
     public int Id { get; set; }

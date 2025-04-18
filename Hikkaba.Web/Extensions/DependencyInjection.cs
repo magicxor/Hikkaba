@@ -12,6 +12,7 @@ using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.Implementations;
+using Hikkaba.Infrastructure.Repositories.Implementations.Interceptors;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Shared.Services.Implementations;
@@ -59,7 +60,11 @@ internal static class DependencyInjection
                 options.EnableSensitiveDataLogging();
             }
 
-            options.UseSqlServer(connectionString, ContextConfiguration.SqlServerOptionsAction);
+            var auditColumnWriter = provider.GetRequiredService<IAuditColumnWriter>();
+
+            options
+                .UseSqlServer(connectionString, ContextConfiguration.SqlServerOptionsAction)
+                .AddInterceptors(auditColumnWriter);
         });
 
         return services;
@@ -80,6 +85,7 @@ internal static class DependencyInjection
 
     internal static IServiceCollection AddHikkabaRepositories(this IServiceCollection services)
     {
+        services.AddScoped<IAuditColumnWriter, AuditColumnWriter>();
         services.AddScoped<ISeedRepository, SeedRepository>();
         services.AddScoped<IMigrationRepository, MigrationRepository>();
         services.AddScoped<IAdministrationRepository, AdministrationRepository>();
