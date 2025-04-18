@@ -11,12 +11,15 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using TwentyTwenty.Storage;
 
 namespace Hikkaba.Application.Implementations;
 
 public sealed class AttachmentService : IAttachmentService
 {
+    private static readonly DecoderOptions DecoderOptions = new() { MaxFrames = 1 };
+
     private readonly IOptions<HikkabaConfiguration> _settings;
     private readonly IAttachmentCategorizer _attachmentCategorizer;
     private readonly IStorageProvider _storageProvider;
@@ -82,7 +85,7 @@ public sealed class AttachmentService : IAttachmentService
         FileStream tempFileStream,
         CancellationToken cancellationToken)
     {
-        using var image = await Image.LoadAsync(formFileStream, cancellationToken);
+        using var image = await Image.LoadAsync(DecoderOptions, formFileStream, cancellationToken);
         var width = image.Width;
         var height = image.Height;
 
