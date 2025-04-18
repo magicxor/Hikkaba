@@ -23,7 +23,6 @@ public static partial class ApplicationUserMapper
     [MapperIgnoreSource(nameof(ApplicationUser.CreatedAt))]
     [MapperIgnoreSource(nameof(ApplicationUser.CreatedBans))]
     [MapperIgnoreSource(nameof(ApplicationUser.CreatedCategories))]
-    [MapperIgnoreSource(nameof(ApplicationUser.CreatedPosts))]
     [MapperIgnoreSource(nameof(ApplicationUser.CreatedNotices))]
     [MapperIgnoreSource(nameof(ApplicationUser.ModifiedBans))]
     [MapperIgnoreSource(nameof(ApplicationUser.ModifiedCategories))]

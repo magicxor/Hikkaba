@@ -120,7 +120,6 @@ internal sealed class BanRepositoryTests
             BumpLimit = 500,
             Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category,
-            CreatedBy = null,
         };
         dbContext.Threads.Add(thread);
 
@@ -258,7 +257,6 @@ internal sealed class BanRepositoryTests
             BumpLimit = 500,
             Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category,
-            CreatedBy = null,
         };
         dbContext.Threads.Add(thread);
 

@@ -118,7 +118,6 @@ internal sealed class ThreadRepositoryTests
             BumpLimit = 500,
             Salt = GuidGenerator.GenerateSeededGuid(),
             Category = category,
-            CreatedBy = null,
         };
         dbContext.Threads.Add(thread);
 
@@ -388,7 +387,6 @@ internal sealed class ThreadRepositoryTests
                 BumpLimit = 500,
                 Salt = salt1,
                 Category = category1,
-                CreatedBy = null,
                 Posts =
                 [
                     new Post
@@ -415,7 +413,6 @@ internal sealed class ThreadRepositoryTests
                 BumpLimit = 500,
                 Salt = salt2,
                 Category = category2,
-                CreatedBy = null,
                 Posts =
                 [
                     new Post
@@ -445,7 +442,6 @@ internal sealed class ThreadRepositoryTests
                     BumpLimit = 500,
                     Salt = GuidGenerator.GenerateSeededGuid(),
                     Category = category1,
-                    CreatedBy = null,
                 })
                 .Union([deletedThread, anotherCategoryThread])
                 .ToList();
@@ -651,7 +647,6 @@ internal sealed class ThreadRepositoryTests
                 BumpLimit = 500,
                 Salt = salt1,
                 Category = category1,
-                CreatedBy = null,
                 Posts =
                 [
                     new Post
@@ -678,7 +673,6 @@ internal sealed class ThreadRepositoryTests
                 BumpLimit = 500,
                 Salt = salt2,
                 Category = category2,
-                CreatedBy = null,
                 Posts =
                 [
                     new Post
@@ -708,7 +702,6 @@ internal sealed class ThreadRepositoryTests
                     BumpLimit = 500,
                     Salt = GuidGenerator.GenerateSeededGuid(),
                     Category = category1,
-                    CreatedBy = null,
                 })
                 .Union([deletedThread, anotherCategoryThread])
                 .ToList();
@@ -919,7 +912,6 @@ internal sealed class ThreadRepositoryTests
                 BumpLimit = 500,
                 Salt = salt1,
                 Category = category1,
-                CreatedBy = null,
                 Posts =
                 [
                     new Post
@@ -946,7 +938,6 @@ internal sealed class ThreadRepositoryTests
                 BumpLimit = 500,
                 Salt = salt2,
                 Category = category2,
-                CreatedBy = null,
                 Posts =
                 [
                     new Post
@@ -976,7 +967,6 @@ internal sealed class ThreadRepositoryTests
                     BumpLimit = 500,
                     Salt = GuidGenerator.GenerateSeededGuid(),
                     Category = category1,
-                    CreatedBy = null,
                 })
                 .Union([deletedThread, anotherCategoryThread])
                 .ToList();
@@ -1005,7 +995,6 @@ internal sealed class ThreadRepositoryTests
                 BumpLimit = 500,
                 Salt = salt3,
                 Category = category1,
-                CreatedBy = null,
                 Posts = [postWithoutSage],
             };
             seedDbContext.Threads.Add(threadWithPostWithoutSage);
@@ -1205,7 +1194,6 @@ internal sealed class ThreadRepositoryTests
             BumpLimit = 500,
             Salt = salt1,
             Category = category1,
-            CreatedBy = null,
             Posts =
             [
                 new Post
@@ -1232,7 +1220,6 @@ internal sealed class ThreadRepositoryTests
             BumpLimit = 500,
             Salt = salt2,
             Category = category2,
-            CreatedBy = null,
             Posts =
             [
                 new Post

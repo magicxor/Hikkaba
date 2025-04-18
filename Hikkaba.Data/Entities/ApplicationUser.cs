@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Data.Contracts;
 using Hikkaba.Data.Entities.Attachments;
 using Microsoft.AspNetCore.Identity;
 
 namespace Hikkaba.Data.Entities;
 
-public class ApplicationUser : IdentityUser<int>
+public class ApplicationUser : IdentityUser<int>, IHasCreatedAt
 {
     [Required]
     public bool IsDeleted { get; set; }
@@ -23,9 +24,6 @@ public class ApplicationUser : IdentityUser<int>
 
     [InverseProperty(nameof(Category.CreatedBy))]
     public virtual ICollection<Category> CreatedCategories { get; set; } = new List<Category>();
-
-    [InverseProperty(nameof(Post.CreatedBy))]
-    public virtual ICollection<Post> CreatedPosts { get; set; } = new List<Post>();
 
     [InverseProperty(nameof(Notice.CreatedBy))]
     public virtual ICollection<Notice> CreatedNotices { get; set; } = new List<Notice>();

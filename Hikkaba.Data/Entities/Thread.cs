@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Data.Contracts;
 using Hikkaba.Shared.Constants;
 
 namespace Hikkaba.Data.Entities;
 
 [Table("Threads")]
-public class Thread
+public class Thread : IHasCreatedAt, IHasModifiedAt, IHasModifiedById
 {
     [Key]
     public long Id { get; set; }
@@ -45,9 +46,6 @@ public class Thread
     [ForeignKey(nameof(Category))]
     public int CategoryId { get; set; }
 
-    [ForeignKey(nameof(CreatedBy))]
-    public int? CreatedById { get; set; }
-
     [ForeignKey(nameof(ModifiedBy))]
     public int? ModifiedById { get; set; }
 
@@ -61,8 +59,6 @@ public class Thread
     }
 
     private Category? _category;
-
-    public virtual ApplicationUser? CreatedBy { get; set; }
 
     public virtual ApplicationUser? ModifiedBy { get; set; }
 
