@@ -257,3 +257,5 @@ Hikkaba.Web/wwwroot/AttachmentsStorage/
 Hikkaba.Web/seedconfig.json
 Hikkaba.Web/appsettings.json
 Hikkaba.Web/WwwRootSources/_output/
+
+.sonarqube/
