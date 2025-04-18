@@ -1,6 +1,6 @@
 ﻿namespace Hikkaba.Infrastructure.Repositories.Implementations.Interceptors;
 
-public record ChangedDbItemPropSm(
+public record ChangedDbItemPropModel(
     string Name,
     object? OriginalValue,
     object? CurrentValue

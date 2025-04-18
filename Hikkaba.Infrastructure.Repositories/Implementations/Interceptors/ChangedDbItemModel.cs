@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations.Interceptors;
 
-public record ChangedDbItemSm(
+public record ChangedDbItemModel(
     EntityEntry Entry,
     EntityState State,
-    IReadOnlyCollection<ChangedDbItemPropSm> ChangedProps
+    IReadOnlyCollection<ChangedDbItemPropModel> ChangedProps
 );
