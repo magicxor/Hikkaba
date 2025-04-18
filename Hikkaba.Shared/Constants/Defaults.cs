@@ -73,8 +73,6 @@ public static class Defaults
     public const int ThumbnailsMaxHeight = 200;
     public const int UserIdleTimeoutMinutes = 60;
 
-    public const int HikkabaStartEventId = 735060000;
-
     public const string AudioExtensions = "mp3,ogg,aac,m4a,opus";
     public const string PictureExtensions = "jpg,jpeg,png,gif,webp";
     public const string VideoExtensions = "webm,mp4";
