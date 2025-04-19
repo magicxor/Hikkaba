@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
@@ -22,6 +23,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Tests.Manual.Seed;
 
+[ExcludeFromCodeCoverage]
 internal sealed class CustomAppFactory
     : WebApplicationFactory<Web.Program>
 {

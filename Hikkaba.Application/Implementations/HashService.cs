@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Buffers;
+using System.Text;
 using Blake3;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Telemetry;
@@ -10,8 +11,25 @@ public sealed class HashService : IHashService
     public byte[] GetHashBytes(Stream inputStream)
     {
         using var activity = ApplicationTelemetry.HashServiceSource.StartActivity();
-        using var blake3Stream = new Blake3Stream(inputStream);
-        return blake3Stream.ComputeHash().AsSpan().ToArray();
+
+        const int bufferSize = 8192;
+        using var hasher = Hasher.New();
+        var sharedArrayPool = ArrayPool<byte>.Shared;
+        var buffer = sharedArrayPool.Rent(bufferSize);
+        Array.Fill<byte>(buffer, 0);
+        try
+        {
+            for (int read; (read = inputStream.Read(buffer, 0, buffer.Length)) != 0;)
+            {
+                hasher.Update(buffer.AsSpan(start: 0, read));
+            }
+
+            return hasher.Finalize().AsSpan().ToArray();
+        }
+        finally
+        {
+            sharedArrayPool.Return(buffer);
+        }
     }
 
     public byte[] GetHashBytes(string input)

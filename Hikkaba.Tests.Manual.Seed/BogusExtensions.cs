@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Bogus.DataSets;
 
 namespace Hikkaba.Tests.Manual.Seed;
 
+[ExcludeFromCodeCoverage]
 internal static class BogusExtensions
 {
     public static string Password(
