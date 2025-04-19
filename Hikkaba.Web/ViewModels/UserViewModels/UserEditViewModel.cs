@@ -26,6 +26,7 @@ public sealed class UserEditViewModel
     public required bool TwoFactorEnabled { get; set; }
 
     [Required]
+    [Display(Name = @"Roles")]
     public required IReadOnlyList<int> UserRoleIds { get; set; } = [];
 
     public IReadOnlyList<SelectListItem> AllExistingRoles { get; set; } = [];
