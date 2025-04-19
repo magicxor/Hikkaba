@@ -8,6 +8,10 @@
     <form asp-route="UserEditConfirm" method="post" class="form-horizontal" enctype="multipart/form-data">
       <h4 class="m-3">@ViewData["Title"]</h4>
 
+      <a class="decoration-on-hover" href="@Url.RouteUrl("UserIndex")">
+        <i class="bi bi-chevron-left"></i> Back to users
+      </a>
+
       <hr/>
 
       <div asp-validation-summary="All" class="text-danger"></div>
@@ -19,6 +23,7 @@
       @Html.EditorFor(m => m.LockoutEndDate, "DateTimeNullableEditViewModel", new { Label = "Lockout end date" })
       @Html.EditorFor(m => m.TwoFactorEnabled, "BooleanCheckbox", new { Label = "2FA enabled" })
 
+      <label asp-for="UserRoleIds" class="form-label">@Html.DisplayNameFor(m => m.UserRoleIds)</label>
       @Html.ListBoxFor(
         m => m.UserRoleIds,
         Model.AllExistingRoles,

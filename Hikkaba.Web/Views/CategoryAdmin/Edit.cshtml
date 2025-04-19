@@ -7,6 +7,11 @@
   <div class="col-md-8 offset-md-2">
     <form asp-route="CategoryEditConfirm" method="post" class="form-horizontal mt-3">
       <h4>@ViewData["Title"]</h4>
+
+      <a class="decoration-on-hover" href="@Url.RouteUrl("CategoryIndex")">
+        <i class="bi bi-chevron-left"></i> Back to categories
+      </a>
+
       <hr/>
 
       @Html.EditorFor(model => model)
