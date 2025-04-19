@@ -4,8 +4,10 @@ using Hikkaba.Application.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;
+using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.BoardViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc.Admin;
@@ -36,6 +38,13 @@ public sealed class BoardAdminController : BaseMvcController
         BoardViewModel boardViewModel,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return View("Edit", boardViewModel);
+        }
+
         await _boardService.EditBoardAsync(boardViewModel.Name, cancellationToken);
         return RedirectToRoute("AdminDashboard");
     }

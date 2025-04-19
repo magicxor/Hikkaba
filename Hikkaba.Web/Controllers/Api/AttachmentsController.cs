@@ -49,22 +49,20 @@ public sealed class AttachmentsController : ControllerBase
         {
             return StatusCode(StatusCodes.Status304NotModified);
         }
-        else
+
+        var fileName = blobId + "." + fileExtension;
+        if (getThumbnail)
         {
-            var fileName = blobId + "." + fileExtension;
-            if (getThumbnail)
-            {
-                blobId += Defaults.ThumbnailPostfix;
-            }
-            var contentType = GetContentTypeByFileName(fileName);
-            var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(blobContainerId, blobId);
-            var blobStream = await _storageProvider.GetBlobStreamAsync(blobContainerId, blobId);
-
-            HttpContext.Response.Headers[HeaderNames.ContentDisposition] = "inline; filename=" + fileName;
-            HttpContext.Response.ContentType = contentType;
-            HttpContext.Response.ContentLength = blobDescriptor.Length;
-
-            return new FileStreamResult(blobStream, contentType);
+            blobId += Defaults.ThumbnailPostfix;
         }
+        var contentType = GetContentTypeByFileName(fileName);
+        var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(blobContainerId, blobId);
+        var blobStream = await _storageProvider.GetBlobStreamAsync(blobContainerId, blobId);
+
+        HttpContext.Response.Headers[HeaderNames.ContentDisposition] = "inline; filename=" + fileName;
+        HttpContext.Response.ContentType = contentType;
+        HttpContext.Response.ContentLength = blobDescriptor.Length;
+
+        return new FileStreamResult(blobStream, contentType);
     }
 }

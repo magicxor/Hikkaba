@@ -12,6 +12,7 @@ using Hikkaba.Paging.Models;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Web.Mappings;
+using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.Controllers.Mvc;
@@ -38,6 +39,13 @@ public sealed class CategoryController : BaseMvcController
         [FromQuery] [Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var category = await _categoryService.GetCategoryAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {

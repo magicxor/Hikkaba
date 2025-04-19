@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Web.Controllers.Mvc.Base;
+using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc.Admin;
@@ -31,6 +33,13 @@ public sealed class PostAdminController : BaseMvcController
         [Required] [FromForm] [Range(1, long.MaxValue)] long threadId,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _postService.SetPostDeletedAsync(postId, isDeleted, cancellationToken);
 
         var redirectUrl = GetLocalReferrerOrRoute(

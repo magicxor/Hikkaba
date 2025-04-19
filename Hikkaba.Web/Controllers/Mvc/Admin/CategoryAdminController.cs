@@ -52,6 +52,13 @@ public sealed class CategoryAdminController : BaseMvcController
         [Required] [FromRoute] string categoryAlias,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var filter = new CategoryModeratorFilter
         {
             OrderBy = [nameof(UserDetailsModel.UserName)],
@@ -91,7 +98,7 @@ public sealed class CategoryAdminController : BaseMvcController
         {
             var errorMessage = ModelState.ModelErrorsToString();
             ViewBag.ErrorMessage = errorMessage;
-            return CustomErrorPage(StatusCodes.Status500InternalServerError, errorMessage, GetLocalReferrerOrNull());
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
         }
 
         await _categoryService.SetCategoryModeratorsAsync(
@@ -131,6 +138,7 @@ public sealed class CategoryAdminController : BaseMvcController
             ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
             return View("Create", viewModel);
         }
+
         var requestModel = viewModel.ToModel();
         await _categoryService.CreateCategoryAsync(requestModel, cancellationToken);
         return RedirectToRoute("CategoryIndex");
@@ -141,6 +149,13 @@ public sealed class CategoryAdminController : BaseMvcController
         [Required] [FromRoute] string categoryAlias,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var category = await _categoryService.GetCategoryAsync(categoryAlias, true, cancellationToken);
         if (category is null)
         {
@@ -179,6 +194,13 @@ public sealed class CategoryAdminController : BaseMvcController
         [Required] [FromForm] bool isDeleted,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _categoryService.SetCategoryDeletedAsync(categoryAlias, isDeleted, cancellationToken);
         return RedirectToRoute("CategoryIndex");
     }

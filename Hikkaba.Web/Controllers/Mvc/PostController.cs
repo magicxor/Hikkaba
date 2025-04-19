@@ -55,6 +55,13 @@ public sealed class PostController : BaseMvcController
         long threadId,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var filter = new CategoryThreadFilter
         {
             CategoryAlias = categoryAlias,
@@ -192,31 +199,29 @@ public sealed class PostController : BaseMvcController
         {
             return RedirectToRoute("HomeIndex", new { message = ModelState.ModelErrorsToString() });
         }
-        else
+
+        var filter = new SearchPostsPagingFilter
         {
-            var filter = new SearchPostsPagingFilter
+            PageSize = size,
+            PageNumber = page,
+            OrderBy = new List<OrderByItem>
             {
-                PageSize = size,
-                PageNumber = page,
-                OrderBy = new List<OrderByItem>
-                {
-                    new() { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc },
-                    new() { Field = nameof(Post.Id), Direction = OrderByDirection.Desc },
-                },
-                SearchQuery = request.Query,
-            };
+                new() { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc },
+                new() { Field = nameof(Post.Id), Direction = OrderByDirection.Desc },
+            },
+            SearchQuery = request.Query,
+        };
 
-            var result = await _postService.SearchPostsPaginatedAsync(filter, cancellationToken);
+        var result = await _postService.SearchPostsPaginatedAsync(filter, cancellationToken);
 
-            var posts = new PagedResult<PostDetailsViewModel>(result.Data.ToViewModels(), filter, result.TotalItemCount);
+        var posts = new PagedResult<PostDetailsViewModel>(result.Data.ToViewModels(), filter, result.TotalItemCount);
 
-            var vm = new PostSearchResultViewModel
-            {
-                Query = request.Query,
-                Posts = posts,
-            };
+        var vm = new PostSearchResultViewModel
+        {
+            Query = request.Query,
+            Posts = posts,
+        };
 
-            return View(vm);
-        }
+        return View(vm);
     }
 }
