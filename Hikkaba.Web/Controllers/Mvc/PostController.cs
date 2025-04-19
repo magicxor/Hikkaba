@@ -96,89 +96,87 @@ public sealed class PostController : BaseMvcController
         PostAnonymousCreateViewModel viewModel,
         CancellationToken cancellationToken)
     {
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                var postCreateRm = new PostCreateRequestModel
-                {
-                    BlobContainerId = Guid.NewGuid(),
-                    IsSageEnabled = viewModel.IsSageEnabled,
-                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, viewModel.ThreadId, viewModel.Message ?? string.Empty),
-                    MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message ?? string.Empty),
-                    UserIpAddress = UserIpAddressBytes,
-                    UserAgent = UserAgent.TryLeft(Defaults.MaxUserAgentLength),
-                    CategoryAlias = viewModel.CategoryAlias,
-                    ThreadId = viewModel.ThreadId,
-                    MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message ?? string.Empty),
-                };
-
-                if (postCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)
-                {
-                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageTextLength} characters.");
-                    return View("Create", viewModel);
-                }
-
-                if (postCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
-                {
-                    ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
-                    return View("Create", viewModel);
-                }
-
-                var postCreateResult = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments ?? new FormFileCollection(), cancellationToken);
-
-                var actionResult = postCreateResult.Match<IActionResult>(
-                    success =>
-                    {
-                        _logger.LogDebug(
-                            LogEventIds.PostCreated,
-                            "Post created. ThreadId: {ThreadId}, PostId: {PostId}, CategoryAlias: {CategoryAlias}",
-                            viewModel.ThreadId,
-                            success,
-                            viewModel.CategoryAlias);
-
-                        return LocalRedirect(
-                            Url.RouteUrl(
-                                "ThreadDetails",
-                                new
-                                {
-                                    categoryAlias = viewModel.CategoryAlias,
-                                    threadId = viewModel.ThreadId,
-                                }) + "#" + success);
-                    },
-                    err =>
-                    {
-                        _logger.LogError(
-                            LogEventIds.PostCreateError,
-                            "Error creating post. CategoryAlias: {CategoryAlias}, ThreadId: {ThreadId}, Error: {Error}",
-                            viewModel.CategoryAlias,
-                            viewModel.ThreadId,
-                            err.ErrorMessage);
-
-                        ViewBag.ErrorMessage = err.ErrorMessage;
-                        return View("Create", viewModel);
-                    });
-
-                return actionResult;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(
-                    LogEventIds.PostCreateError,
-                    e,
-                    "Error creating post in category '{CategoryAlias}'. ThreadId: {ThreadId}, Message length: {MessageLength}, AttachmentsCount: {AttachmentsCount}",
-                    categoryAlias,
-                    viewModel.ThreadId,
-                    viewModel.Message?.Length ?? 0,
-                    viewModel.Attachments?.Count);
-
-                ViewBag.ErrorMessage = "Error occurred while creating a post. Please try again.";
-                return View("Create", viewModel);
-            }
-        }
-        else
+        if (!ModelState.IsValid)
         {
             ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+            return View("Create", viewModel);
+        }
+
+        try
+        {
+            var postCreateRm = new PostCreateRequestModel
+            {
+                BlobContainerId = Guid.NewGuid(),
+                IsSageEnabled = viewModel.IsSageEnabled,
+                MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, viewModel.ThreadId, viewModel.Message ?? string.Empty),
+                MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message ?? string.Empty),
+                UserIpAddress = UserIpAddressBytes,
+                UserAgent = UserAgent.TryLeft(Defaults.MaxUserAgentLength),
+                CategoryAlias = viewModel.CategoryAlias,
+                ThreadId = viewModel.ThreadId,
+                MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message ?? string.Empty),
+            };
+
+            if (postCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)
+            {
+                ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageTextLength} characters.");
+                return View("Create", viewModel);
+            }
+
+            if (postCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
+            {
+                ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
+                return View("Create", viewModel);
+            }
+
+            var postCreateResult = await _postService.CreatePostAsync(postCreateRm, viewModel.Attachments ?? new FormFileCollection(), cancellationToken);
+
+            var actionResult = postCreateResult.Match<IActionResult>(
+                success =>
+                {
+                    _logger.LogDebug(
+                        LogEventIds.PostCreated,
+                        "Post created. ThreadId: {ThreadId}, PostId: {PostId}, CategoryAlias: {CategoryAlias}",
+                        viewModel.ThreadId,
+                        success,
+                        viewModel.CategoryAlias);
+
+                    return LocalRedirect(
+                        Url.RouteUrl(
+                            "ThreadDetails",
+                            new
+                            {
+                                categoryAlias = viewModel.CategoryAlias,
+                                threadId = viewModel.ThreadId,
+                            }) + "#" + success);
+                },
+                err =>
+                {
+                    _logger.LogError(
+                        LogEventIds.PostCreateError,
+                        "Error creating post. CategoryAlias: {CategoryAlias}, ThreadId: {ThreadId}, Error: {Error}",
+                        viewModel.CategoryAlias,
+                        viewModel.ThreadId,
+                        err.ErrorMessage);
+
+                    ViewBag.ErrorMessage = err.ErrorMessage;
+                    return View("Create", viewModel);
+                });
+
+            return actionResult;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                LogEventIds.PostCreateError,
+                e,
+                "Error creating post in category '{CategoryAlias}'. ThreadId: {ThreadId}, Message length: {MessageLength}, AttachmentsCount: {AttachmentsCount}",
+                categoryAlias,
+                viewModel.ThreadId,
+                viewModel.Message?.Length ?? 0,
+                viewModel.Attachments?.Count);
+
+            ViewBag.ErrorMessage = "Error occurred while creating a post. Please try again.";
             return View("Create", viewModel);
         }
     }

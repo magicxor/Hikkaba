@@ -14,6 +14,8 @@ public interface IThreadRepository
 
     Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateExtendedRequestModel createRequestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
 
+    Task<ThreadPatchResultModel> EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken);
+
     Task<ThreadPatchResultModel> SetThreadPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken);
 
     Task<ThreadPatchResultModel> SetThreadCyclicAsync(long threadId, bool isCyclic, CancellationToken cancellationToken);

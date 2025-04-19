@@ -19,11 +19,6 @@ public sealed class CategoryService : ICategoryService
         return await _categoryRepository.ListCategoriesAsync(filter, cancellationToken);
     }
 
-    public async Task<CategoryModeratorsModel> ListCategoryModeratorsAsync(CategoryModeratorsFilter filter, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<CategoryDetailsModel?> GetCategoryAsync(string alias, bool includeDeleted, CancellationToken cancellationToken)
     {
         return await _categoryRepository.GetCategoryAsync(alias, includeDeleted, cancellationToken);

@@ -150,9 +150,9 @@ public sealed class ThreadService : IThreadService
         }
     }
 
-    public async Task EditThreadAsync(ThreadEditRequestModel requestModel, CancellationToken cancellationToken)
+    public async Task<ThreadPatchResultModel> EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _threadRepository.EditThreadAsync(editRequestModel, cancellationToken);
     }
 
     public async Task<ThreadPatchResultModel> SetThreadPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken)

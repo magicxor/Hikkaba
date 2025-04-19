@@ -1,0 +1,26 @@
+﻿@model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadEditViewModel
+@{
+  ViewData["Title"] = $"Edit thread {Model.Id}";
+}
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="ThreadEditConfirm" asp-route-threadId="@Model.Id" method="post" class="form-horizontal">
+      <h4>@ViewData["Title"]</h4>
+
+      <hr/>
+
+      <div asp-validation-summary="All" class="text-danger"></div>
+
+      <input asp-for="Id" type="hidden"/>
+      <input asp-for="CategoryAlias" type="hidden"/>
+
+      @Html.EditorFor(x => x.Title, "StringEditViewModel")
+      @Html.EditorFor(x => x.BumpLimit, "IntEditViewModel")
+
+      <div class="form-group">
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
