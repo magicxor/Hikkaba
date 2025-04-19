@@ -4,22 +4,10 @@
     ViewData["Title"] = "Administration panel";
 }
 
-<h2 class="text-center">@Html.DisplayNameFor(model => model.Board)</h2>
-
-<table class="table table-bordered">
-  <thead>
-  <tr>
-    <th class="text-center">@Html.DisplayNameFor(model => model.Board)</th>
-    <th class="text-center">Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td class="text-center">@Html.DisplayFor(model => model.Board.Name)</td>
-    <td class="text-center">@Html.RouteLink("Edit", "BoardEdit", new { id = Model.Board.Id }, new { @class = "decoration-on-hover" })</td>
-  </tr>
-  </tbody>
-</table>
+<h2 class="text-center m-3">
+  @Html.RouteLink("Board", "BoardEdit", new { id = Model.Board.Id }, new { @class = "decoration-on-hover" })
+</h2>
+<hr />
 
 <h2 class="text-center m-3">
   @Html.RouteLink("Categories", "CategoryIndex", new {}, new { @class = "decoration-on-hover" })

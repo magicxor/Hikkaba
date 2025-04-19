@@ -4,17 +4,17 @@
     ViewData["Title"] = $"Edit board";
 }
 
-<form asp-route="BoardEditConfirm" method="post" class="form-horizontal">
-    <h4>@ViewData["Title"]</h4>
-    <hr />
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <form asp-route="BoardEditConfirm" method="post" class="form-horizontal">
+      <h4>@ViewData["Title"]</h4>
+      <hr />
 
-    <div class="mb-3">
-      @Html.EditorFor(model => model)
-    </div>
+      <div class="mb-3">
+        @Html.EditorFor(model => model)
+      </div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </div>
-    </div>
-</form>
+      <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+    </form>
+  </div>
+</div>
