@@ -73,14 +73,11 @@ internal static class RateLimiterFactory
                 if (method.Equals(endpointLimit.Method, StringComparison.Ordinal)
                     && path.StartsWith(endpointLimit.Path, StringComparison.Ordinal))
                 {
-                    // Console.WriteLine($"ROUTE MATCHED: Rate limit for {path} {method} is {endpointLimit.SlidingWindowOptions.PermitLimit} per {endpointLimit.SlidingWindowOptions.Window.TotalSeconds} seconds");
                     return CreateSlidingRateLimitPartition(
                         $"{httpContext.Connection.RemoteIpAddress}-{endpointLimit.PartitionName}",
                         endpointLimit.SlidingWindowOptions);
                 }
             }
-
-            // Console.WriteLine($"NO MATCH FOR ROUTE: Rate limit for {path} {method} is {DefaultSlidingWindowOptions.PermitLimit} per {DefaultSlidingWindowOptions.Window.TotalSeconds} seconds");
 
             return CreateSlidingRateLimitPartition(
                 $"{httpContext.Connection.RemoteIpAddress}",
