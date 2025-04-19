@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Hikkaba.Tests.Manual.Seed;
 
+[ExcludeFromCodeCoverage]
 internal sealed class GuidGenerator
 {
     private readonly Random _random;
