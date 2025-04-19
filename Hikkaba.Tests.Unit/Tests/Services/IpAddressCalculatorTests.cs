@@ -1,3 +1,4 @@
+using System.Net;
 using Hikkaba.Application.Implementations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -103,6 +104,28 @@ internal sealed class IpAddressCalculatorTests
     {
         var ipAddressCalculator = new IpAddressCalculator(NullLogger);
         var actualResult = ipAddressCalculator.IsInRange(networkAddress, ipAddress);
+        Assert.That(actualResult, Is.EqualTo(expectedResult));
+    }
+
+    [TestCase("127.0.0.1", true)]
+    [TestCase("10.0.0.1", true)]
+    [TestCase("10.2.0.1", true)]
+    [TestCase("172.16.0.1", true)]
+    [TestCase("172.16.30.6", true)]
+    [TestCase("192.168.0.1", true)]
+    [TestCase("192.168.10.1", true)]
+    [TestCase("::1", true)]
+    [TestCase("0:0:0:0:0:0:0:1", true)]
+    [TestCase("fe80::ad88:a298:5114:18bb", true)]
+    [TestCase("fd12:3456:789a:1::1", true)]
+    [TestCase("192.169.120.30", false)]
+    [TestCase(SomePublicIpv4, false)]
+    [TestCase(SomePublicIpv6, false)]
+    public void TestIsPrivate(string ipAddressStr, bool expectedResult)
+    {
+        var ipAddressCalculator = new IpAddressCalculator(NullLogger);
+        var ipAddress = IPAddress.Parse(ipAddressStr);
+        var actualResult = ipAddressCalculator.IsPrivate(ipAddress);
         Assert.That(actualResult, Is.EqualTo(expectedResult));
     }
 }
