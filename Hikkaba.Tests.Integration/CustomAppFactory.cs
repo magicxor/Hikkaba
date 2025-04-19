@@ -86,14 +86,18 @@ internal sealed class CustomAppFactory
                         options.EnableSensitiveDataLogging();
                     }
 
-                    options
-                        .UseSqlServer(_connectionString, ContextConfiguration.SqlServerOptionsAction)
-                        .LogTo((eventId, logLevel) => logLevel >= LogLevel.Trace,
+                    options.UseSqlServer(_connectionString, ContextConfiguration.SqlServerOptionsAction);
+
+                    var isQueryLoggingEnabled = bool.Parse("false");
+                    if (isQueryLoggingEnabled)
+                    {
+                        options.LogTo((eventId, logLevel) => logLevel >= LogLevel.Trace,
                             eventData =>
                             {
                                 TestLogUtils.WriteProgressMessage(eventData.ToString());
                                 TestLogUtils.WriteConsoleMessage(eventData.ToString());
                             });
+                    }
                 });
 
                 services.AddDataProtection(options => options

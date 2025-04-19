@@ -107,13 +107,7 @@ internal sealed class CustomAppFactory
 
                     options
                         .UseInMemoryDatabase("HikkabaInMemoryDb")
-                        .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                        .LogTo((eventId, logLevel) => logLevel >= LogLevel.Trace,
-                            eventData =>
-                            {
-                                TestLogUtils.WriteProgressMessage(eventData.ToString());
-                                TestLogUtils.WriteConsoleMessage(eventData.ToString());
-                            });
+                        .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning));
                 });
 
                 services.AddDataProtection(options => options
