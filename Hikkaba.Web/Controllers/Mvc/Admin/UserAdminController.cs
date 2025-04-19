@@ -109,6 +109,13 @@ public sealed class UserAdminController : BaseMvcController
         [Required] [FromRoute] int userId,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var user = await _userService.GetUserAsync(userId, cancellationToken);
         if (user is null)
         {
@@ -174,6 +181,13 @@ public sealed class UserAdminController : BaseMvcController
         [Required] [FromForm] bool isDeleted,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _userService.SetUserDeletedAsync(userId, isDeleted, cancellationToken);
         return RedirectToRoute("UserIndex");
     }

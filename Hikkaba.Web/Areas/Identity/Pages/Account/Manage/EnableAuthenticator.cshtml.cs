@@ -140,10 +140,8 @@ public class EnableAuthenticatorModel : PageModel
             RecoveryCodes = recoveryCodes?.ToArray() ?? [];
             return RedirectToPage("./ShowRecoveryCodes");
         }
-        else
-        {
-            return RedirectToPage("./TwoFactorAuthentication");
-        }
+
+        return RedirectToPage("./TwoFactorAuthentication");
     }
 
     private async Task LoadSharedKeyAndQrCodeUriAsync(ApplicationUser user)

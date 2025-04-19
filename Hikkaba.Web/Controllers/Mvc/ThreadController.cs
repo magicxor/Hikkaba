@@ -49,6 +49,13 @@ public sealed class ThreadController : BaseMvcController
         long threadId,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var threadPosts = await _threadService.GetThreadDetailsAsync(threadId, cancellationToken);
 
         if (threadPosts is null)
@@ -71,6 +78,13 @@ public sealed class ThreadController : BaseMvcController
         string categoryAlias,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var category = await _categoryService.GetCategoryAsync(categoryAlias, false, cancellationToken);
         if (category is null)
         {
@@ -101,90 +115,88 @@ public sealed class ThreadController : BaseMvcController
         [Required] ThreadAnonymousCreateViewModel viewModel,
         CancellationToken cancellationToken)
     {
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                var messagePlainText = _messagePostProcessor.MessageToPlainText(viewModel.Message);
-                var threadTitle = string.IsNullOrWhiteSpace(viewModel.Title)
-                    ? messagePlainText.Cut(Defaults.MaxTitleLength)
-                    : viewModel.Title.Cut(Defaults.MaxTitleLength);
-
-                var threadCreateRm = new ThreadCreateRequestModel
-                {
-                    CategoryAlias = viewModel.CategoryAlias,
-                    ThreadTitle = threadTitle,
-                    BlobContainerId = Guid.NewGuid(),
-                    MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, null, viewModel.Message),
-                    MessageText = messagePlainText,
-                    UserIpAddress = UserIpAddressBytes,
-                    UserAgent = UserAgent,
-                };
-
-                if (threadCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)
-                {
-                    ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageTextLength} characters.");
-                    return View("Create", viewModel);
-                }
-
-                if (threadCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
-                {
-                    ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
-                    return View("Create", viewModel);
-                }
-
-                var threadCreateResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
-
-                var actionResult = threadCreateResult.Match<IActionResult>(
-                    success =>
-                    {
-                        _logger.LogDebug(
-                            LogEventIds.ThreadCreated,
-                            "Thread created. ThreadId: {ThreadId}, PostId: {PostId}, CategoryAlias: {CategoryAlias}",
-                            success.ThreadId,
-                            success.PostId,
-                            viewModel.CategoryAlias);
-
-                        return RedirectToRoute(
-                            "ThreadDetails",
-                            new
-                            {
-                                categoryAlias = viewModel.CategoryAlias,
-                                threadId = success.ThreadId,
-                            });
-                    },
-                    err =>
-                    {
-                        _logger.LogError(
-                            LogEventIds.ThreadCreateError,
-                            "Error creating thread. CategoryAlias: {CategoryAlias}, Error: {Error}",
-                            viewModel.CategoryAlias,
-                            err.ErrorMessage);
-
-                        ViewBag.ErrorMessage = err.ErrorMessage;
-                        return View("Create", viewModel);
-                    });
-
-                return actionResult;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    LogEventIds.ThreadCreateError,
-                    ex,
-                    "Error creating thread in category '{CategoryAlias}'. Title: '{Title}', Message length: {MessageLength}, Attachments count: {AttachmentsCount}",
-                    categoryAlias,
-                    viewModel.Title,
-                    viewModel.Message.Length,
-                    viewModel.Attachments.Count);
-
-                ViewBag.ErrorMessage = "Error occurred while creating a thread. Please try again.";
-                return View("Create", viewModel);
-            }
-        }
-        else
+        if (!ModelState.IsValid)
         {
             ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+            return View("Create", viewModel);
+        }
+
+        try
+        {
+            var messagePlainText = _messagePostProcessor.MessageToPlainText(viewModel.Message);
+            var threadTitle = string.IsNullOrWhiteSpace(viewModel.Title)
+                ? messagePlainText.Cut(Defaults.MaxTitleLength)
+                : viewModel.Title.Cut(Defaults.MaxTitleLength);
+
+            var threadCreateRm = new ThreadCreateRequestModel
+            {
+                CategoryAlias = viewModel.CategoryAlias,
+                ThreadTitle = threadTitle,
+                BlobContainerId = Guid.NewGuid(),
+                MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, null, viewModel.Message),
+                MessageText = messagePlainText,
+                UserIpAddress = UserIpAddressBytes,
+                UserAgent = UserAgent,
+            };
+
+            if (threadCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)
+            {
+                ModelState.AddModelError(nameof(viewModel.Message), $"Message text is too long. Maximum length is {Defaults.MaxMessageTextLength} characters.");
+                return View("Create", viewModel);
+            }
+
+            if (threadCreateRm.MessageHtml.Length > Defaults.MaxMessageHtmlLength)
+            {
+                ModelState.AddModelError(nameof(viewModel.Message), $"Resulting HTML is too long. Maximum length is {Defaults.MaxMessageHtmlLength} characters.");
+                return View("Create", viewModel);
+            }
+
+            var threadCreateResult = await _threadService.CreateThreadAsync(threadCreateRm, viewModel.Attachments, cancellationToken);
+
+            var actionResult = threadCreateResult.Match<IActionResult>(
+                success =>
+                {
+                    _logger.LogDebug(
+                        LogEventIds.ThreadCreated,
+                        "Thread created. ThreadId: {ThreadId}, PostId: {PostId}, CategoryAlias: {CategoryAlias}",
+                        success.ThreadId,
+                        success.PostId,
+                        viewModel.CategoryAlias);
+
+                    return RedirectToRoute(
+                        "ThreadDetails",
+                        new
+                        {
+                            categoryAlias = viewModel.CategoryAlias,
+                            threadId = success.ThreadId,
+                        });
+                },
+                err =>
+                {
+                    _logger.LogError(
+                        LogEventIds.ThreadCreateError,
+                        "Error creating thread. CategoryAlias: {CategoryAlias}, Error: {Error}",
+                        viewModel.CategoryAlias,
+                        err.ErrorMessage);
+
+                    ViewBag.ErrorMessage = err.ErrorMessage;
+                    return View("Create", viewModel);
+                });
+
+            return actionResult;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                LogEventIds.ThreadCreateError,
+                ex,
+                "Error creating thread in category '{CategoryAlias}'. Title: '{Title}', Message length: {MessageLength}, Attachments count: {AttachmentsCount}",
+                categoryAlias,
+                viewModel.Title,
+                viewModel.Message.Length,
+                viewModel.Attachments.Count);
+
+            ViewBag.ErrorMessage = "Error occurred while creating a thread. Please try again.";
             return View("Create", viewModel);
         }
     }

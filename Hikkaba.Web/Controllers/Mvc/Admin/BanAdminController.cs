@@ -40,6 +40,13 @@ public sealed class BanAdminController : BaseMvcController
         [FromRoute] [Range(1, int.MaxValue)] int id,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var ban = await _banService.GetBanAsync(id, cancellationToken);
         if (ban is null)
         {
@@ -59,6 +66,13 @@ public sealed class BanAdminController : BaseMvcController
         [FromQuery] [Range(1, 100)] int size = 10,
         CancellationToken cancellationToken = default)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var filter = new BanPagingFilter
         {
             EndsNotBefore = _timeProvider.GetUtcNow().UtcDateTime,
@@ -85,6 +99,13 @@ public sealed class BanAdminController : BaseMvcController
         [FromQuery] [Range(1, long.MaxValue)] long postId,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var prerequisites = await _banCreationPrerequisiteService.GetPrerequisitesAsync(postId, threadId, cancellationToken);
 
         switch (prerequisites.Status)
@@ -169,29 +190,7 @@ public sealed class BanAdminController : BaseMvcController
         [Required] BanCreateViewModel viewModel,
         CancellationToken cancellationToken)
     {
-        if (ModelState.IsValid)
-        {
-            var command = new BanCreateCommand
-            {
-                EndsAt = viewModel.EndsAt,
-                BannedIpAddress = viewModel.BannedIpAddress,
-                BanByNetwork = viewModel.BanByNetwork,
-                BanInAllCategories = viewModel.BanInAllCategories,
-                AdditionalAction = viewModel.AdditionalAction,
-                Reason = viewModel.Reason,
-                RelatedPostId = viewModel.RelatedPostId,
-                RelatedThreadId = viewModel.RelatedThreadId,
-                CategoryAlias = viewModel.CategoryAlias,
-            };
-            var resultModel = await _banService.CreateBanAsync(command, cancellationToken);
-
-            var result = resultModel.Match(
-                success => RedirectToRoute("BanDetails", new { id = success.BanId }),
-                err => CustomErrorPage(err.StatusCode, err.ErrorMessage, GetLocalReferrerOrNull()));
-
-            return result;
-        }
-        else
+        if (!ModelState.IsValid)
         {
             ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
 
@@ -272,6 +271,26 @@ public sealed class BanAdminController : BaseMvcController
 
             return View("Create", vm);
         }
+
+        var command = new BanCreateCommand
+        {
+            EndsAt = viewModel.EndsAt,
+            BannedIpAddress = viewModel.BannedIpAddress,
+            BanByNetwork = viewModel.BanByNetwork,
+            BanInAllCategories = viewModel.BanInAllCategories,
+            AdditionalAction = viewModel.AdditionalAction,
+            Reason = viewModel.Reason,
+            RelatedPostId = viewModel.RelatedPostId,
+            RelatedThreadId = viewModel.RelatedThreadId,
+            CategoryAlias = viewModel.CategoryAlias,
+        };
+        var resultModel = await _banService.CreateBanAsync(command, cancellationToken);
+
+        var result = resultModel.Match(
+            success => RedirectToRoute("BanDetails", new { id = success.BanId }),
+            err => CustomErrorPage(err.StatusCode, err.ErrorMessage, GetLocalReferrerOrNull()));
+
+        return result;
     }
 
     [HttpGet("{id:int}/delete", Name = "BanDelete")]
@@ -279,6 +298,13 @@ public sealed class BanAdminController : BaseMvcController
         [FromRoute] [Range(1, int.MaxValue)] int id,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var ban = await _banService.GetBanAsync(id, cancellationToken);
         var viewModel = ban?.ToViewModel();
         return View(viewModel);
@@ -290,6 +316,13 @@ public sealed class BanAdminController : BaseMvcController
         [FromRoute] [Range(1, int.MaxValue)] int id,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _banService.SetBanDeletedAsync(id, true, cancellationToken);
         return RedirectToRoute("BanIndex");
     }

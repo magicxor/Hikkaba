@@ -320,9 +320,6 @@ dotnet_diagnostic.S1075.severity = suggestion
 # S3358 : Extract this nested ternary operation into an independent statement.
 dotnet_diagnostic.S3358.severity = suggestion
 
-# S6967 : ModelState.IsValid should be checked in controller actions.
-dotnet_diagnostic.S6967.severity = suggestion
-
 # CA1819: Properties should not return arrays
 dotnet_diagnostic.CA1819.severity = suggestion
 

@@ -5,6 +5,7 @@ using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.ErrorViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -27,6 +28,11 @@ public sealed class ErrorController : Controller
     [SuppressMessage("Security", "CA5395:Miss HttpVerb attribute for action methods", Justification = "This is acceptable for the error controller.")]
     public IActionResult Index([Required] [Range(1, 999)] int statusCode)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
         var (statusCodeName, statusCodeDescription, _) = StatusCodeUtils.GetDetails(statusCode);
 
         var vm = new StatusCodeViewModel

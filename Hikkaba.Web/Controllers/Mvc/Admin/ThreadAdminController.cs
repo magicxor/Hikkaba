@@ -33,6 +33,13 @@ public sealed class ThreadAdminController : BaseMvcController
         long threadId,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         var thread = await _threadService.GetThreadDetailsAsync(threadId, cancellationToken);
         if (thread is null)
         {
@@ -101,6 +108,13 @@ public sealed class ThreadAdminController : BaseMvcController
         [Required] [FromForm] [MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _threadService.SetThreadPinnedAsync(threadId, isPinned, cancellationToken);
 
         var redirectUrl = GetLocalReferrerOrRoute(
@@ -122,6 +136,13 @@ public sealed class ThreadAdminController : BaseMvcController
         [Required] [FromForm] [MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _threadService.SetThreadCyclicAsync(threadId, isCyclic, cancellationToken);
 
         var redirectUrl = GetLocalReferrerOrRoute(
@@ -143,6 +164,13 @@ public sealed class ThreadAdminController : BaseMvcController
         [Required] [FromForm] [MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _threadService.SetThreadClosedAsync(threadId, isClosed, cancellationToken);
 
         var redirectUrl = GetLocalReferrerOrRoute(
@@ -164,6 +192,13 @@ public sealed class ThreadAdminController : BaseMvcController
         [Required] [FromForm] [MaxLength(Defaults.MaxCategoryAliasLength)] string categoryAlias,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.ModelErrorsToString();
+            ViewBag.ErrorMessage = errorMessage;
+            return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
+        }
+
         await _threadService.SetThreadDeletedAsync(threadId, isDeleted, cancellationToken);
 
         var redirectUrl = GetLocalReferrerOrRoute(
