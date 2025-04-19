@@ -14,7 +14,7 @@ public interface IThreadService
 
     Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateRequestModel requestModel, IFormFileCollection attachments, CancellationToken cancellationToken);
 
-    Task EditThreadAsync(ThreadEditRequestModel requestModel, CancellationToken cancellationToken);
+    Task<ThreadPatchResultModel> EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken);
 
     Task<ThreadPatchResultModel> SetThreadPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken);
 

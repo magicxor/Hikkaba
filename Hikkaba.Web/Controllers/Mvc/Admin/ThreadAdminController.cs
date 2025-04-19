@@ -3,9 +3,14 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Web.Controllers.Mvc.Base;
+using Hikkaba.Web.Mappings;
+using Hikkaba.Web.Utils;
+using Hikkaba.Web.ViewModels.ThreadsViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Controllers.Mvc.Admin;
@@ -20,6 +25,72 @@ public sealed class ThreadAdminController : BaseMvcController
         IThreadService threadService)
     {
         _threadService = threadService;
+    }
+
+    [HttpGet("{threadId:long}", Name = "ThreadEdit")]
+    public async Task<IActionResult> Edit(
+        [Required] [FromRoute] [Range(1, long.MaxValue)]
+        long threadId,
+        CancellationToken cancellationToken)
+    {
+        var thread = await _threadService.GetThreadDetailsAsync(threadId, cancellationToken);
+        if (thread is null)
+        {
+            var returnUrl = GetLocalReferrerOrNull();
+            return CustomErrorPage(
+                StatusCodes.Status404NotFound,
+                "The requested thread was not found.",
+                returnUrl);
+        }
+
+        var viewModel = thread.ToEditViewModel();
+        return View(viewModel);
+    }
+
+    [HttpPost("{threadId:long}", Name = "ThreadEditConfirm")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditConfirm(
+        [Required] [FromRoute] [Range(1, long.MaxValue)]
+        long threadId,
+        [Required] [FromForm]
+        ThreadEditViewModel viewModel,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.ErrorMessage = ModelState.ModelErrorsToString();
+            return View("Edit", viewModel);
+        }
+
+        var editRequestModel = viewModel.ToEditRequestModel();
+        var result = await _threadService.EditThreadAsync(editRequestModel, cancellationToken);
+
+        return result.Match(
+            _ =>
+            {
+                var returnUrl = GetLocalReferrerOrRoute(
+                    "ThreadDetails",
+                    new
+                    {
+                        categoryAlias = viewModel.CategoryAlias,
+                        threadId = threadId,
+                    }) ?? "/";
+                return LocalRedirect(returnUrl);
+            },
+            err =>
+            {
+                var returnUrl = GetLocalReferrerOrRoute(
+                    "ThreadDetails",
+                    new
+                    {
+                        categoryAlias = viewModel.CategoryAlias,
+                        threadId = threadId,
+                    });
+                return CustomErrorPage(
+                    err.StatusCode,
+                    err.ErrorMessage,
+                    returnUrl);
+            });
     }
 
     [HttpPost("{threadId:long}/set-pinned", Name = "ThreadSetPinned")]

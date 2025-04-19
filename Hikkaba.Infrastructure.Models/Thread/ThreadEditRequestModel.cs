@@ -2,5 +2,7 @@
 
 public sealed class ThreadEditRequestModel
 {
-    public required string ThreadTitle { get; set; }
+    public required long Id { get; set; }
+    public required string Title { get; set; }
+    public required int BumpLimit { get; set; }
 }

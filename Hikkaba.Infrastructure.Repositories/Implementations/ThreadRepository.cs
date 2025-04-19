@@ -414,6 +414,31 @@ public sealed class ThreadRepository : IThreadRepository
         };
     }
 
+    public async Task<ThreadPatchResultModel> EditThreadAsync(ThreadEditRequestModel editRequestModel, CancellationToken cancellationToken)
+    {
+        var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
+            .OrderBy(t => t.Id)
+            .FirstOrDefaultAsync(t => t.Id == editRequestModel.Id, cancellationToken);
+
+        if (thread is null)
+        {
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"Thread with id {editRequestModel.Id} not found",
+            };
+        }
+
+        thread.Title = editRequestModel.Title;
+        thread.BumpLimit = editRequestModel.BumpLimit;
+        thread.ModifiedAt = _timeProvider.GetUtcNow().UtcDateTime;
+
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+
+        return default(Success);
+    }
+
     public async Task<ThreadPatchResultModel> SetThreadPinnedAsync(long threadId, bool isPinned, CancellationToken cancellationToken)
     {
         var thread = await _applicationDbContext.Threads
@@ -432,6 +457,7 @@ public sealed class ThreadRepository : IThreadRepository
         thread.ModifiedAt = _timeProvider.GetUtcNow().UtcDateTime;
 
         await _applicationDbContext.SaveChangesAsync(cancellationToken);
+
         return default(Success);
     }
 

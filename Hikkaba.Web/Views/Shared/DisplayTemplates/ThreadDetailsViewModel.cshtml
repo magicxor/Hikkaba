@@ -41,6 +41,12 @@
           <div class="row">
             <div class="col-md-12">
               <div class="d-grid gap-2 d-md-block thread-moderation-panel" role="group">
+                <form asp-route="ThreadEdit" asp-route-threadId="@Model.Id" method="get" class="display-inline">
+                  <button type="submit" class="btn btn-outline-dark">
+                    <i class="bi-pencil" aria-hidden="true"></i>
+                    Edit
+                  </button>
+                </form>
                 <form asp-route="ThreadSetPinned" asp-route-threadId="@Model.Id" method="post" class="display-inline">
                   <input name="isPinned" type="hidden" value="@((!Model.IsPinned).ToString())"/>
                   <input name="categoryAlias" type="hidden" value="@(Model.CategoryAlias)"/>
