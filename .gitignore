@@ -259,3 +259,7 @@ Hikkaba.Web/appsettings.json
 Hikkaba.Web/WwwRootSources/_output/
 
 .sonarqube/
+
+coveragereport/
+
+FinalCoverageReport/

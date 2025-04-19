@@ -42,7 +42,25 @@ jobs:
         dotnet --version
 
     - name: Run tests
-      run: dotnet test $SOLUTION -s .runsettings --configuration $BUILD_CONFIG --framework ${{ matrix.dotnet.tfm }} --logger trx --results-directory "TestResults" /maxcpucount:1 /p:CollectCoverage=true /p:CoverletOutput="../TestResults/" /p:MergeWith="../TestResults/coverage.json" /p:CoverletOutputFormat="cobertura" --verbosity normal
+      run: |
+        dotnet tool install --global Microsoft.CodeCoverage.Console
+
+        dotnet test $SOLUTION -s .runsettings --configuration $BUILD_CONFIG --framework ${{ matrix.dotnet.tfm }} --logger trx --results-directory "TestResults" /maxcpucount:1 /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura" /p:CoverletOutput="./TestResults/coverage" --verbosity normal
+
+        MERGED_REPORT_PATH="./FinalCoverageReport/coverage.cobertura.xml"
+
+        echo "Creating directory: $(dirname "$MERGED_REPORT_PATH")"
+        mkdir -p "$(dirname "$MERGED_REPORT_PATH")"
+
+        echo "Searching for coverage files..."
+        find . -path '*/TestResults/coverage.cobertura.xml' -print0 | xargs -0 codecoverage merge -o "$MERGED_REPORT_PATH" -f cobertura
+
+        if [ $? -eq 0 ]; then
+          echo "Coverage files successfully merged into: $MERGED_REPORT_PATH"
+        else
+          echo "Error during coverage file merge."
+          exit 1
+        fi
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
