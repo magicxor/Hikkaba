@@ -115,8 +115,7 @@ internal static class DependencyInjection
         // general
         services.AddScoped<ISeedService, SeedService>();
         services.AddScoped<IMigrationService, MigrationService>();
-        services.AddScoped<IEmailSender, AuthMessageSender>();
-        services.AddScoped<ISmsSender, AuthMessageSender>();
+        services.AddScoped<IAuthMessageSender, AuthMessageSender>();
         services.AddScoped<IAdministrationService, AdministrationService>();
         services.AddScoped<IAttachmentCategorizer, AttachmentCategorizer>();
         services.AddScoped<IBanService, BanService>();
@@ -321,6 +320,7 @@ internal static class DependencyInjection
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddProcessInstrumentation()
+                    .AddMeter("mailkit.*")
                     .AddMeter("Hikkaba.*")
                     .AddOtlpExporter(options => options.Endpoint = otlpExporterUri));
         }
@@ -332,6 +332,7 @@ internal static class DependencyInjection
     {
         return services
             .AddSingleton<PostMetrics>()
-            .AddSingleton<ThreadMetrics>();
+            .AddSingleton<ThreadMetrics>()
+            .AddSingleton<AuthMessageSenderMetrics>();
     }
 }

@@ -39,6 +39,10 @@ internal class Startup
             .Bind(_configuration.GetSection(nameof(SeedConfiguration)))
             .ValidateDataAnnotations();
 
+        services.AddOptionsWithValidateOnStart<SmtpClientConfiguration>()
+            .Bind(_configuration.GetSection(nameof(SmtpClientConfiguration)))
+            .ValidateDataAnnotations();
+
         services.AddHikkabaDbContext(_configuration, _webHostEnvironment);
 
         services.AddDefaultIdentity<ApplicationUser>()

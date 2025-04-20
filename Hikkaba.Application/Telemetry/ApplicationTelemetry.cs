@@ -9,4 +9,5 @@ public static class ApplicationTelemetry
     public static readonly ActivitySource HashServiceSource = new("Hikkaba.Application.HashService");
     public static readonly ActivitySource HtmlUtilitiesSource = new("Hikkaba.Application.HtmlUtilities");
     public static readonly ActivitySource ThumbnailGeneratorSource = new("Hikkaba.Application.ThumbnailGenerator");
+    public static readonly ActivitySource AuthMessageSenderSource = new("Hikkaba.Application.AuthMessageSender");
 }
