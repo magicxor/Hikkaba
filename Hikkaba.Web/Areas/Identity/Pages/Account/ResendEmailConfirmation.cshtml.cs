@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Hikkaba.Application.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Hikkaba.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -21,9 +22,9 @@ namespace Hikkaba.Web.Areas.Identity.Pages.Account;
 public class ResendEmailConfirmationModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IEmailSender _emailSender;
+    private readonly IAuthMessageSender _emailSender;
 
-    public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+    public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IAuthMessageSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;

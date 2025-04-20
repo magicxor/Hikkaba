@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -30,14 +31,14 @@ public class RegisterModel : PageModel
     private readonly IUserStore<ApplicationUser> _userStore;
     private readonly IUserEmailStore<ApplicationUser> _emailStore;
     private readonly ILogger<RegisterModel> _logger;
-    private readonly IEmailSender _emailSender;
+    private readonly IAuthMessageSender _emailSender;
 
     public RegisterModel(
         UserManager<ApplicationUser> userManager,
         IUserStore<ApplicationUser> userStore,
         ApplicationSignInManager signInManager,
         ILogger<RegisterModel> logger,
-        IEmailSender emailSender)
+        IAuthMessageSender emailSender)
     {
         _userManager = userManager;
         _userStore = userStore;
@@ -72,6 +73,10 @@ public class RegisterModel : PageModel
     /// </summary>
     public class InputModel
     {
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -115,7 +120,7 @@ public class RegisterModel : PageModel
         {
             var user = CreateUser();
 
-            await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+            await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
             await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
             var result = await _userManager.CreateAsync(user, Input.Password);
 

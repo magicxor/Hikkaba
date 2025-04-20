@@ -73,6 +73,15 @@ internal sealed class CustomAppFactory
                         o.AdministratorEmail = "admin@example.com";
                         o.AdministratorPassword = "6fd71994-b5ca-4b17-aa4f-513a42dab5ad";
                     })
+                    .Configure<SmtpClientConfiguration>(o =>
+                    {
+                        o.Username = "test@mailhog.local";
+                        o.DisplayName = "Hikkaba";
+                        o.Password = "sdfn8439hIUHewinuihIO";
+                        o.Host = "localhost";
+                        o.Port = 65025;
+                        o.UseSecureConnection = false;
+                    })
                     .Configure<MemoryDistributedCacheOptions>(_ => { });
 
                 // fake Redis
