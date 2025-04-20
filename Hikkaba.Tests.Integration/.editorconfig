@@ -11,3 +11,6 @@ dotnet_diagnostic.CA1861.severity = none
 
 # VSTHRD200: Use "Async" suffix in names of methods that return an awaitable type
 dotnet_diagnostic.VSTHRD200.severity = none
+
+# EPC20: A default ToString implementation is used for type ?
+dotnet_diagnostic.EPC20.severity = suggestion
