@@ -27,12 +27,6 @@ internal static class TestDbUtils
     {
         var dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlServer(connectionString, ContextConfiguration.SqlServerOptionsAction)
-            .LogTo((eventId, logLevel) => logLevel >= LogLevel.Trace,
-                eventData =>
-                {
-                    TestLogUtils.WriteProgressMessage(eventData.ToString());
-                    TestLogUtils.WriteConsoleMessage(eventData.ToString());
-                })
             .Options;
         return new ApplicationDbContext(dbContextOptions);
     }
