@@ -42,6 +42,8 @@ public sealed class SystemInfoService
 
     public SystemInfoModel GetSystemInfo()
     {
+        var process = Process.GetCurrentProcess();
+
         return new SystemInfoModel
         {
             DatabaseProvider = _applicationDbContext.Database.ProviderName ?? string.Empty,
@@ -50,7 +52,11 @@ public sealed class SystemInfoService
             OsDescription = RuntimeInformation.OSDescription,
             ProcessArchitecture = RuntimeInformation.ProcessArchitecture,
             OsPlatform = GetOsPlatform(),
-            MemoryUsage = Process.GetCurrentProcess().WorkingSet64,
+            WorkingSet64 = process.WorkingSet64,
+            PrivateMemorySize64 = process.PrivateMemorySize64,
+            PagedMemorySize64 = process.PagedMemorySize64,
+            PeakWorkingSet64 = process.PeakWorkingSet64,
+            PeakPagedMemorySize64 = process.PeakPagedMemorySize64,
             ProcessorCount = Environment.ProcessorCount,
             UserName = Environment.UserName,
         };
