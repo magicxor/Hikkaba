@@ -1,49 +1,68 @@
+@using System.Globalization
 @using Hikkaba.Web.ViewModels.AdministrationViewModels
+@using Humanizer
 @model SystemInfoViewModel
 
 <table class="table table-bordered">
-    <thead>
-        <tr>
-            <th class="text-center">Key</th>
-            <th class="text-center">Value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.DatabaseProvider)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.DatabaseProvider)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.FrameworkDescription)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.FrameworkDescription)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.OsArchitecture)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.OsArchitecture)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.OsPlatform)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.OsPlatform)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.OsDescription)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.OsDescription)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.ProcessArchitecture)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.ProcessArchitecture)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.MemoryUsage)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.MemoryUsage)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.ProcessorCount)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.ProcessorCount)</td>
-        </tr>
-        <tr>
-            <td class="text-center">@Html.DisplayNameFor(model => model.UserName)</td>
-            <td class="text-center">@Html.DisplayFor(model => model.UserName)</td>
-        </tr>
-    </tbody>
+  <thead>
+  <tr>
+    <th class="text-center">Key</th>
+    <th class="text-center">Value</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.DatabaseProvider)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.DatabaseProvider)</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.FrameworkDescription)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.FrameworkDescription)</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.OsArchitecture)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.OsArchitecture)</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.OsPlatform)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.OsPlatform)</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.OsDescription)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.OsDescription)</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.ProcessArchitecture)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.ProcessArchitecture)</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.WorkingSet64)</td>
+    <td class="text-center">@(Model.WorkingSet64.Bytes().Humanize(CultureInfo.InvariantCulture))</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.PrivateMemorySize64)</td>
+    <td class="text-center">@(Model.PrivateMemorySize64.Bytes().Humanize(CultureInfo.InvariantCulture))</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.PagedMemorySize64)</td>
+    <td class="text-center">@(Model.PagedMemorySize64.Bytes().Humanize(CultureInfo.InvariantCulture))</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.PeakWorkingSet64)</td>
+    <td class="text-center">@(Model.PeakWorkingSet64.Bytes().Humanize(CultureInfo.InvariantCulture))</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.PeakPagedMemorySize64)</td>
+    <td class="text-center">@(Model.PeakPagedMemorySize64.Bytes().Humanize(CultureInfo.InvariantCulture))</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.ProcessorCount)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.ProcessorCount)</td>
+  </tr>
+  <tr>
+    <td class="text-center">@Html.DisplayNameFor(model => model.UserName)</td>
+    <td class="text-center">@Html.DisplayFor(model => model.UserName)</td>
+  </tr>
+  </tbody>
 </table>
+

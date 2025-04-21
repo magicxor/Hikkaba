@@ -22,8 +22,20 @@ public sealed class SystemInfoViewModel
     [Display(Name = @"OS platform")]
     public required string OsPlatform { get; set; }
 
-    [Display(Name = @"Memory usage")]
-    public required string MemoryUsage { get; set; }
+    [Display(Name = @"Working set")]
+    public required long WorkingSet64 { get; set; }
+
+    [Display(Name = @"Private memory size")]
+    public required long PrivateMemorySize64 { get; set; }
+
+    [Display(Name = @"Paged memory size")]
+    public required long PagedMemorySize64 { get; set; }
+
+    [Display(Name = @"Peak working set")]
+    public required long PeakWorkingSet64 { get; set; }
+
+    [Display(Name = @"Peak paged memory size")]
+    public required long PeakPagedMemorySize64 { get; set; }
 
     [Display(Name = @"Processor count")]
     public required int ProcessorCount { get; set; }
