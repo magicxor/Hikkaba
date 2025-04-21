@@ -5,6 +5,7 @@ using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Infrastructure.Repositories.QueryableExtensions;
 using Hikkaba.Infrastructure.Repositories.Telemetry;
+using Hikkaba.Infrastructure.Repositories.Utils;
 using Hikkaba.Paging.Extensions;
 using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Enums;
@@ -67,8 +68,11 @@ public sealed class PostRepository : IPostRepository
     {
         using var activity = RepositoriesTelemetry.PostSource.StartActivity();
 
+        var searchableString = FullTextUtils.ConvertToSearchableString(filter.SearchQuery);
+
         var query = _applicationDbContext.Posts
             .TagWithCallSite()
+            .AsSingleQuery()
             .Include(post => post.Thread)
             .ThenInclude(thread => thread.Category)
             .Include(post => post.Audios)
@@ -80,7 +84,7 @@ public sealed class PostRepository : IPostRepository
             .Where(post => !post.IsDeleted
                            && !post.Thread.IsDeleted
                            && !post.Thread.Category.IsDeleted
-                           && EF.Functions.Contains(post.MessageText, filter.SearchQuery))
+                           && EF.Functions.Contains(post.MessageText, searchableString))
             .GetDetailsModel();
 
         var totalCount = await query.CountAsync(cancellationToken);
