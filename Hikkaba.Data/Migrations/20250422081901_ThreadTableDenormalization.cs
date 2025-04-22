@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Hikkaba.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddThreadLastBumpAt : Migration
+    public partial class ThreadTableDenormalization : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +17,20 @@ namespace Hikkaba.Data.Migrations
                 type: "datetime2",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<bool>(
+                name: "HasOriginalPosterMark",
+                table: "Posts",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsOriginalPost",
+                table: "Posts",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
         }
 
         /// <inheritdoc />
@@ -25,6 +39,14 @@ namespace Hikkaba.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "LastBumpAt",
                 table: "Threads");
+
+            migrationBuilder.DropColumn(
+                name: "HasOriginalPosterMark",
+                table: "Posts");
+
+            migrationBuilder.DropColumn(
+                name: "IsOriginalPost",
+                table: "Posts");
         }
     }
 }

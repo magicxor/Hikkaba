@@ -198,6 +198,8 @@ public sealed class PostRepository : IPostRepository
             Documents = attachments.Documents,
             Pictures = attachments.Pictures,
             Videos = attachments.Videos,
+            IsOriginalPost = false,
+            HasOriginalPosterMark = false,
         };
 
         var postsToReply = await _applicationDbContext.Posts

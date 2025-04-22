@@ -134,6 +134,7 @@ public sealed class ApplicationDbContext
     public DbSet<CategoryToModerator> CategoriesToModerators { get; set; } = null!;
     public DbSet<Post> Posts { get; set; } = null!;
     public DbSet<PostToReply> PostsToReplies { get; set; } = null!;
+    public DbSet<Attachment> Attachments { get; set; } = null!;
     public DbSet<Thread> Threads { get; set; } = null!;
     public DbSet<Audio> Audios { get; set; } = null!;
     public DbSet<Document> Documents { get; set; } = null!;

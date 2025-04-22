@@ -127,6 +127,7 @@ internal sealed class PostRepositoryTests
 
         var post1 = new Post
         {
+            IsOriginalPost = true,
             BlobContainerId = new Guid("243D7DB4-4EE8-4285-8888-E7185A7CB1B2"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
@@ -139,6 +140,7 @@ internal sealed class PostRepositoryTests
         };
         var post2 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("D9AED982-37D6-4C5C-B235-E1AADC342236"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
@@ -151,6 +153,7 @@ internal sealed class PostRepositoryTests
         };
         var post3 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("C8393E45-20AE-4214-A1EF-5F6AE0D93477"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsDeleted = true,

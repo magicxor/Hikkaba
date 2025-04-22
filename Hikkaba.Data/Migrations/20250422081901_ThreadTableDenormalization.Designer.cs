@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hikkaba.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250422055336_AddThreadOriginalPost")]
-    partial class AddThreadOriginalPost
+    [Migration("20250422081901_ThreadTableDenormalization")]
+    partial class ThreadTableDenormalization
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -381,7 +381,13 @@ namespace Hikkaba.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("HasOriginalPosterMark")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOriginalPost")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSageEnabled")
@@ -404,9 +410,6 @@ namespace Hikkaba.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<long>("ThreadId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("ThreadId1")
                         .HasColumnType("bigint");
 
                     b.Property<byte[]>("ThreadLocalUserHash")
@@ -439,10 +442,6 @@ namespace Hikkaba.Data.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("ThreadId");
-
-                    b.HasIndex("ThreadId1")
-                        .IsUnique()
-                        .HasFilter("[ThreadId1] IS NOT NULL");
 
                     b.ToTable("Posts");
                 });
@@ -499,13 +498,13 @@ namespace Hikkaba.Data.Migrations
                     b.Property<bool>("IsPinned")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("LastBumpAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("OriginalPostId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("Salt")
@@ -954,10 +953,6 @@ namespace Hikkaba.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Hikkaba.Data.Entities.Thread", null)
-                        .WithOne("OriginalPost")
-                        .HasForeignKey("Hikkaba.Data.Entities.Post", "ThreadId1");
-
                     b.Navigation("ModifiedBy");
 
                     b.Navigation("Thread");
@@ -1161,8 +1156,6 @@ namespace Hikkaba.Data.Migrations
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Thread", b =>
                 {
-                    b.Navigation("OriginalPost");
-
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

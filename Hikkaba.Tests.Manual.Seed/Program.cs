@@ -115,6 +115,7 @@ internal sealed class Program
                     var testPosts = new Faker<Post>()
                         .CustomInstantiator(f => new Post
                         {
+                            IsOriginalPost = f.IndexFaker == 0,
                             BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                             IsDeleted = Random.Next(0, 50) == 0,
                             CreatedAt = f.Date.Between(thread.CreatedAt, utcNow),
@@ -153,6 +154,7 @@ internal sealed class Program
                             var replies = new Faker<Post>()
                                 .CustomInstantiator(f => new Post
                                 {
+                                    IsOriginalPost = f.IndexFaker == 0,
                                     BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                                     IsDeleted = Random.Next(0, 50) == 0,
                                     CreatedAt = f.Date.Between(post.CreatedAt.AddSeconds(1), utcNow),
