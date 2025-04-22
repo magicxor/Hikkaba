@@ -64,7 +64,7 @@ public sealed class CategoryController : BaseMvcController
             OrderBy =
             [
                 new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
             ],
         };

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -110,9 +111,11 @@ internal sealed class PostRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "BoardThreadPostSearchTerm thread 1 ThreadAndPostSearchTerm",
             IsPinned = false,
             IsClosed = false,
@@ -159,7 +162,12 @@ internal sealed class PostRepositoryTests
             ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
             Thread = thread,
         };
-        dbContext.AddRange(post1, post2, post3);
+        IReadOnlyList<Post> allPosts = [post1, post2, post3];
+        dbContext.Posts.AddRange(allPosts);
+
+        var latestPostWithoutSage = allPosts
+            .Where(x => x is { IsSageEnabled: false, IsDeleted: false })
+            .MaxBy(x => x.CreatedAt);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

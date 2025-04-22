@@ -111,9 +111,11 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "test thread 1 Buzz",
             IsPinned = false,
             IsClosed = false,
@@ -248,9 +250,11 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "test thread 1 Buzz",
             IsPinned = false,
             IsClosed = false,

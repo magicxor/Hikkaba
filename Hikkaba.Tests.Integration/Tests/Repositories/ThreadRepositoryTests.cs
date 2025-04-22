@@ -109,9 +109,11 @@ internal sealed class ThreadRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "test thread 1 Buzz",
             IsPinned = false,
             IsClosed = false,
@@ -244,7 +246,7 @@ internal sealed class ThreadRepositoryTests
             OrderBy =
             [
                 new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
             ],
             CategoryAlias = category.Alias,
@@ -312,6 +314,7 @@ internal sealed class ThreadRepositoryTests
             var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
+            var timeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
             if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
             {
@@ -377,9 +380,11 @@ internal sealed class ThreadRepositoryTests
             var salt1 = GuidGenerator.GenerateSeededGuid();
             var salt2 = GuidGenerator.GenerateSeededGuid();
             var userIp = IPAddress.Parse($"127.0.0.1").GetAddressBytes();
+            var utcNow = timeProvider.GetUtcNow().UtcDateTime;
             var deletedThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "deleted thread",
                 IsPinned = true,
                 IsClosed = true,
@@ -405,7 +410,8 @@ internal sealed class ThreadRepositoryTests
             };
             var anotherCategoryThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "another category thread",
                 IsPinned = false,
                 IsClosed = false,
@@ -434,7 +440,8 @@ internal sealed class ThreadRepositoryTests
                 .Range(0, totalThreadCount)
                 .Select(i => new Thread
                 {
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddSeconds(i),
+                    CreatedAt = utcNow.AddSeconds(i),
+                    LastBumpAt = utcNow.AddSeconds(i),
                     Title = $"test thread {i}",
                     IsPinned = false,
                     IsClosed = false,
@@ -496,7 +503,7 @@ internal sealed class ThreadRepositoryTests
                 OrderBy =
                 [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
@@ -531,7 +538,7 @@ internal sealed class ThreadRepositoryTests
                 .By(nameof(ThreadPreviewModel.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewModel.LastBumpAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -637,9 +644,11 @@ internal sealed class ThreadRepositoryTests
 
             var salt1 = GuidGenerator.GenerateSeededGuid();
             var salt2 = GuidGenerator.GenerateSeededGuid();
+            var utcNow = seedTimeProvider.GetUtcNow().UtcDateTime;
             var deletedThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "deleted thread",
                 IsPinned = true,
                 IsClosed = true,
@@ -665,7 +674,8 @@ internal sealed class ThreadRepositoryTests
             };
             var anotherCategoryThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "another category thread",
                 IsPinned = false,
                 IsClosed = false,
@@ -694,7 +704,8 @@ internal sealed class ThreadRepositoryTests
                 .Range(0, totalThreadCount)
                 .Select(i => new Thread
                 {
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddSeconds(i),
+                    CreatedAt = utcNow,
+                    LastBumpAt = utcNow,
                     Title = $"test thread {i}",
                     IsPinned = i == 3,
                     IsClosed = false,
@@ -755,7 +766,7 @@ internal sealed class ThreadRepositoryTests
                 OrderBy =
                 [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
@@ -795,7 +806,7 @@ internal sealed class ThreadRepositoryTests
                 .By(nameof(ThreadPreviewModel.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewModel.LastBumpAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -902,9 +913,11 @@ internal sealed class ThreadRepositoryTests
 
             var salt1 = GuidGenerator.GenerateSeededGuid();
             var salt2 = GuidGenerator.GenerateSeededGuid();
+            var utcNow = seedTimeProvider.GetUtcNow().UtcDateTime;
             var deletedThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "deleted thread",
                 IsPinned = true,
                 IsClosed = true,
@@ -930,7 +943,8 @@ internal sealed class ThreadRepositoryTests
             };
             var anotherCategoryThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "another category thread",
                 IsPinned = false,
                 IsClosed = false,
@@ -959,7 +973,8 @@ internal sealed class ThreadRepositoryTests
                 .Range(0, totalThreadCount)
                 .Select(i => new Thread
                 {
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddSeconds(i),
+                    CreatedAt = utcNow,
+                    LastBumpAt = utcNow,
                     Title = $"test thread {i}",
                     IsPinned = false,
                     IsClosed = false,
@@ -987,7 +1002,8 @@ internal sealed class ThreadRepositoryTests
             };
             var threadWithPostWithoutSage = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "thread with no-sage post",
                 IsPinned = false,
                 IsClosed = false,
@@ -1047,7 +1063,7 @@ internal sealed class ThreadRepositoryTests
                 OrderBy =
                 [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
@@ -1076,7 +1092,7 @@ internal sealed class ThreadRepositoryTests
                 .By(nameof(ThreadPreviewModel.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewModel.LastBumpAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -1184,9 +1200,11 @@ internal sealed class ThreadRepositoryTests
 
         var salt1 = GuidGenerator.GenerateSeededGuid();
         var salt2 = GuidGenerator.GenerateSeededGuid();
+        var utcNow = seedTimeProvider.GetUtcNow().UtcDateTime;
         var deletedThread = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "deleted thread",
             IsPinned = true,
             IsClosed = true,
@@ -1212,7 +1230,8 @@ internal sealed class ThreadRepositoryTests
         };
         var anotherCategoryThread = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "another category thread",
             IsPinned = false,
             IsClosed = false,
@@ -1238,7 +1257,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread1 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(1),
+            CreatedAt = utcNow.AddMinutes(1),
+            LastBumpAt = utcNow.AddMinutes(1),
             Title = "thread with bump limit 1",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1246,7 +1266,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread2 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(2),
+            CreatedAt = utcNow.AddMinutes(2),
+            LastBumpAt = utcNow.AddMinutes(2),
             Title = "thread with bump limit 2",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1254,7 +1275,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread3 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(3),
+            CreatedAt = utcNow.AddMinutes(3),
+            LastBumpAt = utcNow.AddMinutes(3),
             Title = "thread with bump limit 3",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1262,7 +1284,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread4 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(4),
+            CreatedAt = utcNow.AddMinutes(4),
+            LastBumpAt = utcNow.AddMinutes(4),
             Title = "thread with bump limit 4",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1305,7 +1328,7 @@ internal sealed class ThreadRepositoryTests
             OrderBy =
             [
                 new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
             ],
             CategoryAlias = "b",
@@ -1336,7 +1359,7 @@ internal sealed class ThreadRepositoryTests
             .By(nameof(ThreadPreviewModel.IsPinned))
             .Descending
             .Then
-            .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+            .By(nameof(ThreadPreviewModel.LastBumpAt))
             .Descending);
 
         foreach (var thread in actualThreadPreviews.Data)

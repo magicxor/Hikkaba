@@ -22,6 +22,9 @@ public class Thread : IHasCreatedAt, IHasModifiedAt, IHasModifiedById
     public DateTime? ModifiedAt { get; set; }
 
     [Required]
+    public required DateTime LastBumpAt { get; set; }
+
+    [Required]
     [MinLength(Defaults.MinTitleLength)]
     [MaxLength(Defaults.MaxTitleLength)]
     public required string Title { get; set; }

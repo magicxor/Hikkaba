@@ -122,48 +122,59 @@ public sealed class ThreadRepository : IThreadRepository
         var threadQuery = _applicationDbContext.Threads
             .TagWithCallSite()
             .Include(thread => thread.Category)
-            .AsQueryable()
-            .AsSingleQuery();
-
-        if (!string.IsNullOrEmpty(filter.CategoryAlias))
-        {
-            threadQuery = threadQuery.Where(thread => thread.Category.Alias == filter.CategoryAlias);
-        }
-
-        threadQuery = filter.IncludeDeleted
-            ? threadQuery.IgnoreQueryFilters()
-            : threadQuery.Where(thread => !thread.IsDeleted && !thread.Category.IsDeleted);
-
-        var resultQuery = threadQuery
+            .Where(thread => thread.Category.Alias == filter.CategoryAlias)
+            .Where(thread =>
+                !thread.IsDeleted
+                && !thread.Category.IsDeleted
+                && thread.Posts.Any(p => !p.IsDeleted))
             .Select(thread => new
             {
                 Thread = thread,
                 Category = thread.Category,
                 BumpLimit = thread.BumpLimit > 0 ? thread.BumpLimit : thread.Category.DefaultBumpLimit,
-                PostCount = thread.Posts.Count(post => filter.IncludeDeleted || !post.IsDeleted),
-            })
+                Id = thread.Id,
+                LastBumpAt = thread.LastBumpAt,
+                IsPinned = thread.IsPinned,
+                PostCount = thread.Posts.Count(p => !p.IsDeleted),
+                Posts = thread.Posts.Where(p => !p.IsDeleted),
+            });
+
+        var totalCount = await threadQuery.CountAsync(cancellationToken);
+
+        var threads = await threadQuery
+            .ApplyOrderByAndPaging(filter, x => x.LastBumpAt, OrderByDirection.Desc)
+            .ToListAsync(cancellationToken);
+
+        var retrievedThreadIds = threads.ConvertAll(x => x.Id);
+
+        var data = await _applicationDbContext.Threads
+            .Where(thread => retrievedThreadIds.Contains(thread.Id))
+            .GroupJoin(
+                _applicationDbContext.Posts,
+                thread => thread.Id,
+                post => post.ThreadId,
+                (key, values) => new
+                {
+                    Thread = key,
+                    Posts = values,
+                })
             .Select(x => new
             {
                 Thread = x.Thread,
-                Category = x.Category,
-                LastPostCreatedAt = x.Thread.Posts
-                    .OrderBy(p => p.CreatedAt)
-                    .ThenBy(p => p.Id)
-                    .Take(x.BumpLimit)
-                    .Where(p => !p.IsSageEnabled && !p.IsDeleted)
-                    .Max(p => p.CreatedAt),
-                Posts = x.Thread.Posts
+                Category = x.Thread.Category,
+                LastPostCreatedAt = x.Thread.LastBumpAt,
+                Posts = x.Posts
                     .Where(p => filter.IncludeDeleted || !p.IsDeleted)
                     .OrderBy(p => p.CreatedAt)
                     /* take the OP-post (the first post) */
                     .Take(1)
-                    .Union(x.Thread.Posts
+                    .Union(x.Posts
                         .Where(p => filter.IncludeDeleted || !p.IsDeleted)
                         .OrderByDescending(p => p.CreatedAt)
                         /* take the 3 last posts */
                         .Take(Defaults.LatestPostsCountInThreadPreview))
                     .ToList(),
-                PostCount = x.PostCount,
+                PostCount = x.Posts.Count(p => !p.IsDeleted),
             })
             .Where(thread => filter.IncludeDeleted || thread.PostCount > 0)
             .Select(g => new ThreadPreviewModel
@@ -172,7 +183,7 @@ public sealed class ThreadRepository : IThreadRepository
                 IsDeleted = g.Thread.IsDeleted,
                 CreatedAt = g.Thread.CreatedAt,
                 ModifiedAt = g.Thread.ModifiedAt,
-                LastPostCreatedAt = g.LastPostCreatedAt,
+                LastBumpAt = g.LastPostCreatedAt,
                 Title = g.Thread.Title,
                 IsPinned = g.Thread.IsPinned,
                 IsClosed = g.Thread.IsClosed,
@@ -289,12 +300,7 @@ public sealed class ThreadRepository : IThreadRepository
                     .OrderBy(x => x.CreatedAt)
                     .ThenBy(x => x.Id)
                     .ToList(),
-            });
-
-        var totalCount = await resultQuery.CountAsync(cancellationToken);
-
-        var data = await resultQuery
-            .ApplyOrderByAndPaging(filter, x => x.LastPostCreatedAt, OrderByDirection.Desc)
+            })
             .ToListAsync(cancellationToken);
 
         // calculate real post index
@@ -317,6 +323,7 @@ public sealed class ThreadRepository : IThreadRepository
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
+
         _logger.LogInformation(
             LogEventIds.CreatingThread,
             "Creating thread in category {CategoryAlias}. Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
@@ -376,10 +383,12 @@ public sealed class ThreadRepository : IThreadRepository
             _applicationDbContext.Threads.RemoveRange(threadsToBeDeleted);
         }
 
+        var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
+
         var post = new Post
         {
             BlobContainerId = createRequestModel.BaseModel.BlobContainerId,
-            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
             IsSageEnabled = false,
             MessageText = createRequestModel.BaseModel.MessageText,
             MessageHtml = createRequestModel.BaseModel.MessageHtml,
@@ -394,7 +403,8 @@ public sealed class ThreadRepository : IThreadRepository
 
         var thread = new Thread
         {
-            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = createRequestModel.BaseModel.ThreadTitle,
             BumpLimit = category.DefaultBumpLimit > 0 ? category.DefaultBumpLimit : Defaults.DefaultBumpLimit,
             Salt = createRequestModel.ThreadSalt,

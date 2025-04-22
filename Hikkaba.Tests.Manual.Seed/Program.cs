@@ -93,6 +93,7 @@ internal sealed class Program
                     {
                         IsDeleted = false,
                         CreatedAt = f.Date.Between(utcNow.AddYears(-5), utcNow),
+                        LastBumpAt = f.Date.Between(utcNow.AddYears(-5), utcNow),
                         ModifiedAt = Random.Next(5) == 0 ? f.Date.Between(utcNow.AddYears(-5), utcNow) : null,
                         Title = f.Lorem.Sentence(5),
                         IsPinned = Random.Next(0, 3000) == 0,
