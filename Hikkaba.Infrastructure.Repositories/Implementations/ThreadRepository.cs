@@ -410,6 +410,7 @@ public sealed class ThreadRepository : IThreadRepository
             Salt = createRequestModel.ThreadSalt,
             CategoryId = category.Id,
             Posts = [post],
+            OriginalPost = post,
         };
 
         _applicationDbContext.Threads.Add(thread);

@@ -52,6 +52,8 @@ public class Thread : IHasCreatedAt, IHasModifiedAt, IHasModifiedById
     [ForeignKey(nameof(ModifiedBy))]
     public int? ModifiedById { get; set; }
 
+    public int? OriginalPostId { get; set; }
+
     // FK models
     [Required]
     public virtual Category Category
@@ -64,6 +66,8 @@ public class Thread : IHasCreatedAt, IHasModifiedAt, IHasModifiedById
     private Category? _category;
 
     public virtual ApplicationUser? ModifiedBy { get; set; }
+
+    public virtual Post? OriginalPost { get; set; }
 
     // Relations
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
