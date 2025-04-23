@@ -1,10 +1,12 @@
-@using Hikkaba.Shared.Constants
+@using Hikkaba.Infrastructure.Models.Configuration
+@using Microsoft.Extensions.Options
+@inject IOptions<HikkabaConfiguration> HikkabaConfiguration
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>@ViewData["Title"] - @Defaults.BoardName</title>
+  <title>@ViewData["Title"] - @HikkabaConfiguration.Value.BoardName</title>
   <link href="~/favicon.ico" rel="icon" />
 
   @*https://github.com/VahidN/DNTCaptcha.Core/blob/master/src/DNTCaptcha.TestWebApp/Views/Shared/_Layout.cshtml*@

@@ -62,6 +62,7 @@ internal sealed class CustomAppFactory
                         o.AuthCertificatePassword = "f84dddc8-e695-463a-bde9-0666d28be69b";
                         o.MaintenanceKey = "203koiHuieowh3784HIOUNhui#$%sefr";
                         o.TripCodeSalt = "34mi2ouijnruioehiwerg3847";
+                        o.BoardName = "Hikkaba";
                     })
                     .Configure<SeedConfiguration>(o =>
                     {

@@ -33,7 +33,6 @@ public sealed class AdminController : BaseMvcController
 
         var dashboardViewModel = new DashboardViewModel
         {
-            Board = board.ToViewModel(),
             SystemInfo = systemInfo.ToViewModel(),
         };
 

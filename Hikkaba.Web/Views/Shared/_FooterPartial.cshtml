@@ -1,8 +1,9 @@
-﻿@using System.Globalization
-@using Hikkaba.Application.Contracts
-@using Hikkaba.Shared.Constants
+﻿@using Hikkaba.Application.Contracts
+@using Hikkaba.Infrastructure.Models.Configuration
 @using Humanizer
+@using Microsoft.Extensions.Options
 @inject IVersionInfoService VersionInfoService
+@inject IOptions<HikkabaConfiguration> HikkabaConfiguration
 <footer>
   <div class="container">
     <div class="row align-items-center">
@@ -16,7 +17,7 @@
 
     <div class="row align-items-center">
       <div class="col text-center">
-        <small class="text-body-secondary">@Defaults.BoardName @VersionInfoService.ProductVersion</small>
+        <small class="text-body-secondary">@HikkabaConfiguration.Value.BoardName @VersionInfoService.ProductVersion</small>
       </div>
     </div>
     @if (ViewData["ExecutionTime"] is long executionTime)

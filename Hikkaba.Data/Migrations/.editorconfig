@@ -16,3 +16,6 @@ dotnet_diagnostic.IDE0161.severity = suggestion
 
 # CA1062: In externally visible method 'void AddPostMessageFulltextIndex.Up(MigrationBuilder migrationBuilder)', validate parameter 'migrationBuilder' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'.
 dotnet_diagnostic.CA1062.severity = suggestion
+
+# SA1122: Use string.Empty for empty strings
+dotnet_diagnostic.SA1122.severity = none

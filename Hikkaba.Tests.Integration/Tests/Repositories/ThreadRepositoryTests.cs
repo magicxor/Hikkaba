@@ -84,10 +84,7 @@ internal sealed class ThreadRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board
-        {
-            Name = "Test Board Fizz",
-        };
+        var board = new Board();
         dbContext.Boards.Add(board);
 
         var category = new Category
@@ -341,10 +338,7 @@ internal sealed class ThreadRepositoryTests
             };
             seedDbContext.Users.Add(admin);
 
-            var board = new Board
-            {
-                Name = "Test Board Fizz",
-            };
+            var board = new Board();
             seedDbContext.Boards.Add(board);
 
             var category1 = new Category
@@ -610,10 +604,7 @@ internal sealed class ThreadRepositoryTests
             };
             seedDbContext.Users.Add(admin);
 
-            var board = new Board
-            {
-                Name = "Test Board Fizz",
-            };
+            var board = new Board();
             seedDbContext.Boards.Add(board);
 
             var category1 = new Category
@@ -883,10 +874,7 @@ internal sealed class ThreadRepositoryTests
             };
             seedDbContext.Users.Add(admin);
 
-            var board = new Board
-            {
-                Name = "Test Board Fizz",
-            };
+            var board = new Board();
             seedDbContext.Boards.Add(board);
 
             var category1 = new Category
@@ -1176,10 +1164,7 @@ internal sealed class ThreadRepositoryTests
         };
         seedDbContext.Users.Add(admin);
 
-        var board = new Board
-        {
-            Name = "Test Board Fizz",
-        };
+        var board = new Board();
         seedDbContext.Boards.Add(board);
 
         var category1 = new Category

@@ -11,11 +11,6 @@ public class Board
     [Key]
     public int Id { get; set; }
 
-    [Required]
-    [MinLength(Defaults.MinCategoryAndBoardNameLength)]
-    [MaxLength(Defaults.MaxCategoryAndBoardNameLength)]
-    public required string Name { get; set; }
-
     // Relations
     public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 }

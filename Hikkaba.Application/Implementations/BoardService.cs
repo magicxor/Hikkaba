@@ -17,9 +17,4 @@ public sealed class BoardService : IBoardService
     {
         return await _boardRepository.GetBoardAsync(cancellationToken);
     }
-
-    public async Task EditBoardAsync(string boardName, CancellationToken cancellationToken)
-    {
-        await _boardRepository.EditBoardAsync(boardName, cancellationToken);
-    }
 }

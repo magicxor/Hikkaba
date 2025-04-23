@@ -53,4 +53,7 @@ public sealed class HikkabaConfiguration
     public required string TripCodeSalt { get; set; }
 
     public string? StoragePath { get; set; }
+
+    [Required]
+    public required string BoardName { get; set; }
 }

@@ -15,6 +15,7 @@ namespace Hikkaba.Infrastructure.Repositories.Implementations;
 public sealed class SeedRepository : ISeedRepository
 {
     private readonly ILogger<SeedRepository> _logger;
+    private readonly HikkabaConfiguration _hikkabaConfiguration;
     private readonly SeedConfiguration _seedConfiguration;
     private readonly TimeProvider _timeProvider;
     private readonly ApplicationDbContext _context;
@@ -23,14 +24,16 @@ public sealed class SeedRepository : ISeedRepository
 
     public SeedRepository(
         ILogger<SeedRepository> logger,
-        IOptions<SeedConfiguration> settings,
+        IOptions<HikkabaConfiguration> hikkabaConfiguration,
+        IOptions<SeedConfiguration> seedConfiguration,
         TimeProvider timeProvider,
         ApplicationDbContext context,
         UserManager<ApplicationUser> userMgr,
         RoleManager<ApplicationRole> roleMgr)
     {
         _logger = logger;
-        _seedConfiguration = settings.Value;
+        _hikkabaConfiguration = hikkabaConfiguration.Value;
+        _seedConfiguration = seedConfiguration.Value;
         _timeProvider = timeProvider;
         _context = context;
         _userMgr = userMgr;
@@ -135,7 +138,7 @@ public sealed class SeedRepository : ISeedRepository
         Board board;
         if (!await _context.Boards.AnyAsync(cancellationToken))
         {
-            board = new Board { Name = Defaults.BoardName };
+            board = new Board();
             await _context.Boards.AddAsync(board, cancellationToken);
         }
         else
@@ -151,7 +154,7 @@ public sealed class SeedRepository : ISeedRepository
             await SeedNewCategoryAsync(adminUser, board, "nsfw", "18+ content", true, cancellationToken: cancellationToken);
             await SeedNewCategoryAsync(adminUser, board, "vg", "Video Games", cancellationToken: cancellationToken);
             await SeedNewCategoryAsync(adminUser, board, "wp", "Wallpapers", cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "d", "Discussions about " + Defaults.BoardName, false, true, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, board, "d", "Discussions about " + _hikkabaConfiguration.BoardName, false, true, cancellationToken: cancellationToken);
         }
 
         await _context.SaveChangesAsync(cancellationToken);
