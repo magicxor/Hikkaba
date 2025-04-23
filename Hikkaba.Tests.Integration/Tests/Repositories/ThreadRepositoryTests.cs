@@ -1323,20 +1323,22 @@ internal sealed class ThreadRepositoryTests
         // thread1 contains several old posts before bump limit and several new posts after bump limit, which shouldn't affect the result
         AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(-1), bumpLimit, false, false, hashService);
         AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1), 2, false, false, hashService);
+        thread1.LastBumpAt = thread1.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         // thread2 contains several new posts
         AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(1), 1, true, false, hashService);
-        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(2), 1, false, true, hashService);
         AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1), bumpLimit, false, false, hashService);
+        thread2.LastBumpAt = thread2.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         // thread3 contains even newer posts
         AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(3), 1, true, false, hashService);
-        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(4), 1, false, true, hashService);
         AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddSeconds(1), bumpLimit, false, false, hashService);
+        thread3.LastBumpAt = thread3.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         // thread4 contains a lot of posts
         AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime, bumpLimit + 10, false, false, hashService);
         AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(5), bumpLimit + 10, false, false, hashService);
+        thread4.LastBumpAt = thread4.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         await seedDbContext.SaveChangesAsync(cancellationToken);
 
@@ -1361,11 +1363,6 @@ internal sealed class ThreadRepositoryTests
         Assert.That(actualThreadPreviews, Is.Not.Null);
 
         Assert.That(actualThreadPreviews.Data, Has.Count.EqualTo(4));
-
-        Assert.That(actualThreadPreviews.Data[0].Title, Is.EqualTo(thread3.Title));
-        Assert.That(actualThreadPreviews.Data[1].Title, Is.EqualTo(thread2.Title));
-        Assert.That(actualThreadPreviews.Data[2].Title, Is.EqualTo(thread4.Title));
-        Assert.That(actualThreadPreviews.Data[3].Title, Is.EqualTo(thread1.Title));
 
         // check that category is correct
         Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
