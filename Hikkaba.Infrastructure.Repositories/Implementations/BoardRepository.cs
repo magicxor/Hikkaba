@@ -24,20 +24,8 @@ public sealed class BoardRepository : IBoardRepository
             .Select(b => new BoardDetailsModel
             {
                 Id = b.Id,
-                Name = b.Name,
             })
             .OrderBy(b => b.Id)
             .FirstAsync(cancellationToken);
-    }
-
-    public async Task EditBoardAsync(string boardName, CancellationToken cancellationToken)
-    {
-        using var activity = RepositoriesTelemetry.BoardSource.StartActivity();
-
-        await _applicationDbContext.Boards
-            .TagWithCallSite()
-            .ExecuteUpdateAsync(setProp => setProp
-                .SetProperty(board => board.Name, boardName),
-                cancellationToken);
     }
 }

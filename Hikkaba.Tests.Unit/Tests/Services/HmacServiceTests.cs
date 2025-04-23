@@ -29,6 +29,7 @@ internal sealed class HmacServiceTests
             MaintenanceKey = string.Empty,
             TripCodeSalt = "831cc049-c706-44e9-829c-cc5ac0602c5e",
             StoragePath = string.Empty,
+            BoardName = "Hikkaba",
         });
         var hmacService = new HmacService(options);
         var renderedTripCode = hmacService.GetTripCode(inputTripCode);

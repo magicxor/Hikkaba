@@ -86,10 +86,7 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board
-        {
-            Name = "Test Board Fizz",
-        };
+        var board = new Board();
         dbContext.Boards.Add(board);
 
         var category = new Category
@@ -227,10 +224,7 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board
-        {
-            Name = "Test Board Fizz",
-        };
+        var board = new Board();
         dbContext.Boards.Add(board);
 
         var category = new Category

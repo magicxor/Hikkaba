@@ -1,16 +1,17 @@
 ﻿@using Hikkaba.Application.Contracts
-@using Hikkaba.Shared.Constants
 @using Hikkaba.Data.Entities
 @using Hikkaba.Infrastructure.Models.Category
+@using Hikkaba.Infrastructure.Models.Configuration
 @using Hikkaba.Web.ViewModels.SearchViewModels
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.Extensions.Options
 @inject ICategoryService CategoryService
+@inject IOptions<HikkabaConfiguration> HikkabaConfiguration
 
 <div class="container">
     <div class="row">
         <div class="col-md-8">
             <span style="font-size: 21px" class="h5">
-              [<a class="decoration-on-hover" href="@Url.Action("Index", "Home")">@Defaults.BoardName</a>]
+              [<a class="decoration-on-hover" href="@Url.Action("Index", "Home")">@HikkabaConfiguration.Value.BoardName</a>]
                 [
                 @{
                     var categories = await CategoryService.ListCategoriesAsync(new CategoryFilter { OrderBy = [nameof(Category.Alias)] }, Context.RequestAborted);

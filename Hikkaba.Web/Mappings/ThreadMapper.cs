@@ -6,7 +6,6 @@ using Riok.Mapperly.Abstractions;
 namespace Hikkaba.Web.Mappings;
 
 [Mapper]
-[UseStaticMapper(typeof(BoardMapper))]
 [UseStaticMapper(typeof(CategoryMapper))]
 [UseStaticMapper(typeof(PostMapper))]
 internal static partial class ThreadMapper

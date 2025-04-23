@@ -89,10 +89,7 @@ internal sealed class PostRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board
-        {
-            Name = "BoardThreadPostSearchTerm Board BoardSearchTerm",
-        };
+        var board = new Board();
         dbContext.Boards.Add(board);
 
         var category = new Category
@@ -167,10 +164,6 @@ internal sealed class PostRepositoryTests
         };
         IReadOnlyList<Post> allPosts = [post1, post2, post3];
         dbContext.Posts.AddRange(allPosts);
-
-        var latestPostWithoutSage = allPosts
-            .Where(x => x is { IsSageEnabled: false, IsDeleted: false })
-            .MaxBy(x => x.CreatedAt);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
