@@ -109,9 +109,11 @@ internal sealed class ThreadRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "test thread 1 Buzz",
             IsPinned = false,
             IsClosed = false,
@@ -124,6 +126,7 @@ internal sealed class ThreadRepositoryTests
         var userIp = IPAddress.Parse("127.0.0.1").GetAddressBytes();
         var post0 = new Post
         {
+            IsOriginalPost = true,
             BlobContainerId = new Guid("545917CA-374F-4C34-80B9-7D8DF0842D72"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(1),
             IsSageEnabled = false,
@@ -136,6 +139,7 @@ internal sealed class ThreadRepositoryTests
         };
         var post1 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("502FACD5-C207-4684-960B-274949E6D043"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(2),
             IsSageEnabled = false,
@@ -166,6 +170,7 @@ internal sealed class ThreadRepositoryTests
         };
         var post2 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("91F9A825-FFC0-45FA-B8CF-EA0435F414BC"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(3),
             IsSageEnabled = false,
@@ -195,6 +200,7 @@ internal sealed class ThreadRepositoryTests
         };
         var post3 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("BD852887-CBE3-4BAB-9FAC-F501EC3DA439"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(4),
             IsSageEnabled = false,
@@ -207,6 +213,7 @@ internal sealed class ThreadRepositoryTests
         };
         var post4 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("2FA199CC-CD14-402D-8209-0A1B8353E463"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(5),
             IsSageEnabled = false,
@@ -219,6 +226,7 @@ internal sealed class ThreadRepositoryTests
         };
         var post5 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("1F657883-6C50-48FE-982C-5E1B552918D3"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime.AddSeconds(6),
             IsSageEnabled = false,
@@ -244,7 +252,7 @@ internal sealed class ThreadRepositoryTests
             OrderBy =
             [
                 new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
             ],
             CategoryAlias = category.Alias,
@@ -312,6 +320,7 @@ internal sealed class ThreadRepositoryTests
             var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
+            var timeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
             if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
             {
@@ -377,9 +386,11 @@ internal sealed class ThreadRepositoryTests
             var salt1 = GuidGenerator.GenerateSeededGuid();
             var salt2 = GuidGenerator.GenerateSeededGuid();
             var userIp = IPAddress.Parse($"127.0.0.1").GetAddressBytes();
+            var utcNow = timeProvider.GetUtcNow().UtcDateTime;
             var deletedThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "deleted thread",
                 IsPinned = true,
                 IsClosed = true,
@@ -391,6 +402,7 @@ internal sealed class ThreadRepositoryTests
                 [
                     new Post
                     {
+                        IsOriginalPost = true,
                         BlobContainerId = new Guid("CC8B3B30-A82B-4634-BE98-17E6FE646E1A"),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                         IsSageEnabled = false,
@@ -405,7 +417,8 @@ internal sealed class ThreadRepositoryTests
             };
             var anotherCategoryThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "another category thread",
                 IsPinned = false,
                 IsClosed = false,
@@ -417,6 +430,7 @@ internal sealed class ThreadRepositoryTests
                 [
                     new Post
                     {
+                        IsOriginalPost = true,
                         BlobContainerId = new Guid("8B6789E0-9086-456F-94AA-AC070DF868B5"),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                         IsSageEnabled = false,
@@ -434,7 +448,8 @@ internal sealed class ThreadRepositoryTests
                 .Range(0, totalThreadCount)
                 .Select(i => new Thread
                 {
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddSeconds(i),
+                    CreatedAt = utcNow.AddSeconds(i),
+                    LastBumpAt = utcNow.AddSeconds(i),
                     Title = $"test thread {i}",
                     IsPinned = false,
                     IsClosed = false,
@@ -451,6 +466,7 @@ internal sealed class ThreadRepositoryTests
                     .Range(0, totalPostCountPerThread)
                     .Select(i => new Post
                     {
+                        IsOriginalPost = i == 0,
                         BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
                         IsSageEnabled = i % 2 == 0,
@@ -465,6 +481,7 @@ internal sealed class ThreadRepositoryTests
                     .Union([
                         new Post
                         {
+                            IsOriginalPost = false,
                             BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
                             IsSageEnabled = false,
@@ -496,7 +513,7 @@ internal sealed class ThreadRepositoryTests
                 OrderBy =
                 [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
@@ -531,7 +548,7 @@ internal sealed class ThreadRepositoryTests
                 .By(nameof(ThreadPreviewModel.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewModel.LastBumpAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -637,9 +654,11 @@ internal sealed class ThreadRepositoryTests
 
             var salt1 = GuidGenerator.GenerateSeededGuid();
             var salt2 = GuidGenerator.GenerateSeededGuid();
+            var utcNow = seedTimeProvider.GetUtcNow().UtcDateTime;
             var deletedThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "deleted thread",
                 IsPinned = true,
                 IsClosed = true,
@@ -651,6 +670,7 @@ internal sealed class ThreadRepositoryTests
                 [
                     new Post
                     {
+                        IsOriginalPost = true,
                         BlobContainerId = new Guid("4C708859-478D-451F-9EFD-315EAC9ABCAF"),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                         IsSageEnabled = false,
@@ -665,7 +685,8 @@ internal sealed class ThreadRepositoryTests
             };
             var anotherCategoryThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "another category thread",
                 IsPinned = false,
                 IsClosed = false,
@@ -677,6 +698,7 @@ internal sealed class ThreadRepositoryTests
                 [
                     new Post
                     {
+                        IsOriginalPost = true,
                         BlobContainerId = new Guid("B4041A4C-10CD-4332-AFA2-7D04A9D130DD"),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                         IsSageEnabled = false,
@@ -694,7 +716,8 @@ internal sealed class ThreadRepositoryTests
                 .Range(0, totalThreadCount)
                 .Select(i => new Thread
                 {
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddSeconds(i),
+                    CreatedAt = utcNow,
+                    LastBumpAt = utcNow,
                     Title = $"test thread {i}",
                     IsPinned = i == 3,
                     IsClosed = false,
@@ -711,6 +734,7 @@ internal sealed class ThreadRepositoryTests
                     .Range(0, totalPostCountPerThread)
                     .Select(i => new Post
                     {
+                        IsOriginalPost = i == 0,
                         BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
                         IsSageEnabled = i % 2 == 0,
@@ -725,6 +749,7 @@ internal sealed class ThreadRepositoryTests
                     .Union([
                         new Post
                         {
+                            IsOriginalPost = false,
                             BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
                             IsSageEnabled = false,
@@ -755,7 +780,7 @@ internal sealed class ThreadRepositoryTests
                 OrderBy =
                 [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
@@ -795,7 +820,7 @@ internal sealed class ThreadRepositoryTests
                 .By(nameof(ThreadPreviewModel.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewModel.LastBumpAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -902,9 +927,11 @@ internal sealed class ThreadRepositoryTests
 
             var salt1 = GuidGenerator.GenerateSeededGuid();
             var salt2 = GuidGenerator.GenerateSeededGuid();
+            var utcNow = seedTimeProvider.GetUtcNow().UtcDateTime;
             var deletedThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "deleted thread",
                 IsPinned = true,
                 IsClosed = true,
@@ -916,6 +943,7 @@ internal sealed class ThreadRepositoryTests
                 [
                     new Post
                     {
+                        IsOriginalPost = true,
                         BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                         IsSageEnabled = false,
@@ -930,7 +958,8 @@ internal sealed class ThreadRepositoryTests
             };
             var anotherCategoryThread = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "another category thread",
                 IsPinned = false,
                 IsClosed = false,
@@ -942,6 +971,7 @@ internal sealed class ThreadRepositoryTests
                 [
                     new Post
                     {
+                        IsOriginalPost = true,
                         BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                         IsSageEnabled = false,
@@ -959,7 +989,8 @@ internal sealed class ThreadRepositoryTests
                 .Range(0, totalThreadCount)
                 .Select(i => new Thread
                 {
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddSeconds(i),
+                    CreatedAt = utcNow,
+                    LastBumpAt = utcNow,
                     Title = $"test thread {i}",
                     IsPinned = false,
                     IsClosed = false,
@@ -975,6 +1006,7 @@ internal sealed class ThreadRepositoryTests
             var salt3 = GuidGenerator.GenerateSeededGuid();
             var postWithoutSage = new Post
             {
+                IsOriginalPost = false,
                 BlobContainerId = new Guid("9BE82B5A-0C4C-475C-9A3B-29F498E079E5"),
                 CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.Subtract(TimeSpan.FromDays(20)),
                 IsDeleted = false,
@@ -987,7 +1019,8 @@ internal sealed class ThreadRepositoryTests
             };
             var threadWithPostWithoutSage = new Thread
             {
-                CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
                 Title = "thread with no-sage post",
                 IsPinned = false,
                 IsClosed = false,
@@ -1003,6 +1036,7 @@ internal sealed class ThreadRepositoryTests
                     .Range(0, totalPostCountPerThread)
                     .Select(i => new Post
                     {
+                        IsOriginalPost = i == 0,
                         BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                         CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
                         IsSageEnabled = true,
@@ -1017,6 +1051,7 @@ internal sealed class ThreadRepositoryTests
                     .Union([
                         new Post
                         {
+                            IsOriginalPost = false,
                             BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                             CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
                             IsSageEnabled = false,
@@ -1047,7 +1082,7 @@ internal sealed class ThreadRepositoryTests
                 OrderBy =
                 [
                     new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                     new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
                 ],
                 CategoryAlias = "b",
@@ -1076,7 +1111,7 @@ internal sealed class ThreadRepositoryTests
                 .By(nameof(ThreadPreviewModel.IsPinned))
                 .Descending
                 .Then
-                .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+                .By(nameof(ThreadPreviewModel.LastBumpAt))
                 .Descending);
 
             foreach (var thread in actualThreadPreviews.Data)
@@ -1097,6 +1132,7 @@ internal sealed class ThreadRepositoryTests
             {
                 thread.Posts.Add(new Post
                 {
+                    IsOriginalPost = i == 0,
                     BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                     CreatedAt = startingAt.AddSeconds(i),
                     IsSageEnabled = isSageEnabled,
@@ -1184,9 +1220,11 @@ internal sealed class ThreadRepositoryTests
 
         var salt1 = GuidGenerator.GenerateSeededGuid();
         var salt2 = GuidGenerator.GenerateSeededGuid();
+        var utcNow = seedTimeProvider.GetUtcNow().UtcDateTime;
         var deletedThread = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "deleted thread",
             IsPinned = true,
             IsClosed = true,
@@ -1198,6 +1236,7 @@ internal sealed class ThreadRepositoryTests
             [
                 new Post
                 {
+                    IsOriginalPost = true,
                     BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
@@ -1212,7 +1251,8 @@ internal sealed class ThreadRepositoryTests
         };
         var anotherCategoryThread = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "another category thread",
             IsPinned = false,
             IsClosed = false,
@@ -1224,6 +1264,7 @@ internal sealed class ThreadRepositoryTests
             [
                 new Post
                 {
+                    IsOriginalPost = true,
                     BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
                     CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
                     IsSageEnabled = false,
@@ -1238,7 +1279,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread1 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(1),
+            CreatedAt = utcNow.AddMinutes(1),
+            LastBumpAt = utcNow.AddMinutes(1),
             Title = "thread with bump limit 1",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1246,7 +1288,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread2 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(2),
+            CreatedAt = utcNow.AddMinutes(2),
+            LastBumpAt = utcNow.AddMinutes(2),
             Title = "thread with bump limit 2",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1254,7 +1297,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread3 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(3),
+            CreatedAt = utcNow.AddMinutes(3),
+            LastBumpAt = utcNow.AddMinutes(3),
             Title = "thread with bump limit 3",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1262,7 +1306,8 @@ internal sealed class ThreadRepositoryTests
         };
         var thread4 = new Thread
         {
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime.AddMinutes(4),
+            CreatedAt = utcNow.AddMinutes(4),
+            LastBumpAt = utcNow.AddMinutes(4),
             Title = "thread with bump limit 4",
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -1278,20 +1323,22 @@ internal sealed class ThreadRepositoryTests
         // thread1 contains several old posts before bump limit and several new posts after bump limit, which shouldn't affect the result
         AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(-1), bumpLimit, false, false, hashService);
         AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1), 2, false, false, hashService);
+        thread1.LastBumpAt = thread1.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         // thread2 contains several new posts
         AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(1), 1, true, false, hashService);
-        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(2), 1, false, true, hashService);
         AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1), bumpLimit, false, false, hashService);
+        thread2.LastBumpAt = thread2.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         // thread3 contains even newer posts
         AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(3), 1, true, false, hashService);
-        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(4), 1, false, true, hashService);
         AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddSeconds(1), bumpLimit, false, false, hashService);
+        thread3.LastBumpAt = thread3.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         // thread4 contains a lot of posts
         AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime, bumpLimit + 10, false, false, hashService);
         AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(5), bumpLimit + 10, false, false, hashService);
+        thread4.LastBumpAt = thread4.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
 
         await seedDbContext.SaveChangesAsync(cancellationToken);
 
@@ -1305,7 +1352,7 @@ internal sealed class ThreadRepositoryTests
             OrderBy =
             [
                 new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.LastPostCreatedAt), Direction = OrderByDirection.Desc },
+                new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
             ],
             CategoryAlias = "b",
@@ -1316,11 +1363,6 @@ internal sealed class ThreadRepositoryTests
         Assert.That(actualThreadPreviews, Is.Not.Null);
 
         Assert.That(actualThreadPreviews.Data, Has.Count.EqualTo(4));
-
-        Assert.That(actualThreadPreviews.Data[0].Title, Is.EqualTo(thread3.Title));
-        Assert.That(actualThreadPreviews.Data[1].Title, Is.EqualTo(thread2.Title));
-        Assert.That(actualThreadPreviews.Data[2].Title, Is.EqualTo(thread4.Title));
-        Assert.That(actualThreadPreviews.Data[3].Title, Is.EqualTo(thread1.Title));
 
         // check that category is correct
         Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
@@ -1336,7 +1378,7 @@ internal sealed class ThreadRepositoryTests
             .By(nameof(ThreadPreviewModel.IsPinned))
             .Descending
             .Then
-            .By(nameof(ThreadPreviewModel.LastPostCreatedAt))
+            .By(nameof(ThreadPreviewModel.LastBumpAt))
             .Descending);
 
         foreach (var thread in actualThreadPreviews.Data)

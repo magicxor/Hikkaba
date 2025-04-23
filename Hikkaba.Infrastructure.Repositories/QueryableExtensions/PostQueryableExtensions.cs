@@ -1,8 +1,6 @@
 ﻿using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Attachments.Concrete;
 using Hikkaba.Infrastructure.Models.Post;
-using Microsoft.EntityFrameworkCore;
-using Thinktecture;
 
 namespace Hikkaba.Infrastructure.Repositories.QueryableExtensions;
 
@@ -12,9 +10,7 @@ public static class PostQueryableExtensions
     {
         return query.Select(post => new PostDetailsModel
         {
-            Index = EF.Functions.RowNumber(post.ThreadId,
-                EF.Functions.OrderBy(post.CreatedAt)
-                    .ThenBy(post.Id)),
+            Index = 0,
             Id = post.Id,
             IsDeleted = post.IsDeleted,
             CreatedAt = post.CreatedAt,

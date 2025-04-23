@@ -13,7 +13,7 @@ internal static partial class ThreadMapper
 {
     public static partial ThreadDetailsViewModel ToViewModel(this ThreadDetailsRequestModel model);
 
-    [MapperIgnoreSource(nameof(ThreadPreviewModel.LastPostCreatedAt))]
+    [MapperIgnoreSource(nameof(ThreadPreviewModel.LastBumpAt))]
     public static partial ThreadDetailsViewModel ToViewModel(this ThreadPreviewModel model);
 
     public static partial IReadOnlyList<ThreadDetailsViewModel> ToViewModels(this IReadOnlyList<ThreadPreviewModel> models);

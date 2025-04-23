@@ -111,9 +111,11 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "test thread 1 Buzz",
             IsPinned = false,
             IsClosed = false,
@@ -125,6 +127,7 @@ internal sealed class BanRepositoryTests
 
         var post1 = new Post
         {
+            IsOriginalPost = true,
             BlobContainerId = new Guid("05E219F7-35F2-495B-A0D3-D7EF7018C674"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
@@ -137,6 +140,7 @@ internal sealed class BanRepositoryTests
         };
         var post2 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("EADF6C08-1C14-432E-A9EB-0DDF67D55FC7"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
@@ -248,9 +252,11 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "test thread 1 Buzz",
             IsPinned = false,
             IsClosed = false,
@@ -262,6 +268,7 @@ internal sealed class BanRepositoryTests
 
         var post1 = new Post
         {
+            IsOriginalPost = true,
             BlobContainerId = new Guid("64596344-BC44-489A-9D6E-1AA2BB5A27BF"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
@@ -274,6 +281,7 @@ internal sealed class BanRepositoryTests
         };
         var post2 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("9BC6094D-DD51-4C59-8EAB-444446DEEF62"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,

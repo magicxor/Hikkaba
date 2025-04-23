@@ -93,6 +93,7 @@ internal sealed class Program
                     {
                         IsDeleted = false,
                         CreatedAt = f.Date.Between(utcNow.AddYears(-5), utcNow),
+                        LastBumpAt = f.Date.Between(utcNow.AddYears(-5), utcNow),
                         ModifiedAt = Random.Next(5) == 0 ? f.Date.Between(utcNow.AddYears(-5), utcNow) : null,
                         Title = f.Lorem.Sentence(5),
                         IsPinned = Random.Next(0, 3000) == 0,
@@ -114,6 +115,7 @@ internal sealed class Program
                     var testPosts = new Faker<Post>()
                         .CustomInstantiator(f => new Post
                         {
+                            IsOriginalPost = f.IndexFaker == 0,
                             BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                             IsDeleted = Random.Next(0, 50) == 0,
                             CreatedAt = f.Date.Between(thread.CreatedAt, utcNow),
@@ -152,6 +154,7 @@ internal sealed class Program
                             var replies = new Faker<Post>()
                                 .CustomInstantiator(f => new Post
                                 {
+                                    IsOriginalPost = f.IndexFaker == 0,
                                     BlobContainerId = GuidGenerator.GenerateSeededGuid(),
                                     IsDeleted = Random.Next(0, 50) == 0,
                                     CreatedAt = f.Date.Between(post.CreatedAt.AddSeconds(1), utcNow),

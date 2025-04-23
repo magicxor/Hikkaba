@@ -48,6 +48,12 @@ public class Post
     [Column(TypeName = "binary(32)")]
     public required byte[] ThreadLocalUserHash { get; set; }
 
+    [Required]
+    public required bool IsOriginalPost { get; set; }
+
+    [Required]
+    public bool HasOriginalPosterMark { get; set; }
+
     // FK id
     [ForeignKey(nameof(Thread))]
     public long ThreadId { get; set; }

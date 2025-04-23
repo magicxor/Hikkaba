@@ -172,10 +172,21 @@ public sealed class PostRepository : IPostRepository
             _applicationDbContext.Posts.RemoveRange(postsToBeDeleted);
         }
 
+        var thread = await _applicationDbContext.Threads
+            .TagWithCallSite()
+            .FirstAsync(t => t.Id == requestModel.BaseModel.ThreadId, cancellationToken);
+
+        var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
+
+        if (!requestModel.BaseModel.IsSageEnabled || inputFiles.Any())
+        {
+            thread.LastBumpAt = utcNow;
+        }
+
         var post = new Post
         {
             BlobContainerId = requestModel.BaseModel.BlobContainerId,
-            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
             IsSageEnabled = requestModel.BaseModel.IsSageEnabled,
             MessageText = requestModel.BaseModel.MessageText,
             MessageHtml = requestModel.BaseModel.MessageHtml,
@@ -187,6 +198,8 @@ public sealed class PostRepository : IPostRepository
             Documents = attachments.Documents,
             Pictures = attachments.Pictures,
             Videos = attachments.Videos,
+            IsOriginalPost = false,
+            HasOriginalPosterMark = false,
         };
 
         var postsToReply = await _applicationDbContext.Posts

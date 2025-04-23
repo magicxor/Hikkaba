@@ -9,7 +9,7 @@ public static class ContextConfiguration
 {
     public static readonly Action<SqlServerDbContextOptionsBuilder> SqlServerOptionsAction = sql
         => sql
-            .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
+            .UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)
             .AddWindowFunctionsSupport()
             .AddTableHintSupport();
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
+using Hikkaba.Data.Entities.Attachments;
 using Hikkaba.Infrastructure.Models.Attachments.Concrete;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using Hikkaba.Infrastructure.Models.Error;
@@ -17,7 +18,6 @@ using Hikkaba.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OneOf.Types;
-using Thinktecture;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Infrastructure.Repositories.Implementations;
@@ -93,6 +93,13 @@ public sealed class ThreadRepository : IThreadRepository
         if (thread is null || posts.Count == 0)
             return null;
 
+        // calculate real post index
+        for (var index = 0; index < posts.Count; index++)
+        {
+            var post = posts[index];
+            post.Index = index + 1;
+        }
+
         return new ThreadDetailsRequestModel
         {
             Id = thread.Id,
@@ -120,185 +127,198 @@ public sealed class ThreadRepository : IThreadRepository
         using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
 
         var threadQuery = _applicationDbContext.Threads
-            .TagWithCallSite()
             .Include(thread => thread.Category)
-            .AsQueryable()
-            .AsSingleQuery();
-
-        if (!string.IsNullOrEmpty(filter.CategoryAlias))
-        {
-            threadQuery = threadQuery.Where(thread => thread.Category.Alias == filter.CategoryAlias);
-        }
-
-        threadQuery = filter.IncludeDeleted
-            ? threadQuery.IgnoreQueryFilters()
-            : threadQuery.Where(thread => !thread.IsDeleted && !thread.Category.IsDeleted);
-
-        var resultQuery = threadQuery
+            .Where(thread => thread.Category.Alias == filter.CategoryAlias)
+            .Where(thread =>
+                !thread.IsDeleted
+                && !thread.Category.IsDeleted
+                && thread.Posts.Any(p => !p.IsDeleted))
             .Select(thread => new
             {
                 Thread = thread,
                 Category = thread.Category,
                 BumpLimit = thread.BumpLimit > 0 ? thread.BumpLimit : thread.Category.DefaultBumpLimit,
-                PostCount = thread.Posts.Count(post => filter.IncludeDeleted || !post.IsDeleted),
-            })
-            .Select(x => new
-            {
-                Thread = x.Thread,
-                Category = x.Category,
-                LastPostCreatedAt = x.Thread.Posts
-                    .OrderBy(p => p.CreatedAt)
-                    .ThenBy(p => p.Id)
-                    .Take(x.BumpLimit)
-                    .Where(p => !p.IsSageEnabled && !p.IsDeleted)
-                    .Max(p => p.CreatedAt),
-                Posts = x.Thread.Posts
-                    .Where(p => filter.IncludeDeleted || !p.IsDeleted)
-                    .OrderBy(p => p.CreatedAt)
-                    /* take the OP-post (the first post) */
-                    .Take(1)
-                    .Union(x.Thread.Posts
-                        .Where(p => filter.IncludeDeleted || !p.IsDeleted)
-                        .OrderByDescending(p => p.CreatedAt)
-                        /* take the 3 last posts */
-                        .Take(Defaults.LatestPostsCountInThreadPreview))
-                    .ToList(),
-                PostCount = x.PostCount,
-            })
-            .Where(thread => filter.IncludeDeleted || thread.PostCount > 0)
-            .Select(g => new ThreadPreviewModel
-            {
-                Id = g.Thread.Id,
-                IsDeleted = g.Thread.IsDeleted,
-                CreatedAt = g.Thread.CreatedAt,
-                ModifiedAt = g.Thread.ModifiedAt,
-                LastPostCreatedAt = g.LastPostCreatedAt,
-                Title = g.Thread.Title,
-                IsPinned = g.Thread.IsPinned,
-                IsClosed = g.Thread.IsClosed,
-                IsCyclic = g.Thread.IsCyclic,
-                BumpLimit = g.Thread.BumpLimit,
-                ShowThreadLocalUserHash = g.Category.ShowThreadLocalUserHash,
-                CategoryId = g.Category.Id,
-                CategoryAlias = g.Category.Alias,
-                CategoryName = g.Category.Name,
-                PostCount = g.PostCount,
-                Posts = g.Posts.Select(post => new PostDetailsModel
-                    {
-                        Index = EF.Functions.RowNumber(EF.Functions.OrderByDescending(post.CreatedAt)
-                            .ThenByDescending(post.Id)),
-                        Id = post.Id,
-                        IsDeleted = post.IsDeleted,
-                        CreatedAt = post.CreatedAt,
-                        ModifiedAt = post.ModifiedAt,
-                        IsSageEnabled = post.IsSageEnabled,
-                        MessageHtml = post.MessageHtml,
-                        UserIpAddress = post.UserIpAddress,
-                        UserAgent = post.UserAgent,
-                        Audio = post.Audios
-                            .Select(attachment => new AudioModel
-                            {
-                                Id = attachment.Id,
-                                PostId = attachment.PostId,
-                                ThreadId = post.ThreadId,
-                                BlobId = attachment.BlobId,
-                                BlobContainerId = post.BlobContainerId,
-                                FileName = attachment.FileNameWithoutExtension,
-                                FileExtension = attachment.FileExtension,
-                                FileSize = attachment.FileSize,
-                                FileContentType = attachment.FileContentType,
-                                FileHash = attachment.FileHash,
-                                Title = attachment.Title,
-                                Album = attachment.Album,
-                                Artist = attachment.Artist,
-                                DurationSeconds = attachment.DurationSeconds,
-                            })
-                            .ToList(),
-                        Documents = post.Documents
-                            .Select(attachment => new DocumentModel
-                            {
-                                Id = attachment.Id,
-                                PostId = attachment.PostId,
-                                ThreadId = post.ThreadId,
-                                BlobId = attachment.BlobId,
-                                BlobContainerId = post.BlobContainerId,
-                                FileName = attachment.FileNameWithoutExtension,
-                                FileExtension = attachment.FileExtension,
-                                FileSize = attachment.FileSize,
-                                FileContentType = attachment.FileContentType,
-                                FileHash = attachment.FileHash,
-                            })
-                            .ToList(),
-                        Notices = post.Notices
-                            .Select(attachment => new NoticeModel
-                            {
-                                Id = attachment.Id,
-                                PostId = attachment.PostId,
-                                ThreadId = post.ThreadId,
-                                Text = attachment.Text,
-                            })
-                            .ToList(),
-                        Pictures = post.Pictures
-                            .Select(attachment => new PictureModel
-                            {
-                                Id = attachment.Id,
-                                PostId = attachment.PostId,
-                                ThreadId = post.ThreadId,
-                                BlobId = attachment.BlobId,
-                                BlobContainerId = post.BlobContainerId,
-                                FileName = attachment.FileNameWithoutExtension,
-                                FileExtension = attachment.FileExtension,
-                                FileSize = attachment.FileSize,
-                                FileContentType = attachment.FileContentType,
-                                FileHash = attachment.FileHash,
-                                Width = attachment.Width,
-                                Height = attachment.Height,
-                                ThumbnailExtension = attachment.ThumbnailExtension,
-                                ThumbnailWidth = attachment.ThumbnailWidth,
-                                ThumbnailHeight = attachment.ThumbnailHeight,
-                            })
-                            .ToList(),
-                        Video = post.Videos
-                            .Select(attachment => new VideoModel
-                            {
-                                Id = attachment.Id,
-                                PostId = attachment.PostId,
-                                ThreadId = post.ThreadId,
-                                BlobId = attachment.BlobId,
-                                BlobContainerId = post.BlobContainerId,
-                                FileName = attachment.FileNameWithoutExtension,
-                                FileExtension = attachment.FileExtension,
-                                FileSize = attachment.FileSize,
-                                FileContentType = attachment.FileContentType,
-                                FileHash = attachment.FileHash,
-                            })
-                            .ToList(),
-                        ThreadId = post.ThreadId,
-                        ShowThreadLocalUserHash = g.Category.ShowThreadLocalUserHash,
-                        ShowCountry = g.Category.ShowCountry,
-                        ShowOs = g.Category.ShowOs,
-                        ShowBrowser = g.Category.ShowBrowser,
-                        ThreadLocalUserHash = post.ThreadLocalUserHash,
-                        CategoryAlias = g.Category.Alias,
-                        CategoryId = g.Category.Id,
-                        Replies = post.RepliesToThisMentionedPost
-                            .Where(r => !r.Post.IsDeleted && !r.Reply.IsDeleted)
-                            .Select(r => r.ReplyId)
-                            .ToList(),
-                    })
-                    .OrderBy(x => x.CreatedAt)
-                    .ThenBy(x => x.Id)
-                    .ToList(),
+                Id = thread.Id,
+                LastBumpAt = thread.LastBumpAt,
+                IsPinned = thread.IsPinned,
+                PostCount = thread.Posts.Count(p => !p.IsDeleted),
             });
 
-        var totalCount = await resultQuery.CountAsync(cancellationToken);
+        var totalCount = await threadQuery
+            .TagWithCallSite()
+            .CountAsync(cancellationToken);
 
-        var data = await resultQuery
-            .ApplyOrderByAndPaging(filter, x => x.LastPostCreatedAt, OrderByDirection.Desc)
+        // 1) Get the threads
+        var threads = await threadQuery
+            .TagWithCallSite()
+            .ApplyOrderByAndPaging(filter, x => x.LastBumpAt, OrderByDirection.Desc)
             .ToListAsync(cancellationToken);
 
+        var retrievedThreadIds = threads.ConvertAll(x => x.Id);
+
+        // 2) Get the posts
+        var threadPosts = await _applicationDbContext.Posts
+            .TagWithCallSite()
+            .Where(post => retrievedThreadIds.Contains(post.ThreadId))
+            .GroupBy(
+                post => post.ThreadId,
+                post => new { Post = post, Replies = post.RepliesToThisMentionedPost },
+                (threadId, posts) => new
+                {
+                    ThreadId = threadId,
+                    PostsWithReplies = posts.Where(p => filter.IncludeDeleted || !p.Post.IsDeleted)
+                        .OrderByDescending(p => p.Post.IsOriginalPost)
+                        .ThenByDescending(p => p.Post.CreatedAt)
+                        .Take(Defaults.LatestPostsCountInThreadPreview + 1),
+                })
+            .ToListAsync(cancellationToken);
+
+        var postIds = threadPosts
+            .SelectMany(x => x.PostsWithReplies.Select(pr => pr.Post.Id))
+            .ToList();
+
+        // 3) Get the attachments
+        var attachments = await _applicationDbContext.Attachments
+            .TagWithCallSite()
+            .Where(a => postIds.Contains(a.PostId))
+            .ToListAsync(cancellationToken);
+
+        // combine
+        var result = threads
+            .Select(t => new ThreadPreviewModel
+            {
+                Id = t.Thread.Id,
+                IsDeleted = t.Thread.IsDeleted,
+                CreatedAt = t.Thread.CreatedAt,
+                ModifiedAt = t.Thread.ModifiedAt,
+                LastBumpAt = t.Thread.LastBumpAt,
+                Title = t.Thread.Title,
+                IsPinned = t.Thread.IsPinned,
+                IsClosed = t.Thread.IsClosed,
+                IsCyclic = t.Thread.IsCyclic,
+                BumpLimit = t.BumpLimit,
+                ShowThreadLocalUserHash = t.Category.ShowThreadLocalUserHash,
+                CategoryId = t.Category.Id,
+                CategoryAlias = t.Category.Alias,
+                CategoryName = t.Category.Name,
+                PostCount = t.PostCount,
+                Posts = threadPosts
+                    .Where(tp => tp.ThreadId == t.Thread.Id)
+                    .SelectMany(tp => tp.PostsWithReplies)
+                    .Select((tp, i) => new PostDetailsModel
+                        {
+                            Index = i,
+                            Id = tp.Post.Id,
+                            IsDeleted = tp.Post.IsDeleted,
+                            CreatedAt = tp.Post.CreatedAt,
+                            ModifiedAt = tp.Post.ModifiedAt,
+                            IsSageEnabled = tp.Post.IsSageEnabled,
+                            MessageHtml = tp.Post.MessageHtml,
+                            UserIpAddress = tp.Post.UserIpAddress,
+                            UserAgent = tp.Post.UserAgent,
+                            Audio = attachments.OfType<Audio>()
+                                .Where(a => a.PostId == tp.Post.Id)
+                                .Select(attachment => new AudioModel
+                                {
+                                    Id = attachment.Id,
+                                    PostId = attachment.PostId,
+                                    ThreadId = tp.Post.ThreadId,
+                                    BlobId = attachment.BlobId,
+                                    BlobContainerId = tp.Post.BlobContainerId,
+                                    FileName = attachment.FileNameWithoutExtension,
+                                    FileExtension = attachment.FileExtension,
+                                    FileSize = attachment.FileSize,
+                                    FileContentType = attachment.FileContentType,
+                                    FileHash = attachment.FileHash,
+                                    Title = attachment.Title,
+                                    Album = attachment.Album,
+                                    Artist = attachment.Artist,
+                                    DurationSeconds = attachment.DurationSeconds,
+                                })
+                                .ToList(),
+                            Documents = attachments.OfType<Document>()
+                                .Where(a => a.PostId == tp.Post.Id)
+                                .Select(attachment => new DocumentModel
+                                {
+                                    Id = attachment.Id,
+                                    PostId = attachment.PostId,
+                                    ThreadId = tp.Post.ThreadId,
+                                    BlobId = attachment.BlobId,
+                                    BlobContainerId = tp.Post.BlobContainerId,
+                                    FileName = attachment.FileNameWithoutExtension,
+                                    FileExtension = attachment.FileExtension,
+                                    FileSize = attachment.FileSize,
+                                    FileContentType = attachment.FileContentType,
+                                    FileHash = attachment.FileHash,
+                                })
+                                .ToList(),
+                            Notices = attachments.OfType<Notice>()
+                                .Where(a => a.PostId == tp.Post.Id)
+                                .Select(attachment => new NoticeModel
+                                {
+                                    Id = attachment.Id,
+                                    PostId = attachment.PostId,
+                                    ThreadId = tp.Post.ThreadId,
+                                    Text = attachment.Text,
+                                })
+                                .ToList(),
+                            Pictures = attachments.OfType<Picture>()
+                                .Where(a => a.PostId == tp.Post.Id)
+                                .Select(attachment => new PictureModel
+                                {
+                                    Id = attachment.Id,
+                                    PostId = attachment.PostId,
+                                    ThreadId = tp.Post.ThreadId,
+                                    BlobId = attachment.BlobId,
+                                    BlobContainerId = tp.Post.BlobContainerId,
+                                    FileName = attachment.FileNameWithoutExtension,
+                                    FileExtension = attachment.FileExtension,
+                                    FileSize = attachment.FileSize,
+                                    FileContentType = attachment.FileContentType,
+                                    FileHash = attachment.FileHash,
+                                    Width = attachment.Width,
+                                    Height = attachment.Height,
+                                    ThumbnailExtension = attachment.ThumbnailExtension,
+                                    ThumbnailWidth = attachment.ThumbnailWidth,
+                                    ThumbnailHeight = attachment.ThumbnailHeight,
+                                })
+                                .ToList(),
+                            Video = attachments.OfType<Video>()
+                                .Where(a => a.PostId == tp.Post.Id)
+                                .Select(attachment => new VideoModel
+                                {
+                                    Id = attachment.Id,
+                                    PostId = attachment.PostId,
+                                    ThreadId = tp.Post.ThreadId,
+                                    BlobId = attachment.BlobId,
+                                    BlobContainerId = tp.Post.BlobContainerId,
+                                    FileName = attachment.FileNameWithoutExtension,
+                                    FileExtension = attachment.FileExtension,
+                                    FileSize = attachment.FileSize,
+                                    FileContentType = attachment.FileContentType,
+                                    FileHash = attachment.FileHash,
+                                })
+                                .ToList(),
+                            ThreadId = tp.Post.ThreadId,
+                            ShowThreadLocalUserHash = t.Category.ShowThreadLocalUserHash,
+                            ShowCountry = t.Category.ShowCountry,
+                            ShowOs = t.Category.ShowOs,
+                            ShowBrowser = t.Category.ShowBrowser,
+                            ThreadLocalUserHash = tp.Post.ThreadLocalUserHash,
+                            CategoryAlias = t.Category.Alias,
+                            CategoryId = t.Category.Id,
+                            Replies = tp.Replies
+                                .Where(r => !r.Reply.IsDeleted)
+                                .Select(r => r.ReplyId)
+                                .ToList(),
+                        })
+                    .OrderBy(tp => tp.CreatedAt)
+                    .ToList(),
+            })
+            .ToList();
+
         // calculate real post index
-        foreach (var thread in data)
+        foreach (var thread in result)
         {
             foreach (var post in thread.Posts)
             {
@@ -308,7 +328,7 @@ public sealed class ThreadRepository : IThreadRepository
             }
         }
 
-        return new PagedResult<ThreadPreviewModel>(data, filter, totalCount);
+        return new PagedResult<ThreadPreviewModel>(result, filter, totalCount);
     }
 
     public async Task<ThreadPostCreateResultModel> CreateThreadAsync(
@@ -317,6 +337,7 @@ public sealed class ThreadRepository : IThreadRepository
         CancellationToken cancellationToken)
     {
         using var activity = RepositoriesTelemetry.ThreadSource.StartActivity();
+
         _logger.LogInformation(
             LogEventIds.CreatingThread,
             "Creating thread in category {CategoryAlias}. Attachment count: {AttachmentCount}, BlobContainerId: {BlobContainerId}",
@@ -376,10 +397,12 @@ public sealed class ThreadRepository : IThreadRepository
             _applicationDbContext.Threads.RemoveRange(threadsToBeDeleted);
         }
 
+        var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
+
         var post = new Post
         {
             BlobContainerId = createRequestModel.BaseModel.BlobContainerId,
-            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
             IsSageEnabled = false,
             MessageText = createRequestModel.BaseModel.MessageText,
             MessageHtml = createRequestModel.BaseModel.MessageHtml,
@@ -390,11 +413,14 @@ public sealed class ThreadRepository : IThreadRepository
             Documents = attachments.Documents,
             Pictures = attachments.Pictures,
             Videos = attachments.Videos,
+            IsOriginalPost = true,
+            HasOriginalPosterMark = false,
         };
 
         var thread = new Thread
         {
-            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = createRequestModel.BaseModel.ThreadTitle,
             BumpLimit = category.DefaultBumpLimit > 0 ? category.DefaultBumpLimit : Defaults.DefaultBumpLimit,
             Salt = createRequestModel.ThreadSalt,

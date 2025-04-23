@@ -16,6 +16,7 @@ using Hikkaba.Infrastructure.Repositories.Implementations.Interceptors;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Shared.Services.Implementations;
+using Hikkaba.Web.ActionFilters;
 using Hikkaba.Web.Binding.Providers;
 using Hikkaba.Web.Metrics;
 using Hikkaba.Web.Models;
@@ -257,7 +258,10 @@ internal static class DependencyInjection
         services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
 
         services.AddDatabaseDeveloperPageExceptionFilter();
-        services.AddControllersWithViews();
+        services.AddControllersWithViews(options =>
+        {
+            options.Filters.Add<StopwatchActionFilter>();
+        });
         services.AddRazorPages();
         services.AddBootstrapPagerGenerator(options => options.ConfigureDefault());
 

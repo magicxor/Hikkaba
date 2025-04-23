@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -110,9 +111,11 @@ internal sealed class PostRepositoryTests
         };
         dbContext.Categories.Add(category);
 
+        var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var thread = new Thread
         {
-            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            CreatedAt = utcNow,
+            LastBumpAt = utcNow,
             Title = "BoardThreadPostSearchTerm thread 1 ThreadAndPostSearchTerm",
             IsPinned = false,
             IsClosed = false,
@@ -124,6 +127,7 @@ internal sealed class PostRepositoryTests
 
         var post1 = new Post
         {
+            IsOriginalPost = true,
             BlobContainerId = new Guid("243D7DB4-4EE8-4285-8888-E7185A7CB1B2"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
@@ -136,6 +140,7 @@ internal sealed class PostRepositoryTests
         };
         var post2 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("D9AED982-37D6-4C5C-B235-E1AADC342236"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
@@ -148,6 +153,7 @@ internal sealed class PostRepositoryTests
         };
         var post3 = new Post
         {
+            IsOriginalPost = false,
             BlobContainerId = new Guid("C8393E45-20AE-4214-A1EF-5F6AE0D93477"),
             CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             IsDeleted = true,
@@ -159,7 +165,12 @@ internal sealed class PostRepositoryTests
             ThreadLocalUserHash = hashService.GetHashBytes(thread.Salt, IPAddress.Parse("127.0.0.1").GetAddressBytes()),
             Thread = thread,
         };
-        dbContext.AddRange(post1, post2, post3);
+        IReadOnlyList<Post> allPosts = [post1, post2, post3];
+        dbContext.Posts.AddRange(allPosts);
+
+        var latestPostWithoutSage = allPosts
+            .Where(x => x is { IsSageEnabled: false, IsDeleted: false })
+            .MaxBy(x => x.CreatedAt);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

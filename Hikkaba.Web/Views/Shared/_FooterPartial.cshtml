@@ -1,5 +1,7 @@
-﻿@using Hikkaba.Application.Contracts
+﻿@using System.Globalization
+@using Hikkaba.Application.Contracts
 @using Hikkaba.Shared.Constants
+@using Humanizer
 @inject IVersionInfoService VersionInfoService
 <footer>
   <div class="container">
@@ -17,5 +19,13 @@
         <small class="text-body-secondary">@Defaults.BoardName @VersionInfoService.ProductVersion</small>
       </div>
     </div>
+    @if (ViewData["ExecutionTime"] is long executionTime)
+    {
+      <div class="row align-items-center">
+        <div class="col text-center">
+          <small class="text-body-secondary">Page generated in @(executionTime.Milliseconds().Humanize())</small>
+        </div>
+      </div>
+    }
   </div>
 </footer>
