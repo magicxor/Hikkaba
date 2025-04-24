@@ -59,10 +59,10 @@ public sealed class AttachmentsController : ControllerBase
         var blobDescriptor = await _storageProvider.GetBlobDescriptorAsync(blobContainerId, blobId);
         var blobStream = await _storageProvider.GetBlobStreamAsync(blobContainerId, blobId);
 
-        HttpContext.Response.Headers[HeaderNames.ContentDisposition] = "inline; filename=" + fileName;
-        HttpContext.Response.ContentType = contentType;
         HttpContext.Response.ContentLength = blobDescriptor.Length;
 
-        return new FileStreamResult(blobStream, contentType);
+        var cd = new ContentDispositionHeaderValue("inline") { FileNameStar = fileName };
+        Response.Headers[HeaderNames.ContentDisposition] = cd.ToString();
+        return File(blobStream, contentType);
     }
 }
