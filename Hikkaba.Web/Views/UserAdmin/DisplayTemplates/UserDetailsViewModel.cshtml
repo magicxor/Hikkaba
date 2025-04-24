@@ -1,7 +1,18 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Hikkaba.Web.ViewModels.UserViewModels.UserDetailsViewModel
+﻿@model Hikkaba.Web.ViewModels.UserViewModels.UserDetailsViewModel
+@inject TimeProvider TimeProvider
 
-<tr>
+@{
+  var utcNow = TimeProvider.GetUtcNow().UtcDateTime;
+  var colorClass = Model switch
+  {
+    { IsDeleted: true } => "table-danger",
+    { EmailConfirmed: false } => "table-secondary",
+    { LockoutEnabled: true, LockoutEnd: { } lockoutEnd } when lockoutEnd > utcNow => "table-warning",
+    _ => "",
+  };
+}
+
+<tr class="@(colorClass)">
   <td>@Html.DisplayFor(m => m.Id)</td>
   <td>@Html.DisplayFor(m => m.IsDeleted)</td>
   <td>@Html.DisplayFor(m => m.AccessFailedCount)</td>
