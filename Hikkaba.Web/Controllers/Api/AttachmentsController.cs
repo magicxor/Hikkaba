@@ -62,7 +62,7 @@ public sealed class AttachmentsController : ControllerBase
         HttpContext.Response.ContentLength = blobDescriptor.Length;
 
         var cd = new ContentDispositionHeaderValue("inline") { FileNameStar = fileName };
-        Response.Headers.Append(HeaderNames.ContentDisposition, cd.ToString());
+        Response.Headers[HeaderNames.ContentDisposition] = cd.ToString();
         return File(blobStream, contentType);
     }
 }
