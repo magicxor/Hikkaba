@@ -38,13 +38,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using MyCSharp.HttpUserAgentParser.AspNetCore.DependencyInjection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Sakura.AspNetCore.Mvc;
 using TwentyTwenty.Storage;
 using TwentyTwenty.Storage.Local;
-using MyCSharp.HttpUserAgentParser.AspNetCore.DependencyInjection;
 using MyCSharp.HttpUserAgentParser.MemoryCache.DependencyInjection;
 
 namespace Hikkaba.Web.Extensions;

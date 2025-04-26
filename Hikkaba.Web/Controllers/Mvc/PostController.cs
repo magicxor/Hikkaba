@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Hikkaba.Web.Utils;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Application.Implementations;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
@@ -23,6 +24,8 @@ using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MyCSharp.HttpUserAgentParser;
+using MyCSharp.HttpUserAgentParser.AspNetCore;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
@@ -34,17 +37,23 @@ public sealed class PostController : BaseMvcController
     private readonly IMessagePostProcessor _messagePostProcessor;
     private readonly IThreadService _threadService;
     private readonly IPostService _postService;
+    private readonly GeoIpCountryReader _geoIpCountryReader;
+    private readonly IHttpUserAgentParserAccessor _httpUserAgentParserAccessor;
 
     public PostController(
         ILogger<PostController> logger,
         IMessagePostProcessor messagePostProcessor,
         IThreadService threadService,
-        IPostService postService)
+        IPostService postService,
+        GeoIpCountryReader geoIpCountryReader,
+        IHttpUserAgentParserAccessor httpUserAgentParserAccessor)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;
         _threadService = threadService;
         _postService = postService;
+        _geoIpCountryReader = geoIpCountryReader;
+        _httpUserAgentParserAccessor = httpUserAgentParserAccessor;
     }
 
     [HttpGet("/{categoryAlias}/{threadId:long}/create", Name = "PostCreate")]
@@ -111,6 +120,23 @@ public sealed class PostController : BaseMvcController
 
         try
         {
+            string? countryIsoCode = null;
+            var userIp = Request.HttpContext.Connection.RemoteIpAddress;
+            if (userIp is not null && _geoIpCountryReader.TryCountry(userIp, out var countryResponse))
+            {
+                countryIsoCode = countryResponse?.Country.IsoCode;
+            }
+
+            var userAgentInfo = _httpUserAgentParserAccessor.Get(HttpContext);
+            var clientInfoModel = new ClientInfoModel
+            {
+                CountryIsoCode = countryIsoCode,
+                BrowserType = userAgentInfo?.Name,
+                OsType = userAgentInfo?.Platform?.PlatformType is { } pt
+                    ? Enum.GetName(pt)
+                    : null,
+            };
+
             var postCreateRm = new PostCreateRequestModel
             {
                 BlobContainerId = Guid.NewGuid(),
@@ -122,6 +148,7 @@ public sealed class PostController : BaseMvcController
                 CategoryAlias = viewModel.CategoryAlias,
                 ThreadId = viewModel.ThreadId,
                 MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message ?? string.Empty),
+                ClientInfo = clientInfoModel,
             };
 
             if (postCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)

@@ -102,6 +102,7 @@ public sealed class ThreadService : IThreadService
             BaseModel = requestModel,
             ThreadSalt = threadSalt,
             ThreadLocalUserHash = threadLocalUserHash,
+            ClientInfo = requestModel.ClientInfo,
         };
 
         await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(requestModel.BlobContainerId, attachments, cancellationToken);

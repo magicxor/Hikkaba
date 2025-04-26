@@ -6,6 +6,8 @@ using DNTCaptcha.Core;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Application.Contracts;
+using Hikkaba.Application.Implementations;
+using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Extensions;
 using Hikkaba.Web.Controllers.Mvc.Base;
@@ -17,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MyCSharp.HttpUserAgentParser.AspNetCore;
 
 namespace Hikkaba.Web.Controllers.Mvc;
 
@@ -28,17 +31,23 @@ public sealed class ThreadController : BaseMvcController
     private readonly IMessagePostProcessor _messagePostProcessor;
     private readonly ICategoryService _categoryService;
     private readonly IThreadService _threadService;
+    private readonly GeoIpCountryReader _geoIpCountryReader;
+    private readonly IHttpUserAgentParserAccessor _httpUserAgentParserAccessor;
 
     public ThreadController(
         ILogger<ThreadController> logger,
         IMessagePostProcessor messagePostProcessor,
         ICategoryService categoryService,
-        IThreadService threadService)
+        IThreadService threadService,
+        GeoIpCountryReader geoIpCountryReader,
+        IHttpUserAgentParserAccessor httpUserAgentParserAccessor)
     {
         _logger = logger;
         _messagePostProcessor = messagePostProcessor;
         _categoryService = categoryService;
         _threadService = threadService;
+        _geoIpCountryReader = geoIpCountryReader;
+        _httpUserAgentParserAccessor = httpUserAgentParserAccessor;
     }
 
     [HttpGet("/{categoryAlias}/{threadId:long}", Name = "ThreadDetails")]
@@ -123,6 +132,23 @@ public sealed class ThreadController : BaseMvcController
 
         try
         {
+            string? countryIsoCode = null;
+            var userIp = Request.HttpContext.Connection.RemoteIpAddress;
+            if (userIp is not null && _geoIpCountryReader.TryCountry(userIp, out var countryResponse))
+            {
+                countryIsoCode = countryResponse?.Country.IsoCode;
+            }
+
+            var userAgentInfo = _httpUserAgentParserAccessor.Get(HttpContext);
+            var clientInfoModel = new ClientInfoModel
+            {
+                CountryIsoCode = countryIsoCode,
+                BrowserType = userAgentInfo?.Name,
+                OsType = userAgentInfo?.Platform?.PlatformType is { } pt
+                    ? Enum.GetName(pt)
+                    : null,
+            };
+
             var messagePlainText = _messagePostProcessor.MessageToPlainText(viewModel.Message);
             var threadTitle = string.IsNullOrWhiteSpace(viewModel.Title)
                 ? messagePlainText.Cut(Defaults.MaxTitleLength)
@@ -137,6 +163,7 @@ public sealed class ThreadController : BaseMvcController
                 MessageText = messagePlainText,
                 UserIpAddress = UserIpAddressBytes,
                 UserAgent = UserAgent,
+                ClientInfo = clientInfoModel,
             };
 
             if (threadCreateRm.MessageText.Length > Defaults.MaxMessageTextLength)

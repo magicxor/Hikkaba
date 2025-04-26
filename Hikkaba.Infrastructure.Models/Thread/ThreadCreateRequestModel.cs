@@ -1,4 +1,6 @@
-﻿namespace Hikkaba.Infrastructure.Models.Thread;
+﻿using Hikkaba.Infrastructure.Models.Post;
+
+namespace Hikkaba.Infrastructure.Models.Thread;
 
 public sealed class ThreadCreateRequestModel
 {
@@ -15,4 +17,6 @@ public sealed class ThreadCreateRequestModel
     public required byte[]? UserIpAddress { get; set; }
 
     public required string UserAgent { get; set; }
+
+    public required ClientInfoModel ClientInfo { get; set; }
 }
