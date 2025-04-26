@@ -1,0 +1,30 @@
+﻿@model string?
+
+@switch (Model?.ToUpperInvariant())
+{
+  case "WINDOWS":
+  {
+    <i class="bi bi-windows" title="@Model"></i>
+    break;
+  }
+  case "ANDROID":
+  {
+    <i class="bi bi-android2" title="@Model"></i>
+    break;
+  }
+  case "UNIX" or "LINUX":
+  {
+    <i class="bi bi-ubuntu" title="@Model"></i>
+    break;
+  }
+  case "IOS" or "MACOS":
+  {
+    <i class="bi bi-apple" title="@Model"></i>
+    break;
+  }
+  default:
+  {
+    <i class="bi bi-question-diamond" title="@Model"></i>
+    break;
+  }
+}

@@ -1,0 +1,30 @@
+﻿@model string?
+
+@switch (Model?.ToUpperInvariant())
+{
+  case "CHROME":
+  {
+    <i class="bi bi-browser-chrome" title="@Model"></i>
+    break;
+  }
+  case "FIREFOX":
+  {
+    <i class="bi bi-browser-firefox" title="@Model"></i>
+    break;
+  }
+  case "EDGE":
+  {
+    <i class="bi bi-browser-edge" title="@Model"></i>
+    break;
+  }
+  case "SAFARI":
+  {
+    <i class="bi bi-browser-safari" title="@Model"></i>
+    break;
+  }
+  default:
+  {
+    <i class="bi bi-question-diamond" title="@Model"></i>
+    break;
+  }
+}

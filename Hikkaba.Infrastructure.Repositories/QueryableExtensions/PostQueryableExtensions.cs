@@ -19,6 +19,9 @@ public static class PostQueryableExtensions
             MessageHtml = post.MessageHtml,
             UserIpAddress = post.UserIpAddress,
             UserAgent = post.UserAgent,
+            CountryIsoCode = post.CountryIsoCode,
+            BrowserType = post.BrowserType,
+            OsType = post.OsType,
             Audio = post.Audios
                 .Select(a => new AudioModel
                 {

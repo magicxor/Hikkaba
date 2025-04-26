@@ -34,6 +34,15 @@ public sealed record PostDetailsViewModel
     [Display(Name = @"User-agent")]
     public required string UserAgent { get; init; }
 
+    [Display(Name = @"Country")]
+    public required string? CountryIsoCode { get; set; }
+
+    [Display(Name = @"Browser")]
+    public required string? BrowserType { get; set; }
+
+    [Display(Name = @"OS")]
+    public required string? OsType { get; set; }
+
     [Display(Name = @"Audio")]
     public required IReadOnlyList<AudioViewModel> Audio { get; init; }
 

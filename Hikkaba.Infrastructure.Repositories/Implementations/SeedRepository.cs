@@ -4,6 +4,7 @@ using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Enums;
 using Hikkaba.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ public sealed class SeedRepository : ISeedRepository
         bool isHidden = false,
         bool showThreadLocalUserHash = false,
         int defaultBumpLimit = Defaults.DefaultBumpLimit,
+        ShowUserParamType showUserParamType = ShowUserParamType.None,
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Seeding new category: {CategoryName}", name);
@@ -152,9 +154,11 @@ public sealed class SeedRepository : ISeedRepository
             await SeedNewCategoryAsync(adminUser, board, "b", "Random", cancellationToken: cancellationToken);
             await SeedNewCategoryAsync(adminUser, board, "mu", "Music", cancellationToken: cancellationToken);
             await SeedNewCategoryAsync(adminUser, board, "nsfw", "18+ content", true, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, board, "s", "Software", showUserParamType: ShowUserParamType.Browser, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, board, "mobi", "Mobile devices", showUserParamType: ShowUserParamType.Os, cancellationToken: cancellationToken);
             await SeedNewCategoryAsync(adminUser, board, "vg", "Video Games", cancellationToken: cancellationToken);
             await SeedNewCategoryAsync(adminUser, board, "wp", "Wallpapers", cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "d", "Discussions about " + _hikkabaConfiguration.BoardName, false, true, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, board, "d", "Discussions about " + _hikkabaConfiguration.BoardName, false, true, showUserParamType: ShowUserParamType.Country, cancellationToken: cancellationToken);
         }
 
         await _context.SaveChangesAsync(cancellationToken);

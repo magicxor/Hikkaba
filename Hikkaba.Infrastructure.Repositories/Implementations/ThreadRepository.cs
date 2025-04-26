@@ -216,6 +216,9 @@ public sealed class ThreadRepository : IThreadRepository
                             MessageHtml = tp.Post.MessageHtml,
                             UserIpAddress = tp.Post.UserIpAddress,
                             UserAgent = tp.Post.UserAgent,
+                            CountryIsoCode = tp.Post.CountryIsoCode,
+                            BrowserType = tp.Post.BrowserType,
+                            OsType = tp.Post.OsType,
                             Audio = attachments.OfType<Audio>()
                                 .Where(a => a.PostId == tp.Post.Id)
                                 .Select(attachment => new AudioModel
