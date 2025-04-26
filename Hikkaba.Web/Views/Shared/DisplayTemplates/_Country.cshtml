@@ -1,0 +1,16 @@
+﻿@model string?
+
+@{
+  var countryFlag = !string.IsNullOrEmpty(Model) && Model.Length == 2
+    ? string.Concat(Model.ToUpperInvariant().Select(x => char.ConvertFromUtf32(x + 0x1F1A5)))
+    : null;
+}
+
+@if (countryFlag is not null)
+{
+  <span title="@Model">@(countryFlag)</span>
+}
+else
+{
+  <i class="bi bi-question-diamond" title="@Model"></i>
+}

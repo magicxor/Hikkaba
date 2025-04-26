@@ -15,6 +15,28 @@
           @(Defaults.AnonymousUserName)
         </div>
 
+        @*Icons*@
+        @if (Model.ShowOs)
+        {
+          <div class="post-header-flex-item">
+            @Html.DisplayFor(x => x.OsType, "_OsIcon")
+          </div>
+        }
+
+        @if (Model.ShowBrowser)
+        {
+          <div class="post-header-flex-item">
+            @Html.DisplayFor(x => x.BrowserType, "_Browser")
+          </div>
+        }
+
+        @if (Model.ShowCountry)
+        {
+          <div class="post-header-flex-item">
+            @Html.DisplayFor(x => x.CountryIsoCode, "_Country")
+          </div>
+        }
+
         @*User unique hash in this thread*@
         @if (Model.ShowThreadLocalUserHash)
         {
