@@ -50,6 +50,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
+    <PackageVersion Include="MyCSharp.HttpUserAgentParser.AspNetCore" Version="3.0.25" />
+    <PackageVersion Include="MyCSharp.HttpUserAgentParser.MemoryCache" Version="3.0.25" />
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageVersion Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
     <PackageVersion Include="NLog" Version="5.4.0" />

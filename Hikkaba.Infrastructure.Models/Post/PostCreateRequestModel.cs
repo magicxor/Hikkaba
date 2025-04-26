@@ -19,4 +19,6 @@ public sealed class PostCreateRequestModel
     public required long ThreadId { get; set; }
 
     public required IReadOnlyList<long> MentionedPosts { get; set; }
+
+    public required ClientInfoModel ClientInfo { get; set; }
 }

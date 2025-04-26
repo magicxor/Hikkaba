@@ -28,6 +28,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
+    <PackageReference Include="MyCSharp.HttpUserAgentParser.AspNetCore" />
+    <PackageReference Include="MyCSharp.HttpUserAgentParser.MemoryCache" />
     <PackageReference Include="NLog.Web.AspNetCore" />
     <PackageReference Include="OneOf" />
     <PackageReference Include="OneOf.SourceGenerator" />
@@ -52,8 +54,6 @@
     <ProjectReference Include="..\Hikkaba.Infrastructure.Models\Hikkaba.Infrastructure.Models.csproj" />
     <ProjectReference Include="..\Hikkaba.Infrastructure.Repositories\Hikkaba.Infrastructure.Repositories.csproj" />
     <ProjectReference Include="..\Hikkaba.Application\Hikkaba.Application.csproj" />
-    <ProjectReference Include="..\HttpUserAgentParser.AspNetCore\HttpUserAgentParser.AspNetCore.csproj" />
-    <ProjectReference Include="..\HttpUserAgentParser.MemoryCache\HttpUserAgentParser.MemoryCache.csproj" />
   </ItemGroup>
 
 
@@ -71,19 +71,6 @@
     <Content Include="GeoIp\GeoLite2-ASN.mmdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\CategoryAnon\EditorTemplates\CategoryCreateViewModel.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\CategoryAnon\EditorTemplates\CategoryEditViewModel.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\UserAdmin\EditorTemplates\UserEditViewModel.cshtml" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <AdditionalFiles Include="Views\CategoryAdmin\EditorTemplates\CategoryCreateViewModel.cshtml" />
-    <AdditionalFiles Include="Views\CategoryAdmin\EditorTemplates\CategoryEditViewModel.cshtml" />
   </ItemGroup>
 
 </Project>

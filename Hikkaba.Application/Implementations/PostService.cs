@@ -108,6 +108,7 @@ public sealed class PostService : IPostService
                 IsCyclic = noPostingRestrictionsModel.IsCyclic,
                 BumpLimit = noPostingRestrictionsModel.BumpLimit,
                 PostCount = noPostingRestrictionsModel.PostCount,
+                ClientInfo = requestModel.ClientInfo,
             };
 
             await using var uploadedAttachments = await _attachmentService.UploadAttachmentsAsync(requestModel.BlobContainerId, attachments, cancellationToken);

@@ -9,4 +9,6 @@ public sealed class PostCreateExtendedRequestModel
     public required bool IsCyclic { get; set; }
     public required int BumpLimit { get; set; }
     public required int PostCount { get; set; }
+
+    public required ClientInfoModel ClientInfo { get; set; }
 }
