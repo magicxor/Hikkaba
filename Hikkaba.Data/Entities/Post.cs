@@ -42,6 +42,15 @@ public class Post
     [MaxLength(Defaults.MaxUserAgentLength)]
     public required string UserAgent { get; set; }
 
+    [MaxLength(Defaults.MaxCountryIsoCodeLength)]
+    public string? CountryIsoCode { get; set; }
+
+    [MaxLength(Defaults.MaxBrowserTypeLength)]
+    public string? BrowserType { get; set; }
+
+    [MaxLength(Defaults.MaxOsTypeLength)]
+    public string? OsType { get; set; }
+
     [Required]
     [MinLength(Defaults.MaxFileHashBytesLength)]
     [MaxLength(Defaults.MaxFileHashBytesLength)]

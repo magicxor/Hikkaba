@@ -1,0 +1,3 @@
+﻿[*.cs]
+# SA1642: Constructor summary documentation should begin with standard text
+dotnet_diagnostic.SA1642.severity = none

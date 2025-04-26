@@ -52,6 +52,8 @@
     <ProjectReference Include="..\Hikkaba.Infrastructure.Models\Hikkaba.Infrastructure.Models.csproj" />
     <ProjectReference Include="..\Hikkaba.Infrastructure.Repositories\Hikkaba.Infrastructure.Repositories.csproj" />
     <ProjectReference Include="..\Hikkaba.Application\Hikkaba.Application.csproj" />
+    <ProjectReference Include="..\HttpUserAgentParser.AspNetCore\HttpUserAgentParser.AspNetCore.csproj" />
+    <ProjectReference Include="..\HttpUserAgentParser.MemoryCache\HttpUserAgentParser.MemoryCache.csproj" />
   </ItemGroup>
 
 
