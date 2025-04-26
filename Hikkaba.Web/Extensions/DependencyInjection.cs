@@ -44,6 +44,8 @@ using OpenTelemetry.Trace;
 using Sakura.AspNetCore.Mvc;
 using TwentyTwenty.Storage;
 using TwentyTwenty.Storage.Local;
+using MyCSharp.HttpUserAgentParser.AspNetCore.DependencyInjection;
+using MyCSharp.HttpUserAgentParser.MemoryCache.DependencyInjection;
 
 namespace Hikkaba.Web.Extensions;
 
@@ -151,6 +153,9 @@ internal static class DependencyInjection
         services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
         services.AddScoped<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
         services.AddScoped<IMessagePostProcessor, MessagePostProcessor>();
+
+        services.AddHttpUserAgentMemoryCachedParser()
+            .AddHttpUserAgentParserAccessor();
 
         return services;
     }

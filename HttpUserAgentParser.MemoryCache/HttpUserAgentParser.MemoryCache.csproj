@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>MyCSharp.HttpUserAgentParser.MemoryCache</RootNamespace>
+  </PropertyGroup>
+
+    <PropertyGroup>
+        <Product>HTTP User Agent Parser Extensions for IMemoryCache</Product>
+        <Description>HTTP User Agent Parser Extensions for IMemoryCache</Description>
+    </PropertyGroup>
+
+    <ItemGroup Label="NuGet">
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\HttpUserAgentParser\HttpUserAgentParser.csproj" />
+    </ItemGroup>
+
+</Project>

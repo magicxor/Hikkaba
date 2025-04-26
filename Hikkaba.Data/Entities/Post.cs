@@ -42,15 +42,12 @@ public class Post
     [MaxLength(Defaults.MaxUserAgentLength)]
     public required string UserAgent { get; set; }
 
-    [Required]
     [MaxLength(Defaults.MaxCountryIsoCodeLength)]
     public string? CountryIsoCode { get; set; }
 
-    [Required]
     [MaxLength(Defaults.MaxBrowserTypeLength)]
     public string? BrowserType { get; set; }
 
-    [Required]
     [MaxLength(Defaults.MaxOsTypeLength)]
     public string? OsType { get; set; }
 
