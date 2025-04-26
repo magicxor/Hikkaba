@@ -62,6 +62,8 @@ public static class Defaults
     public const int MaxAudioMetadataLength = 100;
     public const int MaxImageWidth = 10_000;
     public const int MaxImageHeight = 10_000;
+    public const int MaxBrowserTypeLength = 20;
+    public const int MaxOsTypeLength = 20;
 
     public const string DefaultMimeType = "application/octet-stream";
     public static readonly string DefaultLastModified = new DateTime(2007, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("r"); // RFC1123
