@@ -33,7 +33,8 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 - [x] **Timezone display:** Shows post datetimes adjusted to the current user's timezone ([Moment.js](http://momentjs.com/))
 - [x] Post backlink display (shows replies to a post)
 - [x] Country flag display (using GeoIP)
-- [x] User agent icon display (e.g., browser type or OS type)
+- [x] User agent icon display (e.g., browser type or OS type) ([HttpUserAgentParser](https://github.com/mycsharp/HttpUserAgentParser))
+- [x] Audio metadata display ([Audio Tools Library](https://github.com/Zeugma440/atldotnet))
 - [ ] Media gallery view
 - [ ] Content embedding (YouTube, Vimeo, Coub, Twitter, Instagram, etc.)
 - [ ] Detection of duplicate attachments within a thread
