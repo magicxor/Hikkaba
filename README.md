@@ -17,7 +17,7 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 - [x] **Server-side paging:** Efficiently handles navigation through category indexes ([Sakura.AspNetCore.PagedList](https://github.com/sgjsakura/AspNetCore))
 - [x] **Thread-local user hashes:** Option to display unique user identifiers ([Blake3.NET](https://github.com/xoofx/Blake3.NET))
 - [x] **Docker support:** Ready for containerized deployment
-- [ ] Archive old threads
+- [ ] Thread archiving
 - [ ] API for third-party integration
 - [ ] Internationalization (multi-language support)
 - [ ] User-created boards
@@ -32,17 +32,17 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 - [x] **URI detection:** Automatically converts `http://`, `https://`, and `ftp://` links
 - [x] **Timezone display:** Shows post datetimes adjusted to the current user's timezone ([Moment.js](http://momentjs.com/))
 - [x] Post backlink display (shows replies to a post)
+- [x] Country flag display (using GeoIP)
+- [x] User agent icon display (e.g., browser type or OS type)
 - [ ] Media gallery view
-- [ ] Embedding content from YouTube, Vimeo, Coub, Twitter, Instagram, etc.
+- [ ] Content embedding (YouTube, Vimeo, Coub, Twitter, Instagram, etc.)
 - [ ] Detection of duplicate attachments within a thread
 - [ ] Tripcodes
 - [ ] Visual style/theme switching
 - [ ] Post reactions (e.g., likes, dislikes, etc.)
-- [ ] Display country flags for posters (using GeoIP)
-- [ ] Display user agent icons (e.g. browser type or OS type)
-- [ ] Post highlighting via user hash click
-- [ ] Truncate long messages by line count
-- [ ] Fetch new replies automatically
+- [ ] User post highlighting (on hash click)
+- [ ] Long message truncation
+- [ ] Automatic reply fetching
 
 ### Storage
 - [x] **Multiple storage backends:** Flexible file storage options ([20|20 Storage](https://github.com/2020IP/TwentyTwenty.Storage)):
@@ -64,10 +64,10 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 - [ ] Identity lockout (Account security feature)
 - [ ] Two-factor authentication (TOTP)
 - [ ] Passcodes (user captcha bypass)
-- [ ] Delete posts via password
-- [ ] Report posts
+- [ ] Password-based post deletion
+- [ ] Post reporting system
 - [ ] DNSBL integration (spam prevention)
-- [ ] Move threads between boards
+- [ ] Thread moving (between boards)
 - [ ] Modlog (audit trail for staff actions)
 - [ ] Wordfilter (regex support, configurable actions: replace, hide, deny)
 
