@@ -43,7 +43,6 @@ public sealed class SeedRepository : ISeedRepository
 
     private async Task SeedNewCategoryAsync(
         ApplicationUser createdBy,
-        Board board,
         string alias,
         string name,
         bool isHidden = false,
@@ -61,7 +60,6 @@ public sealed class SeedRepository : ISeedRepository
             IsHidden = isHidden,
             ShowThreadLocalUserHash = showThreadLocalUserHash,
             DefaultBumpLimit = defaultBumpLimit,
-            Board = board,
             CreatedBy = createdBy,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
@@ -137,28 +135,17 @@ public sealed class SeedRepository : ISeedRepository
             await _userMgr.AddToRoleAsync(adminUser, Defaults.AdministratorRoleName);
         }
 
-        Board board;
-        if (!await _context.Boards.AnyAsync(cancellationToken))
-        {
-            board = new Board();
-            await _context.Boards.AddAsync(board, cancellationToken);
-        }
-        else
-        {
-            board = await _context.Boards.OrderBy(x => x.Id).FirstAsync(cancellationToken);
-        }
-
         if (!await _context.Categories.AnyAsync(cancellationToken))
         {
-            await SeedNewCategoryAsync(adminUser, board, "a", "Anime", cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "b", "Random", cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "mu", "Music", cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "nsfw", "18+ content", true, cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "s", "Software", showUserParamType: ShowUserParamType.Browser, cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "mobi", "Mobile devices", showUserParamType: ShowUserParamType.Os, cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "vg", "Video Games", cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "wp", "Wallpapers", cancellationToken: cancellationToken);
-            await SeedNewCategoryAsync(adminUser, board, "d", "Discussions about " + _hikkabaConfiguration.BoardName, false, true, showUserParamType: ShowUserParamType.Country, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "a", "Anime", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "b", "Random", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "mu", "Music", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "nsfw", "18+ content", true, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "s", "Software", showUserParamType: ShowUserParamType.Browser, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "mobi", "Mobile devices", showUserParamType: ShowUserParamType.Os, cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "vg", "Video Games", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "wp", "Wallpapers", cancellationToken: cancellationToken);
+            await SeedNewCategoryAsync(adminUser, "d", "Discussions about " + _hikkabaConfiguration.BoardName, false, true, showUserParamType: ShowUserParamType.Country, cancellationToken: cancellationToken);
         }
 
         await _context.SaveChangesAsync(cancellationToken);

@@ -43,7 +43,4 @@ public sealed class CategoryDetailsViewModel
 
     [Display(Name = @"Max thread count")]
     public required int MaxThreadCount { get; set; }
-
-    [Display(Name = @"Board id")]
-    public required int BoardId { get; set; }
 }

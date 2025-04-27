@@ -38,7 +38,6 @@ public static class CategoryQueryableExtensions
             ShowOs = x.ShowOs,
             ShowBrowser = x.ShowBrowser,
             MaxThreadCount = x.MaxThreadCount,
-            BoardId = x.BoardId,
         });
     }
 }
