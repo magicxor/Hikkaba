@@ -55,9 +55,6 @@ public class Category : IHasAuditColumns
     public required int MaxThreadCount { get; set; }
 
     // FK id
-    [ForeignKey(nameof(Board))]
-    public int BoardId { get; set; }
-
     [ForeignKey(nameof(CreatedBy))]
     public int CreatedById { get; set; }
 
@@ -65,16 +62,6 @@ public class Category : IHasAuditColumns
     public int? ModifiedById { get; set; }
 
     // FK models
-    [Required]
-    public Board Board
-    {
-        get => _board
-               ?? throw new InvalidOperationException("Uninitialized property: " + nameof(Board));
-        set => _board = value;
-    }
-
-    private Board? _board;
-
     [Required]
     public virtual ApplicationUser CreatedBy
     {

@@ -84,9 +84,6 @@ internal sealed class ThreadRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board();
-        dbContext.Boards.Add(board);
-
         var category = new Category
         {
             IsDeleted = false,
@@ -101,7 +98,6 @@ internal sealed class ThreadRepositoryTests
             ShowBrowser = false,
             ShowCountry = false,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            Board = board,
             CreatedBy = admin,
         };
         dbContext.Categories.Add(category);
@@ -338,9 +334,6 @@ internal sealed class ThreadRepositoryTests
             };
             seedDbContext.Users.Add(admin);
 
-            var board = new Board();
-            seedDbContext.Boards.Add(board);
-
             var category1 = new Category
             {
                 IsDeleted = false,
@@ -355,7 +348,6 @@ internal sealed class ThreadRepositoryTests
                 ShowBrowser = false,
                 ShowCountry = false,
                 MaxThreadCount = Defaults.MaxThreadCountInCategory,
-                Board = board,
                 CreatedBy = admin,
             };
             var category2 = new Category
@@ -372,7 +364,6 @@ internal sealed class ThreadRepositoryTests
                 ShowBrowser = false,
                 ShowCountry = false,
                 MaxThreadCount = Defaults.MaxThreadCountInCategory,
-                Board = board,
                 CreatedBy = admin,
             };
             seedDbContext.Categories.AddRange(category1, category2);
@@ -604,9 +595,6 @@ internal sealed class ThreadRepositoryTests
             };
             seedDbContext.Users.Add(admin);
 
-            var board = new Board();
-            seedDbContext.Boards.Add(board);
-
             var category1 = new Category
             {
                 IsDeleted = false,
@@ -621,7 +609,6 @@ internal sealed class ThreadRepositoryTests
                 ShowBrowser = false,
                 ShowCountry = false,
                 MaxThreadCount = Defaults.MaxThreadCountInCategory,
-                Board = board,
                 CreatedBy = admin,
             };
             var category2 = new Category
@@ -638,7 +625,6 @@ internal sealed class ThreadRepositoryTests
                 ShowBrowser = false,
                 ShowCountry = false,
                 MaxThreadCount = Defaults.MaxThreadCountInCategory,
-                Board = board,
                 CreatedBy = admin,
             };
             seedDbContext.Categories.AddRange(category1, category2);
@@ -874,9 +860,6 @@ internal sealed class ThreadRepositoryTests
             };
             seedDbContext.Users.Add(admin);
 
-            var board = new Board();
-            seedDbContext.Boards.Add(board);
-
             var category1 = new Category
             {
                 IsDeleted = false,
@@ -891,7 +874,6 @@ internal sealed class ThreadRepositoryTests
                 ShowBrowser = false,
                 ShowCountry = false,
                 MaxThreadCount = Defaults.MaxThreadCountInCategory,
-                Board = board,
                 CreatedBy = admin,
             };
             var category2 = new Category
@@ -908,7 +890,6 @@ internal sealed class ThreadRepositoryTests
                 ShowBrowser = false,
                 ShowCountry = false,
                 MaxThreadCount = Defaults.MaxThreadCountInCategory,
-                Board = board,
                 CreatedBy = admin,
             };
             seedDbContext.Categories.AddRange(category1, category2);
@@ -1164,9 +1145,6 @@ internal sealed class ThreadRepositoryTests
         };
         seedDbContext.Users.Add(admin);
 
-        var board = new Board();
-        seedDbContext.Boards.Add(board);
-
         var category1 = new Category
         {
             IsDeleted = false,
@@ -1181,7 +1159,6 @@ internal sealed class ThreadRepositoryTests
             ShowBrowser = false,
             ShowCountry = false,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            Board = board,
             CreatedBy = admin,
         };
         var category2 = new Category
@@ -1198,7 +1175,6 @@ internal sealed class ThreadRepositoryTests
             ShowBrowser = false,
             ShowCountry = false,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            Board = board,
             CreatedBy = admin,
         };
         seedDbContext.Categories.AddRange(category1, category2);

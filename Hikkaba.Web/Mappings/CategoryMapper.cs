@@ -19,7 +19,6 @@ internal static partial class CategoryMapper
 
     [MapperIgnoreSource(nameof(CategoryDetailsModel.CreatedBy))]
     [MapperIgnoreSource(nameof(CategoryDetailsModel.ModifiedBy))]
-    [MapperIgnoreSource(nameof(CategoryDetailsModel.BoardId))]
     [MapperIgnoreSource(nameof(CategoryDetailsModel.CreatedAt))]
     [MapperIgnoreSource(nameof(CategoryDetailsModel.ModifiedAt))]
     [MapperIgnoreSource(nameof(CategoryDetailsModel.IsDeleted))]

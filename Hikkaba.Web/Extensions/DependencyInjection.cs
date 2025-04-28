@@ -93,7 +93,6 @@ internal static class DependencyInjection
         services.AddScoped<IMigrationRepository, MigrationRepository>();
         services.AddScoped<IAdministrationRepository, AdministrationRepository>();
         services.AddScoped<IBanRepository, BanRepository>();
-        services.AddScoped<IBoardRepository, BoardRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
@@ -122,7 +121,6 @@ internal static class DependencyInjection
         services.AddScoped<IAdministrationService, AdministrationService>();
         services.AddScoped<IAttachmentCategorizer, AttachmentCategorizer>();
         services.AddScoped<IBanService, BanService>();
-        services.AddScoped<IBoardService, BoardService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IGeoIpService, GeoIpService>();
         services.AddScoped<IHmacService, HmacService>();

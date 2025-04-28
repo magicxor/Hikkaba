@@ -86,9 +86,6 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board();
-        dbContext.Boards.Add(board);
-
         var category = new Category
         {
             IsDeleted = false,
@@ -103,7 +100,6 @@ internal sealed class BanRepositoryTests
             ShowOs = false,
             ShowBrowser = false,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            Board = board,
             CreatedBy = admin,
         };
         dbContext.Categories.Add(category);
@@ -224,9 +220,6 @@ internal sealed class BanRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board();
-        dbContext.Boards.Add(board);
-
         var category = new Category
         {
             IsDeleted = false,
@@ -241,7 +234,6 @@ internal sealed class BanRepositoryTests
             ShowOs = false,
             ShowBrowser = false,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            Board = board,
             CreatedBy = admin,
         };
         dbContext.Categories.Add(category);

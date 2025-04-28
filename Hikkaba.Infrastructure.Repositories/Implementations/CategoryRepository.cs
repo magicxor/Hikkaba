@@ -76,16 +76,10 @@ public sealed class CategoryRepository : ICategoryRepository
 
         var user = _userContext.GetRequiredUser();
         var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
-        var boardId = await _applicationDbContext.Boards
-            .TagWithCallSite()
-            .Select(x => x.Id)
-            .OrderBy(x => x)
-            .FirstAsync(cancellationToken);
 
         var category = requestModel.ToEntity();
         category.CreatedAt = utcNow;
         category.CreatedById = user.Id;
-        category.BoardId = boardId;
 
         _applicationDbContext.Categories.Add(category);
         await _applicationDbContext.SaveChangesAsync(cancellationToken);

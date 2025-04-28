@@ -89,9 +89,6 @@ internal sealed class PostRepositoryTests
         };
         dbContext.Users.Add(admin);
 
-        var board = new Board();
-        dbContext.Boards.Add(board);
-
         var category = new Category
         {
             IsDeleted = false,
@@ -103,7 +100,6 @@ internal sealed class PostRepositoryTests
             DefaultBumpLimit = 500,
             ShowThreadLocalUserHash = false,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            Board = board,
             CreatedBy = admin,
         };
         dbContext.Categories.Add(category);

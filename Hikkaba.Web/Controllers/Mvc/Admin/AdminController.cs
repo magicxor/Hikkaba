@@ -14,21 +14,17 @@ namespace Hikkaba.Web.Controllers.Mvc.Admin;
 [Route("admin")]
 public sealed class AdminController : BaseMvcController
 {
-    private readonly IBoardService _boardService;
     private readonly ISystemInfoService _systemInfoService;
 
     public AdminController(
-        IBoardService boardService,
         ISystemInfoService systemInfoService)
     {
-        _boardService = boardService;
         _systemInfoService = systemInfoService;
     }
 
     [HttpGet("dashboard", Name = "AdminDashboard")]
     public async Task<IActionResult> Dashboard(CancellationToken cancellationToken)
     {
-        var board = await _boardService.GetBoardAsync(cancellationToken);
         var systemInfo = _systemInfoService.GetSystemInfo();
 
         var dashboardViewModel = new DashboardViewModel

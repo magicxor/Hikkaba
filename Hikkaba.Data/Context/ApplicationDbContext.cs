@@ -129,7 +129,6 @@ public sealed class ApplicationDbContext
     }
 
     public DbSet<Ban> Bans { get; set; } = null!;
-    public DbSet<Board> Boards { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<CategoryToModerator> CategoriesToModerators { get; set; } = null!;
     public DbSet<Post> Posts { get; set; } = null!;

@@ -29,6 +29,4 @@ public sealed class CategoryDetailsModel
     public required bool ShowBrowser { get; init; }
 
     public required int MaxThreadCount { get; set; }
-
-    public required int BoardId { get; set; }
 }
