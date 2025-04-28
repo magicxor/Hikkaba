@@ -73,4 +73,10 @@
     </Content>
   </ItemGroup>
 
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\BoardAdmin\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\BoardAdmin\EditorTemplates\BoardViewModel.cshtml" />
+  </ItemGroup>
+
 </Project>
