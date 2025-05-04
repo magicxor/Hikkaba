@@ -1,0 +1,46 @@
+<Solution>
+  <Folder Name="/0 Libraries/">
+    <Project Path="BBCodeParser/BBCodeParser.csproj" />
+    <Project Path="Hikkaba.Paging/Hikkaba.Paging.csproj" />
+  </Folder>
+  <Folder Name="/1 Shared/">
+    <Project Path="Hikkaba.Shared/Hikkaba.Shared.csproj" />
+  </Folder>
+  <Folder Name="/2 Database/">
+    <Project Path="Hikkaba.Data/Hikkaba.Data.csproj" />
+  </Folder>
+  <Folder Name="/3 Infrastructure/">
+    <Project Path="Hikkaba.Infrastructure.Mappings/Hikkaba.Infrastructure.Mappings.csproj" />
+    <Project Path="Hikkaba.Infrastructure.Models/Hikkaba.Infrastructure.Models.csproj" />
+    <Project Path="Hikkaba.Infrastructure.Repositories/Hikkaba.Infrastructure.Repositories.csproj" />
+  </Folder>
+  <Folder Name="/4 Application Services/">
+    <Project Path="Hikkaba.Application/Hikkaba.Application.csproj" />
+  </Folder>
+  <Folder Name="/5 Presentation/">
+    <Project Path="Hikkaba.Web/Hikkaba.Web.csproj" />
+  </Folder>
+  <Folder Name="/6 Tests/">
+    <Project Path="Hikkaba.Paging.Tests.Unit/Hikkaba.Paging.Tests.Unit.csproj" />
+    <Project Path="Hikkaba.Tests.Integration/Hikkaba.Tests.Integration.csproj" />
+    <Project Path="Hikkaba.Tests.Unit/Hikkaba.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/7 Tools/">
+    <Project Path="Hikkaba.Tools.Manual.LibManOptimizer/Hikkaba.Tools.Manual.LibManOptimizer.csproj" />
+    <Project Path="Hikkaba.Tools.Manual.Seed/Hikkaba.Tools.Manual.Seed.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="BannedSymbols.SolutionWide.txt" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Hikkaba.sln.DotSettings" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>
