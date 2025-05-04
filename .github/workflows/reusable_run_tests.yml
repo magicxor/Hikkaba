@@ -19,7 +19,7 @@ jobs:
         ]
     env:
       BUILD_CONFIG: Release
-      SOLUTION: Hikkaba.sln
+      SOLUTION: Hikkaba.slnx
 
     steps:
     - name: Checkout
