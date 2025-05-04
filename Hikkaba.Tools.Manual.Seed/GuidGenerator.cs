@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Hikkaba.Tests.Manual.Seed;
+namespace Hikkaba.Tools.Manual.Seed;
 
 [ExcludeFromCodeCoverage]
 internal sealed class GuidGenerator

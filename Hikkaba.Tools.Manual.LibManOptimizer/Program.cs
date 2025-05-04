@@ -2,7 +2,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
-namespace Hikkaba.Tests.Manual.LibManOptimizer;
+namespace Hikkaba.Tools.Manual.LibManOptimizer;
 
 [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "This is a utility application.")]
 [SuppressMessage("CodeSmell", "EPC12:Suspicious exception handling: only the \'Message\' property is observed in the catch block", Justification = "This is a utility application.")]
