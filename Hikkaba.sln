@@ -54,13 +54,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Application", "Hikk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BBCodeParser", "BBCodeParser\BBCodeParser.csproj", "{BB98684B-B0DE-44DE-909B-165749BA722E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7 Seed", "7 Seed", "{6859906F-E63D-4594-A9FA-A34425549011}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7 Tools", "7 Tools", "{6859906F-E63D-4594-A9FA-A34425549011}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Tests.Manual.Seed", "Hikkaba.Tests.Manual.Seed\Hikkaba.Tests.Manual.Seed.csproj", "{A6D4E56D-E6C2-45D5-8F21-6BDF349143CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Tools.Manual.Seed", "Hikkaba.Tools.Manual.Seed\Hikkaba.Tools.Manual.Seed.csproj", "{A6D4E56D-E6C2-45D5-8F21-6BDF349143CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Paging.Tests.Unit", "Hikkaba.Paging.Tests.Unit\Hikkaba.Paging.Tests.Unit.csproj", "{3F51F019-7FEA-4ABD-B2A3-77D5D86F01E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Tests.Manual.LibManOptimizer", "Hikkaba.Tests.Manual.LibManOptimizer\Hikkaba.Tests.Manual.LibManOptimizer.csproj", "{34800F75-A21B-46E3-AC3A-8DEC62B0C958}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikkaba.Tools.Manual.LibManOptimizer", "Hikkaba.Tools.Manual.LibManOptimizer\Hikkaba.Tools.Manual.LibManOptimizer.csproj", "{34800F75-A21B-46E3-AC3A-8DEC62B0C958}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

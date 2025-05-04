@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Bogus.DataSets;
 
-namespace Hikkaba.Tests.Manual.Seed;
+namespace Hikkaba.Tools.Manual.Seed;
 
 [ExcludeFromCodeCoverage]
 internal static class BogusExtensions

@@ -21,7 +21,7 @@ using NLog.Config;
 using NLog.Web;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace Hikkaba.Tests.Manual.Seed;
+namespace Hikkaba.Tools.Manual.Seed;
 
 [ExcludeFromCodeCoverage]
 internal sealed class CustomAppFactory

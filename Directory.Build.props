@@ -26,6 +26,6 @@
     <InternalsVisibleTo Include="Hikkaba.Paging.Tests.Unit" />
     <InternalsVisibleTo Include="Hikkaba.Tests.Unit" />
     <InternalsVisibleTo Include="Hikkaba.Tests.Integration" />
-    <InternalsVisibleTo Include="Hikkaba.Tests.Manual.Seed" />
+    <InternalsVisibleTo Include="Hikkaba.Tools.Manual.Seed" />
   </ItemGroup>
 </Project>

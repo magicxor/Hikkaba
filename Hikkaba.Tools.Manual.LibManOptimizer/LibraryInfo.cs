@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace Hikkaba.Tests.Manual.LibManOptimizer;
+namespace Hikkaba.Tools.Manual.LibManOptimizer;
 
 internal sealed class LibraryInfo
 {

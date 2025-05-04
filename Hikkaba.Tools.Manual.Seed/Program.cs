@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Thread = Hikkaba.Data.Entities.Thread;
 
-namespace Hikkaba.Tests.Manual.Seed;
+namespace Hikkaba.Tools.Manual.Seed;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("Major Code Smell", "S1118:Utility classes should not have public constructors", Justification = "This is an entry point.")]
