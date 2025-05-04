@@ -112,10 +112,8 @@ jobs:
           context: .
           file: ./Hikkaba.Web/Dockerfile
           build-args: |
-            # Pass both versions as build args, applications might need them
             ASSEMBLY_VERSION=${{ steps.get_semver_tag.outputs.CORE_VERSION }}
             PRODUCT_VERSION=${{ steps.get_semver_tag.outputs.FULL_TAG }}
-          # Use the tags determined in the previous step
           tags: ${{ steps.determine_tags.outputs.docker_tags }}
           platforms: |
             linux/amd64
