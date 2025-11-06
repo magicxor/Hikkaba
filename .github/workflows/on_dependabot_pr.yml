@@ -1,0 +1,35 @@
+# This workflow runs tests for Dependabot PRs with access to secrets
+# Using pull_request_target is safe here because:
+# 1. We explicitly check that the PR is from Dependabot
+# 2. We checkout the PR code explicitly
+# 3. Dependabot PRs only update dependencies, not workflow files
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+name: run tests for dependabot PRs
+
+jobs:
+  # First, verify this is actually a Dependabot PR
+  check_dependabot:
+    name: verify dependabot PR
+    runs-on: ubuntu-latest
+    # Only run if PR is from Dependabot
+    if: github.actor == 'dependabot[bot]'
+    outputs:
+      is_dependabot: ${{ steps.check.outputs.is_dependabot }}
+    steps:
+      - name: Check if Dependabot
+        id: check
+        run: |
+          echo "PR is from Dependabot"
+          echo "is_dependabot=true" >> $GITHUB_OUTPUT
+
+  # Run tests with access to secrets
+  call_reusable_run_tests:
+    name: run tests
+    needs: check_dependabot
+    if: needs.check_dependabot.outputs.is_dependabot == 'true'
+    uses: ./.github/workflows/reusable_run_tests.yml
+    secrets: inherit

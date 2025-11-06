@@ -7,5 +7,7 @@ name: run tests
 jobs:
   call_reusable_run_tests:
     name: run tests
+    # Skip this workflow for Dependabot PRs - they use on_dependabot_pr.yml instead
+    if: github.actor != 'dependabot[bot]'
     uses: ./.github/workflows/reusable_run_tests.yml
     secrets: inherit
