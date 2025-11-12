@@ -1,5 +1,4 @@
 ﻿using Hikkaba.Application.Contracts;
-using Hikkaba.Infrastructure.Models.Administration;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 

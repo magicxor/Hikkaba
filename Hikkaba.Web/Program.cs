@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Config;
 using NLog.Web;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -56,7 +55,7 @@ internal class Program
             {
                 logging.ClearProviders();
                 logging.SetMinimumLevel(LogLevel.Trace);
-                logging.AddNLog(loggingConfiguration);
+                logging.AddNLogWeb(loggingConfiguration);
 
                 var hikkabaConfig = hostBuilderContext.Configuration
                     .GetSection(nameof(HikkabaConfiguration))

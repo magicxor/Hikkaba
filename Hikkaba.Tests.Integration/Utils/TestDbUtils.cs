@@ -6,7 +6,6 @@ using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Services;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Tests.Integration.Utils;
 

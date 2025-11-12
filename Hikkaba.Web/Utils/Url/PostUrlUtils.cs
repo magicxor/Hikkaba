@@ -1,11 +1,12 @@
+using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.ViewModels.PostsViewModels;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.Utils.Url;
 
 public static class PostUrlUtils
 {
-    public static string? GetThreadDetailsPostUri(PostDetailsViewModel postDetailsViewModel, IUrlHelper urlHelper)
+    public static string? GetThreadDetailsPostUri(PostDetailsViewModel postDetailsViewModel, ILinkBuilder urlHelper)
     {
         return urlHelper.RouteUrl(
             "ThreadDetails",
@@ -14,8 +15,6 @@ public static class PostUrlUtils
                 categoryAlias = postDetailsViewModel.CategoryAlias,
                 threadId = postDetailsViewModel.ThreadId,
             },
-            protocol: null,
-            host: null,
-            fragment: $"{postDetailsViewModel.Id}");
+            fragment: new FragmentString($"#{postDetailsViewModel.Id}"));
     }
 }

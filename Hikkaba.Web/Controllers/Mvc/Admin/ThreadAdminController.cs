@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
-using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Web.Controllers.Mvc.Base;
 using Hikkaba.Web.Mappings;

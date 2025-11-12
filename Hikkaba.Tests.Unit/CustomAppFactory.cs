@@ -5,16 +5,13 @@ using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Tests.Unit.Mocks;
-using Hikkaba.Web.Services.Contracts;
-using Hikkaba.Web.Services.Implementations;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Distributed;
@@ -34,11 +31,8 @@ namespace Hikkaba.Tests.Unit;
 internal sealed class CustomAppFactory
     : WebApplicationFactory<Web.Program>
 {
-    private readonly FakeUrlHelperParams _fakeUrlHelperParams;
-
-    public CustomAppFactory(FakeUrlHelperParams fakeUrlHelperParams)
+    public CustomAppFactory()
     {
-        _fakeUrlHelperParams = fakeUrlHelperParams;
         LogManager.Configuration = new XmlLoggingConfiguration("nlog.config");
     }
 
@@ -63,10 +57,8 @@ internal sealed class CustomAppFactory
                 services.RemoveAll<IdentityOptions>();
                 services.RemoveAll<KeyManagementOptions>();
 
-                services.RemoveAll<IUrlHelper>();
-                services.RemoveAll<IUrlHelperFactory>();
-                services.RemoveAll<IUrlHelperFactoryWrapper>();
-                services.RemoveAll<IActionContextAccessor>();
+                services.RemoveAll<IHttpContextAccessor>();
+                services.RemoveAll<LinkGenerator>();
 
                 // we will use TestContainers + Respawner for DB, Redis, RabbitMQ
                 services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
@@ -126,10 +118,8 @@ internal sealed class CustomAppFactory
 
                 services.AddSingleton<TimeProvider>(x => FakeTimeProviderFactory.Create());
 
-                services.AddSingleton<IUrlHelper, FakeUrlHelper>(x => new FakeUrlHelper(_fakeUrlHelperParams));
-                services.AddSingleton<IUrlHelperFactory, FakeUrlHelperFactory>(x => new FakeUrlHelperFactory(_fakeUrlHelperParams));
-                services.AddSingleton<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
-                services.AddSingleton<IActionContextAccessor, FakeActionContextAccessor>();
+                services.AddSingleton<IHttpContextAccessor, FakeHttpContextAccessor>();
+                services.AddSingleton<LinkGenerator, FakeLinkGenerator>();
             })
             .ConfigureLogging(logging =>
             {

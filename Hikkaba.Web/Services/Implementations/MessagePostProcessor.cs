@@ -6,13 +6,12 @@ using BBCodeParser.Tags;
 using Hikkaba.Application.Implementations;
 using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.Telemetry;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Hikkaba.Web.Services.Implementations;
 
 public partial class MessagePostProcessor : IMessagePostProcessor
 {
-    private readonly IUrlHelper _urlHelper;
+    private readonly ILinkBuilder _linkBuilder;
 
     private readonly BBParser _bbParser = new([
         new Tag("b", "<b>", "</b>"),
@@ -45,10 +44,9 @@ public partial class MessagePostProcessor : IMessagePostProcessor
     private static readonly Regex ReplaceLineTerminatorsRegex = GetReplaceLineTerminatorsRegex();
     private static readonly Regex LimitLineTerminatorCountRegex = GetLimitLineTerminatorCountRegex();
 
-    public MessagePostProcessor(
-        IUrlHelperFactoryWrapper urlHelperFactoryWrapper)
+    public MessagePostProcessor(ILinkBuilder linkBuilder)
     {
-        _urlHelper = urlHelperFactoryWrapper.GetUrlHelper();
+        _linkBuilder = linkBuilder;
     }
 
     private static string ReplaceUrisWithBbCodeUrl(string text)
@@ -60,7 +58,7 @@ public partial class MessagePostProcessor : IMessagePostProcessor
     private string ReplacePostLinksWithBbCodeUrl(string categoryAlias, long threadId, string text)
     {
         using var activity = WebTelemetry.MessagePostProcessorSource.StartActivity();
-        var threadUri = _urlHelper.RouteUrl(
+        var threadUri = _linkBuilder.RouteUrl(
             "ThreadDetails",
             new
             {

@@ -1,7 +1,9 @@
-﻿@using Hikkaba.Web.Utils.Url
+﻿@using Hikkaba.Web.Services.Contracts
+@using Hikkaba.Web.Utils.Url
 @using Humanizer
 @model Hikkaba.Web.ViewModels.BansViewModels.BanViewModel
 @inject TimeProvider TimeProvider
+@inject ILinkBuilder LinkBuilder
 @{
   ViewData["Title"] = "Ban details";
 }
@@ -55,7 +57,7 @@
       <dd>@Html.DisplayFor(model => model.CategoryAlias)</dd>
 
       <dt>@Html.DisplayNameFor(model => model.RelatedPostId)</dt>
-      <dd><a href="@(Model.RelatedPostId == null ? "#" : BanUrlUtils.GetThreadDetailsPostUri(Model, Url))">@(Model.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></dd>
+      <dd><a href="@(Model.RelatedPostId == null ? "#" : BanUrlUtils.GetThreadDetailsPostUri(Model, LinkBuilder))">@(Model.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></dd>
 
       <dt>@Html.DisplayNameFor(model => model.Reason)</dt>
       <dd>@Html.DisplayFor(model => model.Reason)</dd>

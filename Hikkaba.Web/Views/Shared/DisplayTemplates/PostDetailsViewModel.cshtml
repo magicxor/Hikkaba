@@ -1,10 +1,12 @@
 @using Hikkaba.Shared.Constants
 @using Hikkaba.Shared.Extensions
 @using Hikkaba.Shared.Services.Contracts
+@using Hikkaba.Web.Services.Contracts
 @using Hikkaba.Web.Utils.Url
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.PostsViewModels.PostDetailsViewModel
 @inject IUserContext UserContext
+@inject ILinkBuilder LinkBuilder
 
 <div class="card @(Model.IsDeleted ? "bg-light" : "")">
   <span class="card-header fs-5">
@@ -69,7 +71,7 @@
         @*Post ID*@
         <div class="post-header-flex-item">
           @*no extra spaces inside a*@
-          <a id="@(Model.Id)" class="decoration-on-hover post-id-link" href="@PostUrlUtils.GetThreadDetailsPostUri(Model, Url)">@Html.DisplayFor(model => model.Id)</a>
+          <a id="@(Model.Id)" class="decoration-on-hover post-id-link" href="@PostUrlUtils.GetThreadDetailsPostUri(Model, LinkBuilder)">@Html.DisplayFor(model => model.Id)</a>
         </div>
 
         @*Post sequence number in thread*@

@@ -1,5 +1,3 @@
-using System;
-using Hikkaba.Tests.Unit.Mocks;
 using Hikkaba.Web.Services.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,15 +7,6 @@ namespace Hikkaba.Tests.Unit.Tests.Services;
 [Parallelizable(scope: ParallelScope.All)]
 internal sealed class MessageToPlainTextTests
 {
-    private const string FakeActionPath = "/b/23454362";
-    private static readonly FakeUrlHelperParams FakeUrlHelperParams = new()
-    {
-        Action = FakeActionPath,
-        RouteUrlFactory = (routeName, values) => routeName == "ThreadDetails"
-            ? FakeActionPath
-            : throw new ArgumentException("Invalid route name", nameof(routeName)),
-    };
-
     [TestCase("ＳＯＭＥ　ＳＴＲＡＮＧＥ　ＴＥＸＴ，　ｈｕｈ　^^　延凹線艶彙")]
     [TestCase("Ｓ♢ＭΞ░ＳＴＲΛＮＧΞ░ＴΞＸＴ，░ｈｕｈ░^^　（延凹線艶彙）")]
     [TestCase("【﻿ＳＯＭＥ　ＳＴＲＡＮＧＥ　ＴＥＸＴ，　ｈｕｈ　^^】")]
@@ -30,7 +19,7 @@ internal sealed class MessageToPlainTextTests
     [TestCase("Line 1\n\nLine 2\n\nLine 3")]
     public void MessageToPlainText_WhenCalledWithText_ShouldReturnTheSameText(string input)
     {
-        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
+        using var customAppFactory = new CustomAppFactory();
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 
@@ -51,7 +40,7 @@ internal sealed class MessageToPlainTextTests
               """, "plain \nmix3\nmix2 mix1\nplain")]
     public void MessageToPlainText_WhenCalledWithTags_ShouldReturnPlainText(string input, string expectedOutput)
     {
-        using var customAppFactory = new CustomAppFactory(FakeUrlHelperParams);
+        using var customAppFactory = new CustomAppFactory();
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var messagePostProcessor = scope.ServiceProvider.GetRequiredService<IMessagePostProcessor>();
 

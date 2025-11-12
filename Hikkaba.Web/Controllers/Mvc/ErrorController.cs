@@ -5,7 +5,6 @@ using Hikkaba.Web.Utils;
 using Hikkaba.Web.ViewModels.ErrorViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 

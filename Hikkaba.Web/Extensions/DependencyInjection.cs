@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -148,8 +148,7 @@ internal static class DependencyInjection
         });
 
         // declared in presentation layer
-        services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-        services.AddScoped<IUrlHelperFactoryWrapper, UrlHelperFactoryWrapper>();
+        services.AddScoped<ILinkBuilder, LinkBuilder>();
         services.AddScoped<IMessagePostProcessor, MessagePostProcessor>();
 
         services.AddHttpUserAgentMemoryCachedParser()

@@ -24,7 +24,6 @@ using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.ViewModels.SearchViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MyCSharp.HttpUserAgentParser;
 using MyCSharp.HttpUserAgentParser.AspNetCore;
 
 namespace Hikkaba.Web.Controllers.Mvc;

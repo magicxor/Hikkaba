@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Library</OutputType>
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
@@ -35,5 +35,6 @@
     <None Remove="Migrations\20250405112056_AddThreadTitleFulltextIndex.Up.sql" />
     <EmbeddedResource Include="Migrations\20250405112056_AddThreadTitleFulltextIndex.Up.sql" />
   </ItemGroup>
+
 
 </Project>

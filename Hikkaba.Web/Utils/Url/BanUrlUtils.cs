@@ -1,11 +1,12 @@
+using Hikkaba.Web.Services.Contracts;
 using Hikkaba.Web.ViewModels.BansViewModels;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Hikkaba.Web.Utils.Url;
 
 public static class BanUrlUtils
 {
-    public static string? GetThreadDetailsPostUri(BanViewModel banViewModel, IUrlHelper urlHelper)
+    public static string? GetThreadDetailsPostUri(BanViewModel banViewModel, ILinkBuilder urlHelper)
     {
         return urlHelper.RouteUrl(
             "ThreadDetails",
@@ -14,8 +15,6 @@ public static class BanUrlUtils
                 categoryAlias = banViewModel.CategoryAlias,
                 threadId = banViewModel.RelatedThreadId,
             },
-            protocol: null,
-            host: null,
-            fragment: $"{banViewModel.RelatedPostId}");
+            fragment: new FragmentString($"#{banViewModel.RelatedPostId}"));
     }
 }

@@ -16,6 +16,11 @@
     CS1591 - Missing XML comment for publicly visible type or member 'Type_or_Member'
     -->
     <NoWarn>$(NoWarn);1591</NoWarn>
+
+    <!--
+    NU1903: Package 'XXX' 1.1.1 has a known high severity vulnerability
+    -->
+    <WarningsNotAsErrors>NU1903</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

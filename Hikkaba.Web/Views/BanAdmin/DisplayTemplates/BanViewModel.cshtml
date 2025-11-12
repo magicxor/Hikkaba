@@ -1,10 +1,12 @@
+@using Hikkaba.Web.Services.Contracts
 @using Hikkaba.Web.Utils.Url
 @model Hikkaba.Web.ViewModels.BansViewModels.BanViewModel
+@inject ILinkBuilder LinkBuilder
 
 <tr class="@(Model.IsDeleted ? "deleted" : "")">
     <td>@Html.DisplayFor(model => model.CreatedAt)</td>
     <td>@(Model.CategoryAlias == null ? "" : "/" + Model.CategoryAlias)</td>
-    <td><a href="@(Model?.RelatedPostId == null ? "#" : BanUrlUtils.GetThreadDetailsPostUri(Model, Url))">@(Model?.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></td>
+    <td><a href="@(Model?.RelatedPostId == null ? "#" : BanUrlUtils.GetThreadDetailsPostUri(Model, LinkBuilder))">@(Model?.RelatedPostId == null ? "" : Model.RelatedPostId.ToString())</a></td>
     <td>@Html.DisplayFor(model => model.BannedIpAddress)</td>
     <td>@Html.DisplayFor(model => model.BannedCidrLowerIpAddress)</td>
     <td>@Html.DisplayFor(model => model.BannedCidrUpperIpAddress)</td>

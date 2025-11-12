@@ -1,23 +1,23 @@
 @using Hikkaba.Shared.Constants
-@using Hikkaba.Shared.Models
 @using Hikkaba.Shared.Services.Contracts
+@using Hikkaba.Web.Services.Contracts
 @using Hikkaba.Web.Utils.Url
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Hikkaba.Web.ViewModels.ThreadsViewModels.ThreadDetailsViewModel
 @inject IUserContext UserContext
+@inject ILinkBuilder LinkBuilder
 
 <div class="row">
   <div class="col-md-12">
     <div class="card">
       <div class="card-body">
         <span class="fs-5">
-          <a class="decoration-on-hover inherit-color" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, Url)"><b>@Model.Title</b></a>
+          <a class="decoration-on-hover inherit-color" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, LinkBuilder)"><b>@Model.Title</b></a>
           &nbsp;
           @Model.PostCount posts
           &nbsp;
           @Html.DisplayFor(model => model.CreatedAt)
           &nbsp;
-          <a class="decoration-on-hover" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, Url)">@Model.Id</a>
+          <a class="decoration-on-hover" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, LinkBuilder)">@Model.Id</a>
           @if (Model.IsPinned)
           {
             <span>&nbsp;</span>
@@ -96,7 +96,7 @@
               {
                 <div class="mt-2 mb-0">
                   <div class="alert alert-light m-0 pt-1 pb-1" role="alert">
-                    @(Model.PostCount - Model.Posts.Count) replies omitted. <a class="alert-link decoration-on-hover" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, Url)">Click here</a> to view.
+                    @(Model.PostCount - Model.Posts.Count) replies omitted. <a class="alert-link decoration-on-hover" href="@ThreadUrlUtils.GetThreadDetailsUri(Model, LinkBuilder)">Click here</a> to view.
                   </div>
                 </div>
               }

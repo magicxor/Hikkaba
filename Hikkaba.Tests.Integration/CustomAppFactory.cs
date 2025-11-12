@@ -1,7 +1,6 @@
 using System;
 using System.Data.Common;
 using Hikkaba.Shared.Constants;
-using Hikkaba.Shared.Enums;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
@@ -21,7 +20,6 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Config;
 using NLog.Web;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Tests.Integration;
