@@ -17,6 +17,7 @@ dotnet_diagnostic.CS1998.severity = suggestion
 dotnet_diagnostic.CA1848.severity = none
 
 # CA1873: Evaluation of this argument may be expensive and unnecessary if logging is disabled
+# Reason: logging performance is not critical in our context, and this warning is too aggressive
 dotnet_diagnostic.CA1873.severity = none
 
 # CA1716: Rename namespace Constants so that it no longer conflicts with the reserved language keyword 'Shared'.
