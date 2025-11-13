@@ -1,6 +1,8 @@
 # Hikkaba [pre-alpha]
 
+[![build and push docker image](https://github.com/magicxor/Hikkaba/actions/workflows/on_tag.yml/badge.svg)](https://github.com/magicxor/Hikkaba/actions/workflows/on_tag.yml)
 ![Coverage Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fmagicxor%2F45e3ca73a0c4dcf8685dce0bf047c5b1%2Fraw%2FHikkaba-cobertura-coverage.json)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/magicxor/Hikkaba)
 
 Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, designed with minimal JavaScript usage.
 
