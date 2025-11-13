@@ -31,7 +31,7 @@ export default defineConfig({
       // Vite enables these by default usually, but explicitly setting for clarity
       keep_classnames: true,
       keep_fnames: true,
-      output: {
+      format: {
         comments: false, // Remove comments
       },
     },
