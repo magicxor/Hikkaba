@@ -1,8 +1,6 @@
-using System;
-using Hikkaba.Tests.Integration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ReactReduxTodo.Tests.Integration.Models;
+namespace Hikkaba.Tests.Integration.Models;
 
 internal sealed class SeedResult : ISeedResult, IAppFactorySeedResult
 {

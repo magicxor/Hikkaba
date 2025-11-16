@@ -14,13 +14,13 @@ using Hikkaba.Paging.Models;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Extensions;
+using Hikkaba.Tests.Integration.Models;
 using Hikkaba.Tests.Integration.Services;
 using Hikkaba.Tests.Integration.Utils;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ReactReduxTodo.Tests.Integration.Models;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories;

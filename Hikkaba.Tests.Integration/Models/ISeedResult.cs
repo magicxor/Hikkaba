@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ReactReduxTodo.Tests.Integration.Models;
+namespace Hikkaba.Tests.Integration.Models;
 
 internal interface ISeedResult : IDisposable
 {
