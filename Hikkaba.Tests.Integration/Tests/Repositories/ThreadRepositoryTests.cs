@@ -22,6 +22,7 @@ using Hikkaba.Tests.Integration.Utils;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ReactReduxTodo.Tests.Integration.Models;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories;
@@ -47,10 +48,24 @@ internal sealed class ThreadRepositoryTests
     }
 
     [MustDisposeResource]
-    private async Task<CustomAppFactory> CreateAppFactoryAsync()
+    private async Task<ISeedResult> Seed(CancellationToken cancellationToken)
     {
         var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
-        return new CustomAppFactory(connectionString);
+        var customAppFactory = new CustomAppFactory(connectionString);
+
+        var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
+        {
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+
+        return new SeedResult
+        {
+            Scope = scope,
+            AppFactory = customAppFactory,
+        };
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -59,16 +74,10 @@ internal sealed class ThreadRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        await using var customAppFactory = await CreateAppFactoryAsync();
-        using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
-
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-        {
-            await dbContext.Database.MigrateAsync(cancellationToken);
-        }
+        using var seedResult = await Seed(cancellationToken);
+        var dbContext = seedResult.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hashService = seedResult.Scope.ServiceProvider.GetRequiredService<IHashService>();
+        var timeProvider = seedResult.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         // Seed
         var admin = new ApplicationUser
@@ -235,7 +244,7 @@ internal sealed class ThreadRepositoryTests
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var repository = scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = seedResult.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
 
         // Act
         var result = await repository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewFilter
@@ -307,18 +316,14 @@ internal sealed class ThreadRepositoryTests
         const int totalPostCountPerThread = 55;
 
         // Arrange
-        await using var customAppFactory = await CreateAppFactoryAsync();
-        using (var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+        using var seedResult = await Seed(cancellationToken);
+
+        using (var seedScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
             var timeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
-
-            if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-            {
-                await seedDbContext.Database.MigrateAsync(cancellationToken);
-            }
 
             // Seed
             var admin = new ApplicationUser
@@ -487,7 +492,7 @@ internal sealed class ThreadRepositoryTests
         }
 
         // Act
-        using (var actScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+        using (var actScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             var threadRepository = actScope.ServiceProvider.GetRequiredService<IThreadRepository>();
 
@@ -569,17 +574,13 @@ internal sealed class ThreadRepositoryTests
         const int totalPostCountPerThread = 25;
 
         // Arrange
-        await using var customAppFactory = await CreateAppFactoryAsync();
-        using (var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+        using var seedResult = await Seed(cancellationToken);
+
+        using (var seedScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
-            var seedTimeProvider = customAppFactory.Services.GetRequiredService<TimeProvider>();
+            var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
-
-            if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-            {
-                await seedDbContext.Database.MigrateAsync(cancellationToken);
-            }
 
             // Seed
             var admin = new ApplicationUser
@@ -747,7 +748,7 @@ internal sealed class ThreadRepositoryTests
         }
 
         // Act
-        using (var actScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+        using (var actScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             var threadRepository = actScope.ServiceProvider.GetRequiredService<IThreadRepository>();
             var actualThreadPreviews = await threadRepository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewFilter
@@ -834,17 +835,13 @@ internal sealed class ThreadRepositoryTests
         const int totalPostCountPerThread = 25;
 
         // Arrange
-        await using var customAppFactory = await CreateAppFactoryAsync();
-        using (var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+        using var seedResult = await Seed(cancellationToken);
+
+        using (var seedScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
             var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
-
-            if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-            {
-                await seedDbContext.Database.MigrateAsync(cancellationToken);
-            }
 
             // Seed
             var admin = new ApplicationUser
@@ -1041,7 +1038,7 @@ internal sealed class ThreadRepositoryTests
         }
 
         // Act
-        using (var actScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+        using (var actScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             var threadRepository = actScope.ServiceProvider.GetRequiredService<IThreadRepository>();
             var actualThreadPreviews = await threadRepository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewFilter
@@ -1120,232 +1117,232 @@ internal sealed class ThreadRepositoryTests
         const int pageSize = 10;
 
         // Arrange
-        await using var customAppFactory = await CreateAppFactoryAsync();
-        using var seedScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var seedTimeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
-        var seedDbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
+        using var seedResult = await Seed(cancellationToken);
 
-        if ((await seedDbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
+        using (var seedScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
-            await seedDbContext.Database.MigrateAsync(cancellationToken);
+            var dbContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
+            var timeProvider = seedScope.ServiceProvider.GetRequiredService<TimeProvider>();
+
+            // Seed
+            var admin = new ApplicationUser
+            {
+                UserName = "admin",
+                NormalizedUserName = "ADMIN",
+                Email = "admin@example.com",
+                NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                EmailConfirmed = true,
+                SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
+                ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
+                CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+            };
+            dbContext.Users.Add(admin);
+
+            var category1 = new Category
+            {
+                IsDeleted = false,
+                CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+                ModifiedAt = null,
+                Alias = "b",
+                Name = "Random Foo",
+                IsHidden = false,
+                DefaultBumpLimit = 500,
+                ShowThreadLocalUserHash = false,
+                ShowOs = false,
+                ShowBrowser = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
+                CreatedBy = admin,
+            };
+            var category2 = new Category
+            {
+                IsDeleted = false,
+                CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+                ModifiedAt = null,
+                Alias = "a",
+                Name = "Random Bar",
+                IsHidden = false,
+                DefaultBumpLimit = 500,
+                ShowThreadLocalUserHash = false,
+                ShowOs = false,
+                ShowBrowser = false,
+                ShowCountry = false,
+                MaxThreadCount = Defaults.MaxThreadCountInCategory,
+                CreatedBy = admin,
+            };
+            dbContext.Categories.AddRange(category1, category2);
+
+            var salt1 = GuidGenerator.GenerateSeededGuid();
+            var salt2 = GuidGenerator.GenerateSeededGuid();
+            var utcNow = timeProvider.GetUtcNow().UtcDateTime;
+            var deletedThread = new Thread
+            {
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
+                Title = "deleted thread",
+                IsPinned = true,
+                IsClosed = true,
+                IsDeleted = true,
+                BumpLimit = 500,
+                Salt = salt1,
+                Category = category1,
+                Posts =
+                [
+                    new Post
+                    {
+                        IsOriginalPost = true,
+                        BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
+                        CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
+                    },
+                ],
+            };
+            var anotherCategoryThread = new Thread
+            {
+                CreatedAt = utcNow,
+                LastBumpAt = utcNow,
+                Title = "another category thread",
+                IsPinned = false,
+                IsClosed = false,
+                IsDeleted = false,
+                BumpLimit = 500,
+                Salt = salt2,
+                Category = category2,
+                Posts =
+                [
+                    new Post
+                    {
+                        IsOriginalPost = true,
+                        BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
+                        CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+                        IsSageEnabled = false,
+                        IsDeleted = false,
+                        MessageText = $"test post in deleted thread",
+                        MessageHtml = $"test post in deleted thread",
+                        UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
+                        UserAgent = "Firefox",
+                        ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
+                    },
+                ],
+            };
+            var thread1 = new Thread
+            {
+                CreatedAt = utcNow.AddMinutes(1),
+                LastBumpAt = utcNow.AddMinutes(1),
+                Title = "thread with bump limit 1",
+                BumpLimit = bumpLimit,
+                Salt = GuidGenerator.GenerateSeededGuid(),
+                Category = category1,
+            };
+            var thread2 = new Thread
+            {
+                CreatedAt = utcNow.AddMinutes(2),
+                LastBumpAt = utcNow.AddMinutes(2),
+                Title = "thread with bump limit 2",
+                BumpLimit = bumpLimit,
+                Salt = GuidGenerator.GenerateSeededGuid(),
+                Category = category1,
+            };
+            var thread3 = new Thread
+            {
+                CreatedAt = utcNow.AddMinutes(3),
+                LastBumpAt = utcNow.AddMinutes(3),
+                Title = "thread with bump limit 3",
+                BumpLimit = bumpLimit,
+                Salt = GuidGenerator.GenerateSeededGuid(),
+                Category = category1,
+            };
+            var thread4 = new Thread
+            {
+                CreatedAt = utcNow.AddMinutes(4),
+                LastBumpAt = utcNow.AddMinutes(4),
+                Title = "thread with bump limit 4",
+                BumpLimit = bumpLimit,
+                Salt = GuidGenerator.GenerateSeededGuid(),
+                Category = category1,
+            };
+            List<Thread> allThreads = [deletedThread, anotherCategoryThread, thread1, thread2, thread3, thread4];
+            dbContext.Threads.AddRange(allThreads);
+
+            // these threads contain the newest posts, but they aren't included in our query
+            AddPosts(deletedThread, timeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false, hashService);
+            AddPosts(anotherCategoryThread, timeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false, hashService);
+
+            // thread1 contains several old posts before bump limit and several new posts after bump limit, which shouldn't affect the result
+            AddPosts(thread1, timeProvider.GetUtcNow().UtcDateTime.AddYears(-1), bumpLimit, false, false, hashService);
+            AddPosts(thread1, timeProvider.GetUtcNow().UtcDateTime.AddYears(1), 2, false, false, hashService);
+            thread1.LastBumpAt = thread1.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
+
+            // thread2 contains several new posts
+            AddPosts(thread2, timeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(1), 1, true, false, hashService);
+            AddPosts(thread2, timeProvider.GetUtcNow().UtcDateTime.AddDays(1), bumpLimit, false, false, hashService);
+            thread2.LastBumpAt = thread2.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
+
+            // thread3 contains even newer posts
+            AddPosts(thread3, timeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(3), 1, true, false, hashService);
+            AddPosts(thread3, timeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddSeconds(1), bumpLimit, false, false, hashService);
+            thread3.LastBumpAt = thread3.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
+
+            // thread4 contains a lot of posts
+            AddPosts(thread4, timeProvider.GetUtcNow().UtcDateTime, bumpLimit + 10, false, false, hashService);
+            AddPosts(thread4, timeProvider.GetUtcNow().UtcDateTime.AddYears(5), bumpLimit + 10, false, false, hashService);
+            thread4.LastBumpAt = thread4.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        // Seed
-        var admin = new ApplicationUser
-        {
-            UserName = "admin",
-            NormalizedUserName = "ADMIN",
-            Email = "admin@example.com",
-            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-            EmailConfirmed = true,
-            SecurityStamp = "896e8014-c237-41f5-a925-dabf640ee4c4",
-            ConcurrencyStamp = "43035b63-359d-4c23-8812-29bbc5affbf2",
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-        };
-        seedDbContext.Users.Add(admin);
-
-        var category1 = new Category
-        {
-            IsDeleted = false,
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-            ModifiedAt = null,
-            Alias = "b",
-            Name = "Random Foo",
-            IsHidden = false,
-            DefaultBumpLimit = 500,
-            ShowThreadLocalUserHash = false,
-            ShowOs = false,
-            ShowBrowser = false,
-            ShowCountry = false,
-            MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            CreatedBy = admin,
-        };
-        var category2 = new Category
-        {
-            IsDeleted = false,
-            CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-            ModifiedAt = null,
-            Alias = "a",
-            Name = "Random Bar",
-            IsHidden = false,
-            DefaultBumpLimit = 500,
-            ShowThreadLocalUserHash = false,
-            ShowOs = false,
-            ShowBrowser = false,
-            ShowCountry = false,
-            MaxThreadCount = Defaults.MaxThreadCountInCategory,
-            CreatedBy = admin,
-        };
-        seedDbContext.Categories.AddRange(category1, category2);
-
-        var salt1 = GuidGenerator.GenerateSeededGuid();
-        var salt2 = GuidGenerator.GenerateSeededGuid();
-        var utcNow = seedTimeProvider.GetUtcNow().UtcDateTime;
-        var deletedThread = new Thread
-        {
-            CreatedAt = utcNow,
-            LastBumpAt = utcNow,
-            Title = "deleted thread",
-            IsPinned = true,
-            IsClosed = true,
-            IsDeleted = true,
-            BumpLimit = 500,
-            Salt = salt1,
-            Category = category1,
-            Posts =
-            [
-                new Post
-                {
-                    IsOriginalPost = true,
-                    BlobContainerId = new Guid("F115A07E-3B7F-4F54-8140-A9481EBE3F0A"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                    ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
-                },
-            ],
-        };
-        var anotherCategoryThread = new Thread
-        {
-            CreatedAt = utcNow,
-            LastBumpAt = utcNow,
-            Title = "another category thread",
-            IsPinned = false,
-            IsClosed = false,
-            IsDeleted = false,
-            BumpLimit = 500,
-            Salt = salt2,
-            Category = category2,
-            Posts =
-            [
-                new Post
-                {
-                    IsOriginalPost = true,
-                    BlobContainerId = new Guid("A4129657-90E4-4B5C-95A6-CB9D1B9746EC"),
-                    CreatedAt = seedTimeProvider.GetUtcNow().UtcDateTime,
-                    IsSageEnabled = false,
-                    IsDeleted = false,
-                    MessageText = $"test post in deleted thread",
-                    MessageHtml = $"test post in deleted thread",
-                    UserIpAddress = IPAddress.Parse($"127.0.0.1").GetAddressBytes(),
-                    UserAgent = "Firefox",
-                    ThreadLocalUserHash = hashService.GetHashBytes(salt1, IPAddress.Parse($"127.0.0.1").GetAddressBytes()),
-                },
-            ],
-        };
-        var thread1 = new Thread
-        {
-            CreatedAt = utcNow.AddMinutes(1),
-            LastBumpAt = utcNow.AddMinutes(1),
-            Title = "thread with bump limit 1",
-            BumpLimit = bumpLimit,
-            Salt = GuidGenerator.GenerateSeededGuid(),
-            Category = category1,
-        };
-        var thread2 = new Thread
-        {
-            CreatedAt = utcNow.AddMinutes(2),
-            LastBumpAt = utcNow.AddMinutes(2),
-            Title = "thread with bump limit 2",
-            BumpLimit = bumpLimit,
-            Salt = GuidGenerator.GenerateSeededGuid(),
-            Category = category1,
-        };
-        var thread3 = new Thread
-        {
-            CreatedAt = utcNow.AddMinutes(3),
-            LastBumpAt = utcNow.AddMinutes(3),
-            Title = "thread with bump limit 3",
-            BumpLimit = bumpLimit,
-            Salt = GuidGenerator.GenerateSeededGuid(),
-            Category = category1,
-        };
-        var thread4 = new Thread
-        {
-            CreatedAt = utcNow.AddMinutes(4),
-            LastBumpAt = utcNow.AddMinutes(4),
-            Title = "thread with bump limit 4",
-            BumpLimit = bumpLimit,
-            Salt = GuidGenerator.GenerateSeededGuid(),
-            Category = category1,
-        };
-        List<Thread> allThreads = [deletedThread, anotherCategoryThread, thread1, thread2, thread3, thread4];
-        seedDbContext.Threads.AddRange(allThreads);
-
-        // these threads contain the newest posts, but they aren't included in our query
-        AddPosts(deletedThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false, hashService);
-        AddPosts(anotherCategoryThread, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(2), bumpLimit + 2, false, false, hashService);
-
-        // thread1 contains several old posts before bump limit and several new posts after bump limit, which shouldn't affect the result
-        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(-1), bumpLimit, false, false, hashService);
-        AddPosts(thread1, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(1), 2, false, false, hashService);
-        thread1.LastBumpAt = thread1.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
-
-        // thread2 contains several new posts
-        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(1), 1, true, false, hashService);
-        AddPosts(thread2, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1), bumpLimit, false, false, hashService);
-        thread2.LastBumpAt = thread2.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
-
-        // thread3 contains even newer posts
-        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddHours(3), 1, true, false, hashService);
-        AddPosts(thread3, seedTimeProvider.GetUtcNow().UtcDateTime.AddDays(1).AddSeconds(1), bumpLimit, false, false, hashService);
-        thread3.LastBumpAt = thread3.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
-
-        // thread4 contains a lot of posts
-        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime, bumpLimit + 10, false, false, hashService);
-        AddPosts(thread4, seedTimeProvider.GetUtcNow().UtcDateTime.AddYears(5), bumpLimit + 10, false, false, hashService);
-        thread4.LastBumpAt = thread4.Posts.Where(p => !p.IsSageEnabled).Max(x => x.CreatedAt);
-
-        await seedDbContext.SaveChangesAsync(cancellationToken);
-
         // Act
-        using var actScope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var threadRepository = actScope.ServiceProvider.GetRequiredService<IThreadRepository>();
-        var actualThreadPreviews = await threadRepository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewFilter
+        using (var actScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            OrderBy =
-            [
-                new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
-            ],
-            CategoryAlias = "b",
-            IncludeDeleted = false,
-        }, cancellationToken);
+            var threadRepository = actScope.ServiceProvider.GetRequiredService<IThreadRepository>();
+            var actualThreadPreviews = await threadRepository.ListThreadPreviewsPaginatedAsync(new ThreadPreviewFilter
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                OrderBy =
+                [
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
+                    new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
+                ],
+                CategoryAlias = "b",
+                IncludeDeleted = false,
+            }, cancellationToken);
 
-        // Assert
-        Assert.That(actualThreadPreviews, Is.Not.Null);
+            // Assert
+            Assert.That(actualThreadPreviews, Is.Not.Null);
 
-        Assert.That(actualThreadPreviews.Data, Has.Count.EqualTo(4));
+            Assert.That(actualThreadPreviews.Data, Has.Count.EqualTo(4));
 
-        // check that category is correct
-        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
+            // check that category is correct
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.CategoryAlias == "b"));
 
-        // check that there are no deleted threads
-        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => !x.IsDeleted));
+            // check that there are no deleted threads
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => !x.IsDeleted));
 
-        // check that there are no deleted posts
-        Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => !p.IsDeleted)));
+            // check that there are no deleted posts
+            Assert.That(actualThreadPreviews.Data, Is.All.Matches<ThreadPreviewModel>(x => x.Posts.All(p => !p.IsDeleted)));
 
-        // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
-        Assert.That(actualThreadPreviews.Data, Is.Ordered
-            .By(nameof(ThreadPreviewModel.IsPinned))
-            .Descending
-            .Then
-            .By(nameof(ThreadPreviewModel.LastBumpAt))
-            .Descending);
+            // check that every next thread updated earlier than the previous one (sort by LastPostCreatedAt desc)
+            Assert.That(actualThreadPreviews.Data, Is.Ordered
+                .By(nameof(ThreadPreviewModel.IsPinned))
+                .Descending
+                .Then
+                .By(nameof(ThreadPreviewModel.LastBumpAt))
+                .Descending);
 
-        foreach (var thread in actualThreadPreviews.Data)
-        {
-            // check that posts are sorted by date ascending
-            Assert.That(thread.Posts, Is.Ordered.By(nameof(PostDetailsModel.CreatedAt)).Ascending);
+            foreach (var thread in actualThreadPreviews.Data)
+            {
+                // check that posts are sorted by date ascending
+                Assert.That(thread.Posts, Is.Ordered.By(nameof(PostDetailsModel.CreatedAt)).Ascending);
+            }
         }
     }
 }

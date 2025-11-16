@@ -19,6 +19,7 @@ using Hikkaba.Tests.Integration.Utils;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ReactReduxTodo.Tests.Integration.Models;
 using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories;
@@ -44,10 +45,24 @@ internal sealed class BanRepositoryTests
     }
 
     [MustDisposeResource]
-    private async Task<CustomAppFactory> CreateAppFactoryAsync()
+    private async Task<ISeedResult> Seed(CancellationToken cancellationToken)
     {
         var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
-        return new CustomAppFactory(connectionString);
+        var customAppFactory = new CustomAppFactory(connectionString);
+
+        var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
+        {
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+
+        return new SeedResult
+        {
+            Scope = scope,
+            AppFactory = customAppFactory,
+        };
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -61,16 +76,12 @@ internal sealed class BanRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        await using var customAppFactory = await CreateAppFactoryAsync();
-        using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
+        using var seedResult = await Seed(cancellationToken);
+        using var serviceScope = seedResult.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-        {
-            await dbContext.Database.MigrateAsync(cancellationToken);
-        }
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hashService = serviceScope.ServiceProvider.GetRequiredService<IHashService>();
+        var timeProvider = serviceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         // Seed
         var admin = new ApplicationUser
@@ -168,7 +179,7 @@ internal sealed class BanRepositoryTests
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var repository = scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = serviceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.ListBansPaginatedAsync(new BanPagingFilter
@@ -195,16 +206,10 @@ internal sealed class BanRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        await using var customAppFactory = await CreateAppFactoryAsync();
-        using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var hashService = scope.ServiceProvider.GetRequiredService<IHashService>();
-
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-        {
-            await dbContext.Database.MigrateAsync(cancellationToken);
-        }
+        using var seedResult = await Seed(cancellationToken);
+        var dbContext = seedResult.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hashService = seedResult.Scope.ServiceProvider.GetRequiredService<IHashService>();
+        var timeProvider = seedResult.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         // Seed
         var admin = new ApplicationUser
@@ -306,7 +311,7 @@ internal sealed class BanRepositoryTests
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var repository = scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = seedResult.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.ListBansPaginatedAsync(new BanPagingFilter

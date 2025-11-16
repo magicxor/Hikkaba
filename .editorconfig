@@ -381,5 +381,5 @@ roslynator_binary_operator_new_line = before
 roslynator_conditional_operator_new_line = before
 roslynator_null_conditional_operator_new_line = before
 
-[*.{json,env,yml,yaml,xml,xsd,html,cshtml,csproj,props,sln,resx}]
+[*.{json,env,yml,yaml,xml,xsd,html,cshtml,csproj,props,sln,slnx,resx}]
 indent_size = 2
