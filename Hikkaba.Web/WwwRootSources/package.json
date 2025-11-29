@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build",
     "dev": "vite",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "lint:fix": "eslint --fix ."
   },
   "keywords": [],
   "author": "",

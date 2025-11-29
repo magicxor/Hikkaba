@@ -17,7 +17,7 @@ export default defineConfig({
         chunkFileNames: 'js/[name]-[hash].min.js', // Chunks if any
         assetFileNames: (assetInfo) => {
           // Check if the original asset name corresponds to our CSS entry point
-          if (assetInfo.names.some((name) => name === 'site_css.css')) {
+          if (assetInfo.names.some(name => name === 'site_css.css')) {
             // Force the CSS output name
             return 'css/site.min.css'; // Output CSS to wwwroot/css/site.min.css
           }

@@ -1,16 +1,17 @@
-// eslint.config.js
 import js from '@eslint/js';
 import globals from 'globals';
-import eslintConfigPrettier from 'eslint-config-prettier'; // Disables ESLint rules that conflict with Prettier
+import stylistic from '@stylistic/eslint-plugin';
+
+const filesArray = ['js/**/*.{js,jsx,ts,tsx}'];
 
 export default [
-  js.configs.recommended, // Applies recommended rules from @eslint/js
-  eslintConfigPrettier, // Applies Prettier configuration to disable conflicting rules
+  js.configs.recommended,
+  stylistic.configs.recommended,
   {
     // Main configuration for project JS files
-    files: ['js/**/*.js'], // Apply only to files in the js folder
+    files: filesArray,
     languageOptions: {
-      ecmaVersion: 'latest', // Use the latest ECMAScript version
+      ecmaVersion: 'latest',
       globals: {
         ...globals.browser, // Define global browser environment variables
         $: 'readonly', // Add jQuery
@@ -20,15 +21,16 @@ export default [
         writeLineToInput: 'readonly',
         writeSelectionLineToInput: 'readonly',
         navigationFn: 'readonly',
-        // Here you can add other global variables if they are used
-        // myCustomGlobal: "readonly"
       },
     },
+    plugins: {
+      '@stylistic': stylistic,
+    },
     rules: {
-      // Here you can override recommended rules or add custom ones
-      // Example:
-      // "no-unused-vars": "warn"
-      'no-undef': 'off',
+      ...js.configs.recommended.rules,
+      ...stylistic.configs.recommended.rules,
+      '@stylistic/semi': ['error', 'always'],
+      '@stylistic/brace-style': ['error', '1tbs'],
     },
   },
   {
@@ -41,6 +43,8 @@ export default [
     },
     rules: {
       // You can add/override rules specific to Vite config
+      '@stylistic/semi': ['error', 'always'],
+      '@stylistic/brace-style': ['error', '1tbs'],
     },
   },
   {
