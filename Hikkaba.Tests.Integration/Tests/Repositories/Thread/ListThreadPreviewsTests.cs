@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -11,19 +10,12 @@ using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
-using Hikkaba.Tests.Integration.Extensions;
 using Hikkaba.Tests.Integration.Models;
-using Hikkaba.Tests.Integration.Services;
-using Hikkaba.Tests.Integration.Utils;
-using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Thread;
 
-[TestFixture]
-[Parallelizable(scope: ParallelScope.Fixtures)]
-internal sealed class ListThreadPreviewsTests
+internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 {
     private const int PageSize = 5;
 
@@ -33,41 +25,6 @@ internal sealed class ListThreadPreviewsTests
         new() { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
         new() { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
     ];
-
-    private RespawnableContextManager<ApplicationDbContext>? _contextManager;
-
-    [OneTimeSetUp]
-    public async Task OneTimeSetUpAsync()
-    {
-        _contextManager = await TestDbUtils.CreateNewRandomDbContextManagerAsync();
-    }
-
-    [OneTimeTearDown]
-    public async Task OneTimeTearDownAsync()
-    {
-        await _contextManager.StopIfNotNullAsync();
-    }
-
-    [MustDisposeResource]
-    private async Task<IAppScope> CreateAppScopeAsync(CancellationToken cancellationToken)
-    {
-        var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
-        var customAppFactory = new CustomAppFactory(connectionString);
-
-        var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-        {
-            await dbContext.Database.MigrateAsync(cancellationToken);
-        }
-
-        return new AppScope
-        {
-            Scope = scope,
-            AppFactory = customAppFactory,
-        };
-    }
 
     private static async Task<ThreadTestDataBuilder> CreateBaseBuilderAsync(
         IAppScope appScope,

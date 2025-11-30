@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
@@ -8,56 +7,15 @@ using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
-using Hikkaba.Tests.Integration.Extensions;
 using Hikkaba.Tests.Integration.Models;
-using Hikkaba.Tests.Integration.Services;
 using Hikkaba.Tests.Integration.Utils;
-using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
-[TestFixture]
-[Parallelizable(scope: ParallelScope.Fixtures)]
-internal sealed class SearchPostsTests
+internal sealed class SearchPostsTests : IntegrationTestBase
 {
-    private RespawnableContextManager<ApplicationDbContext>? _contextManager;
-
-    [OneTimeSetUp]
-    public async Task OneTimeSetUpAsync()
-    {
-        _contextManager = await TestDbUtils.CreateNewRandomDbContextManagerAsync();
-    }
-
-    [OneTimeTearDown]
-    public async Task OneTimeTearDownAsync()
-    {
-        await _contextManager.StopIfNotNullAsync();
-    }
-
-    [MustDisposeResource]
-    private async Task<IAppScope> CreateAppScopeAsync(CancellationToken cancellationToken)
-    {
-        var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
-        var customAppFactory = new CustomAppFactory(connectionString);
-
-        var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
-        {
-            await dbContext.Database.MigrateAsync(cancellationToken);
-        }
-
-        return new AppScope
-        {
-            Scope = scope,
-            AppFactory = customAppFactory,
-        };
-    }
-
     private static async Task SeedSearchPostsDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         await new PostTestDataBuilder(scope)
