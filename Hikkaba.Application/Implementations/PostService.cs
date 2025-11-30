@@ -47,12 +47,12 @@ public sealed class PostService : IPostService
         return await _postRepository.ListThreadPostsAsync(filter, cancellationToken);
     }
 
-    public async Task<PagedResult<PostDetailsModel>> SearchPostsPaginatedAsync(SearchPostsPagingFilter filter, CancellationToken cancellationToken)
+    public async Task<PagedResult<PostDetailsModel>> SearchPostsAsync(SearchPostsPagingFilter filter, CancellationToken cancellationToken)
     {
         return await _postRepository.SearchPostsAsync(filter, cancellationToken);
     }
 
-    public async Task<PagedResult<PostDetailsModel>> ListPostsPaginatedAsync(PostPagingFilter filter, CancellationToken cancellationToken)
+    public async Task<PagedResult<PostDetailsModel>> ListPostsAsync(PostPagingFilter filter, CancellationToken cancellationToken)
     {
         return await _postRepository.ListPostsAsync(filter, cancellationToken);
     }

@@ -38,7 +38,7 @@ public sealed class HomeController : Controller
             PageNumber = 1,
             OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
         };
-        var posts = await _postService.ListPostsPaginatedAsync(postPagingFilter, cancellationToken);
+        var posts = await _postService.ListPostsAsync(postPagingFilter, cancellationToken);
 
         var categoryFilter = new CategoryFilter
         {

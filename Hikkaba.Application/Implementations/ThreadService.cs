@@ -50,7 +50,7 @@ public sealed class ThreadService : IThreadService
         return await _threadRepository.GetThreadDetailsAsync(threadId, false, cancellationToken);
     }
 
-    public async Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken)
+    public async Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken)
     {
         return await _threadRepository.ListThreadPreviewsAsync(filter, cancellationToken);
     }

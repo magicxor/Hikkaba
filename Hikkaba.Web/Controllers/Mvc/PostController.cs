@@ -238,7 +238,7 @@ public sealed class PostController : BaseMvcController
             SearchQuery = request.Query,
         };
 
-        var result = await _postService.SearchPostsPaginatedAsync(filter, cancellationToken);
+        var result = await _postService.SearchPostsAsync(filter, cancellationToken);
 
         var posts = new PagedResult<PostDetailsViewModel>(result.Data.ToViewModels(), filter, result.TotalItemCount);
 

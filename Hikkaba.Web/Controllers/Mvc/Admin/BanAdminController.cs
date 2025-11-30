@@ -84,7 +84,7 @@ public sealed class BanAdminController : BaseMvcController
                 new OrderByItem { Field = nameof(BanDetailsModel.Id), Direction = OrderByDirection.Desc },
             ],
         };
-        var bans = await _banService.ListBansPaginatedAsync(filter, cancellationToken);
+        var bans = await _banService.ListBansAsync(filter, cancellationToken);
 
         var viewModelList = new BanIndexViewModel
         {

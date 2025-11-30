@@ -68,7 +68,7 @@ public sealed class CategoryController : BaseMvcController
                 new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
             ],
         };
-        var threads = await _threadService.ListThreadPreviewsPaginatedAsync(filter, cancellationToken);
+        var threads = await _threadService.ListThreadPreviewsAsync(filter, cancellationToken);
 
         var categoryDetailsViewModel = new CategoryThreadsViewModel
         {
