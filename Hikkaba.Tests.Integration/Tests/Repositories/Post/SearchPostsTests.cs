@@ -63,21 +63,21 @@ internal sealed class SearchPostsTests
     {
         await new PostTestDataBuilder(scope)
             .WithDefaultAdmin()
-            .WithCategory("b", "Random CategorySearchTerm")
-            .WithThread("BoardThreadPostSearchTerm thread 1 ThreadAndPostSearchTerm")
-            .WithPost(new Guid("243D7DB4-4EE8-4285-8888-E7185A7CB1B2"), "BoardThreadPostSearchTerm post 1 Post1SearchTerm", "127.0.0.1", "Firefox", isOriginalPost: true)
-            .WithPost(new Guid("D9AED982-37D6-4C5C-B235-E1AADC342236"), "BoardThreadPostSearchTerm post 2 Post2SearchTerm", "127.0.0.1", "Chrome")
-            .WithPost(new Guid("C8393E45-20AE-4214-A1EF-5F6AE0D93477"), "BoardThreadPostSearchTerm Post1SearchTerm Post2SearchTerm BoardSearchTerm CategorySearchTerm ThreadAndPostSearchTerm", "127.0.0.1", "Chrome", isDeleted: true)
+            .WithCategory("b", "category")
+            .WithThread("thread")
+            .WithPost(new Guid("243D7DB4-4EE8-4285-8888-E7185A7CB1B2"), "post", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost(new Guid("D9AED982-37D6-4C5C-B235-E1AADC342236"), "blah blah blah", "127.0.0.1", "Chrome")
+            .WithPost(new Guid("C8393E45-20AE-4214-A1EF-5F6AE0D93477"), "blah blah post blah", "127.0.0.1", "Chrome")
+            .WithPost(new Guid("876591b6-2cdf-4971-9af1-aec6d9573440"), "blah blah post blah", "127.0.0.1", "Chrome", isDeleted: true)
             .SaveAsync(cancellationToken);
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
-    [TestCase("BoardSearchTerm", 0)]
-    [TestCase("CategorySearchTerm", 0)]
-    [TestCase("ThreadAndPostSearchTerm", 1, Ignore = "Temporary disabled due to ongoing query performance improvements")]
-    [TestCase("BoardThreadPostSearchTerm", 2)]
-    [TestCase("Post1SearchTerm", 1)]
-    [TestCase("Post2SearchTerm", 1)]
+    [TestCase("category", 0)] // we only search by post content and thread title
+    [TestCase("thread", 1, Ignore = "Temporary disabled due to ongoing query performance improvements")] // search by thread title is temporarily disabled
+    [TestCase("post", 2)] // only 2 non-deleted posts are returned
+    [TestCase("blah", 2)] // only 2 non-deleted posts are returned
+    [TestCase("hedgehog", 0)] // no results
     public async Task SearchPosts_WhenSearchQueryIsProvided_ReturnsExpectedResultsAsync(
         string searchQuery,
         int expectedCount,
