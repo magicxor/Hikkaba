@@ -40,7 +40,7 @@ internal sealed class BanRepositoryTests
     }
 
     [MustDisposeResource]
-    private async Task<IAppScope> CreateSeedResultAsync(CancellationToken cancellationToken)
+    private async Task<IAppScope> CreateAppScopeAsync(CancellationToken cancellationToken)
     {
         var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
         var customAppFactory = new CustomAppFactory(connectionString);
@@ -97,7 +97,7 @@ internal sealed class BanRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        using var seedResult = await CreateSeedResultAsync(cancellationToken);
+        using var seedResult = await CreateAppScopeAsync(cancellationToken);
         await SeedExactBansDataAsync(seedResult.Scope, cancellationToken);
 
         var repository = seedResult.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
@@ -127,7 +127,7 @@ internal sealed class BanRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        using var seedResult = await CreateSeedResultAsync(cancellationToken);
+        using var seedResult = await CreateAppScopeAsync(cancellationToken);
         await SeedRangeBansDataAsync(seedResult.Scope, cancellationToken);
 
         var repository = seedResult.Scope.ServiceProvider.GetRequiredService<IBanRepository>();

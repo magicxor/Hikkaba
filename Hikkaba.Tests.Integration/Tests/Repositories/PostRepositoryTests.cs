@@ -40,7 +40,7 @@ internal sealed class PostRepositoryTests
     }
 
     [MustDisposeResource]
-    private async Task<IAppScope> CreateSeedResultAsync(CancellationToken cancellationToken)
+    private async Task<IAppScope> CreateAppScopeAsync(CancellationToken cancellationToken)
     {
         var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
         var customAppFactory = new CustomAppFactory(connectionString);
@@ -85,7 +85,7 @@ internal sealed class PostRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        using var seedResult = await CreateSeedResultAsync(cancellationToken);
+        using var seedResult = await CreateAppScopeAsync(cancellationToken);
         await SeedSearchPostsDataAsync(seedResult.Scope, cancellationToken);
 
         var dbContext = seedResult.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
