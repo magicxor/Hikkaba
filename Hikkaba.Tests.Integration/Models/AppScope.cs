@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Hikkaba.Tests.Integration.Models;
 
-internal sealed class SeedResult : ISeedResult, IAppFactorySeedResult
+internal sealed class AppScope : IAppFactoryScope
 {
     public required IServiceScope Scope { get; set; }
     public required CustomAppFactory AppFactory { get; set; }

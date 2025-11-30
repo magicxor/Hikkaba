@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Hikkaba.Tests.Integration.Models;
 
-internal interface ISeedResult : IDisposable
+internal interface IAppScope : IDisposable
 {
     public IServiceScope Scope { get; set; }
 }
