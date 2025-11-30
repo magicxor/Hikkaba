@@ -28,7 +28,7 @@ public sealed class BanService : IBanService
 
     public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter filter, CancellationToken cancellationToken)
     {
-        return await _banRepository.ListBansPaginatedAsync(filter, cancellationToken);
+        return await _banRepository.ListBansAsync(filter, cancellationToken);
     }
 
     public async Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken)

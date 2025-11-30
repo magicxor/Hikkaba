@@ -62,7 +62,7 @@ public sealed class PostRepository : IPostRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PagedResult<PostDetailsModel>> SearchPostsPaginatedAsync(
+    public async Task<PagedResult<PostDetailsModel>> SearchPostsAsync(
         SearchPostsPagingFilter filter,
         CancellationToken cancellationToken)
     {
@@ -96,7 +96,7 @@ public sealed class PostRepository : IPostRepository
         return new PagedResult<PostDetailsModel>(data, filter, totalCount);
     }
 
-    public async Task<PagedResult<PostDetailsModel>> ListPostsPaginatedAsync(
+    public async Task<PagedResult<PostDetailsModel>> ListPostsAsync(
         PostPagingFilter filter,
         CancellationToken cancellationToken)
     {

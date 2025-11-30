@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
-using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -19,11 +18,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Hikkaba.Tests.Integration.Tests.Repositories;
+namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.Fixtures)]
-internal sealed class PostRepositoryTests
+internal sealed class SearchPostsTests
 {
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;
 
@@ -79,7 +78,7 @@ internal sealed class PostRepositoryTests
     [TestCase("BoardThreadPostSearchTerm", 2)]
     [TestCase("Post1SearchTerm", 1)]
     [TestCase("Post2SearchTerm", 1)]
-    public async Task SearchPostsPaginatedAsync_WhenSearchQueryIsProvided_ReturnsExpectedResultsAsync(
+    public async Task SearchPosts_WhenSearchQueryIsProvided_ReturnsExpectedResultsAsync(
         string searchQuery,
         int expectedCount,
         CancellationToken cancellationToken)
@@ -89,17 +88,17 @@ internal sealed class PostRepositoryTests
         await SeedSearchPostsDataAsync(appScope.Scope, cancellationToken);
 
         var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var logger = appScope.Scope.ServiceProvider.GetRequiredService<ILogger<PostRepositoryTests>>();
+        var logger = appScope.Scope.ServiceProvider.GetRequiredService<ILogger<SearchPostsTests>>();
         await DbUtils.WaitForFulltextIndexAsync(logger, dbContext, ["Posts", "Threads"], cancellationToken: cancellationToken);
 
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act
-        var result = await repository.SearchPostsPaginatedAsync(new SearchPostsPagingFilter
+        var result = await repository.SearchPostsAsync(new SearchPostsPagingFilter
         {
             PageNumber = 1,
             PageSize = 10,
-            OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Desc }],
             SearchQuery = searchQuery,
         }, cancellationToken);
 

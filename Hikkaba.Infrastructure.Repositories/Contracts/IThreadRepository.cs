@@ -10,7 +10,7 @@ public interface IThreadRepository
 
     Task<ThreadDetailsRequestModel?> GetThreadDetailsAsync(long threadId, bool includeDeleted, CancellationToken cancellationToken);
 
-    Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken);
+    Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsAsync(ThreadPreviewFilter filter, CancellationToken cancellationToken);
 
     Task<ThreadPostCreateResultModel> CreateThreadAsync(ThreadCreateExtendedRequestModel createRequestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
 

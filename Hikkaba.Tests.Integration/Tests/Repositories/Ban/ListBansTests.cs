@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
-using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -19,11 +18,11 @@ using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Hikkaba.Tests.Integration.Tests.Repositories;
+namespace Hikkaba.Tests.Integration.Tests.Repositories.Ban;
 
 [TestFixture]
 [Parallelizable(scope: ParallelScope.Fixtures)]
-internal sealed class BanRepositoryTests
+internal sealed class ListBansTests
 {
     private RespawnableContextManager<ApplicationDbContext>? _contextManager;
 
@@ -91,7 +90,7 @@ internal sealed class BanRepositoryTests
     [TestCase("b550:f112:2801:51d4:fdaf:21d8:6bbc:aaba", true)]
     [TestCase("176.213.241.53", false)]
     [TestCase("e226:df4a:8eb6:99b3:7dad:affa:5560:39d3", false)]
-    public async Task ListBansPaginatedAsync_WhenSearchExact_ReturnsExpectedResult(
+    public async Task ListBans_WhenSearchExact_ReturnsExpectedResult(
         string ipAddress,
         bool expectedFound,
         CancellationToken cancellationToken)
@@ -103,11 +102,11 @@ internal sealed class BanRepositoryTests
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
-        var result = await repository.ListBansPaginatedAsync(new BanPagingFilter
+        var result = await repository.ListBansAsync(new BanPagingFilter
         {
             PageNumber = 1,
             PageSize = 10,
-            OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Desc }],
             IpAddress = IPAddress.Parse(ipAddress),
         }, cancellationToken);
 
@@ -121,7 +120,7 @@ internal sealed class BanRepositoryTests
     [TestCase("2001:4860:0000:bbbb:0000:0000:0000:0", true)]
     [TestCase("95.189.128.0", false)]
     [TestCase("e226:df4a:8eb6:99b3:7dad:affa:5560:39d3", false)]
-    public async Task ListBansPaginatedAsync_WhenSearchInRange_ReturnsExpectedResult(
+    public async Task ListBans_WhenSearchInRange_ReturnsExpectedResult(
         string ipAddress,
         bool expectedFound,
         CancellationToken cancellationToken)
@@ -133,11 +132,11 @@ internal sealed class BanRepositoryTests
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
-        var result = await repository.ListBansPaginatedAsync(new BanPagingFilter
+        var result = await repository.ListBansAsync(new BanPagingFilter
         {
             PageNumber = 1,
             PageSize = 10,
-            OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Desc }],
             IpAddress = IPAddress.Parse(ipAddress),
         }, cancellationToken);
 

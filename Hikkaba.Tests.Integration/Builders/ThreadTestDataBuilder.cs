@@ -57,20 +57,25 @@ internal sealed class ThreadTestDataBuilder
         return this;
     }
 
-    public ThreadTestDataBuilder WithCategory(string alias, string name)
+    public ThreadTestDataBuilder WithCategory(
+        string alias,
+        string name,
+        bool isDeleted = false,
+        int defaultBumpLimit = 500,
+        bool showThreadLocalUserHash = false)
     {
         EnsureAdminExists();
 
         var category = new Category
         {
-            IsDeleted = false,
+            IsDeleted = isDeleted,
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime,
             ModifiedAt = null,
             Alias = alias,
             Name = name,
             IsHidden = false,
-            DefaultBumpLimit = 500,
-            ShowThreadLocalUserHash = false,
+            DefaultBumpLimit = defaultBumpLimit,
+            ShowThreadLocalUserHash = showThreadLocalUserHash,
             ShowOs = false,
             ShowBrowser = false,
             ShowCountry = false,
@@ -91,6 +96,7 @@ internal sealed class ThreadTestDataBuilder
         string title,
         bool isPinned = false,
         bool isClosed = false,
+        bool isCyclic = false,
         bool isDeleted = false,
         int bumpLimit = 500,
         DateTime? createdAt = null,
@@ -106,6 +112,7 @@ internal sealed class ThreadTestDataBuilder
             Title = title,
             IsPinned = isPinned,
             IsClosed = isClosed,
+            IsCyclic = isCyclic,
             IsDeleted = isDeleted,
             BumpLimit = bumpLimit,
             Salt = GuidGenerator.GenerateSeededGuid(),
@@ -113,6 +120,40 @@ internal sealed class ThreadTestDataBuilder
         };
         _threads.Add(thread);
         _dbContext.Threads.Add(thread);
+        return this;
+    }
+
+    public ThreadTestDataBuilder WithThreadAndOp(
+        string categoryAlias,
+        string title,
+        bool isPinned = false,
+        bool isClosed = false,
+        bool isCyclic = false,
+        bool isDeleted = false,
+        int bumpLimit = 500,
+        DateTime? createdAt = null,
+        DateTime? lastBumpAt = null)
+    {
+        WithThread(categoryAlias, title, isPinned, isClosed, isCyclic, isDeleted, bumpLimit, createdAt, lastBumpAt);
+
+        var thread = GetThread(title);
+        var ip = IPAddress.Parse("127.0.0.1").GetAddressBytes();
+
+        var post = new Post
+        {
+            IsOriginalPost = true,
+            BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+            CreatedAt = thread.CreatedAt,
+            IsSageEnabled = false,
+            IsDeleted = false,
+            MessageText = $"OP post in {title}",
+            MessageHtml = $"OP post in {title}",
+            UserIpAddress = ip,
+            UserAgent = "Firefox",
+            ThreadLocalUserHash = HashService.GetHashBytes(thread.Salt, ip),
+            Thread = thread,
+        };
+        _dbContext.Posts.Add(post);
         return this;
     }
 
@@ -380,10 +421,24 @@ internal sealed class ThreadTestDataBuilder
     public ThreadTestDataBuilder UpdateThreadLastBumpAt(string threadTitle)
     {
         var thread = GetThread(threadTitle);
-        var lastNonSagePost = thread.Posts.Where(p => p is { IsSageEnabled: false, IsDeleted: false }).MaxBy(p => p.CreatedAt);
-        if (lastNonSagePost != null)
+
+        // Get non-sage, non-deleted posts ordered by creation date
+        var eligiblePosts = thread.Posts
+            .Where(p => p is { IsSageEnabled: false, IsDeleted: false })
+            .OrderBy(p => p.CreatedAt)
+            .ToList();
+
+        // If bump limit is set, only posts within the limit can bump the thread
+        var bumpLimit = thread.BumpLimit;
+        if (bumpLimit > 0 && eligiblePosts.Count > bumpLimit)
         {
-            thread.LastBumpAt = lastNonSagePost.CreatedAt;
+            eligiblePosts = eligiblePosts.Take(bumpLimit).ToList();
+        }
+
+        var lastEligiblePost = eligiblePosts.LastOrDefault();
+        if (lastEligiblePost != null)
+        {
+            thread.LastBumpAt = lastEligiblePost.CreatedAt;
         }
         return this;
     }

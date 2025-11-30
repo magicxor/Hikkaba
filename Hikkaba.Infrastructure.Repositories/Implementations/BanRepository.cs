@@ -206,7 +206,7 @@ public sealed class BanRepository : IBanRepository
         };
     }
 
-    public async Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(
+    public async Task<PagedResult<BanDetailsModel>> ListBansAsync(
         BanPagingFilter filter,
         CancellationToken cancellationToken)
     {

@@ -8,7 +8,7 @@ public interface IBanRepository
 {
     Task<BanSlimModel?> FindActiveBanAsync(ActiveBanFilter filter, CancellationToken cancellationToken);
     Task<PostingRestrictionsResponseModel> GetPostingRestrictionStatusAsync(PostingRestrictionsRequestModel requestModel, CancellationToken cancellationToken);
-    Task<PagedResult<BanDetailsModel>> ListBansPaginatedAsync(BanPagingFilter filter, CancellationToken cancellationToken);
+    Task<PagedResult<BanDetailsModel>> ListBansAsync(BanPagingFilter filter, CancellationToken cancellationToken);
     Task<BanDetailsModel?> GetBanAsync(int banId, CancellationToken cancellationToken);
     Task<BanCreateResultModel> CreateBanAsync(BanCreateRequestModel requestModel, CancellationToken cancellationToken);
     Task SetBanDeletedAsync(int banId, bool isDeleted, CancellationToken cancellationToken);

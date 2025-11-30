@@ -8,9 +8,9 @@ public interface IPostRepository
 {
     Task<IReadOnlyList<PostDetailsModel>> ListThreadPostsAsync(ThreadPostsFilter filter, CancellationToken cancellationToken);
 
-    Task<PagedResult<PostDetailsModel>> SearchPostsPaginatedAsync(SearchPostsPagingFilter filter, CancellationToken cancellationToken);
+    Task<PagedResult<PostDetailsModel>> SearchPostsAsync(SearchPostsPagingFilter filter, CancellationToken cancellationToken);
 
-    Task<PagedResult<PostDetailsModel>> ListPostsPaginatedAsync(PostPagingFilter filter, CancellationToken cancellationToken);
+    Task<PagedResult<PostDetailsModel>> ListPostsAsync(PostPagingFilter filter, CancellationToken cancellationToken);
 
     Task<PostCreateResultSuccessModel> CreatePostAsync(PostCreateExtendedRequestModel requestModel, FileAttachmentContainerCollection inputFiles, CancellationToken cancellationToken);
 

@@ -120,7 +120,7 @@ public sealed class ThreadRepository : IThreadRepository
         };
     }
 
-    public async Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsPaginatedAsync(
+    public async Task<PagedResult<ThreadPreviewModel>> ListThreadPreviewsAsync(
         ThreadPreviewFilter filter,
         CancellationToken cancellationToken)
     {
@@ -130,9 +130,9 @@ public sealed class ThreadRepository : IThreadRepository
             .Include(thread => thread.Category)
             .Where(thread => thread.Category.Alias == filter.CategoryAlias)
             .Where(thread =>
-                !thread.IsDeleted
-                && !thread.Category.IsDeleted
-                && thread.Posts.Any(p => !p.IsDeleted))
+                (filter.IncludeDeleted || !thread.IsDeleted)
+                && (filter.IncludeDeleted || !thread.Category.IsDeleted)
+                && (filter.IncludeDeleted || thread.Posts.Any(p => !p.IsDeleted)))
             .Select(thread => new
             {
                 Thread = thread,
@@ -141,7 +141,7 @@ public sealed class ThreadRepository : IThreadRepository
                 Id = thread.Id,
                 LastBumpAt = thread.LastBumpAt,
                 IsPinned = thread.IsPinned,
-                PostCount = thread.Posts.Count(p => !p.IsDeleted),
+                PostCount = thread.Posts.Count(p => filter.IncludeDeleted || !p.IsDeleted),
             });
 
         var totalCount = await threadQuery
