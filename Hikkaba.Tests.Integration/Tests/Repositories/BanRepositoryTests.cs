@@ -97,10 +97,10 @@ internal sealed class BanRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        using var seedResult = await CreateAppScopeAsync(cancellationToken);
-        await SeedExactBansDataAsync(seedResult.Scope, cancellationToken);
+        using var appScope = await CreateAppScopeAsync(cancellationToken);
+        await SeedExactBansDataAsync(appScope.Scope, cancellationToken);
 
-        var repository = seedResult.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.ListBansPaginatedAsync(new BanPagingFilter
@@ -127,10 +127,10 @@ internal sealed class BanRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        using var seedResult = await CreateAppScopeAsync(cancellationToken);
-        await SeedRangeBansDataAsync(seedResult.Scope, cancellationToken);
+        using var appScope = await CreateAppScopeAsync(cancellationToken);
+        await SeedRangeBansDataAsync(appScope.Scope, cancellationToken);
 
-        var repository = seedResult.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.ListBansPaginatedAsync(new BanPagingFilter

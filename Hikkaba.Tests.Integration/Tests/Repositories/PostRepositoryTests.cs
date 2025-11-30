@@ -85,14 +85,14 @@ internal sealed class PostRepositoryTests
         CancellationToken cancellationToken)
     {
         // Arrange
-        using var seedResult = await CreateAppScopeAsync(cancellationToken);
-        await SeedSearchPostsDataAsync(seedResult.Scope, cancellationToken);
+        using var appScope = await CreateAppScopeAsync(cancellationToken);
+        await SeedSearchPostsDataAsync(appScope.Scope, cancellationToken);
 
-        var dbContext = seedResult.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var logger = seedResult.Scope.ServiceProvider.GetRequiredService<ILogger<PostRepositoryTests>>();
+        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var logger = appScope.Scope.ServiceProvider.GetRequiredService<ILogger<PostRepositoryTests>>();
         await DbUtils.WaitForFulltextIndexAsync(logger, dbContext, ["Posts", "Threads"], cancellationToken: cancellationToken);
 
-        var repository = seedResult.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act
         var result = await repository.SearchPostsPaginatedAsync(new SearchPostsPagingFilter
