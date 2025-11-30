@@ -14,7 +14,7 @@ namespace Hikkaba.Tests.Integration.Builders;
 
 internal sealed class PostTestDataBuilder
 {
-    private static readonly GuidGenerator GuidGenerator = new();
+    private readonly GuidGenerator _guidGenerator = new();
 
     private readonly ApplicationDbContext _dbContext;
     private readonly IHashService _hashService;
@@ -86,7 +86,7 @@ internal sealed class PostTestDataBuilder
             IsPinned = false,
             IsClosed = false,
             BumpLimit = 500,
-            Salt = GuidGenerator.GenerateSeededGuid(),
+            Salt = _guidGenerator.GenerateSeededGuid(),
             Category = Category,
         };
         _dbContext.Threads.Add(_thread);
@@ -94,12 +94,12 @@ internal sealed class PostTestDataBuilder
     }
 
     public PostTestDataBuilder WithPost(
-        Guid blobContainerId,
         string messageText,
         string ipAddress,
         string userAgent,
         bool isOriginalPost = false,
-        bool isDeleted = false)
+        bool isDeleted = false,
+        Guid? blobContainerId = null)
     {
         EnsureThreadExists();
 
@@ -108,7 +108,7 @@ internal sealed class PostTestDataBuilder
         {
             IsOriginalPost = isOriginalPost,
             IsDeleted = isDeleted,
-            BlobContainerId = blobContainerId,
+            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = messageText,

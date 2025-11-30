@@ -65,10 +65,10 @@ internal sealed class SearchPostsTests
             .WithDefaultAdmin()
             .WithCategory("b", "category")
             .WithThread("thread")
-            .WithPost(new Guid("243D7DB4-4EE8-4285-8888-E7185A7CB1B2"), "post", "127.0.0.1", "Firefox", isOriginalPost: true)
-            .WithPost(new Guid("D9AED982-37D6-4C5C-B235-E1AADC342236"), "blah blah blah", "127.0.0.1", "Chrome")
-            .WithPost(new Guid("C8393E45-20AE-4214-A1EF-5F6AE0D93477"), "blah blah post blah", "127.0.0.1", "Chrome")
-            .WithPost(new Guid("876591b6-2cdf-4971-9af1-aec6d9573440"), "blah blah post blah", "127.0.0.1", "Chrome", isDeleted: true)
+            .WithPost("post", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("blah blah blah", "127.0.0.1", "Chrome")
+            .WithPost("blah blah post blah", "127.0.0.1", "Chrome")
+            .WithPost("blah blah post blah", "127.0.0.1", "Chrome", isDeleted: true)
             .SaveAsync(cancellationToken);
     }
 

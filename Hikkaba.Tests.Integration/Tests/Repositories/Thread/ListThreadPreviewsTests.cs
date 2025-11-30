@@ -400,7 +400,7 @@ internal sealed class ListThreadPreviewsTests
                 for (var i = 1; i <= totalPostCount; i++)
                 {
                     var message = i == 1 ? "OP post" : $"post {i}";
-                    builder.WithPost("test thread", Guid.NewGuid(), message, isOriginalPost: i == 1, createdAtOffset: TimeSpan.FromSeconds(i));
+                    builder.WithPost("test thread", message, isOriginalPost: i == 1, createdAtOffset: TimeSpan.FromSeconds(i));
                 }
             },
             cancellationToken);
@@ -440,7 +440,7 @@ internal sealed class ListThreadPreviewsTests
             b =>
             {
                 b.WithThread("b", "test thread")
-                 .WithPost("test thread", Guid.NewGuid(), "test post", isOriginalPost: true);
+                 .WithPost("test thread", "test post", isOriginalPost: true);
             },
             cancellationToken);
 
@@ -512,9 +512,9 @@ internal sealed class ListThreadPreviewsTests
             {
                 builder
                     .WithThread("b", "test thread")
-                    .WithPost("test thread", Guid.NewGuid(), "OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("test thread", Guid.NewGuid(), "normal post", createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPost("test thread", Guid.NewGuid(), "deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
+                    .WithPost("test thread", "OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("test thread", "normal post", createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPost("test thread", "deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
             },
             cancellationToken);
 
@@ -547,9 +547,9 @@ internal sealed class ListThreadPreviewsTests
                 // Thread with only sage posts - should use original lastBumpAt
                 builder
                     .WithThread("b", "all sage thread", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
-                    .WithPost("all sage thread", Guid.NewGuid(), "OP sage", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
-                    .WithPost("all sage thread", Guid.NewGuid(), "sage 1", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(5))
-                    .WithPost("all sage thread", Guid.NewGuid(), "sage 2", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(6));
+                    .WithPost("all sage thread", "OP sage", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
+                    .WithPost("all sage thread", "sage 1", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(5))
+                    .WithPost("all sage thread", "sage 2", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(6));
 
                 // Thread with normal bump
                 builder
@@ -609,9 +609,9 @@ internal sealed class ListThreadPreviewsTests
             {
                 builder
                     .WithThread("b", "test thread")
-                    .WithPost("test thread", Guid.NewGuid(), "OP", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPostWithAudio("test thread", Guid.NewGuid(), "audio post", Guid.NewGuid(), "audio.mp3", createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPostWithPicture("test thread", Guid.NewGuid(), "picture post", Guid.NewGuid(), "image.jpg", createdAtOffset: TimeSpan.FromSeconds(3));
+                    .WithPost("test thread", "OP", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPostWithAudio("test thread", "audio post", "audio.mp3", createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPostWithPicture("test thread", "picture post", "image.jpg", createdAtOffset: TimeSpan.FromSeconds(3));
             },
             cancellationToken);
 
@@ -682,9 +682,9 @@ internal sealed class ListThreadPreviewsTests
                 // Thread with only deleted posts
                 builder
                     .WithThread("b", "all deleted posts thread", createdAt: utcNow, lastBumpAt: utcNow)
-                    .WithPost("all deleted posts thread", Guid.NewGuid(), "deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("all deleted posts thread", Guid.NewGuid(), "deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPost("all deleted posts thread", Guid.NewGuid(), "deleted post 3", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
+                    .WithPost("all deleted posts thread", "deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("all deleted posts thread", "deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPost("all deleted posts thread", "deleted post 3", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
 
                 // Thread with normal posts
                 builder.WithThreadAndOp("b", "normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
@@ -816,10 +816,10 @@ internal sealed class ListThreadPreviewsTests
             {
                 builder
                     .WithThread("b", "test thread")
-                    .WithPost("test thread", Guid.NewGuid(), "OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("test thread", Guid.NewGuid(), "normal post", createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPost("test thread", Guid.NewGuid(), "deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3))
-                    .WithPost("test thread", Guid.NewGuid(), "another normal post", createdAtOffset: TimeSpan.FromSeconds(4));
+                    .WithPost("test thread", "OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("test thread", "normal post", createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPost("test thread", "deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3))
+                    .WithPost("test thread", "another normal post", createdAtOffset: TimeSpan.FromSeconds(4));
             },
             cancellationToken);
 
@@ -853,8 +853,8 @@ internal sealed class ListThreadPreviewsTests
                 // The deleted post should NOT bump the thread
                 builder
                     .WithThread("b", "thread with deleted bump", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
-                    .WithPost("thread with deleted bump", Guid.NewGuid(), "old OP", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
-                    .WithPost("thread with deleted bump", Guid.NewGuid(), "very fresh deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromDays(10));
+                    .WithPost("thread with deleted bump", "old OP", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
+                    .WithPost("thread with deleted bump", "very fresh deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromDays(10));
 
                 // Thread with recent normal post
                 builder.WithThreadAndOp("b", "fresh normal thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
@@ -891,8 +891,8 @@ internal sealed class ListThreadPreviewsTests
                 // Thread with only deleted posts
                 builder
                     .WithThread("b", "all deleted posts thread", createdAt: utcNow, lastBumpAt: utcNow)
-                    .WithPost("all deleted posts thread", Guid.NewGuid(), "deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("all deleted posts thread", Guid.NewGuid(), "deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2));
+                    .WithPost("all deleted posts thread", "deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("all deleted posts thread", "deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2));
 
                 // Normal thread
                 builder.WithThreadAndOp("b", "normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
@@ -1214,8 +1214,8 @@ internal sealed class ListThreadPreviewsTests
             {
                 builder
                     .WithThread("b", "test thread")
-                    .WithPost("test thread", Guid.NewGuid(), "OP post", isOriginalPost: true, ipAddress: "192.168.1.100", userAgent: "TestBrowser/1.0")
-                    .WithPost("test thread", Guid.NewGuid(), "sage post", isSageEnabled: true, createdAtOffset: TimeSpan.FromSeconds(1));
+                    .WithPost("test thread", "OP post", isOriginalPost: true, ipAddress: "192.168.1.100", userAgent: "TestBrowser/1.0")
+                    .WithPost("test thread", "sage post", isSageEnabled: true, createdAtOffset: TimeSpan.FromSeconds(1));
             },
             cancellationToken);
 

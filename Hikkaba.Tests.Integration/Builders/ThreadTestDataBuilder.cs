@@ -18,7 +18,7 @@ namespace Hikkaba.Tests.Integration.Builders;
 
 internal sealed class ThreadTestDataBuilder
 {
-    private static readonly GuidGenerator GuidGenerator = new();
+    private readonly GuidGenerator _guidGenerator = new();
 
     private readonly ApplicationDbContext _dbContext;
     private readonly List<Category> _categories = [];
@@ -115,7 +115,7 @@ internal sealed class ThreadTestDataBuilder
             IsCyclic = isCyclic,
             IsDeleted = isDeleted,
             BumpLimit = bumpLimit,
-            Salt = GuidGenerator.GenerateSeededGuid(),
+            Salt = _guidGenerator.GenerateSeededGuid(),
             Category = category,
         };
         _threads.Add(thread);
@@ -142,7 +142,7 @@ internal sealed class ThreadTestDataBuilder
         var post = new Post
         {
             IsOriginalPost = true,
-            BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
             CreatedAt = thread.CreatedAt,
             IsSageEnabled = false,
             IsDeleted = false,
@@ -167,14 +167,14 @@ internal sealed class ThreadTestDataBuilder
 
     public ThreadTestDataBuilder WithPost(
         string threadTitle,
-        Guid blobContainerId,
         string messageText,
         string ipAddress = "127.0.0.1",
         string userAgent = "Firefox",
         bool isOriginalPost = false,
         bool isSageEnabled = false,
         bool isDeleted = false,
-        TimeSpan? createdAtOffset = null)
+        TimeSpan? createdAtOffset = null,
+        Guid? blobContainerId = null)
     {
         var thread = GetThread(threadTitle);
         var ip = IPAddress.Parse(ipAddress);
@@ -182,7 +182,7 @@ internal sealed class ThreadTestDataBuilder
         var post = new Post
         {
             IsOriginalPost = isOriginalPost,
-            BlobContainerId = blobContainerId,
+            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.Add(createdAtOffset ?? TimeSpan.Zero),
             IsSageEnabled = isSageEnabled,
             IsDeleted = isDeleted,
@@ -199,13 +199,13 @@ internal sealed class ThreadTestDataBuilder
 
     public ThreadTestDataBuilder WithPostWithAudio(
         string threadTitle,
-        Guid blobContainerId,
         string messageText,
-        Guid audioBlobId,
         string audioFileName,
         string ipAddress = "127.0.0.1",
         string userAgent = "Chrome",
-        TimeSpan? createdAtOffset = null)
+        TimeSpan? createdAtOffset = null,
+        Guid? blobContainerId = null,
+        Guid? audioBlobId = null)
     {
         var thread = GetThread(threadTitle);
         var ip = IPAddress.Parse(ipAddress);
@@ -213,7 +213,7 @@ internal sealed class ThreadTestDataBuilder
         var post = new Post
         {
             IsOriginalPost = false,
-            BlobContainerId = blobContainerId,
+            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.Add(createdAtOffset ?? TimeSpan.Zero),
             IsSageEnabled = false,
             MessageText = messageText,
@@ -226,7 +226,7 @@ internal sealed class ThreadTestDataBuilder
             [
                 new Audio
                 {
-                    BlobId = audioBlobId,
+                    BlobId = audioBlobId ?? _guidGenerator.GenerateSeededGuid(),
                     FileNameWithoutExtension = audioFileName,
                     FileExtension = "mp3",
                     FileSize = 3671469,
@@ -245,13 +245,13 @@ internal sealed class ThreadTestDataBuilder
 
     public ThreadTestDataBuilder WithPostWithPicture(
         string threadTitle,
-        Guid blobContainerId,
         string messageText,
-        Guid pictureBlobId,
         string pictureFileName,
         string ipAddress = "127.0.0.1",
         string userAgent = "Chrome",
-        TimeSpan? createdAtOffset = null)
+        TimeSpan? createdAtOffset = null,
+        Guid? blobContainerId = null,
+        Guid? pictureBlobId = null)
     {
         var thread = GetThread(threadTitle);
         var ip = IPAddress.Parse(ipAddress);
@@ -259,7 +259,7 @@ internal sealed class ThreadTestDataBuilder
         var post = new Post
         {
             IsOriginalPost = false,
-            BlobContainerId = blobContainerId,
+            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.Add(createdAtOffset ?? TimeSpan.Zero),
             IsSageEnabled = false,
             MessageText = messageText,
@@ -272,7 +272,7 @@ internal sealed class ThreadTestDataBuilder
             [
                 new Picture
                 {
-                    BlobId = pictureBlobId,
+                    BlobId = pictureBlobId ?? _guidGenerator.GenerateSeededGuid(),
                     FileNameWithoutExtension = pictureFileName,
                     FileExtension = "jpg",
                     FileSize = 204316,
@@ -304,7 +304,7 @@ internal sealed class ThreadTestDataBuilder
     {
         var category = GetCategory(categoryAlias);
         var utcNow = threadCreatedAt ?? TimeProvider.GetUtcNow().UtcDateTime;
-        var salt = GuidGenerator.GenerateSeededGuid();
+        var salt = _guidGenerator.GenerateSeededGuid();
 
         var thread = new Thread
         {
@@ -326,7 +326,7 @@ internal sealed class ThreadTestDataBuilder
                 return new Post
                 {
                     IsOriginalPost = i == 0,
-                    BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+                    BlobContainerId = _guidGenerator.GenerateSeededGuid(),
                     CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
                     IsSageEnabled = allPostsSage || i % 2 == 0,
                     IsDeleted = false,
@@ -346,7 +346,7 @@ internal sealed class ThreadTestDataBuilder
             posts.Add(new Post
             {
                 IsOriginalPost = false,
-                BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+                BlobContainerId = _guidGenerator.GenerateSeededGuid(),
                 CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
                 IsSageEnabled = false,
                 IsDeleted = true,
@@ -402,7 +402,7 @@ internal sealed class ThreadTestDataBuilder
             var post = new Post
             {
                 IsOriginalPost = thread.Posts.Count == 0 && i == 0,
-                BlobContainerId = GuidGenerator.GenerateSeededGuid(),
+                BlobContainerId = _guidGenerator.GenerateSeededGuid(),
                 CreatedAt = startingAt.AddSeconds(i),
                 IsSageEnabled = isSageEnabled,
                 IsDeleted = isDeleted,

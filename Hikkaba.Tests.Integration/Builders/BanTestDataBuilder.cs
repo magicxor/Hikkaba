@@ -15,7 +15,7 @@ namespace Hikkaba.Tests.Integration.Builders;
 
 internal sealed class BanTestDataBuilder
 {
-    private static readonly GuidGenerator GuidGenerator = new();
+    private readonly GuidGenerator _guidGenerator = new();
 
     private readonly ApplicationDbContext _dbContext;
     private readonly IHashService _hashService;
@@ -90,14 +90,14 @@ internal sealed class BanTestDataBuilder
             IsPinned = false,
             IsClosed = false,
             BumpLimit = 500,
-            Salt = GuidGenerator.GenerateSeededGuid(),
+            Salt = _guidGenerator.GenerateSeededGuid(),
             Category = Category,
         };
         _dbContext.Threads.Add(_thread);
         return this;
     }
 
-    public BanTestDataBuilder WithPost(Guid blobContainerId, string ipAddress, string userAgent, bool isOriginalPost = false)
+    public BanTestDataBuilder WithPost(string ipAddress, string userAgent, bool isOriginalPost = false, Guid? blobContainerId = null)
     {
         EnsureThreadExists();
 
@@ -105,7 +105,7 @@ internal sealed class BanTestDataBuilder
         var post = new Post
         {
             IsOriginalPost = isOriginalPost,
-            BlobContainerId = blobContainerId,
+            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = $"test post {userAgent}",
