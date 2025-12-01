@@ -15,13 +15,13 @@ public static class OrderByProjectionConfig
     /// Gets the replacement rules.
     /// Matching items will be replaced with the new ones.
     /// </summary>
-    public static ConcurrentDictionary<Type, ConcurrentDictionary<string, Func<OrderByItem, IReadOnlyList<OrderByItem>>>> ReplaceRules { get; } = new ();
+    public static ConcurrentDictionary<Type, ConcurrentDictionary<string, Func<OrderByItem, IReadOnlyList<OrderByItem>>>> ReplaceRules { get; } = new();
 
     /// <summary>
     /// Gets the append rules.
     /// The item will be appended to the end of the OrderBy list.
     /// </summary>
-    public static ConcurrentDictionary<Type, OrderByItem> AppendRules { get; } = new ();
+    public static ConcurrentDictionary<Type, OrderByItem> AppendRules { get; } = new();
 
     /// <summary>
     /// Gets the mapping rules.

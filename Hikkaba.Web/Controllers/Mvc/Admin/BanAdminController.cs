@@ -80,8 +80,8 @@ public sealed class BanAdminController : BaseMvcController
             PageSize = size,
             OrderBy =
             [
-                new (nameof(BanDetailsModel.CreatedAt), OrderByDirection.Desc),
-                new (nameof(BanDetailsModel.Id), OrderByDirection.Desc),
+                new(nameof(BanDetailsModel.CreatedAt), OrderByDirection.Desc),
+                new(nameof(BanDetailsModel.Id), OrderByDirection.Desc),
             ],
         };
         var bans = await _banService.ListBansAsync(filter, cancellationToken);

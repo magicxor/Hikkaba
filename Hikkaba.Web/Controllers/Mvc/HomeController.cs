@@ -36,7 +36,7 @@ public sealed class HomeController : Controller
         {
             PageSize = 10,
             PageNumber = 1,
-            OrderBy = [new (nameof(Post.CreatedAt), OrderByDirection.Desc)],
+            OrderBy = [new(nameof(Post.CreatedAt), OrderByDirection.Desc)],
         };
         var posts = await _postService.ListPostsAsync(postPagingFilter, cancellationToken);
 
