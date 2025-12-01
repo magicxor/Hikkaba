@@ -230,11 +230,11 @@ public sealed class PostController : BaseMvcController
         {
             PageSize = size,
             PageNumber = page,
-            OrderBy = new List<OrderByItem>
-            {
-                new() { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc },
-                new() { Field = nameof(Post.Id), Direction = OrderByDirection.Desc },
-            },
+            OrderBy =
+            [
+                new(nameof(Post.CreatedAt), OrderByDirection.Desc),
+                new(nameof(Post.Id), OrderByDirection.Desc),
+            ],
             SearchQuery = request.Query,
         };
 

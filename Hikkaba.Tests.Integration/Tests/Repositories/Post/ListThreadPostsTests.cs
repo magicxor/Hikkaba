@@ -37,7 +37,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         {
             ThreadId = builder.Thread.Id,
             IncludeDeleted = false,
-            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Asc }],
+            OrderBy = [nameof(Hikkaba.Data.Entities.Post.CreatedAt)],
         }, cancellationToken);
 
         // Assert
@@ -69,7 +69,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         {
             ThreadId = builder.Thread.Id,
             IncludeDeleted = true,
-            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Asc }],
+            OrderBy = [nameof(Hikkaba.Data.Entities.Post.CreatedAt)],
         }, cancellationToken);
 
         // Assert
@@ -101,7 +101,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
             ThreadId = builder.Thread.Id,
             PostId = targetPostId,
             IncludeDeleted = false,
-            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Asc }],
+            OrderBy = [nameof(Hikkaba.Data.Entities.Post.CreatedAt)],
         }, cancellationToken);
 
         // Assert
@@ -132,7 +132,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         {
             ThreadId = builder.Thread.Id,
             IncludeDeleted = false,
-            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Asc }],
+            OrderBy = [nameof(Hikkaba.Data.Entities.Post.CreatedAt)],
         }, cancellationToken);
 
         // Assert
@@ -161,7 +161,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         {
             ThreadId = builder.Thread.Id,
             IncludeDeleted = false,
-            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Asc }],
+            OrderBy = [nameof(Hikkaba.Data.Entities.Post.CreatedAt)],
         }, cancellationToken);
 
         // Assert
@@ -227,7 +227,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         {
             ThreadId = builder.Thread.Id,
             IncludeDeleted = false,
-            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Asc }],
+            OrderBy = [nameof(Hikkaba.Data.Entities.Post.CreatedAt)],
         }, cancellationToken);
 
         // Assert

@@ -63,9 +63,9 @@ public sealed class CategoryController : BaseMvcController
             PageSize = size,
             OrderBy =
             [
-                new OrderByItem { Field = nameof(ThreadPreviewModel.IsPinned), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.LastBumpAt), Direction = OrderByDirection.Desc },
-                new OrderByItem { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
+                new (nameof(ThreadPreviewModel.IsPinned), OrderByDirection.Desc),
+                new (nameof(ThreadPreviewModel.LastBumpAt), OrderByDirection.Desc),
+                new (nameof(ThreadPreviewModel.Id), OrderByDirection.Desc),
             ],
         };
         var threads = await _threadService.ListThreadPreviewsAsync(filter, cancellationToken);

@@ -36,13 +36,13 @@ public sealed class HomeController : Controller
         {
             PageSize = 10,
             PageNumber = 1,
-            OrderBy = [new OrderByItem { Field = nameof(Post.CreatedAt), Direction = OrderByDirection.Desc }],
+            OrderBy = [new (nameof(Post.CreatedAt), OrderByDirection.Desc)],
         };
         var posts = await _postService.ListPostsAsync(postPagingFilter, cancellationToken);
 
         var categoryFilter = new CategoryFilter
         {
-            OrderBy = [new OrderByItem { Field = nameof(Category.Alias), Direction = OrderByDirection.Asc }],
+            OrderBy = [nameof(Category.Alias)],
         };
         var categories = await _categoryService.ListCategoriesAsync(categoryFilter, cancellationToken);
         var categoriesVm = categories.ToViewModels();

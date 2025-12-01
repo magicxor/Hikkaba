@@ -72,14 +72,7 @@ public sealed class SkipBasedPagingFilterTests
     public void GetOrderBy_WithValidOrderBy_ReturnsOrderBy()
     {
         // Arrange
-        var orderBy = new List<OrderByItem>
-        {
-            new()
-            {
-                Field = "Name",
-                Direction = OrderByDirection.Asc,
-            },
-        };
+        List<OrderByItem> orderBy = ["Name"];
         var filter = new SearchSkipBasedFilter { OrderBy = orderBy };
 
         // Act & Assert

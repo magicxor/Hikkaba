@@ -58,10 +58,7 @@ public sealed class AppendTests
         var query = objects.AsQueryable();
         IPagingFilter filter = new SearchPageBasedFilter
         {
-            OrderBy = new[]
-            {
-                new OrderByItem { Field = nameof(Person.Name), Direction = OrderByDirection.Asc },
-            },
+            OrderBy = [nameof(Person.Name)],
         };
 
         // Act
@@ -101,10 +98,7 @@ public sealed class AppendTests
 
         IPagingFilter filter = new SearchPageBasedFilter
         {
-            OrderBy = new[]
-            {
-                new OrderByItem { Field = nameof(Person.Name), Direction = OrderByDirection.Asc },
-            },
+            OrderBy = [nameof(Person.Name)],
         };
 
         // Act
