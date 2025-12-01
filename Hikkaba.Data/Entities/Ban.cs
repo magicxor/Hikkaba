@@ -53,6 +53,7 @@ public class Ban : IHasAuditColumns
     public required string Reason { get; set; }
 
     // FK id
+    /* this is not a FK, because the post may be deleted at some point */
     public long? RelatedPostId { get; set; }
 
     [ForeignKey(nameof(Category))]
