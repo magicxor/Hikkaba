@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,9 +21,12 @@ internal sealed class PostTestDataBuilder
     private readonly IHashService _hashService;
     private readonly TimeProvider _timeProvider;
 
+    private readonly List<Post> _posts = new();
+
     private ApplicationUser? _admin;
     private Category? _category;
     private Thread? _thread;
+    private Post? _lastPost;
 
     public PostTestDataBuilder(IServiceScope scope)
     {
@@ -34,6 +38,9 @@ internal sealed class PostTestDataBuilder
     public ApplicationUser Admin => _admin ?? throw new InvalidOperationException("Admin not created. Call WithDefaultAdmin() first.");
     public Category Category => _category ?? throw new InvalidOperationException("Category not created. Call WithCategory() first.");
     public Thread Thread => _thread ?? throw new InvalidOperationException("Thread not created. Call WithThread() first.");
+    public long LastPostId => _lastPost?.Id ?? throw new InvalidOperationException("No post created yet.");
+    public Post LastPost => _lastPost ?? throw new InvalidOperationException("No post created yet.");
+    public IReadOnlyList<Post> Posts => _posts;
 
     public PostTestDataBuilder WithDefaultAdmin()
     {
@@ -52,18 +59,18 @@ internal sealed class PostTestDataBuilder
         return this;
     }
 
-    public PostTestDataBuilder WithCategory(string alias, string name)
+    public PostTestDataBuilder WithCategory(string alias, string name, bool isHidden = false, bool isDeleted = false)
     {
         EnsureAdminExists();
 
         _category = new Category
         {
-            IsDeleted = false,
+            IsDeleted = isDeleted,
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
             ModifiedAt = null,
             Alias = alias,
             Name = name,
-            IsHidden = false,
+            IsHidden = isHidden,
             DefaultBumpLimit = 500,
             ShowThreadLocalUserHash = false,
             MaxThreadCount = Defaults.MaxThreadCountInCategory,
@@ -73,7 +80,7 @@ internal sealed class PostTestDataBuilder
         return this;
     }
 
-    public PostTestDataBuilder WithThread(string title)
+    public PostTestDataBuilder WithThread(string title, bool isClosed = false, bool isDeleted = false, int bumpLimit = 500, bool isCyclic = false)
     {
         EnsureCategoryExists();
 
@@ -84,8 +91,10 @@ internal sealed class PostTestDataBuilder
             LastBumpAt = utcNow,
             Title = title,
             IsPinned = false,
-            IsClosed = false,
-            BumpLimit = 500,
+            IsClosed = isClosed,
+            IsDeleted = isDeleted,
+            BumpLimit = bumpLimit,
+            IsCyclic = isCyclic,
             Salt = _guidGenerator.GenerateSeededGuid(),
             Category = Category,
         };
@@ -99,6 +108,7 @@ internal sealed class PostTestDataBuilder
         string userAgent,
         bool isOriginalPost = false,
         bool isDeleted = false,
+        bool isSageEnabled = false,
         Guid? blobContainerId = null)
     {
         EnsureThreadExists();
@@ -110,6 +120,35 @@ internal sealed class PostTestDataBuilder
             IsDeleted = isDeleted,
             BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
             CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            IsSageEnabled = isSageEnabled,
+            MessageText = messageText,
+            MessageHtml = messageText,
+            UserIpAddress = ip.GetAddressBytes(),
+            UserAgent = userAgent,
+            ThreadLocalUserHash = _hashService.GetHashBytes(Thread.Salt, ip.GetAddressBytes()),
+            Thread = Thread,
+        };
+        _dbContext.Posts.Add(post);
+        _lastPost = post;
+        _posts.Add(post);
+        return this;
+    }
+
+    public PostTestDataBuilder WithPostReplyingTo(
+        string messageText,
+        string ipAddress,
+        string userAgent,
+        IReadOnlyList<long> mentionedPostIds)
+    {
+        EnsureThreadExists();
+
+        var ip = IPAddress.Parse(ipAddress);
+        var post = new Post
+        {
+            IsOriginalPost = false,
+            IsDeleted = false,
+            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = messageText,
             MessageHtml = messageText,
@@ -119,6 +158,20 @@ internal sealed class PostTestDataBuilder
             Thread = Thread,
         };
         _dbContext.Posts.Add(post);
+        _lastPost = post;
+        _posts.Add(post);
+
+        // Create replies to mentioned posts (they must be saved first to have IDs)
+        foreach (var mentionedPostId in mentionedPostIds)
+        {
+            var postToReply = new PostToReply
+            {
+                PostId = mentionedPostId,
+                Reply = post,
+            };
+            _dbContext.PostsToReplies.Add(postToReply);
+        }
+
         return this;
     }
 
