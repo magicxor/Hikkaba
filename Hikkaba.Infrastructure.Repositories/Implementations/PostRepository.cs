@@ -152,6 +152,7 @@ public sealed class PostRepository : IPostRepository
         {
             var postsToBeDeleted = await _applicationDbContext.Posts
                 .TagWithCallSite()
+                .Include(p => p.MentionedPostsToThisReply) // Required for EF Core client-side cascade delete
                 .Where(p => p.ThreadId == requestModel.BaseModel.ThreadId)
                 .OrderBy(p => p.CreatedAt)
                 .ThenBy(p => p.Id)

@@ -380,6 +380,7 @@ public sealed class ThreadRepository : IThreadRepository
             var threadsToBeDeleted = await _applicationDbContext.Threads
                 .TagWithCallSite()
                 .Include(t => t.Posts)
+                    .ThenInclude(p => p.MentionedPostsToThisReply) /* required for ClientCascade delete of PostToReply via ReplyId FK */
                 .Where(t => t.CategoryId == category.Id)
                 .OrderBy(t => t.CreatedAt)
                 .ThenBy(t => t.Id)

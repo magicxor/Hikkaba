@@ -132,12 +132,19 @@ internal sealed class ThreadTestDataBuilder
         bool isDeleted = false,
         int bumpLimit = 500,
         DateTime? createdAt = null,
-        DateTime? lastBumpAt = null)
+        DateTime? lastBumpAt = null,
+        ApplicationUser? modifiedBy = null)
     {
         WithThread(categoryAlias, title, isPinned, isClosed, isCyclic, isDeleted, bumpLimit, createdAt, lastBumpAt);
 
         var thread = GetThread(title);
         var ip = IPAddress.Parse("127.0.0.1").GetAddressBytes();
+
+        if (modifiedBy != null)
+        {
+            thread.ModifiedBy = modifiedBy;
+            thread.ModifiedAt = TimeProvider.GetUtcNow().UtcDateTime;
+        }
 
         var post = new Post
         {
@@ -154,6 +161,169 @@ internal sealed class ThreadTestDataBuilder
             Thread = thread,
         };
         _dbContext.Posts.Add(post);
+        return this;
+    }
+
+    public ThreadTestDataBuilder WithEnrichedThreadAndPosts(
+        string categoryAlias,
+        string title,
+        ApplicationUser modifiedBy,
+        DateTime? createdAt = null,
+        DateTime? lastBumpAt = null)
+    {
+        var category = GetCategory(categoryAlias);
+        var utcNow = createdAt ?? TimeProvider.GetUtcNow().UtcDateTime;
+        var salt = _guidGenerator.GenerateSeededGuid();
+
+        var thread = new Thread
+        {
+            CreatedAt = utcNow,
+            LastBumpAt = lastBumpAt ?? utcNow,
+            Title = title,
+            IsPinned = false,
+            IsClosed = false,
+            IsCyclic = false,
+            IsDeleted = false,
+            BumpLimit = 500,
+            Salt = salt,
+            Category = category,
+            ModifiedBy = modifiedBy,
+            ModifiedAt = utcNow,
+        };
+
+        _threads.Add(thread);
+        _dbContext.Threads.Add(thread);
+
+        // Create OP post with all attachment types
+        var opIp = IPAddress.Parse("127.0.0.1").GetAddressBytes();
+        var opPost = new Post
+        {
+            IsOriginalPost = true,
+            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            CreatedAt = utcNow,
+            IsSageEnabled = false,
+            IsDeleted = false,
+            MessageText = $"OP post in {title}",
+            MessageHtml = $"OP post in {title}",
+            UserIpAddress = opIp,
+            UserAgent = "Firefox",
+            ThreadLocalUserHash = HashService.GetHashBytes(salt, opIp),
+            Thread = thread,
+            ModifiedBy = modifiedBy,
+            ModifiedAt = utcNow,
+            Audios =
+            [
+                new Audio
+                {
+                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    FileNameWithoutExtension = "test_audio",
+                    FileExtension = ".mp3",
+                    FileSize = 1024,
+                    FileContentType = "audio/mpeg",
+                    FileHash = new byte[32],
+                    Title = "Test Title",
+                    Album = "Test Album",
+                    Artist = "Test Artist",
+                    DurationSeconds = 180,
+                },
+            ],
+            Documents =
+            [
+                new Document
+                {
+                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    FileNameWithoutExtension = "test_document",
+                    FileExtension = ".pdf",
+                    FileSize = 2048,
+                    FileContentType = "application/pdf",
+                    FileHash = new byte[32],
+                },
+            ],
+            Notices =
+            [
+                new Notice
+                {
+                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    Text = "Admin notice",
+                    CreatedAt = utcNow,
+                    CreatedBy = modifiedBy,
+                },
+            ],
+            Pictures =
+            [
+                new Picture
+                {
+                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    FileNameWithoutExtension = "test_picture",
+                    FileExtension = ".jpg",
+                    FileSize = 4096,
+                    FileContentType = "image/jpeg",
+                    FileHash = new byte[32],
+                    Width = 800,
+                    Height = 600,
+                    ThumbnailExtension = ".jpg",
+                    ThumbnailWidth = 200,
+                    ThumbnailHeight = 150,
+                },
+            ],
+            Videos =
+            [
+                new Video
+                {
+                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    FileNameWithoutExtension = "test_video",
+                    FileExtension = ".mp4",
+                    FileSize = 8192,
+                    FileContentType = "video/mp4",
+                    FileHash = new byte[32],
+                },
+            ],
+        };
+        _dbContext.Posts.Add(opPost);
+
+        // Create reply post that mentions OP
+        var replyIp = IPAddress.Parse("127.0.0.2").GetAddressBytes();
+        var replyPost = new Post
+        {
+            IsOriginalPost = false,
+            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            CreatedAt = utcNow.AddMinutes(1),
+            IsSageEnabled = false,
+            IsDeleted = false,
+            MessageText = $"Reply in {title}",
+            MessageHtml = $"Reply in {title}",
+            UserIpAddress = replyIp,
+            UserAgent = "Chrome",
+            ThreadLocalUserHash = HashService.GetHashBytes(salt, replyIp),
+            Thread = thread,
+            Pictures =
+            [
+                new Picture
+                {
+                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    FileNameWithoutExtension = "reply_picture",
+                    FileExtension = ".png",
+                    FileSize = 2048,
+                    FileContentType = "image/png",
+                    FileHash = new byte[32],
+                    Width = 640,
+                    Height = 480,
+                    ThumbnailExtension = ".png",
+                    ThumbnailWidth = 160,
+                    ThumbnailHeight = 120,
+                },
+            ],
+        };
+        _dbContext.Posts.Add(replyPost);
+
+        // Create PostToReply relationship (reply mentions OP)
+        var postToReply = new PostToReply
+        {
+            Post = opPost,
+            Reply = replyPost,
+        };
+        _dbContext.PostsToReplies.Add(postToReply);
+
         return this;
     }
 
@@ -441,6 +611,66 @@ internal sealed class ThreadTestDataBuilder
             thread.LastBumpAt = lastEligiblePost.CreatedAt;
         }
         return this;
+    }
+
+    /// <summary>
+    /// Creates a post in replyThread that replies to the OP post in mentionedThread.
+    /// The new post will have a PostToReply record linking it to the mentioned thread's OP.
+    /// </summary>
+    public ThreadTestDataBuilder WithCrossThreadReply(
+        string replyThreadTitle,
+        string mentionedThreadTitle,
+        string messageText,
+        string ipAddress = "127.0.0.1",
+        string userAgent = "Firefox")
+    {
+        var replyThread = GetThread(replyThreadTitle);
+        var mentionedThread = GetThread(mentionedThreadTitle);
+
+        // Get the OP post from the mentioned thread
+        var mentionedPost = mentionedThread.Posts.FirstOrDefault(p => p.IsOriginalPost)
+            ?? throw new InvalidOperationException($"No OP post found in thread '{mentionedThreadTitle}'");
+
+        var ip = IPAddress.Parse(ipAddress);
+        var replyPost = new Post
+        {
+            IsOriginalPost = false,
+            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            CreatedAt = TimeProvider.GetUtcNow().UtcDateTime,
+            IsSageEnabled = false,
+            IsDeleted = false,
+            MessageText = messageText,
+            MessageHtml = messageText,
+            UserIpAddress = ip.GetAddressBytes(),
+            UserAgent = userAgent,
+            ThreadLocalUserHash = HashService.GetHashBytes(replyThread.Salt, ip.GetAddressBytes()),
+            Thread = replyThread,
+        };
+        _dbContext.Posts.Add(replyPost);
+
+        // Create cross-thread PostToReply relationship
+        var postToReply = new PostToReply
+        {
+            Post = mentionedPost,
+            Reply = replyPost,
+        };
+        _dbContext.PostsToReplies.Add(postToReply);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Alias for <see cref="WithCrossThreadReply"/>.
+    /// Creates a post in replyThread that replies to the OP post in mentionedThread.
+    /// </summary>
+    public ThreadTestDataBuilder WithCrossThreadMention(
+        string replyThreadTitle,
+        string mentionedThreadTitle,
+        string messageText,
+        string ipAddress = "127.0.0.1",
+        string userAgent = "Firefox")
+    {
+        return WithCrossThreadReply(replyThreadTitle, mentionedThreadTitle, messageText, ipAddress, userAgent);
     }
 
     public async Task SaveAsync(CancellationToken cancellationToken)

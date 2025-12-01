@@ -4,6 +4,7 @@ using Hikkaba.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hikkaba.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251201050241_ConfigurePostAttachmentsCascadeDelete")]
+    partial class ConfigurePostAttachmentsCascadeDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,7 +154,7 @@ namespace Hikkaba.Data.Migrations
                     b.HasIndex("BlobId")
                         .IsUnique();
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator<int>("AttachmentType");
 
@@ -247,7 +250,7 @@ namespace Hikkaba.Data.Migrations
                         .IsUnique()
                         .HasFilter("[RelatedPostId] IS NOT NULL");
 
-                    b.ToTable("Bans", (string)null);
+                    b.ToTable("Bans");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Category", b =>
@@ -318,7 +321,7 @@ namespace Hikkaba.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.CategoryToModerator", b =>
@@ -341,7 +344,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("ModeratorId");
 
-                    b.ToTable("CategoriesToModerators", (string)null);
+                    b.ToTable("CategoriesToModerators");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Post", b =>
@@ -432,7 +435,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("ThreadId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.PostToReply", b =>
@@ -455,7 +458,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("ReplyId");
 
-                    b.ToTable("PostToReply", (string)null);
+                    b.ToTable("PostToReply");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Thread", b =>
@@ -516,7 +519,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("ModifiedById");
 
-                    b.ToTable("Threads", (string)null);
+                    b.ToTable("Threads");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -535,7 +538,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProtectionKeys", (string)null);
+                    b.ToTable("DataProtectionKeys");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -694,7 +697,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator().HasValue(1);
                 });
@@ -733,7 +736,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator().HasValue(2);
                 });
@@ -757,7 +760,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator().HasValue(3);
                 });
@@ -813,7 +816,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator().HasValue(4);
                 });
@@ -852,7 +855,7 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator().HasValue(5);
                 });

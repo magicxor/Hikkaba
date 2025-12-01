@@ -169,31 +169,6 @@ public sealed class ApplicationDbContext
             .HasForeignKey(e => e.ModifiedById)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Audio>()
-            .HasOne(e => e.Post)
-            .WithMany(e => e.Audios)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Document>()
-            .HasOne(e => e.Post)
-            .WithMany(e => e.Documents)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Notice>()
-            .HasOne(e => e.Post)
-            .WithMany(e => e.Notices)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Picture>()
-            .HasOne(e => e.Post)
-            .WithMany(e => e.Pictures)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Video>()
-            .HasOne(e => e.Post)
-            .WithMany(e => e.Videos)
-            .OnDelete(DeleteBehavior.NoAction);
-
         // Notice -> ApplicationUser relationship
         // On ApplicationUser delete - use NoAction (users are rarely deleted, clean up manually)
         builder.Entity<Notice>()
@@ -205,12 +180,14 @@ public sealed class ApplicationDbContext
         // PostToReply M:M relationship
         // On Post delete - cascade delete PostToReply records,
         // but do NOT delete related posts (replies or mentioned posts)
+        // Note: SQL Server doesn't allow multiple cascade paths, so we use ClientCascade for ReplyId
+        // which requires EF Core to load related entities before deletion
         builder.Entity<Post>()
             .HasMany(e => e.Replies)
             .WithMany(e => e.MentionedPosts)
             .UsingEntity<PostToReply>(
                 l => l.HasOne<Post>(nameof(PostToReply.Post)).WithMany(x => x.RepliesToThisMentionedPost).OnDelete(DeleteBehavior.Cascade),
-                r => r.HasOne<Post>(nameof(PostToReply.Reply)).WithMany(x => x.MentionedPostsToThisReply).OnDelete(DeleteBehavior.NoAction));
+                r => r.HasOne<Post>(nameof(PostToReply.Reply)).WithMany(x => x.MentionedPostsToThisReply).OnDelete(DeleteBehavior.ClientCascade));
 
         // indices
         builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
