@@ -24,6 +24,8 @@ internal sealed class BanTestDataBuilder
     private ApplicationUser? _admin;
     private Category? _category;
     private Thread? _thread;
+    private Ban? _lastBan;
+    private Post? _lastPost;
 
     public BanTestDataBuilder(IServiceScope scope)
     {
@@ -35,6 +37,8 @@ internal sealed class BanTestDataBuilder
     public ApplicationUser Admin => _admin ?? throw new InvalidOperationException("Admin not created. Call WithDefaultAdmin() first.");
     public Category Category => _category ?? throw new InvalidOperationException("Category not created. Call WithDefaultCategory() first.");
     public Thread Thread => _thread ?? throw new InvalidOperationException("Thread not created. Call WithDefaultThread() first.");
+    public int LastBanId => _lastBan?.Id ?? throw new InvalidOperationException("No ban created yet.");
+    public long LastPostId => _lastPost?.Id ?? throw new InvalidOperationException("No post created yet.");
 
     public BanTestDataBuilder WithDefaultAdmin()
     {
@@ -77,7 +81,7 @@ internal sealed class BanTestDataBuilder
         return this;
     }
 
-    public BanTestDataBuilder WithDefaultThread()
+    public BanTestDataBuilder WithDefaultThread(bool isClosed = false)
     {
         EnsureCategoryExists();
 
@@ -86,9 +90,9 @@ internal sealed class BanTestDataBuilder
         {
             CreatedAt = utcNow,
             LastBumpAt = utcNow,
-            Title = "test thread 1",
+            Title = isClosed ? "closed thread" : "test thread 1",
             IsPinned = false,
-            IsClosed = false,
+            IsClosed = isClosed,
             BumpLimit = 500,
             Salt = _guidGenerator.GenerateSeededGuid(),
             Category = Category,
@@ -116,28 +120,42 @@ internal sealed class BanTestDataBuilder
             Thread = Thread,
         };
         _dbContext.Posts.Add(post);
+        _lastPost = post;
         return this;
     }
 
-    public BanTestDataBuilder WithExactBan(string ipAddress, string reason)
+    public BanTestDataBuilder WithExactBan(
+        string ipAddress,
+        string reason,
+        bool isDeleted = false,
+        bool isExpired = false,
+        bool inCategory = false)
     {
         EnsureAdminExists();
+        if (inCategory)
+        {
+            EnsureCategoryExists();
+        }
 
         var ip = IPAddress.Parse(ipAddress);
         var ipType = ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
             ? IpAddressType.IpV4
             : IpAddressType.IpV6;
 
+        var utcNow = _timeProvider.GetUtcNow().UtcDateTime;
         var ban = new Ban
         {
-            CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            EndsAt = _timeProvider.GetUtcNow().UtcDateTime.AddYears(99),
+            IsDeleted = isDeleted,
+            CreatedAt = isExpired ? utcNow.AddDays(-30) : utcNow,
+            EndsAt = isExpired ? utcNow.AddDays(-1) : utcNow.AddYears(99),
             IpAddressType = ipType,
             BannedIpAddress = ip.GetAddressBytes(),
             Reason = reason,
+            Category = inCategory ? Category : null,
             CreatedBy = Admin,
         };
         _dbContext.Bans.Add(ban);
+        _lastBan = ban;
         return this;
     }
 
@@ -166,6 +184,7 @@ internal sealed class BanTestDataBuilder
             CreatedBy = Admin,
         };
         _dbContext.Bans.Add(ban);
+        _lastBan = ban;
         return this;
     }
 
