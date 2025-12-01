@@ -28,6 +28,21 @@ public sealed class ApplicationDbContext
 
         base.OnModelCreating(builder);
 
+        // CategoryToModerator M:M relationship
+        // On ApplicationUser delete - use NoAction (users are rarely deleted, clean up manually)
+        // On Category delete - cascade delete CategoryToModerator records
+        builder.Entity<ApplicationUser>()
+            .HasMany(p => p.ModerationCategories)
+            .WithOne(d => d.Moderator)
+            .HasForeignKey(d => d.ModeratorId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Category>()
+            .HasMany(p => p.Moderators)
+            .WithOne(d => d.Category)
+            .HasForeignKey(d => d.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<Attachment>()
             .HasDiscriminator<AttachmentType>(nameof(Attachment.AttachmentType))
             .HasValue<Audio>(AttachmentType.Audio)
@@ -48,61 +63,154 @@ public sealed class ApplicationDbContext
             .Property(e => e.BannedCidrUpperIpAddress)
             .HasConversion<byte[]>();
 
+        // RelatedPostId is stored as a regular column without FK constraint
+        // to avoid multiple cascade paths (Category -> Thread -> Post and Category -> Ban)
+        builder.Entity<Ban>()
+            .Property(e => e.RelatedPostId)
+            .HasColumnName("RelatedPostId");
+
+        // On Category delete - cascade delete related bans (forgive all banned users in that category)
+        builder.Entity<Ban>()
+            .HasOne(e => e.Category)
+            .WithMany()
+            .HasForeignKey(e => e.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // On ApplicationUser delete - use NoAction (users are rarely deleted, clean up manually)
+        builder.Entity<Ban>()
+            .HasOne(e => e.CreatedBy)
+            .WithMany(u => u.CreatedBans)
+            .HasForeignKey(e => e.CreatedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Ban>()
+            .HasOne(e => e.ModifiedBy)
+            .WithMany(u => u.ModifiedBans)
+            .HasForeignKey(e => e.ModifiedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Entity<Post>()
             .Property(e => e.UserIpAddress)
             .HasConversion<byte[]>();
 
-        builder.Entity<CategoryToModerator>()
-            .HasOne(e => e.Category)
-            .WithMany(e => e.Moderators)
-            .OnDelete(DeleteBehavior.Restrict);
+        // On Category delete - cascade delete all Threads
+        builder.Entity<Category>()
+            .HasMany(p => p.Threads)
+            .WithOne(d => d.Category)
+            .HasForeignKey(d => d.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<CategoryToModerator>()
-            .HasOne(e => e.Moderator)
-            .WithMany(e => e.ModerationCategories)
-            .OnDelete(DeleteBehavior.Restrict);
+        // Category -> ApplicationUser relationships
+        // On ApplicationUser delete - use NoAction (users are rarely deleted, clean up manually)
+        builder.Entity<Category>()
+            .HasOne(e => e.CreatedBy)
+            .WithMany(u => u.CreatedCategories)
+            .HasForeignKey(e => e.CreatedById)
+            .OnDelete(DeleteBehavior.NoAction);
 
+        builder.Entity<Category>()
+            .HasOne(e => e.ModifiedBy)
+            .WithMany(u => u.ModifiedCategories)
+            .HasForeignKey(e => e.ModifiedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // On Thread delete - cascade delete all Posts
         builder.Entity<Thread>()
-            .HasOne(e => e.Category)
-            .WithMany(e => e.Threads)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasMany(p => p.Posts)
+            .WithOne(d => d.Thread)
+            .HasForeignKey(d => d.ThreadId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Thread -> ApplicationUser relationship
+        // On ApplicationUser delete - use NoAction (users are rarely deleted, clean up manually)
+        builder.Entity<Thread>()
+            .HasOne(e => e.ModifiedBy)
+            .WithMany()
+            .HasForeignKey(e => e.ModifiedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // On Post delete - cascade delete all attachments
+        // Use NoAction from Attachment side to avoid multiple cascade paths
+        builder.Entity<Post>()
+            .HasMany(p => p.Audios)
+            .WithOne(d => d.Post)
+            .HasForeignKey(d => d.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Post>()
-            .HasOne(e => e.Thread)
-            .WithMany(e => e.Posts)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasMany(p => p.Documents)
+            .WithOne(d => d.Post)
+            .HasForeignKey(d => d.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Post>()
+            .HasMany(p => p.Notices)
+            .WithOne(d => d.Post)
+            .HasForeignKey(d => d.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Post>()
+            .HasMany(p => p.Pictures)
+            .WithOne(d => d.Post)
+            .HasForeignKey(d => d.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Post>()
+            .HasMany(p => p.Videos)
+            .WithOne(d => d.Post)
+            .HasForeignKey(d => d.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Post -> ApplicationUser relationship
+        // On ApplicationUser delete - use NoAction (users are rarely deleted, clean up manually)
+        builder.Entity<Post>()
+            .HasOne(e => e.ModifiedBy)
+            .WithMany(u => u.ModifiedPosts)
+            .HasForeignKey(e => e.ModifiedById)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Audio>()
             .HasOne(e => e.Post)
             .WithMany(e => e.Audios)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Document>()
             .HasOne(e => e.Post)
             .WithMany(e => e.Documents)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Notice>()
             .HasOne(e => e.Post)
             .WithMany(e => e.Notices)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Picture>()
             .HasOne(e => e.Post)
             .WithMany(e => e.Pictures)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Video>()
             .HasOne(e => e.Post)
             .WithMany(e => e.Videos)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
 
+        // Notice -> ApplicationUser relationship
+        // On ApplicationUser delete - use NoAction (users are rarely deleted, clean up manually)
+        builder.Entity<Notice>()
+            .HasOne(e => e.CreatedBy)
+            .WithMany(u => u.CreatedNotices)
+            .HasForeignKey(e => e.CreatedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // PostToReply M:M relationship
+        // On Post delete - cascade delete PostToReply records,
+        // but do NOT delete related posts (replies or mentioned posts)
         builder.Entity<Post>()
             .HasMany(e => e.Replies)
             .WithMany(e => e.MentionedPosts)
             .UsingEntity<PostToReply>(
                 l => l.HasOne<Post>(nameof(PostToReply.Post)).WithMany(x => x.RepliesToThisMentionedPost).OnDelete(DeleteBehavior.Cascade),
-                r => r.HasOne<Post>(nameof(PostToReply.Reply)).WithMany(x => x.MentionedPostsToThisReply).OnDelete(DeleteBehavior.Restrict));
+                r => r.HasOne<Post>(nameof(PostToReply.Reply)).WithMany(x => x.MentionedPostsToThisReply).OnDelete(DeleteBehavior.NoAction));
 
         // indices
         builder.Entity<Category>().HasIndex(e => e.Alias).IsUnique();
@@ -126,6 +234,7 @@ public sealed class ApplicationDbContext
         builder.Entity<Ban>().HasIndex(e => e.BannedCidrUpperIpAddress);
         builder.Entity<Ban>().HasIndex(e => e.CountryIsoCode);
         builder.Entity<Ban>().HasIndex(e => e.IsDeleted);
+        builder.Entity<Ban>().HasIndex(e => e.RelatedPostId).IsUnique();
     }
 
     public DbSet<Ban> Bans { get; set; } = null!;

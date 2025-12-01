@@ -19,3 +19,12 @@ dotnet_diagnostic.CA1062.severity = suggestion
 
 # SA1122: Use string.Empty for empty strings
 dotnet_diagnostic.SA1122.severity = none
+
+# S1186: Add a nested comment explaining why this method is empty, throw a 'NotSupportedException' or complete the implementation.
+dotnet_diagnostic.S1186.severity = none
+
+# SA1505: An opening brace should not be followed by a blank line.
+dotnet_diagnostic.SA1505.severity = none
+
+# SA1508: A closing brace should not be preceded by a blank line.
+dotnet_diagnostic.SA1508.severity = none

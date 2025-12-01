@@ -280,7 +280,7 @@ public sealed class BanRepository : IBanRepository
 
         var data = await query
             .ApplyOrderByAndPaging(filter, x => x.CreatedAt)
-            .Select(ban => new BanDetailsModel
+            .LeftJoin(_applicationDbContext.Posts, b => b.RelatedPostId, p => p.Id, (ban, relatedPost) => new BanDetailsModel
             {
                 Id = ban.Id,
                 IsDeleted = ban.IsDeleted,
@@ -296,7 +296,7 @@ public sealed class BanRepository : IBanRepository
                 AutonomousSystemOrganization = ban.AutonomousSystemOrganization,
                 Reason = ban.Reason,
                 CategoryAlias = ban.Category != null ? ban.Category.Alias : null,
-                RelatedThreadId = ban.RelatedPost != null ? ban.RelatedPost.ThreadId : null,
+                RelatedThreadId = relatedPost != null ? relatedPost.ThreadId : null,
                 RelatedPostId = ban.RelatedPostId,
                 CategoryId = ban.CategoryId,
                 CreatedById = ban.CreatedById,
@@ -314,7 +314,7 @@ public sealed class BanRepository : IBanRepository
         var ban = await _applicationDbContext.Bans
             .TagWithCallSite()
             .Where(ban => ban.Id == banId)
-            .Select(ban => new BanDetailsModel
+            .LeftJoin(_applicationDbContext.Posts, b => b.RelatedPostId, p => p.Id, (ban, relatedPost) => new BanDetailsModel
             {
                 Id = ban.Id,
                 IsDeleted = ban.IsDeleted,
@@ -330,7 +330,7 @@ public sealed class BanRepository : IBanRepository
                 AutonomousSystemOrganization = ban.AutonomousSystemOrganization,
                 Reason = ban.Reason,
                 CategoryAlias = ban.Category != null ? ban.Category.Alias : null,
-                RelatedThreadId = ban.RelatedPost != null ? ban.RelatedPost.ThreadId : null,
+                RelatedThreadId = relatedPost != null ? relatedPost.ThreadId : null,
                 RelatedPostId = ban.RelatedPostId,
                 CategoryId = ban.CategoryId,
                 CreatedById = ban.CreatedById,

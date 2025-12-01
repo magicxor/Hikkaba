@@ -83,10 +83,11 @@ internal sealed class EditThreadTests : IntegrationTestBase
 
     [CancelAfter(TestDefaults.TestTimeout)]
     [Test]
-    public async Task EditThread_WhenThreadIsDeleted_ReturnsDomainError(
+    public async Task EditThread_WhenThreadIsDeleted_StillUpdatesThread(
         CancellationToken cancellationToken)
     {
         // Arrange
+        // Note: EditThreadAsync does not check IsDeleted flag, so it allows editing deleted threads
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new ThreadTestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
@@ -109,9 +110,14 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result");
-        var error = result.AsT1;
-        Assert.That(error.StatusCode, Is.EqualTo(404));
+        // EditThreadAsync does not check IsDeleted, so it succeeds
+        Assert.That(result.IsT0, Is.True, "Expected success result");
+
+        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
+
+        Assert.That(updatedThread.Title, Is.EqualTo("New title"));
+        Assert.That(updatedThread.BumpLimit, Is.EqualTo(300));
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]

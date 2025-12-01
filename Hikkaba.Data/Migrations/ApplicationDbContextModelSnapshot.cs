@@ -17,7 +17,7 @@ namespace Hikkaba.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -220,7 +220,8 @@ namespace Hikkaba.Data.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<long?>("RelatedPostId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("RelatedPostId");
 
                     b.HasKey("Id");
 
@@ -242,7 +243,9 @@ namespace Hikkaba.Data.Migrations
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex("RelatedPostId");
+                    b.HasIndex("RelatedPostId")
+                        .IsUnique()
+                        .HasFilter("[RelatedPostId] IS NOT NULL");
 
                     b.ToTable("Bans");
                 });
@@ -858,29 +861,25 @@ namespace Hikkaba.Data.Migrations
                 {
                     b.HasOne("Hikkaba.Data.Entities.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "CreatedBy")
                         .WithMany("CreatedBans")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "ModifiedBy")
                         .WithMany("ModifiedBans")
-                        .HasForeignKey("ModifiedById");
-
-                    b.HasOne("Hikkaba.Data.Entities.Post", "RelatedPost")
-                        .WithMany()
-                        .HasForeignKey("RelatedPostId");
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Category");
 
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ModifiedBy");
-
-                    b.Navigation("RelatedPost");
                 });
 
             modelBuilder.Entity("Hikkaba.Data.Entities.Category", b =>
@@ -888,12 +887,13 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "CreatedBy")
                         .WithMany("CreatedCategories")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "ModifiedBy")
                         .WithMany("ModifiedCategories")
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("CreatedBy");
 
@@ -905,13 +905,13 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.Category", "Category")
                         .WithMany("Moderators")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "Moderator")
                         .WithMany("ModerationCategories")
                         .HasForeignKey("ModeratorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -923,12 +923,13 @@ namespace Hikkaba.Data.Migrations
                 {
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "ModifiedBy")
                         .WithMany("ModifiedPosts")
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Hikkaba.Data.Entities.Thread", "Thread")
                         .WithMany("Posts")
                         .HasForeignKey("ThreadId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ModifiedBy");
@@ -947,7 +948,7 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.Post", "Reply")
                         .WithMany("MentionedPostsToThisReply")
                         .HasForeignKey("ReplyId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -960,12 +961,13 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.Category", "Category")
                         .WithMany("Threads")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Category");
 
@@ -1028,7 +1030,7 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.Post", "Post")
                         .WithMany("Audios")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -1039,7 +1041,7 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.Post", "Post")
                         .WithMany("Documents")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -1050,13 +1052,13 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.ApplicationUser", "CreatedBy")
                         .WithMany("CreatedNotices")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Hikkaba.Data.Entities.Post", "Post")
                         .WithMany("Notices")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
@@ -1069,7 +1071,7 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.Post", "Post")
                         .WithMany("Pictures")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -1080,7 +1082,7 @@ namespace Hikkaba.Data.Migrations
                     b.HasOne("Hikkaba.Data.Entities.Post", "Post")
                         .WithMany("Videos")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");

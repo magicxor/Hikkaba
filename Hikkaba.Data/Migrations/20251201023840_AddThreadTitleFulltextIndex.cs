@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using Hikkaba.Data.Utils;
+﻿using Hikkaba.Data.Utils;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -9,19 +6,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Hikkaba.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPostMessageFulltextIndex : Migration
+    public partial class AddThreadTitleFulltextIndex : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20250405100526_AddPostMessageFulltextIndex.Up.sql");
+            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20251201023840_AddThreadTitleFulltextIndex.Up.sql");
             migrationBuilder.Sql(sql, suppressTransaction: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20250405100526_AddPostMessageFulltextIndex.Down.sql");
+            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20251201023840_AddThreadTitleFulltextIndex.Down.sql");
             migrationBuilder.Sql(sql, suppressTransaction: true);
         }
     }

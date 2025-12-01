@@ -56,19 +56,6 @@ namespace Hikkaba.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Boards",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Boards", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DataProtectionKeys",
                 columns: table => new
                 {
@@ -202,10 +189,10 @@ namespace Hikkaba.Data.Migrations
                     IsHidden = table.Column<bool>(type: "bit", nullable: false),
                     DefaultBumpLimit = table.Column<int>(type: "int", nullable: false),
                     ShowThreadLocalUserHash = table.Column<bool>(type: "bit", nullable: false),
-                    ShowUserAgent = table.Column<bool>(type: "bit", nullable: false),
                     ShowCountry = table.Column<bool>(type: "bit", nullable: false),
+                    ShowOs = table.Column<bool>(type: "bit", nullable: false),
+                    ShowBrowser = table.Column<bool>(type: "bit", nullable: false),
                     MaxThreadCount = table.Column<int>(type: "int", nullable: false),
-                    BoardId = table.Column<int>(type: "int", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: false),
                     ModifiedById = table.Column<int>(type: "int", nullable: true)
                 },
@@ -216,163 +203,12 @@ namespace Hikkaba.Data.Migrations
                         name: "FK_Categories_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Categories_AspNetUsers_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Categories_Boards_BoardId",
-                        column: x => x.BoardId,
-                        principalTable: "Boards",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CategoriesToModerators",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    ModeratorId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CategoriesToModerators", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CategoriesToModerators_AspNetUsers_ModeratorId",
-                        column: x => x.ModeratorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_CategoriesToModerators_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Threads",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IsPinned = table.Column<bool>(type: "bit", nullable: false),
-                    IsClosed = table.Column<bool>(type: "bit", nullable: false),
-                    IsCyclic = table.Column<bool>(type: "bit", nullable: false),
-                    BumpLimit = table.Column<int>(type: "int", nullable: false),
-                    Salt = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Threads", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Threads_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Threads_AspNetUsers_ModifiedById",
-                        column: x => x.ModifiedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Threads_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Posts",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BlobContainerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsSageEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    MessageText = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
-                    MessageHtml = table.Column<string>(type: "nvarchar(max)", maxLength: 8192, nullable: false),
-                    UserIpAddress = table.Column<byte[]>(type: "varbinary(16)", maxLength: 16, nullable: true),
-                    UserAgent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ThreadLocalUserHash = table.Column<byte[]>(type: "binary(32)", maxLength: 32, nullable: false),
-                    ThreadId = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Posts_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Posts_AspNetUsers_ModifiedById",
-                        column: x => x.ModifiedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Posts_Threads_ThreadId",
-                        column: x => x.ThreadId,
-                        principalTable: "Threads",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Attachments",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BlobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AttachmentType = table.Column<int>(type: "int", nullable: false),
-                    PostId = table.Column<long>(type: "bigint", nullable: false),
-                    FileNameWithoutExtension = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    FileExtension = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    FileSize = table.Column<long>(type: "bigint", nullable: true),
-                    FileContentType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    FileHash = table.Column<byte[]>(type: "binary(32)", maxLength: 32, nullable: true),
-                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    Width = table.Column<int>(type: "int", nullable: true),
-                    Height = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Attachments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Attachments_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Attachments_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -405,8 +241,7 @@ namespace Hikkaba.Data.Migrations
                         name: "FK_Bans_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Bans_AspNetUsers_ModifiedById",
                         column: x => x.ModifiedById,
@@ -416,10 +251,148 @@ namespace Hikkaba.Data.Migrations
                         name: "FK_Bans_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoriesToModerators",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    ModeratorId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoriesToModerators", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CategoriesToModerators_AspNetUsers_ModeratorId",
+                        column: x => x.ModeratorId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Bans_Posts_RelatedPostId",
-                        column: x => x.RelatedPostId,
+                        name: "FK_CategoriesToModerators_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Threads",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastBumpAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsPinned = table.Column<bool>(type: "bit", nullable: false),
+                    IsClosed = table.Column<bool>(type: "bit", nullable: false),
+                    IsCyclic = table.Column<bool>(type: "bit", nullable: false),
+                    BumpLimit = table.Column<int>(type: "int", nullable: false),
+                    Salt = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Threads", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Threads_AspNetUsers_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Threads_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BlobContainerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsSageEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    MessageText = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
+                    MessageHtml = table.Column<string>(type: "nvarchar(max)", maxLength: 8192, nullable: false),
+                    UserIpAddress = table.Column<byte[]>(type: "varbinary(16)", maxLength: 16, nullable: true),
+                    UserAgent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    CountryIsoCode = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
+                    BrowserType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    OsType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    ThreadLocalUserHash = table.Column<byte[]>(type: "binary(32)", maxLength: 32, nullable: false),
+                    IsOriginalPost = table.Column<bool>(type: "bit", nullable: false),
+                    HasOriginalPosterMark = table.Column<bool>(type: "bit", nullable: false),
+                    ThreadId = table.Column<long>(type: "bigint", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_AspNetUsers_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Posts_Threads_ThreadId",
+                        column: x => x.ThreadId,
+                        principalTable: "Threads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attachments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BlobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AttachmentType = table.Column<int>(type: "int", nullable: false),
+                    PostId = table.Column<long>(type: "bigint", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Album = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Artist = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    DurationSeconds = table.Column<int>(type: "int", nullable: true),
+                    FileNameWithoutExtension = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    FileExtension = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    FileSize = table.Column<long>(type: "bigint", nullable: true),
+                    FileContentType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    FileHash = table.Column<byte[]>(type: "binary(32)", maxLength: 32, nullable: true),
+                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    Width = table.Column<int>(type: "int", nullable: true),
+                    Height = table.Column<int>(type: "int", nullable: true),
+                    ThumbnailExtension = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    ThumbnailWidth = table.Column<int>(type: "int", nullable: true),
+                    ThumbnailHeight = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attachments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attachments_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Attachments_Posts_PostId",
+                        column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id");
                 });
@@ -446,8 +419,7 @@ namespace Hikkaba.Data.Migrations
                         name: "FK_PostToReply_Posts_ReplyId",
                         column: x => x.ReplyId,
                         principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -541,14 +513,14 @@ namespace Hikkaba.Data.Migrations
                 column: "EndsAt");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bans_IsDeleted",
+                table: "Bans",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Bans_ModifiedById",
                 table: "Bans",
                 column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bans_RelatedPostId",
-                table: "Bans",
-                column: "RelatedPostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_Alias",
@@ -557,14 +529,14 @@ namespace Hikkaba.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_BoardId",
-                table: "Categories",
-                column: "BoardId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Categories_CreatedById",
                 table: "Categories",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_IsDeleted",
+                table: "Categories",
+                column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_ModifiedById",
@@ -599,9 +571,10 @@ namespace Hikkaba.Data.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_CreatedById",
+                name: "IX_Posts_IsDeleted",
                 table: "Posts",
-                column: "CreatedById");
+                column: "IsDeleted")
+                .Annotation("SqlServer:Include", new[] { "ThreadId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_IsSageEnabled",
@@ -639,9 +612,9 @@ namespace Hikkaba.Data.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Threads_CreatedById",
+                name: "IX_Threads_IsDeleted",
                 table: "Threads",
-                column: "CreatedById");
+                column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Threads_IsPinned",
@@ -701,9 +674,6 @@ namespace Hikkaba.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Boards");
         }
     }
 }

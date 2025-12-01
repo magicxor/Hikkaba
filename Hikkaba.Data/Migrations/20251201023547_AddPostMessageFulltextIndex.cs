@@ -6,19 +6,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Hikkaba.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddThreadTitleFulltextIndex : Migration
+    public partial class AddPostMessageFulltextIndex : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20250405112056_AddThreadTitleFulltextIndex.Up.sql");
+            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20251201023547_AddPostMessageFulltextIndex.Up.sql");
             migrationBuilder.Sql(sql, suppressTransaction: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20250405112056_AddThreadTitleFulltextIndex.Down.sql");
+            var sql = MigrationUtility.ReadSql(typeof(AddPostMessageFulltextIndex), "20251201023547_AddPostMessageFulltextIndex.Down.sql");
             migrationBuilder.Sql(sql, suppressTransaction: true);
         }
     }

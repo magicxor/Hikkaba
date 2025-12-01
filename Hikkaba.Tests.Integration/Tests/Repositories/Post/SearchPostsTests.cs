@@ -48,7 +48,7 @@ internal sealed class SearchPostsTests : IntegrationTestBase
         var attempt = 0;
 
         // retry 10 times in case fulltext index is not ready yet
-        while (attempt < 10)
+        while (attempt < 50)
         {
             using var actScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var repository = actScope.ServiceProvider.GetRequiredService<IPostRepository>();
