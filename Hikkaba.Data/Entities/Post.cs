@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hikkaba.Data.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Data.Entities.Attachments;
 
 namespace Hikkaba.Data.Entities;
 
 [Table("Posts")]
-public class Post
+public class Post : IHasCreatedAt, IHasModifiedAt, IHasModifiedById
 {
     [Key]
     public long Id { get; set; }
