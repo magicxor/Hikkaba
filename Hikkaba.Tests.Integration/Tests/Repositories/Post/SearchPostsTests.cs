@@ -1,16 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
-using Hikkaba.Tests.Integration.Models;
-using Hikkaba.Tests.Integration.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 

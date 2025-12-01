@@ -11,7 +11,6 @@ using Hikkaba.Shared.Models;
 using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
-using Hikkaba.Tests.Integration.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

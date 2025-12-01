@@ -4,7 +4,6 @@ using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
-using Hikkaba.Tests.Integration.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Ban;
