@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Hikkaba.Paging.Enums;
 using JetBrains.Annotations;
 
@@ -10,9 +11,28 @@ namespace Hikkaba.Paging.Models;
 public sealed class OrderByItem
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="OrderByItem"/> class.
+    /// </summary>
+    public OrderByItem()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrderByItem"/> class.
+    /// </summary>
+    /// <param name="field">Field name.</param>
+    /// <param name="direction">Sort direction.</param>
+    [SetsRequiredMembers]
+    public OrderByItem(string field, OrderByDirection direction = OrderByDirection.Asc)
+    {
+        Field = field;
+        Direction = direction;
+    }
+
+    /// <summary>
     /// Gets or sets field name.
     /// </summary>
-    public string Field { get; set; } = string.Empty;
+    public required string Field { get; set; }
 
     /// <summary>
     /// Gets or sets sort direction.
