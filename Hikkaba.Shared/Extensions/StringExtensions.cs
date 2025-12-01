@@ -83,7 +83,7 @@ public static class StringExtensions
     }
 
     [Pure]
-    public static IReadOnlyCollection<string> FilterNonEmpty(params string?[] values)
+    public static IReadOnlyCollection<string> WhereNotNullOrWhiteSpace(params string?[] values)
     {
         return values
             .Where(x => !string.IsNullOrWhiteSpace(x))

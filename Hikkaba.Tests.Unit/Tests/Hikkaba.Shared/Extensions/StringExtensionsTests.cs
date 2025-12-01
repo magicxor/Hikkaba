@@ -89,14 +89,14 @@ internal sealed class StringExtensionsTests
     [Test]
     public void GetNonEmpty_WhenAllValuesEmpty_ShouldReturnEmptyCollection()
     {
-        var result = StringExtensions.FilterNonEmpty(null, string.Empty, " ", "\t", "\n");
+        var result = StringExtensions.WhereNotNullOrWhiteSpace(null, string.Empty, " ", "\t", "\n");
         Assert.That(result, Is.Empty);
     }
 
     [Test]
     public void GetNonEmpty_WhenSomeValuesNonEmpty_ShouldReturnNonEmptyValues()
     {
-        var result = StringExtensions.FilterNonEmpty(null, "test1", string.Empty, " ", "test2", "\t", "\n");
+        var result = StringExtensions.WhereNotNullOrWhiteSpace(null, "test1", string.Empty, " ", "test2", "\t", "\n");
         Assert.That(result, Is.EqualTo(new[] { "test1", "test2" }));
     }
 
