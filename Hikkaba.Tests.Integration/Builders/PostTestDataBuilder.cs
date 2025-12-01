@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -163,15 +164,12 @@ internal sealed class PostTestDataBuilder
         _posts.Add(post);
 
         // Create replies to mentioned posts (they must be saved first to have IDs)
-        foreach (var mentionedPostId in mentionedPostIds)
+        var postsToReplies = mentionedPostIds.Select(mentionedPostId => new PostToReply
         {
-            var postToReply = new PostToReply
-            {
-                PostId = mentionedPostId,
-                Reply = post,
-            };
-            _dbContext.PostsToReplies.Add(postToReply);
-        }
+            PostId = mentionedPostId,
+            Reply = post,
+        });
+        _dbContext.PostsToReplies.AddRange(postsToReplies);
 
         return this;
     }
