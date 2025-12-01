@@ -23,9 +23,9 @@ internal sealed class SearchPostsTests : IntegrationTestBase
             .WithCategory("b", "category")
             .WithThread("thread")
             .WithPost("post", "127.0.0.1", "Firefox", isOriginalPost: true)
-            .WithPost("blah blah blah", "127.0.0.1", "Chrome")
-            .WithPost("blah blah post blah", "127.0.0.1", "Chrome")
-            .WithPost("blah blah post blah", "127.0.0.1", "Chrome", isDeleted: true)
+            .WithPost("capybara capybara capybara", "127.0.0.1", "Chrome")
+            .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome")
+            .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome", isDeleted: true)
             .SaveAsync(cancellationToken);
     }
 
@@ -33,7 +33,7 @@ internal sealed class SearchPostsTests : IntegrationTestBase
     [TestCase("category", 0)] // we only search by post content and thread title
     [TestCase("thread", 1, Ignore = "Temporary disabled due to ongoing query performance improvements")] // search by thread title is temporarily disabled
     [TestCase("post", 2)] // only 2 non-deleted posts are returned
-    [TestCase("blah", 2)] // only 2 non-deleted posts are returned
+    [TestCase("capybara", 2)] // only 2 non-deleted posts are returned
     [TestCase("hedgehog", 0)] // no results
     public async Task SearchPosts_WhenSearchQueryIsProvided_ReturnsExpectedResultsAsync(
         string searchQuery,
@@ -44,22 +44,36 @@ internal sealed class SearchPostsTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         await SeedSearchPostsDataAsync(appScope.Scope, cancellationToken);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var logger = appScope.Scope.ServiceProvider.GetRequiredService<ILogger<SearchPostsTests>>();
-        await DbUtils.WaitForFulltextIndexAsync(logger, dbContext, ["Posts", "Threads"], cancellationToken: cancellationToken);
+        PagedResult<PostDetailsModel> result = null!;
+        var attempt = 0;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
-
-        // Act
-        var result = await repository.SearchPostsAsync(new SearchPostsPagingFilter
+        // retry 10 times in case fulltext index is not ready yet
+        while (attempt < 10)
         {
-            PageNumber = 1,
-            PageSize = 10,
-            OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Desc }],
-            SearchQuery = searchQuery,
-        }, cancellationToken);
+            using var actScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var repository = actScope.ServiceProvider.GetRequiredService<IPostRepository>();
+
+            // Act
+            result = await repository.SearchPostsAsync(new SearchPostsPagingFilter
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                OrderBy = [new OrderByItem { Field = nameof(Hikkaba.Data.Entities.Post.CreatedAt), Direction = OrderByDirection.Desc }],
+                SearchQuery = searchQuery,
+            }, cancellationToken);
+
+            if (result.Data.Count == expectedCount)
+            {
+                break;
+            }
+            else
+            {
+                attempt++;
+                await Task.Delay(500, cancellationToken);
+            }
+        }
 
         // Assert
-        Assert.That(result.Data, Has.Count.EqualTo(expectedCount));
+        Assert.That(result.Data, Has.Count.EqualTo(expectedCount), $"Expected {expectedCount} results, but got {result.Data.Count} after {attempt} attempts.");
     }
 }
