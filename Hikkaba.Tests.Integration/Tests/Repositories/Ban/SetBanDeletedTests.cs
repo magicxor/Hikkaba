@@ -113,8 +113,6 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
 
         // Delete the ban first
         await repository.SetBanDeletedAsync(banId, true, cancellationToken);
-        var banAfterFirstDelete = await repository.GetBanAsync(banId, cancellationToken);
-        var firstModifiedAt = banAfterFirstDelete!.ModifiedAt;
 
         // Wait a tiny bit to ensure time difference
         await Task.Delay(10, cancellationToken);
