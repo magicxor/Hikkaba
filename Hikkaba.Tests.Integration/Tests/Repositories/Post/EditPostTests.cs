@@ -20,7 +20,7 @@ internal sealed class EditPostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -54,7 +54,7 @@ internal sealed class EditPostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -98,7 +98,7 @@ internal sealed class EditPostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -132,7 +132,7 @@ internal sealed class EditPostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -161,7 +161,7 @@ internal sealed class EditPostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -197,7 +197,7 @@ internal sealed class EditPostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")

@@ -34,7 +34,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -65,7 +65,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -94,7 +94,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -129,7 +129,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -160,7 +160,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -185,7 +185,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -206,7 +206,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var allPosts = await dbContext.Posts
             .IgnoreQueryFilters()
-            .Where(p => p.ThreadId == builder.Thread.Id)
+            .Where(p => p.ThreadId == builder.LastThread.Id)
             .ToListAsync(cancellationToken);
 
         Assert.That(allPosts[0].IsDeleted, Is.True);
@@ -221,7 +221,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -252,7 +252,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")

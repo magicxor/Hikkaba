@@ -14,7 +14,7 @@ internal sealed class SearchPostsTests : IntegrationTestBase
 {
     private static async Task SeedSearchPostsDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        await new PostTestDataBuilder(scope)
+        await new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithCategory("b", "category")
             .WithThread("thread")

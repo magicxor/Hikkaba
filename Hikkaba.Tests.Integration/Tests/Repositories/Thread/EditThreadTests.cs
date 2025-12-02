@@ -20,10 +20,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Original title");
+            .WithThreadAndOp("Original title");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -57,10 +57,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Some thread");
+            .WithThreadAndOp("Some thread");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -89,10 +89,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         // Note: EditThreadAsync does not check IsDeleted flag, so it allows editing deleted threads
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Deleted thread", isDeleted: true);
+            .WithThreadAndOp("Deleted thread", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -127,10 +127,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Original title");
+            .WithThreadAndOp("Original title");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -165,10 +165,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Original title");
+            .WithThreadAndOp("Original title");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -205,10 +205,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
 
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Test thread", createdAt: utcNow.AddDays(-1));
+            .WithThreadAndOp("Test thread", createdAt: utcNow.AddDays(-1));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -255,10 +255,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Original title");
+            .WithThreadAndOp("Original title");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -291,10 +291,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Test thread");
+            .WithThreadAndOp("Test thread");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -327,11 +327,11 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Thread to edit")
-            .WithThreadAndOp("b", "Other thread");
+            .WithThreadAndOp("Thread to edit")
+            .WithThreadAndOp("Other thread");
 
         await builder.SaveAsync(cancellationToken);
 

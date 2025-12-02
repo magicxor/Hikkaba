@@ -17,13 +17,13 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Test thread")
-            .WithPost("Test thread", "OP post", isOriginalPost: true)
-            .WithPost("Test thread", "Reply 1")
-            .WithPost("Test thread", "Reply 2");
+            .WithThread("Test thread")
+            .WithPost("OP post", isOriginalPost: true)
+            .WithPost("Reply 1")
+            .WithPost("Reply 2");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -49,7 +49,7 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -71,11 +71,11 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", showThreadLocalUserHash: true)
-            .WithThread("b", "Pinned cyclic thread", isPinned: true, isClosed: true, isCyclic: true, bumpLimit: 100)
-            .WithPost("Pinned cyclic thread", "OP post", isOriginalPost: true);
+            .WithThread("Pinned cyclic thread", isPinned: true, isClosed: true, isCyclic: true, bumpLimit: 100)
+            .WithPost("OP post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -103,13 +103,13 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Test thread")
-            .WithPost("Test thread", "First", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Test thread", "Second", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Test thread", "Third", createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithThread("Test thread")
+            .WithPost("First", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
+            .WithPost("Second", createdAtOffset: System.TimeSpan.FromSeconds(2))
+            .WithPost("Third", createdAtOffset: System.TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -134,13 +134,13 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Test thread")
-            .WithPost("Test thread", "Post 1", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Test thread", "Post 2", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Test thread", "Post 3", createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithThread("Test thread")
+            .WithPost("Post 1", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
+            .WithPost("Post 2", createdAtOffset: System.TimeSpan.FromSeconds(2))
+            .WithPost("Post 3", createdAtOffset: System.TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -164,13 +164,13 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Test thread")
-            .WithPost("Test thread", "OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Test thread", "Normal post", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Test thread", "Deleted post", isDeleted: true, createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithThread("Test thread")
+            .WithPost("OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
+            .WithPost("Normal post", createdAtOffset: System.TimeSpan.FromSeconds(2))
+            .WithPost("Deleted post", isDeleted: true, createdAtOffset: System.TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -193,13 +193,13 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Test thread")
-            .WithPost("Test thread", "OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Test thread", "Normal post", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Test thread", "Deleted post", isDeleted: true, createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithThread("Test thread")
+            .WithPost("OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
+            .WithPost("Normal post", createdAtOffset: System.TimeSpan.FromSeconds(2))
+            .WithPost("Deleted post", isDeleted: true, createdAtOffset: System.TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -222,10 +222,10 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Deleted thread", isDeleted: true);
+            .WithThreadAndOp("Deleted thread", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -246,10 +246,10 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Deleted thread", isDeleted: true);
+            .WithThreadAndOp("Deleted thread", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -271,10 +271,10 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isDeleted: true)
-            .WithThreadAndOp("b", "Thread in deleted category");
+            .WithThreadAndOp("Thread in deleted category");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -295,10 +295,10 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Empty thread"); // No posts
+            .WithThread("Empty thread"); // No posts
 
         await builder.SaveAsync(cancellationToken);
 
@@ -319,11 +319,11 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Test thread")
-            .WithPost("Test thread", "OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1));
+            .WithThread("Test thread")
+            .WithPost("OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -345,13 +345,13 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThread("b", "Test thread")
-            .WithPost("Test thread", "OP post", isOriginalPost: true)
-            .WithPostWithPicture("Test thread", "Post with picture", "image.jpg", createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPostWithAudio("Test thread", "Post with audio", "audio.mp3", createdAtOffset: System.TimeSpan.FromSeconds(2));
+            .WithThread("Test thread")
+            .WithPost("OP post", isOriginalPost: true)
+            .WithPostWithPicture("Post with picture", "image.jpg", createdAtOffset: System.TimeSpan.FromSeconds(1))
+            .WithPostWithAudio("Post with audio", "audio.mp3", createdAtOffset: System.TimeSpan.FromSeconds(2));
 
         await builder.SaveAsync(cancellationToken);
 

@@ -12,11 +12,11 @@ internal sealed class GetBanTests : IntegrationTestBase
 {
     private static async Task<int> SeedExactBanDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        var builder = new BanTestDataBuilder(scope)
+        var builder = new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("176.213.241.52", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "176.213.241.52", "Firefox", isOriginalPost: true)
             .WithExactBan("176.213.241.52", "test ban reason");
 
         await builder.SaveAsync(cancellationToken);
@@ -25,11 +25,11 @@ internal sealed class GetBanTests : IntegrationTestBase
 
     private static async Task<int> SeedRangeBanDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        var builder = new BanTestDataBuilder(scope)
+        var builder = new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("192.168.1.1", "Chrome", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.1", "Chrome", isOriginalPost: true)
             .WithRangeBan("192.168.1.50", "192.168.1.1", "192.168.1.254", "range ban reason");
 
         await builder.SaveAsync(cancellationToken);
@@ -110,11 +110,11 @@ internal sealed class GetBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new BanTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("10.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "10.0.0.1", "Firefox", isOriginalPost: true)
             .WithExactBan("10.0.0.1", "deleted ban reason", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
@@ -139,11 +139,11 @@ internal sealed class GetBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new BanTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("172.16.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "172.16.0.1", "Firefox", isOriginalPost: true)
             .WithExactBan("172.16.0.1", "category ban reason", inCategory: true);
 
         await builder.SaveAsync(cancellationToken);

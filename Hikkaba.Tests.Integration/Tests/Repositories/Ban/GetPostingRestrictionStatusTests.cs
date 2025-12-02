@@ -14,39 +14,39 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
 {
     private static async Task<long> SeedBasicDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        var builder = new BanTestDataBuilder(scope)
+        var builder = new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("test post", "127.0.0.1", "Firefox", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        return builder.Thread.Id;
+        return builder.LastThread.Id;
     }
 
     private static async Task<long> SeedDataWithBanAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        var builder = new BanTestDataBuilder(scope)
+        var builder = new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("192.168.1.100", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.100", "Firefox", isOriginalPost: true)
             .WithExactBan("192.168.1.100", "you are banned");
 
         await builder.SaveAsync(cancellationToken);
-        return builder.Thread.Id;
+        return builder.LastThread.Id;
     }
 
     private static async Task<long> SeedClosedThreadDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        var builder = new BanTestDataBuilder(scope)
+        var builder = new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread(isClosed: true)
-            .WithPost("127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("test post", "127.0.0.1", "Firefox", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        return builder.Thread.Id;
+        return builder.LastThread.Id;
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]

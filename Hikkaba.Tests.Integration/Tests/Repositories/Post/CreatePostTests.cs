@@ -74,7 +74,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -85,7 +85,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "New reply post");
 
@@ -112,7 +112,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -121,12 +121,12 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
 
         var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var originalBumpTime = builder.Thread.LastBumpAt;
+        var originalBumpTime = builder.LastThread.LastBumpAt;
 
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "Sage post",
             isSageEnabled: true);
@@ -136,7 +136,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await repository.CreatePostAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == builder.Thread.Id, cancellationToken);
+        var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == builder.LastThread.Id, cancellationToken);
         Assert.That(updatedThread.LastBumpAt, Is.EqualTo(originalBumpTime));
     }
 
@@ -147,7 +147,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -156,12 +156,12 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
 
         var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var originalBumpTime = builder.Thread.LastBumpAt;
+        var originalBumpTime = builder.LastThread.LastBumpAt;
 
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "Normal reply");
 
@@ -170,7 +170,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await repository.CreatePostAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == builder.Thread.Id, cancellationToken);
+        var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == builder.LastThread.Id, cancellationToken);
         Assert.That(updatedThread.LastBumpAt, Is.GreaterThanOrEqualTo(originalBumpTime));
     }
 
@@ -181,7 +181,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
@@ -197,7 +197,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "Fourth post - should trigger deletion",
             isCyclic: true,
@@ -232,7 +232,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // - Replies to other posts (MentionedPosts)
         // - Replies from other posts (Replies)
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
@@ -244,7 +244,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         // Create second post (to be deleted) with all attachments and ModifiedBy
         builder
-            .WithPostReplyingTo("Second post with attachments", "127.0.0.2", "Chrome", [originalPostId])
+            .WithPostThatMentionsPost("Second post with attachments", mentionedPostMessageText: "Original post", ipAddress: "127.0.0.2", userAgent: "Chrome")
             .WithModifiedBy(builder.Admin)
             .WithAudio()
             .WithDocument()
@@ -257,7 +257,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var secondPostId = builder.LastPostId;
 
         // Create third post that replies to the second post
-        builder.WithPostReplyingTo("Third post replying to second", "127.0.0.3", "Safari", [secondPostId]);
+        builder.WithPostThatMentionsPost("Third post replying to second", mentionedPostMessageText: "Second post with attachments", ipAddress: "127.0.0.3", userAgent: "Safari");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -290,7 +290,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "Fourth post - should trigger deletion of second post",
             isCyclic: true,
@@ -348,7 +348,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // This tests that ClientCascade correctly deletes PostToReply records when the mentioned post
         // (PostId side) is deleted, while the reply post (in another thread) survives.
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", bumpLimit: 3, isCyclic: true)
@@ -371,12 +371,20 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
         var thirdPostId = builder.LastPostId;
 
+        // Save the cyclic thread reference before creating another thread
+        var cyclicThread = builder.GetThread("Cyclic thread");
+
         // Create a post in ANOTHER thread that replies to secondPost (the one that will be deleted)
         // This creates a cross-thread reply where:
         // - secondPost (in cyclic thread) is the mentioned post (PostId)
         // - crossThreadPost (in another thread) is the reply (ReplyId)
         builder
-            .WithCrossThreadReplyToPost(secondPostId, "Other thread with cross-thread reply");
+            .WithThread("Other thread with cross-thread reply")
+            .WithPostThatMentionsPost(
+                "OP that mentions another post",
+                mentionedPostMessageText: "Second post - will be deleted",
+                mentionedThreadTitle: "Cyclic thread",
+                isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -390,13 +398,13 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         // Verify there are 3 posts in the cyclic thread
         var postsInCyclicThread = await dbContext.Posts
-            .CountAsync(p => p.ThreadId == builder.Thread.Id, cancellationToken);
+            .CountAsync(p => p.ThreadId == cyclicThread.Id, cancellationToken);
         Assert.That(postsInCyclicThread, Is.EqualTo(3), "Cyclic thread should have 3 posts before adding new one");
 
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            cyclicThread.Id,
             "b",
             "Fourth post - should trigger deletion of second post",
             isCyclic: true,
@@ -437,16 +445,16 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
     [CancelAfter(TestDefaults.TestTimeout)]
     [Test]
-    public async Task CreatePost_InCyclicThread_DeletesOldestPostWhichIsReplyToCrossThread(
+    public async Task CreatePost_InCyclicThread_DeletesOldestPostWithCrossThreadMentions(
         CancellationToken cancellationToken)
     {
-        // Arrange: Create a cyclic thread with posts, where one post is a reply to a post in another thread.
+        // Arrange: Create a cyclic thread with posts, where one post mentions (replies to) a post in another thread.
         // This tests that ClientCascade correctly deletes PostToReply records when the reply post
         // (ReplyId side) is deleted, while the mentioned post (in another thread) survives.
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         // First, create another thread with a post that will be mentioned
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Other thread with mentioned post")
@@ -454,7 +462,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
         var mentionedPostId = builder.LastPostId;
-        var otherThreadId = builder.Thread.Id;
+        var otherThreadId = builder.Threads[0].Id;
 
         // Now create the cyclic thread
         builder
@@ -464,9 +472,16 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
         var originalPostId = builder.LastPostId;
 
+        var cyclicThread = builder.GetThread("Cyclic thread");
+
         // Add second post that is a reply to the post in other thread (this will be deleted)
         builder
-            .WithPostReplyingToCrossThread(mentionedPostId, "Second post - reply to other thread, will be deleted");
+            .WithPostThatMentionsPost(
+                "Second post - reply to other thread, will be deleted",
+                mentionedPostMessageText: "Post that will be mentioned",
+                mentionedThreadTitle: "Other thread with mentioned post",
+                ipAddress: "127.0.0.50",
+                userAgent: "CrossThreadReplyAgent");
 
         await builder.SaveAsync(cancellationToken);
         var secondPostId = builder.LastPostId;
@@ -488,13 +503,13 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         // Verify there are 3 posts in the cyclic thread
         var postsInCyclicThread = await dbContext.Posts
-            .CountAsync(p => p.ThreadId == builder.Thread.Id, cancellationToken);
+            .CountAsync(p => p.ThreadId == cyclicThread.Id, cancellationToken);
         Assert.That(postsInCyclicThread, Is.EqualTo(3), "Cyclic thread should have 3 posts before adding new one");
 
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            cyclicThread.Id,
             "b",
             "Fourth post - should trigger deletion of second post",
             isCyclic: true,
@@ -540,7 +555,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -553,7 +568,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "Reply with mention",
             mentionedPosts: [originalPostId]);
@@ -578,7 +593,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -589,7 +604,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "Post with client info",
             userAgent: "Mozilla/5.0 Chrome");
@@ -615,7 +630,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -627,7 +642,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var testIp = "192.168.1.100";
         var request = CreatePostRequest(
             appScope.Scope,
-            builder.Thread.Id,
+            builder.LastThread.Id,
             "b",
             "Post from specific IP",
             ipAddress: testIp);

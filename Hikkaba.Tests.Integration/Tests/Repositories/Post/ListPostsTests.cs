@@ -19,7 +19,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -54,7 +54,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -90,7 +90,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         // Create visible category with post and hidden category with post using the same builder
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isHidden: false)
             .WithThread("Visible thread")
@@ -141,7 +141,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -195,7 +195,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -228,7 +228,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Deleted thread", isDeleted: true)
@@ -261,7 +261,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Deleted category", isDeleted: true)
             .WithThread("Thread in deleted category")
@@ -294,7 +294,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new PostTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")

@@ -26,13 +26,13 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         new() { Field = nameof(ThreadPreviewModel.Id), Direction = OrderByDirection.Desc },
     ];
 
-    private static async Task<ThreadTestDataBuilder> CreateBaseBuilderAsync(
+    private static async Task<TestDataBuilder> CreateBaseBuilderAsync(
         IAppScope appScope,
-        Action<ThreadTestDataBuilder> configure,
+        Action<TestDataBuilder> configure,
         CancellationToken cancellationToken)
     {
         using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var builder = new ThreadTestDataBuilder(seedScope)
+        var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -81,7 +81,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
                 for (var i = 0; i < totalThreadCount; i++)
                 {
                     var createdAt = builder.TimeProvider.GetUtcNow().UtcDateTime.AddSeconds(i);
-                    builder.WithThreadAndOp("b", $"thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
+                    builder.WithThreadAndOp($"thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
                 }
             },
             cancellationToken);
@@ -113,9 +113,9 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 builder
-                    .WithThreadAndOp("b", "old thread", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
-                    .WithThreadAndOp("b", "newest thread", createdAt: utcNow, lastBumpAt: utcNow)
-                    .WithThreadAndOp("b", "middle thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
+                    .WithThreadAndOp("old thread", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
+                    .WithThreadAndOp("newest thread", createdAt: utcNow, lastBumpAt: utcNow)
+                    .WithThreadAndOp("middle thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
             },
             cancellationToken);
 
@@ -153,14 +153,14 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             {
                 // Thread 1: has old posts within bump limit, but very fresh posts after limit
                 builder
-                    .WithThread("b", "thread at bump limit", bumpLimit: bumpLimit, createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
+                    .WithThread("thread at bump limit", bumpLimit: bumpLimit, createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
                     .AddPostsToThread("thread at bump limit", utcNow.AddDays(-10), bumpLimit) // posts within limit (old)
                     .AddPostsToThread("thread at bump limit", utcNow, 5) // posts after limit (very fresh, should be ignored)
                     .UpdateThreadLastBumpAt("thread at bump limit");
 
                 // Thread 2: has fresh posts within bump limit
                 builder
-                    .WithThread("b", "fresh thread", bumpLimit: bumpLimit, createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1))
+                    .WithThread("fresh thread", bumpLimit: bumpLimit, createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1))
                     .AddPostsToThread("fresh thread", utcNow.AddDays(-1), bumpLimit)
                     .UpdateThreadLastBumpAt("fresh thread");
             },
@@ -193,13 +193,13 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 // Fresh deleted thread - should be excluded even though it's newest
-                builder.WithThreadAndOp("b", "deleted fresh thread", isDeleted: true, createdAt: utcNow, lastBumpAt: utcNow);
+                builder.WithThreadAndOp("deleted fresh thread", isDeleted: true, createdAt: utcNow, lastBumpAt: utcNow);
 
                 // 5 normal threads
                 for (var i = 0; i < 5; i++)
                 {
                     var createdAt = utcNow.AddDays(-i - 1);
-                    builder.WithThreadAndOp("b", $"normal thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
+                    builder.WithThreadAndOp($"normal thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
                 }
             },
             cancellationToken);
@@ -233,13 +233,13 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 // Old pinned thread
-                builder.WithThreadAndOp("b", "pinned thread", isPinned: true, createdAt: utcNow.AddYears(-1), lastBumpAt: utcNow.AddYears(-1));
+                builder.WithThreadAndOp("pinned thread", isPinned: true, createdAt: utcNow.AddYears(-1), lastBumpAt: utcNow.AddYears(-1));
 
                 // Fresh normal threads
                 for (var i = 0; i < 5; i++)
                 {
                     var createdAt = utcNow.AddDays(-i);
-                    builder.WithThreadAndOp("b", $"fresh thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
+                    builder.WithThreadAndOp($"fresh thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
                 }
             },
             cancellationToken);
@@ -268,13 +268,13 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 // Pinned thread
-                builder.WithThreadAndOp("b", "pinned thread", isPinned: true, createdAt: utcNow, lastBumpAt: utcNow);
+                builder.WithThreadAndOp("pinned thread", isPinned: true, createdAt: utcNow, lastBumpAt: utcNow);
 
                 // 10 normal threads to fill 2 pages
                 for (var i = 0; i < 10; i++)
                 {
                     var createdAt = utcNow.AddDays(-i - 1);
-                    builder.WithThreadAndOp("b", $"thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
+                    builder.WithThreadAndOp($"thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
                 }
             },
             cancellationToken);
@@ -309,7 +309,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
                 for (var i = 0; i < 12; i++)
                 {
                     var createdAt = utcNow.AddSeconds(i);
-                    builder.WithThreadAndOp("b", $"thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
+                    builder.WithThreadAndOp($"thread {i}", createdAt: createdAt, lastBumpAt: createdAt);
                 }
             },
             cancellationToken);
@@ -351,12 +351,12 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             appScope,
             builder =>
             {
-                builder.WithThread("b", "test thread");
+                builder.WithThread("test thread");
 
                 for (var i = 1; i <= totalPostCount; i++)
                 {
                     var message = i == 1 ? "OP post" : $"post {i}";
-                    builder.WithPost("test thread", message, isOriginalPost: i == 1, createdAtOffset: TimeSpan.FromSeconds(i));
+                    builder.WithPost(message, isOriginalPost: i == 1, createdAtOffset: TimeSpan.FromSeconds(i));
                 }
             },
             cancellationToken);
@@ -395,8 +395,8 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             appScope,
             b =>
             {
-                b.WithThread("b", "test thread")
-                 .WithPost("test thread", "test post", isOriginalPost: true);
+                b.WithThread("test thread")
+                 .WithPost("test post", isOriginalPost: true);
             },
             cancellationToken);
 
@@ -427,19 +427,17 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var b = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
+            .WithCategory("a", "Anime")
+            .WithThread("anime thread", createdAt: utcNow, lastBumpAt: utcNow)
+            .WithPost("anime OP", isOriginalPost: true)
             .WithCategory("b", "Random")
-            .WithCategory("a", "Anime");
-
-        // Thread in another category (fresher)
-        b.WithThreadAndOp("a", "anime thread", createdAt: utcNow, lastBumpAt: utcNow);
-
-        // Threads in target category
-        b.WithThreadAndOp("b", "random thread 1", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
-        b.WithThreadAndOp("b", "random thread 2", createdAt: utcNow.AddDays(-2), lastBumpAt: utcNow.AddDays(-2));
-
-        await b.SaveAsync(cancellationToken);
+            .WithThread("random thread 1", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1))
+            .WithPost("random OP 1", isOriginalPost: true)
+            .WithThread("random thread 2", createdAt: utcNow.AddDays(-2), lastBumpAt: utcNow.AddDays(-2))
+            .WithPost("random OP 2", isOriginalPost: true);
+        await builder.SaveAsync(cancellationToken);
 
         // Act
         var result = await QueryPageAsync(appScope, cancellationToken);
@@ -467,10 +465,10 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 builder
-                    .WithThread("b", "test thread")
-                    .WithPost("test thread", "OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("test thread", "normal post", createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPost("test thread", "deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
+                    .WithThread("test thread")
+                    .WithPost("OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("normal post", createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPost("deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
             },
             cancellationToken);
 
@@ -502,14 +500,14 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             {
                 // Thread with only sage posts - should use original lastBumpAt
                 builder
-                    .WithThread("b", "all sage thread", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
-                    .WithPost("all sage thread", "OP sage", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
-                    .WithPost("all sage thread", "sage 1", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(5))
-                    .WithPost("all sage thread", "sage 2", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(6));
+                    .WithThread("all sage thread", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
+                    .WithPost("OP sage", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
+                    .WithPost("sage 1", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(5))
+                    .WithPost("sage 2", isSageEnabled: true, createdAtOffset: TimeSpan.FromDays(6));
 
                 // Thread with normal bump
                 builder
-                    .WithThreadAndOp("b", "normal thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
+                    .WithThreadAndOp("normal thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
             },
             cancellationToken);
 
@@ -535,7 +533,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
         await CreateBaseBuilderAsync(
             appScope,
-            builder => builder.WithThreadAndOp("b", "single thread"),
+            builder => builder.WithThreadAndOp("single thread"),
             cancellationToken);
 
         // Act - request page 10 when only 1 thread exists
@@ -564,10 +562,10 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 builder
-                    .WithThread("b", "test thread")
-                    .WithPost("test thread", "OP", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPostWithAudio("test thread", "audio post", "audio.mp3", createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPostWithPicture("test thread", "picture post", "image.jpg", createdAtOffset: TimeSpan.FromSeconds(3));
+                    .WithThread("test thread")
+                    .WithPost("OP", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPostWithAudio("audio post", "audio.mp3", createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPostWithPicture("picture post", "image.jpg", createdAtOffset: TimeSpan.FromSeconds(3));
             },
             cancellationToken);
 
@@ -600,10 +598,10 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 // Thread without any posts (empty)
-                builder.WithThread("b", "empty thread", createdAt: utcNow, lastBumpAt: utcNow);
+                builder.WithThread("empty thread", createdAt: utcNow, lastBumpAt: utcNow);
 
                 // Thread with posts
-                builder.WithThreadAndOp("b", "normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
+                builder.WithThreadAndOp("normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
             },
             cancellationToken);
 
@@ -637,13 +635,13 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             {
                 // Thread with only deleted posts
                 builder
-                    .WithThread("b", "all deleted posts thread", createdAt: utcNow, lastBumpAt: utcNow)
-                    .WithPost("all deleted posts thread", "deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("all deleted posts thread", "deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPost("all deleted posts thread", "deleted post 3", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
+                    .WithThread("all deleted posts thread", createdAt: utcNow, lastBumpAt: utcNow)
+                    .WithPost("deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPost("deleted post 3", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
 
                 // Thread with normal posts
-                builder.WithThreadAndOp("b", "normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
+                builder.WithThreadAndOp("normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
             },
             cancellationToken);
 
@@ -676,13 +674,13 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 // Deleted thread with newest lastBumpAt
-                builder.WithThreadAndOp("b", "deleted newest thread", isDeleted: true, createdAt: utcNow, lastBumpAt: utcNow);
+                builder.WithThreadAndOp("deleted newest thread", isDeleted: true, createdAt: utcNow, lastBumpAt: utcNow);
 
                 // Normal thread with middle lastBumpAt
-                builder.WithThreadAndOp("b", "normal middle thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
+                builder.WithThreadAndOp("normal middle thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
 
                 // Deleted thread with oldest lastBumpAt
-                builder.WithThreadAndOp("b", "deleted oldest thread", isDeleted: true, createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10));
+                builder.WithThreadAndOp("deleted oldest thread", isDeleted: true, createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10));
             },
             cancellationToken);
 
@@ -723,7 +721,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
                 {
                     var createdAt = utcNow.AddDays(-i);
                     var isDeleted = i % 2 == 0 && i < 5; // threads 0, 2, 4 are deleted
-                    builder.WithThreadAndOp("b", $"thread {i}", isDeleted: isDeleted, createdAt: createdAt, lastBumpAt: createdAt);
+                    builder.WithThreadAndOp($"thread {i}", isDeleted: isDeleted, createdAt: createdAt, lastBumpAt: createdAt);
                 }
             },
             cancellationToken);
@@ -771,11 +769,11 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 builder
-                    .WithThread("b", "test thread")
-                    .WithPost("test thread", "OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("test thread", "normal post", createdAtOffset: TimeSpan.FromSeconds(2))
-                    .WithPost("test thread", "deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3))
-                    .WithPost("test thread", "another normal post", createdAtOffset: TimeSpan.FromSeconds(4));
+                    .WithThread("test thread")
+                    .WithPost("OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("normal post", createdAtOffset: TimeSpan.FromSeconds(2))
+                    .WithPost("deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3))
+                    .WithPost("another normal post", createdAtOffset: TimeSpan.FromSeconds(4));
             },
             cancellationToken);
 
@@ -808,12 +806,12 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
                 // Thread with old normal post and very fresh deleted post
                 // The deleted post should NOT bump the thread
                 builder
-                    .WithThread("b", "thread with deleted bump", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
-                    .WithPost("thread with deleted bump", "old OP", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
-                    .WithPost("thread with deleted bump", "very fresh deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromDays(10));
+                    .WithThread("thread with deleted bump", createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10))
+                    .WithPost("old OP", isOriginalPost: true, createdAtOffset: TimeSpan.Zero)
+                    .WithPost("very fresh deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromDays(10));
 
                 // Thread with recent normal post
-                builder.WithThreadAndOp("b", "fresh normal thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
+                builder.WithThreadAndOp("fresh normal thread", createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
             },
             cancellationToken);
 
@@ -846,12 +844,12 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             {
                 // Thread with only deleted posts
                 builder
-                    .WithThread("b", "all deleted posts thread", createdAt: utcNow, lastBumpAt: utcNow)
-                    .WithPost("all deleted posts thread", "deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
-                    .WithPost("all deleted posts thread", "deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2));
+                    .WithThread("all deleted posts thread", createdAt: utcNow, lastBumpAt: utcNow)
+                    .WithPost("deleted OP", isOriginalPost: true, isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(1))
+                    .WithPost("deleted post 2", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(2));
 
                 // Normal thread
-                builder.WithThreadAndOp("b", "normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
+                builder.WithThreadAndOp("normal thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
             },
             cancellationToken);
 
@@ -884,8 +882,8 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             appScope,
             builder =>
             {
-                builder.WithThreadAndOp("b", "closed thread", isClosed: true);
-                builder.WithThreadAndOp("b", "open thread", isClosed: false);
+                builder.WithThreadAndOp("closed thread", isClosed: true);
+                builder.WithThreadAndOp("open thread", isClosed: false);
             },
             cancellationToken);
 
@@ -916,8 +914,8 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             appScope,
             builder =>
             {
-                builder.WithThreadAndOp("b", "cyclic thread", isCyclic: true);
-                builder.WithThreadAndOp("b", "normal thread", isCyclic: false);
+                builder.WithThreadAndOp("cyclic thread", isCyclic: true);
+                builder.WithThreadAndOp("normal thread", isCyclic: false);
             },
             cancellationToken);
 
@@ -951,13 +949,13 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 // Old pinned thread
-                builder.WithThreadAndOp("b", "old pinned", isPinned: true, createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10));
+                builder.WithThreadAndOp("old pinned", isPinned: true, createdAt: utcNow.AddDays(-10), lastBumpAt: utcNow.AddDays(-10));
                 // Fresh pinned thread
-                builder.WithThreadAndOp("b", "fresh pinned", isPinned: true, createdAt: utcNow, lastBumpAt: utcNow);
+                builder.WithThreadAndOp("fresh pinned", isPinned: true, createdAt: utcNow, lastBumpAt: utcNow);
                 // Middle pinned thread
-                builder.WithThreadAndOp("b", "middle pinned", isPinned: true, createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
+                builder.WithThreadAndOp("middle pinned", isPinned: true, createdAt: utcNow.AddDays(-5), lastBumpAt: utcNow.AddDays(-5));
                 // Normal thread (very fresh but should be after all pinned)
-                builder.WithThreadAndOp("b", "fresh normal", isPinned: false, createdAt: utcNow.AddHours(1), lastBumpAt: utcNow.AddHours(1));
+                builder.WithThreadAndOp("fresh normal", isPinned: false, createdAt: utcNow.AddHours(1), lastBumpAt: utcNow.AddHours(1));
             },
             cancellationToken);
 
@@ -989,11 +987,11 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var builder = new ThreadTestDataBuilder(seedScope)
+        var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isDeleted: true);
 
-        builder.WithThreadAndOp("b", "thread in deleted category");
+        builder.WithThreadAndOp("thread in deleted category");
         await builder.SaveAsync(cancellationToken);
 
         // Act
@@ -1023,9 +1021,9 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 // All threads have the same LastBumpAt - should fallback to Id desc
-                builder.WithThreadAndOp("b", "thread A", createdAt: sameTime, lastBumpAt: sameTime);
-                builder.WithThreadAndOp("b", "thread B", createdAt: sameTime, lastBumpAt: sameTime);
-                builder.WithThreadAndOp("b", "thread C", createdAt: sameTime, lastBumpAt: sameTime);
+                builder.WithThreadAndOp("thread A", createdAt: sameTime, lastBumpAt: sameTime);
+                builder.WithThreadAndOp("thread B", createdAt: sameTime, lastBumpAt: sameTime);
+                builder.WithThreadAndOp("thread C", createdAt: sameTime, lastBumpAt: sameTime);
             },
             cancellationToken);
 
@@ -1076,11 +1074,11 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var builder = new ThreadTestDataBuilder(seedScope)
+        var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", defaultBumpLimit: 100);
 
-        builder.WithThreadAndOp("b", "thread with zero bump limit", bumpLimit: 0);
+        builder.WithThreadAndOp("thread with zero bump limit", bumpLimit: 0);
         await builder.SaveAsync(cancellationToken);
 
         // Act
@@ -1109,7 +1107,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             appScope,
             builder =>
             {
-                builder.WithThreadAndOp("b", "test thread", createdAt: createdAt, lastBumpAt: createdAt);
+                builder.WithThreadAndOp("test thread", createdAt: createdAt, lastBumpAt: createdAt);
             },
             cancellationToken);
 
@@ -1138,7 +1136,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             appScope,
             builder =>
             {
-                builder.WithThreadAndOp("b", "test thread");
+                builder.WithThreadAndOp("test thread");
             },
             cancellationToken);
 
@@ -1169,9 +1167,9 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             builder =>
             {
                 builder
-                    .WithThread("b", "test thread")
-                    .WithPost("test thread", "OP post", isOriginalPost: true, ipAddress: "192.168.1.100", userAgent: "TestBrowser/1.0")
-                    .WithPost("test thread", "sage post", isSageEnabled: true, createdAtOffset: TimeSpan.FromSeconds(1));
+                    .WithThread("test thread")
+                    .WithPost("OP post", ipAddress: "192.168.1.100", userAgent: "TestBrowser/1.0", isOriginalPost: true)
+                    .WithPost("sage post", isSageEnabled: true, createdAtOffset: TimeSpan.FromSeconds(1));
             },
             cancellationToken);
 
@@ -1202,11 +1200,11 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var builder = new ThreadTestDataBuilder(seedScope)
+        var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", showThreadLocalUserHash: true);
 
-        builder.WithThreadAndOp("b", "thread with user hash");
+        builder.WithThreadAndOp("thread with user hash");
         await builder.SaveAsync(cancellationToken);
 
         // Act

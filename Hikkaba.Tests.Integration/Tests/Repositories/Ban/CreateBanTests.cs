@@ -20,14 +20,14 @@ internal sealed class CreateBanTests : IntegrationTestBase
 {
     private static async Task<(long threadId, long postId, int adminId)> SeedBasicDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        var builder = new BanTestDataBuilder(scope)
+        var builder = new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("192.168.1.100", "Firefox", isOriginalPost: true);
+            .WithPost("test post", "192.168.1.100", "Firefox", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        return (builder.Thread.Id, builder.LastPostId, builder.Admin.Id);
+        return (builder.LastThread.Id, builder.LastPostId, builder.Admin.Id);
     }
 
     private static void SetupUserContext(IServiceScope scope, int adminId)
@@ -272,12 +272,12 @@ internal sealed class CreateBanTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         // First, create posts from the IP that will be banned
-        var builder = new BanTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("192.168.1.100", "Firefox", isOriginalPost: true)
-            .WithPost("192.168.1.100", "Chrome");
+            .WithPost("test post", "192.168.1.100", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.100", "Chrome");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -285,7 +285,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         var bannedIpPostId = builder.LastPostId;
 
         // Add post from different IP (should not be deleted)
-        builder.WithPost("192.168.1.200", "Safari");
+        builder.WithPost("test post", "192.168.1.200", "Safari");
         await builder.SaveAsync(cancellationToken);
 
         SetupUserContext(appScope.Scope, builder.Admin.Id);
@@ -309,7 +309,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
             AdditionalAction = BanAdditionalAction.DeleteAllPostsInThread,
             Reason = "Ban with all posts deletion",
             RelatedPostId = bannedIpPostId,
-            RelatedThreadId = builder.Thread.Id,
+            RelatedThreadId = builder.LastThread.Id,
             CategoryAlias = "b",
         }, cancellationToken);
 
@@ -318,7 +318,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
 
         var posts = await dbContext.Posts
             .IgnoreQueryFilters()
-            .Where(p => p.ThreadId == builder.Thread.Id)
+            .Where(p => p.ThreadId == builder.LastThread.Id)
             .ToListAsync(cancellationToken);
 
         // Posts from 192.168.1.100 should be deleted

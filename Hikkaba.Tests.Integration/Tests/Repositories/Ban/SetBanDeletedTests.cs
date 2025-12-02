@@ -13,11 +13,11 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
 {
     private static async Task<(int banId, int adminId)> SeedBanDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
-        var builder = new BanTestDataBuilder(scope)
+        var builder = new TestDataBuilder(scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("192.168.1.100", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.100", "Firefox", isOriginalPost: true)
             .WithExactBan("192.168.1.100", "test ban reason");
 
         await builder.SaveAsync(cancellationToken);
@@ -71,11 +71,11 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new BanTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("10.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "10.0.0.1", "Firefox", isOriginalPost: true)
             .WithExactBan("10.0.0.1", "deleted ban", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
@@ -166,11 +166,11 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new BanTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("172.16.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "172.16.0.1", "Firefox", isOriginalPost: true)
             .WithExactBan("172.16.0.1", "ban to restore", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);

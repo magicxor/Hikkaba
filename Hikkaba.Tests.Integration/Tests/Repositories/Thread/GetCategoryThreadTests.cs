@@ -17,10 +17,10 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Test thread");
+            .WithThreadAndOp("Test thread");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -49,7 +49,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -76,11 +76,12 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
-            .WithCategory("b", "Random")
             .WithCategory("a", "Anime")
-            .WithThreadAndOp("b", "Thread in Random");
+            .WithCategory("b", "Random")
+            .WithThread("Thread in Random")
+            .WithPost("OP post", "127.0.0.1", "Firefox", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -106,10 +107,10 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Deleted thread", isDeleted: true);
+            .WithThreadAndOp("Deleted thread", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -135,10 +136,10 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Deleted thread", isDeleted: true);
+            .WithThreadAndOp("Deleted thread", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -165,10 +166,10 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isDeleted: true)
-            .WithThreadAndOp("b", "Thread in deleted category");
+            .WithThreadAndOp("Thread in deleted category");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -194,10 +195,10 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isDeleted: true)
-            .WithThreadAndOp("b", "Thread in deleted category");
+            .WithThreadAndOp("Thread in deleted category");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -225,12 +226,12 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
-            .WithThreadAndOp("b", "Thread 1")
-            .WithThreadAndOp("b", "Thread 2")
-            .WithThreadAndOp("b", "Thread 3");
+            .WithThreadAndOp("Thread 1")
+            .WithThreadAndOp("Thread 2")
+            .WithThreadAndOp("Thread 3");
 
         await builder.SaveAsync(cancellationToken);
 

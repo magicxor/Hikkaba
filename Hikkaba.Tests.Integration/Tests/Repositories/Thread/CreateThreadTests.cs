@@ -63,7 +63,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -104,7 +104,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -130,7 +130,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isDeleted: true);
 
@@ -156,7 +156,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", defaultBumpLimit: 250);
 
@@ -185,7 +185,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", defaultBumpLimit: 0);
 
@@ -214,7 +214,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -247,7 +247,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -280,7 +280,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -290,9 +290,9 @@ internal sealed class CreateThreadTests : IntegrationTestBase
 
         // Create 3 threads (at max capacity)
         builder
-            .WithThreadAndOp("b", "Oldest thread", createdAt: utcNow.AddDays(-3), lastBumpAt: utcNow.AddDays(-3))
-            .WithThreadAndOp("b", "Middle thread", createdAt: utcNow.AddDays(-2), lastBumpAt: utcNow.AddDays(-2))
-            .WithThreadAndOp("b", "Newest thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
+            .WithThreadAndOp("Oldest thread", createdAt: utcNow.AddDays(-3), lastBumpAt: utcNow.AddDays(-3))
+            .WithThreadAndOp("Middle thread", createdAt: utcNow.AddDays(-2), lastBumpAt: utcNow.AddDays(-2))
+            .WithThreadAndOp("Newest thread", createdAt: utcNow.AddDays(-1), lastBumpAt: utcNow.AddDays(-1));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -340,7 +340,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -352,19 +352,16 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Each thread has ModifiedBy, posts with all attachment types, and PostToReply relations
         builder
             .WithEnrichedThreadAndPosts(
-                "b",
                 "Oldest enriched thread",
                 builder.Admin,
                 createdAt: utcNow.AddDays(-3),
                 lastBumpAt: utcNow.AddDays(-3))
             .WithEnrichedThreadAndPosts(
-                "b",
                 "Middle enriched thread",
                 builder.Admin,
                 createdAt: utcNow.AddDays(-2),
                 lastBumpAt: utcNow.AddDays(-2))
             .WithEnrichedThreadAndPosts(
-                "b",
                 "Newest enriched thread",
                 builder.Admin,
                 createdAt: utcNow.AddDays(-1),
@@ -471,7 +468,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -482,17 +479,14 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Create 3 threads
         builder
             .WithThreadAndOp(
-                "b",
                 "Oldest thread (to be deleted)",
                 createdAt: utcNow.AddDays(-3),
                 lastBumpAt: utcNow.AddDays(-3))
             .WithThreadAndOp(
-                "b",
                 "Middle thread (survives)",
                 createdAt: utcNow.AddDays(-2),
                 lastBumpAt: utcNow.AddDays(-2))
             .WithThreadAndOp(
-                "b",
                 "Newest thread (survives)",
                 createdAt: utcNow.AddDays(-1),
                 lastBumpAt: utcNow.AddDays(-1));
@@ -502,10 +496,11 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Now create a cross-thread reply:
         // A post in "Oldest thread" replies to OP in "Middle thread"
         // When "Oldest thread" is deleted, the PostToReply record must be deleted via ClientCascade
-        builder.WithCrossThreadReply(
-            replyThreadTitle: "Oldest thread (to be deleted)",
-            mentionedThreadTitle: "Middle thread (survives)",
-            messageText: "Cross-thread reply from oldest to middle");
+        builder
+            .WithPostThatMentionsPost(
+                "Cross-thread reply from oldest to middle",
+                inThreadTitle: "Oldest thread (to be deleted)",
+                mentionedThreadTitle: "Middle thread (survives)");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -523,12 +518,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
 
         // Verify the cross-thread PostToReply exists
         var crossThreadReplyBefore = await dbContext.PostsToReplies
+            .Include(postToReply => postToReply.Post)
             .FirstOrDefaultAsync(ptr => ptr.ReplyId == replyPostId, cancellationToken);
         Assert.That(crossThreadReplyBefore, Is.Not.Null, "Cross-thread PostToReply should exist before deletion");
 
         // Verify the mentioned post is in a different thread
         Assert.That(
-            crossThreadReplyBefore!.Post.ThreadId,
+            crossThreadReplyBefore.Post.ThreadId,
             Is.EqualTo(middleThread.Id),
             "Mentioned post should be in middle thread");
 
@@ -579,7 +575,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -590,17 +586,14 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Create 3 threads
         builder
             .WithThreadAndOp(
-                "b",
                 "Oldest thread (to be deleted, has mentioned post)",
                 createdAt: utcNow.AddDays(-3),
                 lastBumpAt: utcNow.AddDays(-3))
             .WithThreadAndOp(
-                "b",
                 "Middle thread (survives, has reply post)",
                 createdAt: utcNow.AddDays(-2),
                 lastBumpAt: utcNow.AddDays(-2))
             .WithThreadAndOp(
-                "b",
                 "Newest thread (survives)",
                 createdAt: utcNow.AddDays(-1),
                 lastBumpAt: utcNow.AddDays(-1));
@@ -610,10 +603,11 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Create a cross-thread mention:
         // A post in "Middle thread" replies to OP in "Oldest thread"
         // When "Oldest thread" is deleted, the PostToReply record must be deleted via Cascade on PostId
-        builder.WithCrossThreadMention(
-            replyThreadTitle: "Middle thread (survives, has reply post)",
-            mentionedThreadTitle: "Oldest thread (to be deleted, has mentioned post)",
-            messageText: "Cross-thread reply from middle to oldest");
+        builder
+            .WithPostThatMentionsPost(
+                "Cross-thread reply from middle to oldest",
+                inThreadTitle: "Middle thread (survives, has reply post)",
+                mentionedThreadTitle: "Oldest thread (to be deleted, has mentioned post)");
 
         await builder.SaveAsync(cancellationToken);
 
@@ -679,7 +673,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -710,7 +704,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new ThreadTestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.Scope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
