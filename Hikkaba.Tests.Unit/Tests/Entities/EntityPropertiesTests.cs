@@ -42,7 +42,7 @@ public sealed class EntityPropertiesTests
 
             // Get all properties
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => !(p.GetMethod?.IsVirtual ?? true)) // Ignore virtual properties
+                .Where(p => p.GetMethod?.IsVirtual == false) // Ignore virtual properties
                 .ToList();
 
             foreach (var property in properties)
@@ -132,7 +132,7 @@ public sealed class EntityPropertiesTests
 
         if (type == typeof(Guid) || type == typeof(Guid?))
         {
-            return Guid.NewGuid();
+            return Guid.Empty;
         }
 
         if (type == typeof(DateTime) || type == typeof(DateTime?))
