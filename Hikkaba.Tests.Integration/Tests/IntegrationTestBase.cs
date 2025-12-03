@@ -46,7 +46,7 @@ internal abstract class IntegrationTestBase
 
         return new AppScope
         {
-            Scope = scope,
+            ServiceScope = scope,
             AppFactory = customAppFactory,
         };
     }

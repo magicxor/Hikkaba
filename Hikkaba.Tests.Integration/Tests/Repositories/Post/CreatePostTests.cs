@@ -74,7 +74,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -82,9 +82,9 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "New reply post");
@@ -98,7 +98,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(result.DeletedBlobContainerIds, Is.Empty);
 
         // Verify post was created in DB
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var createdPost = await dbContext.Posts.FirstOrDefaultAsync(p => p.Id == result.PostId, cancellationToken);
         Assert.That(createdPost, Is.Not.Null);
         Assert.That(createdPost!.MessageText, Is.EqualTo("New reply post"));
@@ -112,7 +112,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -120,12 +120,12 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var originalBumpTime = builder.LastThread.LastBumpAt;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "Sage post",
@@ -147,7 +147,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -155,12 +155,12 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var originalBumpTime = builder.LastThread.LastBumpAt;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "Normal reply");
@@ -181,7 +181,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
@@ -191,12 +191,12 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var secondPostId = builder.Posts[1].Id;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "Fourth post - should trigger deletion",
@@ -232,7 +232,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // - Replies to other posts (MentionedPosts)
         // - Replies from other posts (Replies)
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
@@ -263,7 +263,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         var thirdPostId = builder.LastPostId;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         // Clear change tracker to simulate a fresh DbContext (as would happen in a real request)
         // This is important because the repository will load posts fresh from the database
@@ -287,9 +287,9 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .CountAsync(ptr => ptr.PostId == secondPostId || ptr.ReplyId == secondPostId, cancellationToken);
         Assert.That(repliesBeforeCount, Is.EqualTo(2), "Second post should have 2 PostToReply relations (1 as reply, 1 as mentioned)");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "Fourth post - should trigger deletion of second post",
@@ -348,7 +348,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // This tests that ClientCascade correctly deletes PostToReply records when the mentioned post
         // (PostId side) is deleted, while the reply post (in another thread) survives.
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", bumpLimit: 3, isCyclic: true)
@@ -388,7 +388,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         dbContext.ChangeTracker.Clear();
 
         // Verify cross-thread PostToReply relation exists
@@ -401,9 +401,9 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .CountAsync(p => p.ThreadId == cyclicThread.Id, cancellationToken);
         Assert.That(postsInCyclicThread, Is.EqualTo(3), "Cyclic thread should have 3 posts before adding new one");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             cyclicThread.Id,
             "b",
             "Fourth post - should trigger deletion of second post",
@@ -454,7 +454,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         // First, create another thread with a post that will be mentioned
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Other thread with mentioned post")
@@ -493,7 +493,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
         var thirdPostId = builder.LastPostId;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         dbContext.ChangeTracker.Clear();
 
         // Verify cross-thread PostToReply relation exists (secondPost replies to mentionedPost)
@@ -506,9 +506,9 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .CountAsync(p => p.ThreadId == cyclicThread.Id, cancellationToken);
         Assert.That(postsInCyclicThread, Is.EqualTo(3), "Cyclic thread should have 3 posts before adding new one");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             cyclicThread.Id,
             "b",
             "Fourth post - should trigger deletion of second post",
@@ -555,7 +555,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -565,9 +565,9 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         var originalPostId = builder.LastPostId;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "Reply with mention",
@@ -578,7 +578,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var result = await repository.CreatePostAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var reply = await dbContext.PostsToReplies
             .FirstOrDefaultAsync(r => r.ReplyId == result.PostId, cancellationToken);
 
@@ -593,7 +593,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -601,9 +601,9 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "Post with client info",
@@ -614,7 +614,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var result = await repository.CreatePostAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var createdPost = await dbContext.Posts.FirstAsync(p => p.Id == result.PostId, cancellationToken);
 
         Assert.That(createdPost.UserAgent, Is.EqualTo("Mozilla/5.0 Chrome"));
@@ -630,7 +630,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -638,10 +638,10 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var testIp = "192.168.1.100";
         var request = CreatePostRequest(
-            appScope.Scope,
+            appScope.ServiceScope,
             builder.LastThread.Id,
             "b",
             "Post from specific IP",
@@ -652,7 +652,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         var result = await repository.CreatePostAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var createdPost = await dbContext.Posts.FirstAsync(p => p.Id == result.PostId, cancellationToken);
 
         Assert.That(createdPost.UserIpAddress, Is.Not.Null);

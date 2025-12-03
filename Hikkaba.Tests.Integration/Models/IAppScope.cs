@@ -5,5 +5,5 @@ namespace Hikkaba.Tests.Integration.Models;
 
 internal interface IAppScope : IDisposable
 {
-    public IServiceScope Scope { get; set; }
+    public IServiceScope ServiceScope { get; set; }
 }

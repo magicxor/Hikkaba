@@ -31,7 +31,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         Action<TestDataBuilder> configure,
         CancellationToken cancellationToken)
     {
-        using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
@@ -47,7 +47,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         int pageNumber = 1,
         bool includeDeleted = false)
     {
-        using var queryScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        using var queryScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var repository = queryScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         return await repository.ListThreadPreviewsAsync(new ThreadPreviewFilter
         {
@@ -105,7 +105,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -142,7 +142,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         const int bumpLimit = 3;
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
@@ -185,7 +185,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -225,7 +225,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -260,7 +260,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -298,7 +298,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -424,10 +424,10 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("a", "Anime")
             .WithThread("anime thread", createdAt: utcNow, lastBumpAt: utcNow)
@@ -491,7 +491,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -590,7 +590,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -626,7 +626,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -666,7 +666,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -707,7 +707,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -796,7 +796,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -835,7 +835,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -941,7 +941,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -986,7 +986,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
-        using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isDeleted: true);
@@ -1013,7 +1013,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var sameTime = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -1073,7 +1073,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
-        using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", defaultBumpLimit: 100);
@@ -1100,7 +1100,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var createdAt = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
@@ -1199,7 +1199,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
-        using var seedScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", showThreadLocalUserHash: true);

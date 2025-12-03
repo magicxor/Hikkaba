@@ -43,9 +43,9 @@ internal sealed class GetBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var banId = await SeedExactBanDataAsync(appScope.Scope, cancellationToken);
+        var banId = await SeedExactBanDataAsync(appScope.ServiceScope, cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.GetBanAsync(banId, cancellationToken);
@@ -70,9 +70,9 @@ internal sealed class GetBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var banId = await SeedRangeBanDataAsync(appScope.Scope, cancellationToken);
+        var banId = await SeedRangeBanDataAsync(appScope.ServiceScope, cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.GetBanAsync(banId, cancellationToken);
@@ -92,9 +92,9 @@ internal sealed class GetBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        await SeedExactBanDataAsync(appScope.Scope, cancellationToken);
+        await SeedExactBanDataAsync(appScope.ServiceScope, cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.GetBanAsync(999999, cancellationToken);
@@ -110,7 +110,7 @@ internal sealed class GetBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
@@ -120,7 +120,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
         var banId = builder.LastBanId;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.GetBanAsync(banId, cancellationToken);
@@ -139,7 +139,7 @@ internal sealed class GetBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
@@ -149,7 +149,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
         var banId = builder.LastBanId;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
         // Act
         var result = await repository.GetBanAsync(banId, cancellationToken);

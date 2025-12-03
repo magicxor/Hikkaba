@@ -21,7 +21,13 @@ internal sealed partial class TestDataBuilder
         string reason,
         bool isDeleted = false,
         bool isExpired = false,
-        bool inCategory = false)
+        bool inCategory = false,
+        TimeSpan? createdAtOffset = null,
+        TimeSpan? endsAtOffset = null,
+        string? countryIsoCode = null,
+        int? autonomousSystemNumber = null,
+        string? autonomousSystemOrganization = null,
+        long? relatedPostId = null)
     {
         EnsureAdminExists();
         if (inCategory)
@@ -35,20 +41,50 @@ internal sealed partial class TestDataBuilder
             : IpAddressType.IpV6;
 
         var utcNow = TimeProvider.GetUtcNow().UtcDateTime;
+        DateTime createdAt;
+        DateTime endsAt;
+
+        if (createdAtOffset.HasValue || endsAtOffset.HasValue)
+        {
+            createdAt = utcNow.Add(createdAtOffset ?? TimeSpan.Zero);
+            endsAt = utcNow.Add(endsAtOffset ?? TimeSpan.FromDays(365 * 99));
+        }
+        else
+        {
+            createdAt = isExpired ? utcNow.AddDays(-30) : utcNow;
+            endsAt = isExpired ? utcNow.AddDays(-1) : utcNow.AddYears(99);
+        }
+
         var ban = new Ban
         {
             IsDeleted = isDeleted,
-            CreatedAt = isExpired ? utcNow.AddDays(-30) : utcNow,
-            EndsAt = isExpired ? utcNow.AddDays(-1) : utcNow.AddYears(99),
+            CreatedAt = createdAt,
+            EndsAt = endsAt,
             IpAddressType = ipType,
             BannedIpAddress = ip.GetAddressBytes(),
             Reason = reason,
             Category = inCategory ? LastCategory : null,
             CreatedBy = Admin,
+            CountryIsoCode = countryIsoCode,
+            AutonomousSystemNumber = autonomousSystemNumber,
+            AutonomousSystemOrganization = autonomousSystemOrganization,
+            RelatedPostId = relatedPostId,
         };
         _dbContext.Bans.Add(ban);
         _bans.Add(ban);
         _lastBan = ban;
+        return this;
+    }
+
+    public TestDataBuilder WithBanRelatedToLastPost()
+    {
+        EnsureLastPostExists();
+        if (_lastBan == null)
+        {
+            throw new InvalidOperationException("Ban must be created first. Call WithExactBan() or WithRangeBan().");
+        }
+
+        _lastBan.RelatedPostId = LastPostId;
         return this;
     }
 

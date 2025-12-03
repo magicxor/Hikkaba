@@ -20,7 +20,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
@@ -29,7 +29,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
 
         var thread = builder.GetThread("Original title");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = thread.Id,
@@ -43,7 +43,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Assert
         Assert.That(result.IsT0, Is.True, "Expected success result");
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
 
         Assert.That(updatedThread.Title, Is.EqualTo("Updated title"));
@@ -57,14 +57,14 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Some thread");
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = 999999,
@@ -89,7 +89,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         // Note: EditThreadAsync does not check IsDeleted flag, so it allows editing deleted threads
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Deleted thread", isDeleted: true);
@@ -98,7 +98,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
 
         var thread = builder.GetThread("Deleted thread");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = thread.Id,
@@ -113,7 +113,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // EditThreadAsync does not check IsDeleted, so it succeeds
         Assert.That(result.IsT0, Is.True, "Expected success result");
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
 
         Assert.That(updatedThread.Title, Is.EqualTo("New title"));
@@ -127,7 +127,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
@@ -137,7 +137,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var thread = builder.GetThread("Original title");
         var originalBumpLimit = thread.BumpLimit;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = thread.Id,
@@ -151,7 +151,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Assert
         Assert.That(result.IsT0, Is.True);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
 
         Assert.That(updatedThread.Title, Is.EqualTo("Updated title"));
@@ -165,7 +165,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
@@ -174,7 +174,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
 
         var thread = builder.GetThread("Original title");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = thread.Id,
@@ -188,7 +188,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Assert
         Assert.That(result.IsT0, Is.True);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
 
         Assert.That(updatedThread.Title, Is.EqualTo("Original title"));
@@ -202,10 +202,10 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
 
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Test thread", createdAt: utcNow.AddDays(-1));
@@ -218,7 +218,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var originalSalt = thread.Salt;
         var originalCategoryId = thread.CategoryId;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = thread.Id,
@@ -232,7 +232,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Assert
         Assert.That(result.IsT0, Is.True);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
 
         Assert.That(updatedThread.Title, Is.EqualTo("Modified title"));
@@ -255,7 +255,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
@@ -264,7 +264,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
 
         var thread = builder.GetThread("Original title");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = thread.Id,
@@ -278,7 +278,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Assert
         Assert.That(result.IsT0, Is.True);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
 
         Assert.That(updatedThread.Title, Is.EqualTo(string.Empty));
@@ -291,7 +291,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Test thread");
@@ -300,7 +300,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
 
         var thread = builder.GetThread("Test thread");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = thread.Id,
@@ -314,7 +314,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Assert
         Assert.That(result.IsT0, Is.True);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
 
         Assert.That(updatedThread.BumpLimit, Is.EqualTo(0));
@@ -327,7 +327,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThreadAndOp("Thread to edit")
@@ -340,7 +340,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var otherThreadOriginalTitle = otherThread.Title;
         var otherThreadOriginalBumpLimit = otherThread.BumpLimit;
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = new ThreadEditRequestModel
         {
             Id = threadToEdit.Id,
@@ -354,7 +354,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Assert
         Assert.That(result.IsT0, Is.True);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var unchangedThread = await dbContext.Threads.FirstAsync(t => t.Id == otherThread.Id, cancellationToken);
 
         Assert.That(unchangedThread.Title, Is.EqualTo(otherThreadOriginalTitle));

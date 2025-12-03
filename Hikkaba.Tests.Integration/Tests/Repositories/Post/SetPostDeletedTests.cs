@@ -34,23 +34,23 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post to delete", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
 
         // Act
         await repository.SetPostDeletedAsync(postId, true, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var deletedPost = await dbContext.Posts
             .IgnoreQueryFilters()
             .FirstAsync(p => p.Id == postId, cancellationToken);
@@ -65,23 +65,23 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Deleted post", isOriginalPost: true, isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
 
         // Act
         await repository.SetPostDeletedAsync(postId, false, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var restoredPost = await dbContext.Posts.FirstAsync(p => p.Id == postId, cancellationToken);
 
         Assert.That(restoredPost.IsDeleted, Is.False);
@@ -94,17 +94,17 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post to track modification", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var postId = builder.LastPostId;
 
         var originalPost = await dbContext.Posts.AsNoTracking().FirstAsync(p => p.Id == postId, cancellationToken);
@@ -129,23 +129,23 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post to track modifier", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
 
         // Act
         await repository.SetPostDeletedAsync(postId, true, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var modifiedPost = await dbContext.Posts
             .IgnoreQueryFilters()
             .FirstAsync(p => p.Id == postId, cancellationToken);
@@ -160,16 +160,16 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Existing post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act & Assert
         Assert.ThrowsAsync<InvalidOperationException>(async () =>
@@ -185,7 +185,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
@@ -194,16 +194,16 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Post 3", "127.0.0.3", "Safari");
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act - delete first two posts
         await repository.SetPostDeletedAsync(builder.Posts[0].Id, true, cancellationToken);
         await repository.SetPostDeletedAsync(builder.Posts[1].Id, true, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var allPosts = await dbContext.Posts
             .IgnoreQueryFilters()
             .Where(p => p.ThreadId == builder.LastThread.Id)
@@ -221,23 +221,23 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Already deleted post", isOriginalPost: true, isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
 
         // Act
         await repository.SetPostDeletedAsync(postId, true, cancellationToken);
 
         // Assert
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var post = await dbContext.Posts
             .IgnoreQueryFilters()
             .FirstAsync(p => p.Id == postId, cancellationToken);
@@ -252,20 +252,20 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post content to preserve", "192.168.1.100", "TestBrowser", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var postId = builder.LastPostId;
         var originalPost = await dbContext.Posts.AsNoTracking().FirstAsync(p => p.Id == postId, cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IPostRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act
         await repository.SetPostDeletedAsync(postId, true, cancellationToken);

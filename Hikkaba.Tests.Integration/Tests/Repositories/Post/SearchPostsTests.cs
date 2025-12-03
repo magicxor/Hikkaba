@@ -12,19 +12,6 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 internal sealed class SearchPostsTests : IntegrationTestBase
 {
-    private static async Task SeedSearchPostsDataAsync(IServiceScope scope, CancellationToken cancellationToken)
-    {
-        await new TestDataBuilder(scope)
-            .WithDefaultAdmin()
-            .WithCategory("b", "category")
-            .WithThread("thread")
-            .WithPost("post", isOriginalPost: true)
-            .WithPost("capybara capybara capybara", "127.0.0.1", "Chrome")
-            .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome")
-            .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome", isDeleted: true)
-            .SaveAsync(cancellationToken);
-    }
-
     [CancelAfter(TestDefaults.TestTimeout)]
     [TestCase("category", 0)] // we only search by post content and thread title
     [TestCase("thread", 1, Ignore = "Temporary disabled due to ongoing query performance improvements")] // search by thread title is temporarily disabled
@@ -38,7 +25,16 @@ internal sealed class SearchPostsTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        await SeedSearchPostsDataAsync(appScope.Scope, cancellationToken);
+
+        await new TestDataBuilder(appScope.ServiceScope)
+            .WithDefaultAdmin()
+            .WithCategory("b", "category")
+            .WithThread("thread")
+            .WithPost("post", isOriginalPost: true)
+            .WithPost("capybara capybara capybara", "127.0.0.1", "Chrome")
+            .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome")
+            .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome", isDeleted: true)
+            .SaveAsync(cancellationToken);
 
         PagedResult<PostDetailsModel> result = null!;
         var attempt = 0;
@@ -46,7 +42,7 @@ internal sealed class SearchPostsTests : IntegrationTestBase
         // retry 10 times in case fulltext index is not ready yet
         while (attempt < 50)
         {
-            using var actScope = appScope.Scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var actScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var repository = actScope.ServiceProvider.GetRequiredService<IPostRepository>();
 
             // Act

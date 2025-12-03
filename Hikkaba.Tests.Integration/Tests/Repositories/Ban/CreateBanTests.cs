@@ -55,16 +55,16 @@ internal sealed class CreateBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.Scope, cancellationToken);
-        SetupUserContext(appScope.Scope, adminId);
+        var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
+        SetupUserContext(appScope.ServiceScope, adminId);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("192.168.1.100");
 
         // Act
         var result = await repository.CreateBanAsync(new BanCreateRequestModel
         {
-            EndsAt = GetBanEndsAt(appScope.Scope),
+            EndsAt = GetBanEndsAt(appScope.ServiceScope),
             IpAddressType = IpAddressType.IpV4,
             BannedIpAddress = ip.GetAddressBytes(),
             BannedCidrLowerIpAddress = null,
@@ -99,15 +99,15 @@ internal sealed class CreateBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.Scope, cancellationToken);
-        SetupUserContext(appScope.Scope, adminId);
+        var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
+        SetupUserContext(appScope.ServiceScope, adminId);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("192.168.1.100");
 
         var request = new BanCreateRequestModel
         {
-            EndsAt = GetBanEndsAt(appScope.Scope),
+            EndsAt = GetBanEndsAt(appScope.ServiceScope),
             IpAddressType = IpAddressType.IpV4,
             BannedIpAddress = ip.GetAddressBytes(),
             BannedCidrLowerIpAddress = null,
@@ -143,16 +143,16 @@ internal sealed class CreateBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var (threadId, _, adminId) = await SeedBasicDataAsync(appScope.Scope, cancellationToken);
-        SetupUserContext(appScope.Scope, adminId);
+        var (threadId, _, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
+        SetupUserContext(appScope.ServiceScope, adminId);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("10.0.0.1");
 
         // Act
         var result = await repository.CreateBanAsync(new BanCreateRequestModel
         {
-            EndsAt = GetBanEndsAt(appScope.Scope),
+            EndsAt = GetBanEndsAt(appScope.ServiceScope),
             IpAddressType = IpAddressType.IpV4,
             BannedIpAddress = ip.GetAddressBytes(),
             BannedCidrLowerIpAddress = null,
@@ -185,17 +185,17 @@ internal sealed class CreateBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.Scope, cancellationToken);
-        SetupUserContext(appScope.Scope, adminId);
+        var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
+        SetupUserContext(appScope.ServiceScope, adminId);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var ip = IPAddress.Parse("192.168.1.100");
 
         // Act
         var result = await repository.CreateBanAsync(new BanCreateRequestModel
         {
-            EndsAt = GetBanEndsAt(appScope.Scope),
+            EndsAt = GetBanEndsAt(appScope.ServiceScope),
             IpAddressType = IpAddressType.IpV4,
             BannedIpAddress = ip.GetAddressBytes(),
             BannedCidrLowerIpAddress = null,
@@ -226,10 +226,10 @@ internal sealed class CreateBanTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var (threadId, _, adminId) = await SeedBasicDataAsync(appScope.Scope, cancellationToken);
-        SetupUserContext(appScope.Scope, adminId);
+        var (threadId, _, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
+        SetupUserContext(appScope.ServiceScope, adminId);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("192.168.1.50");
         var lowerIp = IPAddress.Parse("192.168.1.1");
         var upperIp = IPAddress.Parse("192.168.1.254");
@@ -237,7 +237,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         // Act
         var result = await repository.CreateBanAsync(new BanCreateRequestModel
         {
-            EndsAt = GetBanEndsAt(appScope.Scope),
+            EndsAt = GetBanEndsAt(appScope.ServiceScope),
             IpAddressType = IpAddressType.IpV4,
             BannedIpAddress = ip.GetAddressBytes(),
             BannedCidrLowerIpAddress = lowerIp.GetAddressBytes(),
@@ -272,7 +272,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         // First, create posts from the IP that will be banned
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
@@ -288,16 +288,16 @@ internal sealed class CreateBanTests : IntegrationTestBase
         builder.WithPost("test post", "192.168.1.200", "Safari");
         await builder.SaveAsync(cancellationToken);
 
-        SetupUserContext(appScope.Scope, builder.Admin.Id);
+        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IBanRepository>();
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var ip = IPAddress.Parse("192.168.1.100");
 
         // Act
         var result = await repository.CreateBanAsync(new BanCreateRequestModel
         {
-            EndsAt = GetBanEndsAt(appScope.Scope),
+            EndsAt = GetBanEndsAt(appScope.ServiceScope),
             IpAddressType = IpAddressType.IpV4,
             BannedIpAddress = ip.GetAddressBytes(),
             BannedCidrLowerIpAddress = null,

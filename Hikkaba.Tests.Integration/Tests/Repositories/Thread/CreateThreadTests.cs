@@ -63,13 +63,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "New thread", "Hello world!");
 
         // Act
@@ -84,7 +84,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(success.DeletedBlobContainerIds, Is.Empty);
 
         // Verify thread was created
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var createdThread = await dbContext.Threads
             .Include(t => t.Posts)
             .FirstOrDefaultAsync(t => t.Id == success.ThreadId, cancellationToken);
@@ -104,13 +104,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("nonexistent", "New thread", "Hello!");
 
         // Act
@@ -130,13 +130,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "New thread", "Hello!");
 
         // Act
@@ -156,13 +156,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", defaultBumpLimit: 250);
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "New thread", "Hello!");
 
         // Act
@@ -173,7 +173,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(result.IsT0, Is.True);
         var success = result.AsT0;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var thread = await dbContext.Threads.FirstAsync(t => t.Id == success.ThreadId, cancellationToken);
         Assert.That(thread.BumpLimit, Is.EqualTo(250));
     }
@@ -185,13 +185,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random", defaultBumpLimit: 0);
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "New thread", "Hello!");
 
         // Act
@@ -202,7 +202,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(result.IsT0, Is.True);
         var success = result.AsT0;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var thread = await dbContext.Threads.FirstAsync(t => t.Id == success.ThreadId, cancellationToken);
         Assert.That(thread.BumpLimit, Is.EqualTo(Defaults.DefaultBumpLimit));
     }
@@ -214,13 +214,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "New thread", "Hello!", userAgent: "Mozilla/5.0 Firefox");
 
         // Act
@@ -231,7 +231,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(result.IsT0, Is.True);
         var success = result.AsT0;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var post = await dbContext.Posts.FirstAsync(p => p.Id == success.PostId, cancellationToken);
 
         Assert.That(post.UserAgent, Is.EqualTo("Mozilla/5.0 Firefox"));
@@ -247,13 +247,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "New thread", "Hello!");
 
         // Act
@@ -264,7 +264,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(result.IsT0, Is.True);
         var success = result.AsT0;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var thread = await dbContext.Threads.FirstAsync(t => t.Id == success.ThreadId, cancellationToken);
 
         Assert.That(thread.LastBumpAt, Is.EqualTo(thread.CreatedAt));
@@ -277,10 +277,10 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -298,7 +298,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
 
         var oldestThread = builder.GetThread("Oldest thread");
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "Brand new thread", "Hello!");
 
         // Act
@@ -311,7 +311,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(success.DeletedBlobContainerIds, Has.Count.GreaterThan(0));
 
         // Verify oldest thread was deleted
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var deletedThread = await dbContext.Threads.FirstOrDefaultAsync(t => t.Id == oldestThread.Id, cancellationToken);
         Assert.That(deletedThread, Is.Null, "Oldest thread should be deleted");
 
@@ -337,10 +337,10 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // - All types of attachments (Audio, Document, Notice, Picture, Video)
         // - PostToReply relations (replies between posts)
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -372,7 +372,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var oldestThread = builder.GetThread("Oldest enriched thread");
         var oldestThreadId = oldestThread.Id;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         // Get post IDs from the oldest thread for verification
         var oldestThreadPostIds = await dbContext.Posts
@@ -401,7 +401,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Clear change tracker to simulate a fresh DbContext
         dbContext.ChangeTracker.Clear();
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "Brand new thread", "Hello!");
 
         // Act
@@ -465,10 +465,10 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // - Thread (to be deleted) -> Post (Reply) -> PostToReply.ReplyId (ClientCascade)
         // Since the mentioned post is in a different thread, only ClientCascade can delete the PostToReply
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -508,7 +508,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var middleThread = builder.GetThread("Middle thread (survives)");
         var oldestThreadId = oldestThread.Id;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         // Get the reply post ID (the one that will be deleted)
         var replyPostId = await dbContext.Posts
@@ -531,7 +531,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Clear change tracker to simulate a fresh DbContext
         dbContext.ChangeTracker.Clear();
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "Brand new thread", "Hello!");
 
         // Act
@@ -572,10 +572,10 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // - Thread (to be deleted) -> Post (Mentioned) -> PostToReply.PostId (Cascade)
         // Since the reply post is in a different thread that survives, only PostId Cascade deletes the PostToReply
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var timeProvider = appScope.Scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var timeProvider = appScope.ServiceScope.ServiceProvider.GetRequiredService<TimeProvider>();
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
@@ -616,7 +616,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var oldestThreadId = oldestThread.Id;
         var oldestThreadOpId = oldestThread.Posts.First(p => p.IsOriginalPost).Id;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         // Get the reply post ID (the one in middle thread that mentions oldest thread's OP)
         var replyPostId = await dbContext.Posts
@@ -632,7 +632,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Clear change tracker to simulate a fresh DbContext
         dbContext.ChangeTracker.Clear();
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "Brand new thread", "Hello!");
 
         // Act
@@ -673,13 +673,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var testIp = "192.168.1.100";
         var request = CreateThreadRequest("b", "New thread", "Hello!", ipAddress: testIp);
 
@@ -691,7 +691,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(result.IsT0, Is.True);
         var success = result.AsT0;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var post = await dbContext.Posts.FirstAsync(p => p.Id == success.PostId, cancellationToken);
 
         Assert.That(post.UserIpAddress, Is.EqualTo(IPAddress.Parse(testIp).GetAddressBytes()));
@@ -704,13 +704,13 @@ internal sealed class CreateThreadTests : IntegrationTestBase
     {
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
-        var builder = new TestDataBuilder(appScope.Scope)
+        var builder = new TestDataBuilder(appScope.ServiceScope)
             .WithDefaultAdmin()
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
 
-        var repository = appScope.Scope.ServiceProvider.GetRequiredService<IThreadRepository>();
+        var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IThreadRepository>();
         var request = CreateThreadRequest("b", "New thread", "Hello!");
 
         // Act
@@ -721,7 +721,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(result.IsT0, Is.True);
         var success = result.AsT0;
 
-        var dbContext = appScope.Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var thread = await dbContext.Threads.FirstAsync(t => t.Id == success.ThreadId, cancellationToken);
 
         Assert.That(thread.IsPinned, Is.False);

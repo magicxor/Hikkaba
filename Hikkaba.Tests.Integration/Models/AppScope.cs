@@ -4,12 +4,12 @@ namespace Hikkaba.Tests.Integration.Models;
 
 internal sealed class AppScope : IAppFactoryScope
 {
-    public required IServiceScope Scope { get; set; }
+    public required IServiceScope ServiceScope { get; set; }
     public required CustomAppFactory AppFactory { get; set; }
 
     public void Dispose()
     {
-        Scope.Dispose();
+        ServiceScope.Dispose();
         AppFactory.Dispose();
     }
 }
