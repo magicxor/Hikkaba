@@ -1,7 +1,4 @@
 ﻿[*.cs]
-# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
-dotnet_diagnostic.CA1515.severity = none
-
 # CA1034: Do not nest type InputModel. Alternatively, change its accessibility so that it is not externally visible.
 dotnet_diagnostic.CA1034.severity = suggestion
 

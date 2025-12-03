@@ -8,6 +8,9 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 
 [*.cs]
+# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+dotnet_diagnostic.CA1515.severity = none
+
 # CS1998: Async method lacks 'await' operators and will run synchronously
 # Reason: sometimes we need to have async mocks
 dotnet_diagnostic.CS1998.severity = suggestion
