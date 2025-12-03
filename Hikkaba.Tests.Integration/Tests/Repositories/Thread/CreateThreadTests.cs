@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -77,7 +78,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, "Expected success result");
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
         Assert.That(success.ThreadId, Is.GreaterThan(0));
         Assert.That(success.PostId, Is.GreaterThan(0));
@@ -118,9 +119,9 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result");
         var error = result.AsT1;
-        Assert.That(error.StatusCode, Is.EqualTo(404));
+        Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -144,9 +145,9 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result");
         var error = result.AsT1;
-        Assert.That(error.StatusCode, Is.EqualTo(404));
+        Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -170,7 +171,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -199,7 +200,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -228,7 +229,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -261,7 +262,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -306,7 +307,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
         Assert.That(success.DeletedBlobContainerIds, Has.Count.GreaterThan(0));
 
@@ -409,7 +410,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, "Expected success result");
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
         Assert.That(success.DeletedBlobContainerIds, Has.Count.GreaterThan(0), "Should have deleted blob containers");
 
@@ -428,16 +429,16 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var picturesAfter = await dbContext.Pictures.CountAsync(p => oldestThreadPostIds.Contains(p.PostId), cancellationToken);
         var videosAfter = await dbContext.Videos.CountAsync(v => oldestThreadPostIds.Contains(v.PostId), cancellationToken);
 
-        Assert.That(audiosAfter, Is.EqualTo(0), "Audio attachments should be cascade deleted");
-        Assert.That(documentsAfter, Is.EqualTo(0), "Document attachments should be cascade deleted");
-        Assert.That(noticesAfter, Is.EqualTo(0), "Notice attachments should be cascade deleted");
-        Assert.That(picturesAfter, Is.EqualTo(0), "Picture attachments should be cascade deleted");
-        Assert.That(videosAfter, Is.EqualTo(0), "Video attachments should be cascade deleted");
+        Assert.That(audiosAfter, Is.Zero, "Audio attachments should be cascade deleted");
+        Assert.That(documentsAfter, Is.Zero, "Document attachments should be cascade deleted");
+        Assert.That(noticesAfter, Is.Zero, "Notice attachments should be cascade deleted");
+        Assert.That(picturesAfter, Is.Zero, "Picture attachments should be cascade deleted");
+        Assert.That(videosAfter, Is.Zero, "Video attachments should be cascade deleted");
 
         // Verify PostToReply relations were cascade deleted
         var repliesAfterCount = await dbContext.PostsToReplies
             .CountAsync(ptr => oldestThreadPostIds.Contains(ptr.PostId) || oldestThreadPostIds.Contains(ptr.ReplyId), cancellationToken);
-        Assert.That(repliesAfterCount, Is.EqualTo(0), "PostToReply relations should be cascade deleted");
+        Assert.That(repliesAfterCount, Is.Zero, "PostToReply relations should be cascade deleted");
 
         // Verify new thread was created
         var newThread = await dbContext.Threads.FirstOrDefaultAsync(t => t.Id == success.ThreadId, cancellationToken);
@@ -539,7 +540,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, "Expected success result");
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
 
         // Verify oldest thread was deleted
         var deletedThread = await dbContext.Threads.FirstOrDefaultAsync(t => t.Id == oldestThreadId, cancellationToken);
@@ -640,7 +641,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, "Expected success result");
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
 
         // Verify oldest thread was deleted
         var deletedThread = await dbContext.Threads.FirstOrDefaultAsync(t => t.Id == oldestThreadId, cancellationToken);
@@ -688,7 +689,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -718,7 +719,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         var result = await repository.CreateThreadAsync(request, emptyAttachments, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<ThreadPostCreateSuccessResultModel>(), "Expected success result");
         var success = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

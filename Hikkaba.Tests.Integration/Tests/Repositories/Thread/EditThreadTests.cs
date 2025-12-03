@@ -1,13 +1,16 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OneOf.Types;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Thread;
 
@@ -41,7 +44,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, "Expected success result");
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
@@ -76,9 +79,9 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result");
         var error = result.AsT1;
-        Assert.That(error.StatusCode, Is.EqualTo(404));
+        Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -111,7 +114,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
 
         // Assert
         // EditThreadAsync does not check IsDeleted, so it succeeds
-        Assert.That(result.IsT0, Is.True, "Expected success result");
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
@@ -149,7 +152,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
@@ -186,7 +189,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
@@ -230,7 +233,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
@@ -276,7 +279,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
@@ -312,7 +315,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedThread = await dbContext.Threads.FirstAsync(t => t.Id == thread.Id, cancellationToken);
@@ -352,7 +355,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var result = await repository.EditThreadAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected success result");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var unchangedThread = await dbContext.Threads.FirstAsync(t => t.Id == otherThread.Id, cancellationToken);

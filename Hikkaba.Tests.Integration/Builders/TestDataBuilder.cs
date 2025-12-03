@@ -27,5 +27,6 @@ internal sealed partial class TestDataBuilder
     public async Task SaveAsync(CancellationToken cancellationToken)
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await ApplyPendingUserRoleAssignmentsAsync(cancellationToken);
     }
 }
