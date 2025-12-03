@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Role;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Tests.Integration.Builders;
@@ -34,7 +35,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         var result = await repository.CreateRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, "Expected successful role creation");
+        Assert.That(result.Value, Is.TypeOf<RoleCreateResultSuccessModel>(), "Expected successful role creation");
         var successResult = result.AsT0;
         Assert.That(successResult.RoleId, Is.GreaterThan(0));
 
@@ -63,7 +64,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         var result = await repository.CreateRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<RoleCreateResultSuccessModel>(), "Expected successful role creation");
         var successResult = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -89,7 +90,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         var result = await repository.CreateRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<RoleCreateResultSuccessModel>(), "Expected successful role creation");
         var successResult = result.AsT0;
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -125,7 +126,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         var result = await repository.CreateRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result for duplicate role");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result for duplicate role");
         var error = result.AsT1;
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
         Assert.That(error.ErrorMessage, Does.Contain("Role creation failed"));
@@ -154,7 +155,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         var result = await repository.CreateRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result for duplicate role (case-insensitive)");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result for duplicate role (case-insensitive)");
         var error = result.AsT1;
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
     }
@@ -213,7 +214,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         var result = await repository.CreateRoleAsync(new RoleCreateRequestModel { RoleName = "NewRole" }, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<RoleCreateResultSuccessModel>(), "Expected successful role creation");
         var newRoleId = result.AsT0.RoleId;
         Assert.That(newRoleId, Is.GreaterThan(existingRole1.Id));
         Assert.That(newRoleId, Is.GreaterThan(existingRole2.Id));
@@ -245,7 +246,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         var result = await repository.CreateRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, $"Expected successful creation for role name '{roleName}'");
+        Assert.That(result.Value, Is.TypeOf<RoleCreateResultSuccessModel>(), "Expected successful role creation");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var createdRole = await dbContext.Roles.FirstAsync(r => r.Id == result.AsT0.RoleId, cancellationToken);

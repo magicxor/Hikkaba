@@ -2,12 +2,14 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
+using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Role;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OneOf.Types;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Role;
 
@@ -41,7 +43,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True, "Expected successful role update");
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected successful role update");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedRole = await dbContext.Roles.FirstAsync(r => r.Id == role.Id, cancellationToken);
@@ -74,7 +76,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected successful role update");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedRole = await dbContext.Roles.FirstAsync(r => r.Id == role.Id, cancellationToken);
@@ -107,7 +109,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected successful role update");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedRole = await dbContext.Roles.FirstAsync(r => r.Id == role.Id, cancellationToken);
@@ -137,7 +139,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result for non-existent role");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result for non-existent role");
         var error = result.AsT1;
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
         Assert.That(error.ErrorMessage, Is.EqualTo("Role not found."));
@@ -162,7 +164,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True);
+        Assert.That(result.Value, Is.TypeOf<DomainError>());
         var error = result.AsT1;
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
@@ -198,7 +200,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result for duplicate role name");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result for duplicate role name");
         var error = result.AsT1;
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
         Assert.That(error.ErrorMessage, Does.Contain("Role update failed"));
@@ -231,7 +233,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT1, Is.True, "Expected error result for duplicate role name (case-insensitive)");
+        Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result for duplicate role name (case-insensitive)");
     }
 
     #endregion
@@ -264,7 +266,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         var result = await repository.EditRoleAsync(request, cancellationToken);
 
         // Assert
-        Assert.That(result.IsT0, Is.True);
+        Assert.That(result.Value, Is.TypeOf<Success>(), "Expected successful role update");
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updatedRole = await dbContext.Roles.FirstAsync(r => r.Id == role.Id, cancellationToken);
