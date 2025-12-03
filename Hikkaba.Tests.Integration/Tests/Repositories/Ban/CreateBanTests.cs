@@ -24,7 +24,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "192.168.1.100", "Firefox", isOriginalPost: true);
+            .WithPost("test post", "192.168.1.100", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         return (builder.LastThread.Id, builder.LastPostId, builder.Admin.Id);
@@ -276,7 +276,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "192.168.1.100", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.100", isOriginalPost: true)
             .WithPost("test post", "192.168.1.100", "Chrome");
 
         await builder.SaveAsync(cancellationToken);

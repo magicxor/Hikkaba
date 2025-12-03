@@ -23,7 +23,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("First post", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("First post", isOriginalPost: true)
             .WithPost("Second post", "127.0.0.2", "Chrome")
             .WithPost("Deleted post", "127.0.0.3", "Safari", isDeleted: true);
 
@@ -58,7 +58,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("First post", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("First post", isOriginalPost: true)
             .WithPost("Deleted post", "127.0.0.2", "Chrome", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
@@ -94,7 +94,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random", isHidden: false)
             .WithThread("Visible thread")
-            .WithPost("Visible post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Visible post", isOriginalPost: true);
         await builder.SaveAsync(cancellationToken);
 
         // Reuse the same builder to add hidden category
@@ -145,7 +145,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Post 1", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("Post 1", isOriginalPost: true)
             .WithPost("Post 2", "127.0.0.2", "Chrome")
             .WithPost("Post 3", "127.0.0.3", "Safari")
             .WithPost("Post 4", "127.0.0.4", "Edge")
@@ -199,7 +199,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("First post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("First post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -232,7 +232,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Deleted thread", isDeleted: true)
-            .WithPost("Post in deleted thread", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Post in deleted thread", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -265,7 +265,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Deleted category", isDeleted: true)
             .WithThread("Thread in deleted category")
-            .WithPost("Post in deleted category", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Post in deleted category", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -298,7 +298,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Post with attachments", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Post with attachments", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 

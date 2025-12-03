@@ -24,7 +24,7 @@ internal sealed class EditPostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original message", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original message", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -58,7 +58,7 @@ internal sealed class EditPostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original message", "192.168.1.100", "Firefox", isOriginalPost: true);
+            .WithPost("Original message", "192.168.1.100", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -102,7 +102,7 @@ internal sealed class EditPostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original message with content", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original message with content", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -136,7 +136,7 @@ internal sealed class EditPostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original message", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original message", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -165,7 +165,7 @@ internal sealed class EditPostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Deleted post message", "127.0.0.1", "Firefox", isOriginalPost: true, isDeleted: true);
+            .WithPost("Deleted post message", isOriginalPost: true, isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -201,7 +201,7 @@ internal sealed class EditPostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 

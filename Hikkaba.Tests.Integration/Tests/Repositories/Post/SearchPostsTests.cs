@@ -18,7 +18,7 @@ internal sealed class SearchPostsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "category")
             .WithThread("thread")
-            .WithPost("post", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("post", isOriginalPost: true)
             .WithPost("capybara capybara capybara", "127.0.0.1", "Chrome")
             .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome")
             .WithPost("capybara capybara post capybara", "127.0.0.1", "Chrome", isDeleted: true)

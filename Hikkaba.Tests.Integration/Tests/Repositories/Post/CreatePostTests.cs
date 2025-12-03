@@ -78,7 +78,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -116,7 +116,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -151,7 +151,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -185,7 +185,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("Original post", isOriginalPost: true)
             .WithPost("Second post", "127.0.0.2", "Chrome")
             .WithPost("Third post", "127.0.0.3", "Safari");
 
@@ -236,7 +236,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -352,7 +352,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", bumpLimit: 3, isCyclic: true)
-            .WithPost("OP post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("OP post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         var originalPostId = builder.LastPostId;
@@ -458,7 +458,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Other thread with mentioned post")
-            .WithPost("Post that will be mentioned", "192.168.1.1", "Firefox", isOriginalPost: true);
+            .WithPost("Post that will be mentioned", "192.168.1.1", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         var mentionedPostId = builder.LastPostId;
@@ -467,7 +467,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Now create the cyclic thread
         builder
             .WithThread("Cyclic thread", bumpLimit: 3, isCyclic: true)
-            .WithPost("OP post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("OP post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         var originalPostId = builder.LastPostId;
@@ -559,7 +559,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -597,7 +597,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 
@@ -634,7 +634,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Original post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Original post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 

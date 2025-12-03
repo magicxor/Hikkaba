@@ -16,7 +16,7 @@ internal sealed class GetBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "176.213.241.52", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "176.213.241.52", isOriginalPost: true)
             .WithExactBan("176.213.241.52", "test ban reason");
 
         await builder.SaveAsync(cancellationToken);
@@ -114,7 +114,7 @@ internal sealed class GetBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "10.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "10.0.0.1", isOriginalPost: true)
             .WithExactBan("10.0.0.1", "deleted ban reason", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
@@ -143,7 +143,7 @@ internal sealed class GetBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "172.16.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "172.16.0.1", isOriginalPost: true)
             .WithExactBan("172.16.0.1", "category ban reason", inCategory: true);
 
         await builder.SaveAsync(cancellationToken);

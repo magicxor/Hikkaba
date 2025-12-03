@@ -38,7 +38,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Post to delete", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Post to delete", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         SetupUserContext(appScope.Scope, builder.Admin.Id);
@@ -69,7 +69,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Deleted post", "127.0.0.1", "Firefox", isOriginalPost: true, isDeleted: true);
+            .WithPost("Deleted post", isOriginalPost: true, isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
         SetupUserContext(appScope.Scope, builder.Admin.Id);
@@ -98,7 +98,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Post to track modification", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Post to track modification", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         SetupUserContext(appScope.Scope, builder.Admin.Id);
@@ -133,7 +133,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Post to track modifier", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Post to track modifier", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         SetupUserContext(appScope.Scope, builder.Admin.Id);
@@ -164,7 +164,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Existing post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("Existing post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         SetupUserContext(appScope.Scope, builder.Admin.Id);
@@ -189,7 +189,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Post 1", "127.0.0.1", "Firefox", isOriginalPost: true)
+            .WithPost("Post 1", isOriginalPost: true)
             .WithPost("Post 2", "127.0.0.2", "Chrome")
             .WithPost("Post 3", "127.0.0.3", "Safari");
 
@@ -225,7 +225,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Already deleted post", "127.0.0.1", "Firefox", isOriginalPost: true, isDeleted: true);
+            .WithPost("Already deleted post", isOriginalPost: true, isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
         SetupUserContext(appScope.Scope, builder.Admin.Id);

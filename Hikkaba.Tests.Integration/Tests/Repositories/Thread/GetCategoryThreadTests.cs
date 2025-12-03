@@ -81,7 +81,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
             .WithCategory("a", "Anime")
             .WithCategory("b", "Random")
             .WithThread("Thread in Random")
-            .WithPost("OP post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("OP post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
 

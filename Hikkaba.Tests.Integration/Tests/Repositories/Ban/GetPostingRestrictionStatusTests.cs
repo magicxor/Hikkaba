@@ -18,7 +18,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("test post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         return builder.LastThread.Id;
@@ -30,7 +30,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "192.168.1.100", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.100", isOriginalPost: true)
             .WithExactBan("192.168.1.100", "you are banned");
 
         await builder.SaveAsync(cancellationToken);
@@ -43,7 +43,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread(isClosed: true)
-            .WithPost("test post", "127.0.0.1", "Firefox", isOriginalPost: true);
+            .WithPost("test post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         return builder.LastThread.Id;

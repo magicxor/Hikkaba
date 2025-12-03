@@ -28,7 +28,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "176.213.241.52", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "176.213.241.52", isOriginalPost: true)
             .WithExactBan("176.213.241.52", "exact ban reason")
             .SaveAsync(cancellationToken);
 
@@ -74,7 +74,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "176.213.224.37", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "176.213.224.37", isOriginalPost: true)
             .WithRangeBan("176.213.224.40", "176.213.224.1", "176.213.224.254", "range ban reason")
             .SaveAsync(cancellationToken);
 
@@ -155,7 +155,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "192.168.1.50", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.50", isOriginalPost: true)
             .WithExactBan("192.168.1.50", "deleted ban", isDeleted: true)
             .SaveAsync(cancellationToken);
 
@@ -183,7 +183,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "192.168.1.60", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.60", isOriginalPost: true)
             .WithExactBan("192.168.1.60", "expired ban", isExpired: true)
             .SaveAsync(cancellationToken);
 
@@ -211,7 +211,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "192.168.1.70", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.70", isOriginalPost: true)
             .WithExactBan("192.168.1.70", "expired ban", isExpired: true)
             .WithExactBan("192.168.1.70", "active ban")
             .SaveAsync(cancellationToken);
@@ -241,7 +241,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithDefaultCategory()
             .WithDefaultThread()
-            .WithPost("test post", "192.168.1.80", "Firefox", isOriginalPost: true)
+            .WithPost("test post", "192.168.1.80", isOriginalPost: true)
             .WithExactBan("192.168.1.80", "deleted ban", isDeleted: true)
             .WithExactBan("192.168.1.80", "active ban")
             .SaveAsync(cancellationToken);
