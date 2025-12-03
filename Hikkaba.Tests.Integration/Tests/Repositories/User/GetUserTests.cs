@@ -23,9 +23,7 @@ internal sealed class GetUserTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithAdministratorRole()
-            .WithUser("test_user", email: "test@example.com")
-            .WithUserRole("test_user", Defaults.AdministratorRoleName)
+            .WithUser("test_user", email: "test@example.com", isAdmin: true)
             .SaveAsync(cancellationToken);
 
         var userId = builder.GetUser("test_user").Id;
@@ -93,11 +91,7 @@ internal sealed class GetUserTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithAdministratorRole()
-            .WithModeratorRole()
-            .WithUser("super_user")
-            .WithUserRole("super_user", Defaults.AdministratorRoleName)
-            .WithUserRole("super_user", Defaults.ModeratorRoleName)
+            .WithUser("super_user", isAdmin: true, isModerator: true)
             .SaveAsync(cancellationToken);
 
         var userId = builder.GetUser("super_user").Id;

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Utils;
@@ -22,7 +23,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post to delete", isOriginalPost: true);
@@ -53,7 +54,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Deleted post", isOriginalPost: true, isDeleted: true);
@@ -82,7 +83,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post to track modification", isOriginalPost: true);
@@ -117,7 +118,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post to track modifier", isOriginalPost: true);
@@ -148,7 +149,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Existing post", isOriginalPost: true);
@@ -170,7 +171,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post 1", isOriginalPost: true)
@@ -183,8 +184,11 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act - delete first two posts
-        await repository.SetPostDeletedAsync(builder.Posts[0].Id, true, cancellationToken);
-        await repository.SetPostDeletedAsync(builder.Posts[1].Id, true, cancellationToken);
+        var post1Id = builder.GetPost("Post 1").Id;
+        var post2Id = builder.GetPost("Post 2").Id;
+
+        await repository.SetPostDeletedAsync(post1Id, true, cancellationToken);
+        await repository.SetPostDeletedAsync(post2Id, true, cancellationToken);
 
         // Assert
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -206,7 +210,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Already deleted post", isOriginalPost: true, isDeleted: true);
@@ -237,7 +241,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post content to preserve", "192.168.1.100", "TestBrowser", isOriginalPost: true);

@@ -9,6 +9,7 @@ using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -75,7 +76,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Original post", isOriginalPost: true);
@@ -113,7 +114,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Original post", isOriginalPost: true);
@@ -148,7 +149,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Original post", isOriginalPost: true);
@@ -182,7 +183,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
             .WithPost("Original post", isOriginalPost: true)
@@ -192,7 +193,8 @@ internal sealed class CreatePostTests : IntegrationTestBase
         await builder.SaveAsync(cancellationToken);
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var secondPostId = builder.Posts[1].Id;
+        var originalPostId = builder.GetPost("Original post").Id;
+        var secondPostId = builder.GetPost("Second post").Id;
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var request = CreatePostRequest(
@@ -216,7 +218,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(secondPost, Is.Null, "Second post should be deleted in cyclic thread");
 
         // Verify original post still exists
-        var originalPost = await dbContext.Posts.FirstOrDefaultAsync(p => p.Id == builder.Posts[0].Id, cancellationToken);
+        var originalPost = await dbContext.Posts.FirstOrDefaultAsync(p => p.Id == originalPostId, cancellationToken);
         Assert.That(originalPost, Is.Not.Null, "Original post should not be deleted");
     }
 
@@ -233,7 +235,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // - Replies from other posts (Replies)
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", isCyclic: true, bumpLimit: 3)
             .WithPost("Original post", isOriginalPost: true);
@@ -335,7 +337,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(thirdPost, Is.Not.Null, "Third post should not be deleted");
 
         // Verify admin user still exists (should not be cascade deleted)
-        var admin = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin", cancellationToken);
+        var admin = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == Defaults.AdministratorUserName, cancellationToken);
         Assert.That(admin, Is.Not.Null, "Admin user should not be cascade deleted");
     }
 
@@ -349,7 +351,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // (PostId side) is deleted, while the reply post (in another thread) survives.
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Cyclic thread", bumpLimit: 3, isCyclic: true)
             .WithPost("OP post", isOriginalPost: true);
@@ -455,14 +457,14 @@ internal sealed class CreatePostTests : IntegrationTestBase
 
         // First, create another thread with a post that will be mentioned
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Other thread with mentioned post")
             .WithPost("Post that will be mentioned", "192.168.1.1", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
         var mentionedPostId = builder.LastPostId;
-        var otherThreadId = builder.Threads[0].Id;
+        var mentionedThreadId = builder.LastThread.Id;
 
         // Now create the cyclic thread
         builder
@@ -544,7 +546,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(mentionedPost, Is.Not.Null, "Mentioned post in other thread should still exist");
 
         // Verify other thread still exists
-        var otherThread = await dbContext.Threads.FirstOrDefaultAsync(t => t.Id == otherThreadId, cancellationToken);
+        var otherThread = await dbContext.Threads.FirstOrDefaultAsync(t => t.Id == mentionedThreadId, cancellationToken);
         Assert.That(otherThread, Is.Not.Null, "Other thread should still exist");
     }
 
@@ -556,7 +558,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Original post", isOriginalPost: true);
@@ -594,7 +596,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Original post", isOriginalPost: true);
@@ -631,7 +633,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Original post", isOriginalPost: true);

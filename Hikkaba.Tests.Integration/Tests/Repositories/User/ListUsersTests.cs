@@ -58,12 +58,8 @@ internal sealed class ListUsersTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithAdministratorRole()
-            .WithModeratorRole()
-            .WithUser("admin_user")
-            .WithUserRole("admin_user", Defaults.AdministratorRoleName)
-            .WithUser("mod_user")
-            .WithUserRole("mod_user", Defaults.ModeratorRoleName)
+            .WithUser("admin_user", isAdmin: true)
+            .WithUser("mod_user", isModerator: true)
             .WithUser("user_without_role")
             .SaveAsync(cancellationToken);
 
@@ -99,11 +95,7 @@ internal sealed class ListUsersTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithAdministratorRole()
-            .WithModeratorRole()
-            .WithUser("super_user")
-            .WithUserRole("super_user", Defaults.AdministratorRoleName)
-            .WithUserRole("super_user", Defaults.ModeratorRoleName)
+            .WithUser("super_user", isAdmin: true, isModerator: true)
             .SaveAsync(cancellationToken);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IUserRepository>();

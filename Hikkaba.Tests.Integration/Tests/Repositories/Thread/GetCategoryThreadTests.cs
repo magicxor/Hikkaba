@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Test thread");
 
@@ -50,7 +51,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
@@ -77,7 +78,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Anime")
             .WithCategory("b", "Random")
             .WithThread("Thread in Random")
@@ -108,7 +109,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Deleted thread", isDeleted: true);
 
@@ -137,7 +138,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Deleted thread", isDeleted: true);
 
@@ -167,7 +168,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", isDeleted: true)
             .WithThreadAndOp("Thread in deleted category");
 
@@ -196,7 +197,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", isDeleted: true)
             .WithThreadAndOp("Thread in deleted category");
 
@@ -227,7 +228,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Thread 1")
             .WithThreadAndOp("Thread 2")

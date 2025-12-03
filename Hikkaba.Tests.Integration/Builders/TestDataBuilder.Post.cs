@@ -13,9 +13,14 @@ internal sealed partial class TestDataBuilder
     private readonly List<Post> _posts = [];
     private Post? _lastPost;
 
-    public IReadOnlyList<Post> Posts => _posts;
     public Post LastPost => _lastPost ?? throw new InvalidOperationException("No post created yet.");
     public long LastPostId => _lastPost?.Id ?? throw new InvalidOperationException("No post created yet.");
+
+    public Post GetPost(string messageText)
+    {
+        return _posts.Find(p => p.MessageText == messageText)
+               ?? throw new InvalidOperationException($"Post with message '{messageText}' not found");
+    }
 
     /// <summary>
     ///     Creates a post in the last created thread.

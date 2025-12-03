@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Utils;
@@ -24,7 +25,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", defaultBumpLimit: 500);
         await builder.SaveAsync(cancellationToken);
 
@@ -71,7 +72,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion");
         await builder.SaveAsync(cancellationToken);
 
@@ -105,7 +106,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
 
         Assert.That(updatedCategory.ModifiedById, Is.EqualTo(builder.Admin.Id));
         Assert.That(updatedCategory.ModifiedBy, Is.Not.Null);
-        Assert.That(updatedCategory.ModifiedBy!.UserName, Is.EqualTo("admin"));
+        Assert.That(updatedCategory.ModifiedBy!.UserName, Is.EqualTo(Defaults.AdministratorUserName));
         Assert.That(updatedCategory.ModifiedAt, Is.Not.Null);
         Assert.That(updatedCategory.ModifiedAt, Is.GreaterThanOrEqualTo(originalCreatedAt));
         Assert.That(updatedCategory.CreatedAt, Is.EqualTo(originalCreatedAt));
@@ -120,7 +121,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", defaultBumpLimit: 500);
         await builder.SaveAsync(cancellationToken);
 
@@ -165,7 +166,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("test", "Test Category", showThreadLocalUserHash: false);
         await builder.SaveAsync(cancellationToken);
 
@@ -236,7 +237,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("test", "Test Category", isHidden: initialHidden);
         await builder.SaveAsync(cancellationToken);
 

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Utils;
@@ -15,7 +16,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
     private static async Task<(int banId, int adminId)> SeedBanDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var builder = new TestDataBuilder(scope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.100", isOriginalPost: true)
@@ -61,7 +62,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "10.0.0.1", isOriginalPost: true)
@@ -158,7 +159,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "172.16.0.1", isOriginalPost: true)

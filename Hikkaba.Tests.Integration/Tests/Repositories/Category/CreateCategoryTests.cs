@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Utils;
@@ -25,7 +26,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin();
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true);
         await builder.SaveAsync(cancellationToken);
 
         UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
@@ -73,7 +74,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin();
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true);
         await builder.SaveAsync(cancellationToken);
 
         UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
@@ -102,7 +103,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
             .FirstAsync(c => c.Id == categoryId, cancellationToken);
 
         Assert.That(createdCategory.CreatedById, Is.EqualTo(builder.Admin.Id));
-        Assert.That(createdCategory.CreatedBy.UserName, Is.EqualTo("admin"));
+        Assert.That(createdCategory.CreatedBy.UserName, Is.EqualTo(Defaults.AdministratorUserName));
         Assert.That(createdCategory.CreatedAt, Is.Not.EqualTo(default(DateTime)));
         Assert.That(createdCategory.ModifiedById, Is.Null);
         Assert.That(createdCategory.ModifiedAt, Is.Null);
@@ -117,7 +118,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin();
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true);
         await builder.SaveAsync(cancellationToken);
 
         UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
@@ -154,7 +155,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin();
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true);
         await builder.SaveAsync(cancellationToken);
 
         UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
@@ -200,7 +201,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin();
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true);
         await builder.SaveAsync(cancellationToken);
 
         UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);

@@ -103,10 +103,8 @@ internal sealed class EditUserTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithAdministratorRole()
             .WithModeratorRole()
-            .WithUser("test_user")
-            .WithUserRole("test_user", Defaults.AdministratorRoleName)
+            .WithUser("test_user", isAdmin: true)
             .SaveAsync(cancellationToken);
 
         var userId = builder.GetUser("test_user").Id;
@@ -145,9 +143,7 @@ internal sealed class EditUserTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithAdministratorRole()
-            .WithUser("test_user")
-            .WithUserRole("test_user", Defaults.AdministratorRoleName)
+            .WithUser("test_user", isAdmin: true)
             .SaveAsync(cancellationToken);
 
         var userId = builder.GetUser("test_user").Id;

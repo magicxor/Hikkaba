@@ -66,7 +66,7 @@ internal sealed partial class TestDataBuilder
             Post = _lastPost!,
             Text = text,
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime,
-            CreatedBy = _admin!,
+            CreatedBy = Admin,
         };
         _dbContext.Notices.Add(notice);
         _lastPost!.Notices.Add(notice);

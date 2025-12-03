@@ -4,6 +4,7 @@ using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ internal sealed class SearchPostsTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "category")
             .WithThread("thread")
             .WithPost("post", isOriginalPost: true)

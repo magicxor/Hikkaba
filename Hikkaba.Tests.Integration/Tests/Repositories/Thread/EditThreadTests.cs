@@ -6,6 +6,7 @@ using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
 
@@ -61,7 +62,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Some thread");
 
@@ -93,7 +94,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Note: EditThreadAsync does not check IsDeleted flag, so it allows editing deleted threads
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Deleted thread", isDeleted: true);
 
@@ -131,7 +132,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
 
@@ -169,7 +170,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
 
@@ -209,7 +210,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Test thread", createdAt: utcNow.AddDays(-1));
 
@@ -259,7 +260,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Original title");
 
@@ -295,7 +296,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Test thread");
 
@@ -331,7 +332,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThreadAndOp("Thread to edit")
             .WithThreadAndOp("Other thread");

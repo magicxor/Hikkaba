@@ -5,6 +5,7 @@ using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Extensions;
@@ -25,7 +26,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .SaveAsync(cancellationToken);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<ICategoryRepository>();
@@ -46,7 +47,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Anime")
             .WithCategory("b", "Random")
             .WithCategory("c", "Creativity")
@@ -77,7 +78,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Anime", isHidden: false)
             .WithCategory("b", "Random", isHidden: true)
             .SaveAsync(cancellationToken);
@@ -110,7 +111,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Anime", isDeleted: false)
             .WithCategory("b", "Random", isDeleted: true)
             .SaveAsync(cancellationToken);
@@ -146,7 +147,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Visible Active", isHidden: false, isDeleted: false)
             .WithCategory("b", "Hidden Active", isHidden: true, isDeleted: false)
             .WithCategory("c", "Visible Deleted", isHidden: false, isDeleted: true)
@@ -192,7 +193,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("c", "Creativity", defaultBumpLimit: 300)
             .WithCategory("a", "Anime", defaultBumpLimit: 100)
             .WithCategory("b", "Random", defaultBumpLimit: 200)
@@ -220,7 +221,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Anime", defaultBumpLimit: 100)
             .WithCategory("b", "Random", defaultBumpLimit: 100)
             .WithCategory("c", "Creativity", defaultBumpLimit: 200)
@@ -257,7 +258,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("c", "Creativity")
             .WithCategory("a", "Anime")
             .WithCategory("b", "Random")
@@ -286,7 +287,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory(
                 "test",
                 "Test Category",
@@ -311,7 +312,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         Assert.That(category.DefaultBumpLimit, Is.EqualTo(750));
         Assert.That(category.ShowThreadLocalUserHash, Is.True);
         Assert.That(category.CreatedBy, Is.Not.Null);
-        Assert.That(category.CreatedBy.UserName, Is.EqualTo("admin"));
+        Assert.That(category.CreatedBy.UserName, Is.EqualTo(Defaults.AdministratorUserName));
         Assert.That(category.CreatedAt, Is.Not.EqualTo(default(DateTime)));
     }
 

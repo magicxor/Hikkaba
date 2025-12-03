@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "176.213.241.52", isOriginalPost: true)
@@ -71,7 +72,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "176.213.224.37", isOriginalPost: true)
@@ -108,7 +109,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.100", "Chrome", isOriginalPost: true)
@@ -152,7 +153,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.50", isOriginalPost: true)
@@ -180,7 +181,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.60", isOriginalPost: true)
@@ -208,7 +209,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.70", isOriginalPost: true)
@@ -238,7 +239,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.80", isOriginalPost: true)

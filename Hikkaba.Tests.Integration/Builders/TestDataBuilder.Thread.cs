@@ -12,8 +12,6 @@ internal sealed partial class TestDataBuilder
 {
     private readonly List<Thread> _threads = [];
 
-    public IReadOnlyList<Thread> Threads => _threads;
-
     /// <summary>
     ///     Returns the last created thread.
     /// </summary>
@@ -288,89 +286,6 @@ internal sealed partial class TestDataBuilder
             Reply = replyPost,
         };
         _dbContext.PostsToReplies.Add(postToReply);
-
-        return this;
-    }
-
-    /// <summary>
-    ///     Creates a thread with multiple posts in the last created category.
-    /// </summary>
-    public TestDataBuilder WithThreadAndPosts(
-        string title,
-        int postCount,
-        bool isPinned = false,
-        bool isClosed = false,
-        bool isDeleted = false,
-        int bumpLimit = 500,
-        bool allPostsSage = false,
-        bool includeDeletedPost = false,
-        DateTime? threadCreatedAt = null)
-    {
-        EnsureCategoryExists();
-        var utcNow = threadCreatedAt ?? TimeProvider.GetUtcNow().UtcDateTime;
-        var salt = _guidGenerator.GenerateSeededGuid();
-
-        var thread = new Thread
-        {
-            CreatedAt = utcNow,
-            LastBumpAt = utcNow,
-            Title = title,
-            IsPinned = isPinned,
-            IsClosed = isClosed,
-            IsDeleted = isDeleted,
-            BumpLimit = bumpLimit,
-            Salt = salt,
-            Category = LastCategory,
-        };
-
-        var posts = Enumerable.Range(0, postCount)
-            .Select(i =>
-            {
-                var ip = IPAddress.Parse($"127.0.0.{i % 256}").GetAddressBytes();
-                return new Post
-                {
-                    IsOriginalPost = i == 0,
-                    BlobContainerId = _guidGenerator.GenerateSeededGuid(),
-                    CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.AddMinutes(i),
-                    IsSageEnabled = allPostsSage || i % 2 == 0,
-                    IsDeleted = false,
-                    MessageText = $"test post {i}",
-                    MessageHtml = $"test post {i}",
-                    UserIpAddress = ip,
-                    UserAgent = "Firefox",
-                    ThreadLocalUserHash = HashService.GetHashBytes(salt, ip),
-                    Thread = thread,
-                };
-            })
-            .ToList();
-
-        if (includeDeletedPost)
-        {
-            var deletedPostIp = IPAddress.Parse("127.0.0.1").GetAddressBytes();
-            posts.Add(new Post
-            {
-                IsOriginalPost = false,
-                BlobContainerId = _guidGenerator.GenerateSeededGuid(),
-                CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.AddYears(1),
-                IsSageEnabled = false,
-                IsDeleted = true,
-                MessageText = "deleted post",
-                MessageHtml = "deleted post",
-                UserIpAddress = deletedPostIp,
-                UserAgent = "Firefox",
-                ThreadLocalUserHash = HashService.GetHashBytes(salt, deletedPostIp),
-                Thread = thread,
-            });
-        }
-
-        _threads.Add(thread);
-        _dbContext.Threads.Add(thread);
-        _dbContext.Posts.AddRange(posts);
-        _posts.AddRange(posts);
-        if (posts.Count > 0)
-        {
-            _lastPost = posts[^1];
-        }
 
         return this;
     }

@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
@@ -14,7 +15,7 @@ internal sealed class GetBanTests : IntegrationTestBase
     private static async Task<int> SeedExactBanDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var builder = new TestDataBuilder(scope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "176.213.241.52", isOriginalPost: true)
@@ -27,7 +28,7 @@ internal sealed class GetBanTests : IntegrationTestBase
     private static async Task<int> SeedRangeBanDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var builder = new TestDataBuilder(scope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", "Chrome", isOriginalPost: true)
@@ -112,7 +113,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "10.0.0.1", isOriginalPost: true)
@@ -141,7 +142,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "172.16.0.1", isOriginalPost: true)

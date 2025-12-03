@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Utils;
@@ -23,7 +24,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", isDeleted: false);
         await builder.SaveAsync(cancellationToken);
 
@@ -51,7 +52,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", isDeleted: true);
         await builder.SaveAsync(cancellationToken);
 
@@ -77,7 +78,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", isDeleted: false);
         await builder.SaveAsync(cancellationToken);
 
@@ -99,7 +100,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
 
         Assert.That(deletedCategory.ModifiedById, Is.EqualTo(builder.Admin.Id));
         Assert.That(deletedCategory.ModifiedBy, Is.Not.Null);
-        Assert.That(deletedCategory.ModifiedBy!.UserName, Is.EqualTo("admin"));
+        Assert.That(deletedCategory.ModifiedBy!.UserName, Is.EqualTo(Defaults.AdministratorUserName));
         Assert.That(deletedCategory.ModifiedAt, Is.Not.Null);
         Assert.That(deletedCategory.ModifiedAt, Is.GreaterThanOrEqualTo(originalCreatedAt));
     }
@@ -113,7 +114,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", isDeleted: true);
         await builder.SaveAsync(cancellationToken);
 
@@ -151,7 +152,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", isDeleted: false)
             .WithCategory("random", "Random Board", isDeleted: false)
             .WithCategory("tech", "Technology", isDeleted: false);
@@ -191,7 +192,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", isDeleted: true);
         await builder.SaveAsync(cancellationToken);
 
@@ -219,7 +220,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion", isDeleted: false);
         await builder.SaveAsync(cancellationToken);
 

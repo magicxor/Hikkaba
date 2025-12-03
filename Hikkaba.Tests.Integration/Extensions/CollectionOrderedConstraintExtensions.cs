@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using NUnit.Framework.Constraints;

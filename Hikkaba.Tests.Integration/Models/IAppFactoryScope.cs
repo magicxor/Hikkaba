@@ -1,4 +1,4 @@
-﻿namespace Hikkaba.Tests.Integration.Models;
+namespace Hikkaba.Tests.Integration.Models;
 
 internal interface IAppFactoryScope : IAppScope
 {

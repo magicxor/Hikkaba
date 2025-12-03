@@ -1,3 +1,4 @@
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Models;
 using Hikkaba.Shared.Services.Contracts;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +12,8 @@ internal static class UserContextUtils
     /// </summary>
     /// <param name="scope">The service scope.</param>
     /// <param name="adminId">The admin user ID.</param>
-    /// <param name="userName">The admin username. Defaults to "admin".</param>
-    public static void SetupUserContext(IServiceScope scope, int adminId, string userName = "admin")
+    /// <param name="userName">The admin username. Defaults to Defaults.AdministratorUserName.</param>
+    public static void SetupUserContext(IServiceScope scope, int adminId, string userName = Defaults.AdministratorUserName)
     {
         var userContext = scope.ServiceProvider.GetRequiredService<IUserContext>();
         userContext.SetUser(new CurrentUser

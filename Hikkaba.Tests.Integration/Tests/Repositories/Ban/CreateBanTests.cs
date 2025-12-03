@@ -7,6 +7,7 @@ using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
@@ -21,7 +22,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
     private static async Task<(long threadId, long postId, int adminId)> SeedBasicDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var builder = new TestDataBuilder(scope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.100", isOriginalPost: true);
@@ -261,7 +262,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
 
         // First, create posts from the IP that will be banned
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.100", isOriginalPost: true)

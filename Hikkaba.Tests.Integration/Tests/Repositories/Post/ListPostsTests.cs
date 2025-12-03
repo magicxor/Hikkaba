@@ -4,6 +4,7 @@ using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("First post", isOriginalPost: true)
@@ -55,7 +56,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("First post", isOriginalPost: true)
@@ -91,7 +92,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
 
         // Create visible category with post and hidden category with post using the same builder
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", isHidden: false)
             .WithThread("Visible thread")
             .WithPost("Visible post", isOriginalPost: true)
@@ -139,7 +140,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post 1", isOriginalPost: true)
@@ -193,7 +194,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("First post", isOriginalPost: true);
@@ -226,7 +227,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Deleted thread", isDeleted: true)
             .WithPost("Post in deleted thread", isOriginalPost: true);
@@ -259,7 +260,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Deleted category", isDeleted: true)
             .WithThread("Thread in deleted category")
             .WithPost("Post in deleted category", isOriginalPost: true);
@@ -292,7 +293,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("Post with attachments", isOriginalPost: true);

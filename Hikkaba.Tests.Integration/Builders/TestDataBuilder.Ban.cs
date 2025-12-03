@@ -12,7 +12,6 @@ internal sealed partial class TestDataBuilder
     private readonly List<Ban> _bans = [];
     private Ban? _lastBan;
 
-    public IReadOnlyList<Ban> Bans => _bans;
     public Ban LastBan => _lastBan ?? throw new InvalidOperationException("No ban created yet.");
     public int LastBanId => _lastBan?.Id ?? throw new InvalidOperationException("No ban created yet.");
 

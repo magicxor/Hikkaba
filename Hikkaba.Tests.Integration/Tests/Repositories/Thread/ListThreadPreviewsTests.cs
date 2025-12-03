@@ -8,6 +8,7 @@ using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Models;
@@ -33,7 +34,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     {
         using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         configure(builder);
@@ -428,7 +429,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Anime")
             .WithThread("anime thread", createdAt: utcNow, lastBumpAt: utcNow)
             .WithPost("anime OP", isOriginalPost: true)
@@ -988,7 +989,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
         using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", isDeleted: true);
 
         builder.WithThreadAndOp("thread in deleted category");
@@ -1075,7 +1076,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
         using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", defaultBumpLimit: 100);
 
         builder.WithThreadAndOp("thread with zero bump limit", bumpLimit: 0);
@@ -1195,7 +1196,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
         using var seedScope = appScope.ServiceScope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var builder = new TestDataBuilder(seedScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", showThreadLocalUserHash: true);
 
         builder.WithThreadAndOp("thread with user hash");

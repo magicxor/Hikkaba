@@ -10,8 +10,6 @@ internal sealed partial class TestDataBuilder
 {
     private readonly List<Category> _categories = [];
 
-    public IReadOnlyList<Category> Categories => _categories;
-
     /// <summary>
     ///     Returns the last created category.
     /// </summary>

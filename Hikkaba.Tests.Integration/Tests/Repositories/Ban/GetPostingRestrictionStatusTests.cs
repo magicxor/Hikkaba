@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
@@ -15,7 +16,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
     private static async Task<long> SeedBasicDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var builder = new TestDataBuilder(scope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", isOriginalPost: true);
@@ -27,7 +28,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
     private static async Task<long> SeedDataWithBanAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var builder = new TestDataBuilder(scope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.100", isOriginalPost: true)
@@ -40,7 +41,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
     private static async Task<long> SeedClosedThreadDataAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var builder = new TestDataBuilder(scope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread(isClosed: true)
             .WithPost("test post", isOriginalPost: true);

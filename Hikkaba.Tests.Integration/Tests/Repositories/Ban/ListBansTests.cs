@@ -6,6 +6,7 @@ using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Hikkaba.Tests.Integration.Extensions;
@@ -31,7 +32,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "176.213.241.52", isOriginalPost: true)
@@ -70,7 +71,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "176.213.224.37", isOriginalPost: true)
@@ -111,7 +112,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -155,7 +156,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         var utcNow = builder.TimeProvider.GetUtcNow().UtcDateTime;
 
         await builder
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -195,7 +196,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         var utcNow = builder.TimeProvider.GetUtcNow().UtcDateTime;
 
         await builder
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -236,7 +237,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -277,7 +278,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -319,7 +320,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         using var appScope = await CreateAppScopeAsync(cancellationToken);
 
         await new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -356,7 +357,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("a", "Anime")
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -420,7 +421,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("bad post", "192.168.1.1", isOriginalPost: true)
@@ -474,7 +475,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         var utcNow = builder.TimeProvider.GetUtcNow().UtcDateTime;
 
         await builder
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -556,7 +557,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)
@@ -590,7 +591,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         var builder = new TestDataBuilder(appScope.ServiceScope);
 
         await builder
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithDefaultCategory()
             .WithDefaultThread()
             .WithPost("test post", "192.168.1.1", isOriginalPost: true)

@@ -65,7 +65,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
@@ -106,7 +106,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
@@ -132,7 +132,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
@@ -158,7 +158,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", defaultBumpLimit: 250);
 
         await builder.SaveAsync(cancellationToken);
@@ -187,7 +187,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random", defaultBumpLimit: 0);
 
         await builder.SaveAsync(cancellationToken);
@@ -216,7 +216,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
@@ -249,7 +249,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
@@ -282,7 +282,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         // Manually set MaxThreadCount to a small number for testing
@@ -342,7 +342,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         // Manually set MaxThreadCount to a small number for testing
@@ -450,7 +450,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(threadCountAfter, Is.EqualTo(3));
 
         // Verify admin user still exists (should not be cascade deleted)
-        var admin = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin", cancellationToken);
+        var admin = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == Defaults.AdministratorUserName, cancellationToken);
         Assert.That(admin, Is.Not.Null, "Admin user should not be cascade deleted");
     }
 
@@ -470,7 +470,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         // Set MaxThreadCount to a small number for testing
@@ -577,7 +577,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
 
         var utcNow = timeProvider.GetUtcNow().UtcDateTime;
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         // Set MaxThreadCount to a small number for testing
@@ -675,7 +675,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);
@@ -706,7 +706,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("b", "Random");
 
         await builder.SaveAsync(cancellationToken);

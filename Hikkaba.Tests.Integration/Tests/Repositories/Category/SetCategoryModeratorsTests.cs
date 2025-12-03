@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Repositories.Contracts;
+using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -25,14 +26,14 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion")
-            .WithModerator("moderator1")
-            .WithModerator("moderator2");
+            .WithUser("moderator1")
+            .WithUser("moderator2");
         await builder.SaveAsync(cancellationToken);
 
-        var moderator1 = builder.GetModerator("moderator1");
-        var moderator2 = builder.GetModerator("moderator2");
+        var moderator1 = builder.GetUser("moderator1");
+        var moderator2 = builder.GetUser("moderator2");
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<ICategoryRepository>();
 
@@ -60,16 +61,16 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion")
-            .WithModerator("moderator1")
-            .WithModerator("moderator2")
-            .WithModerator("moderator3")
+            .WithUser("moderator1")
+            .WithUser("moderator2")
+            .WithUser("moderator3")
             .WithCategoryModerators("anime", "moderator1", "moderator2");
         await builder.SaveAsync(cancellationToken);
 
-        var moderator2 = builder.GetModerator("moderator2");
-        var moderator3 = builder.GetModerator("moderator3");
+        var moderator2 = builder.GetUser("moderator2");
+        var moderator3 = builder.GetUser("moderator3");
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<ICategoryRepository>();
 
@@ -99,10 +100,10 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion")
-            .WithModerator("moderator1")
-            .WithModerator("moderator2")
+            .WithUser("moderator1")
+            .WithUser("moderator2")
             .WithCategoryModerators("anime", "moderator1", "moderator2");
         await builder.SaveAsync(cancellationToken);
 
@@ -134,12 +135,12 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion")
-            .WithModerator("moderator1");
+            .WithUser("moderator1");
         await builder.SaveAsync(cancellationToken);
 
-        var moderator = builder.GetModerator("moderator1");
+        var moderator = builder.GetUser("moderator1");
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<ICategoryRepository>();
 
@@ -170,15 +171,15 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion")
             .WithCategory("random", "Random Board")
-            .WithModerator("anime_mod")
-            .WithModerator("random_mod");
+            .WithUser("anime_mod")
+            .WithUser("random_mod");
         await builder.SaveAsync(cancellationToken);
 
-        var animeMod = builder.GetModerator("anime_mod");
-        var randomMod = builder.GetModerator("random_mod");
+        var animeMod = builder.GetUser("anime_mod");
+        var randomMod = builder.GetUser("random_mod");
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<ICategoryRepository>();
 
@@ -214,13 +215,13 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion")
             .WithCategory("random", "Random Board")
-            .WithModerator("shared_mod");
+            .WithUser("shared_mod");
         await builder.SaveAsync(cancellationToken);
 
-        var sharedModerator = builder.GetModerator("shared_mod");
+        var sharedModerator = builder.GetUser("shared_mod");
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<ICategoryRepository>();
 
@@ -269,14 +270,14 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var builder = new TestDataBuilder(appScope.ServiceScope)
-            .WithDefaultAdmin()
+            .WithUser(Defaults.AdministratorUserName, isAdmin: true)
             .WithCategory("anime", "Anime Discussion")
-            .WithModerator("moderator1")
-            .WithModerator("moderator2");
+            .WithUser("moderator1")
+            .WithUser("moderator2");
         await builder.SaveAsync(cancellationToken);
 
-        var moderator1 = builder.GetModerator("moderator1");
-        var moderator2 = builder.GetModerator("moderator2");
+        var moderator1 = builder.GetUser("moderator1");
+        var moderator2 = builder.GetUser("moderator2");
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<ICategoryRepository>();
 
