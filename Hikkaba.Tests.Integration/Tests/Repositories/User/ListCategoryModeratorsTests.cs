@@ -43,7 +43,11 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
         // Assert
         // Includes: admin (administrator via isAdmin: true), mod1 (moderator) = 2 users
         Assert.That(result, Has.Count.EqualTo(2));
+
+        var admin = result.Single(m => m.UserName == Defaults.AdministratorUserName);
         var mod1 = result.Single(m => m.UserName == "mod1");
+
+        Assert.That(admin.IsCategoryModerator, Is.False);
         Assert.That(mod1.IsCategoryModerator, Is.True);
     }
 
@@ -76,7 +80,11 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
         // Assert
         // Includes: admin (administrator), mod1 (moderator in category 'a') = 2 users
         Assert.That(result, Has.Count.EqualTo(2));
+
+        var admin = result.Single(m => m.UserName == Defaults.AdministratorUserName);
         var mod1 = result.Single(m => m.UserName == "mod1");
+
+        Assert.That(admin.IsCategoryModerator, Is.False);
         Assert.That(mod1.IsCategoryModerator, Is.False); // mod1 is not moderator of category 'b'
     }
 
@@ -234,9 +242,10 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
         }, cancellationToken);
 
         // Assert
-        // Should have at least 2: admin and detailed_mod
-        Assert.That(result, Has.Count.GreaterThanOrEqualTo(1));
+        Assert.That(result, Has.Count.EqualTo(2)); // admin + detailed_mod
+
         var mod = result.Single(m => m.UserName == "detailed_mod");
+
         Assert.That(mod.Email, Is.EqualTo("mod@example.com"));
         Assert.That(mod.LastLogin, Is.EqualTo(utcNow.AddDays(-1)).Within(TimeSpan.FromSeconds(1)));
     }
@@ -247,7 +256,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 
     [CancelAfter(TestDefaults.TestTimeout)]
     [Test]
-    public async Task ListCategoryModerators_WhenNoModeratorsExist_ReturnsEmptyList(
+    public async Task ListCategoryModerators_WhenNoModeratorsExist_ReturnsOnlyAdmin(
         CancellationToken cancellationToken)
     {
         // Arrange
