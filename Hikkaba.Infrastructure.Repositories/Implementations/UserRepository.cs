@@ -233,17 +233,36 @@ public sealed class UserRepository : IUserRepository
         return default(Success);
     }
 
-    public async Task SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken)
+    public async Task<UserDeleteResultModel> SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken)
     {
-        await _applicationDbContext.Users
-            .TagWithCallSite()
-            .Where(user => user.Id == userId)
-            .ExecuteUpdateAsync(setProp =>
-                setProp.SetProperty(user => user.IsDeleted, isDeleted),
-                cancellationToken);
-        _logger.LogInformation(
-            LogEventIds.UserDeleted,
-            "User with ID {UserId} marked as deleted",
-            userId);
+        var user = await _userMgr.FindByIdAsync(userId.ToString(CultureInfo.InvariantCulture));
+
+        if (user is null)
+        {
+            _logger.LogWarning(
+                LogEventIds.UserDeleteError,
+                "User with ID {UserId} not found",
+                userId);
+
+            return new DomainError
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                ErrorMessage = $"User with ID {userId} not found.",
+            };
+        }
+        else
+        {
+            user.IsDeleted = isDeleted;
+
+            await _userMgr.UpdateAsync(user);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation(
+                LogEventIds.UserDeleted,
+                "User with ID {UserId} marked as deleted",
+                userId);
+
+            return default(Success);
+        }
     }
 }

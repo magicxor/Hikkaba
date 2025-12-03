@@ -187,7 +187,10 @@ public sealed class UserAdminController : BaseMvcController
             return CustomErrorPage(StatusCodes.Status400BadRequest, errorMessage, GetLocalReferrerOrNull());
         }
 
-        await _userService.SetUserDeletedAsync(userId, isDeleted, cancellationToken);
-        return RedirectToRoute("UserIndex");
+        var result = await _userService.SetUserDeletedAsync(userId, isDeleted, cancellationToken);
+
+        return result.Match(
+            _ => RedirectToRoute("UserIndex"),
+            err => CustomErrorPage(err.StatusCode, err.ErrorMessage, GetLocalReferrerOrNull()));
     }
 }

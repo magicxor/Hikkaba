@@ -9,5 +9,5 @@ public interface IUserRepository
     Task<UserDetailsModel?> GetUserAsync(int userId, CancellationToken cancellationToken);
     Task<UserCreateResultModel> CreateUserAsync(UserCreateRequestModel requestModel, CancellationToken cancellationToken);
     Task<UserEditResultModel> EditUserAsync(UserEditRequestModel requestModel, CancellationToken cancellationToken);
-    Task SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken);
+    Task<UserDeleteResultModel> SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken);
 }

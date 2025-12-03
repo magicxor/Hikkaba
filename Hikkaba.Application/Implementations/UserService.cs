@@ -38,8 +38,8 @@ public class UserService : IUserService
         return await _userRepository.EditUserAsync(requestModel, cancellationToken);
     }
 
-    public async Task SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken)
+    public async Task<UserDeleteResultModel> SetUserDeletedAsync(int userId, bool isDeleted, CancellationToken cancellationToken)
     {
-        await _userRepository.SetUserDeletedAsync(userId, isDeleted, cancellationToken);
+        return await _userRepository.SetUserDeletedAsync(userId, isDeleted, cancellationToken);
     }
 }
