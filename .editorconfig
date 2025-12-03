@@ -378,6 +378,8 @@ resharper_move_local_function_after_jump_statement_highlighting = none
 # The relationship defined by this property contributes to a dependency loop
 resharper_entity_framework_model_validation_circular_dependency_highlighting = none
 
+resharper_redundant_if_else_block_highlighting = none
+
 # formatting rules
 indent_size = 4
 roslynator_binary_operator_new_line = before

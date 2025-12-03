@@ -396,7 +396,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
             b =>
             {
                 b.WithThread("test thread")
-                 .WithPost("test post", isOriginalPost: true);
+                    .WithPost("test post", isOriginalPost: true);
             },
             cancellationToken);
 
@@ -1105,10 +1105,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         var createdAt = timeProvider.GetUtcNow().UtcDateTime;
         await CreateBaseBuilderAsync(
             appScope,
-            builder =>
-            {
-                builder.WithThreadAndOp("test thread", createdAt: createdAt, lastBumpAt: createdAt);
-            },
+            builder => { builder.WithThreadAndOp("test thread", createdAt: createdAt, lastBumpAt: createdAt); },
             cancellationToken);
 
         // Act
@@ -1134,10 +1131,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
         await CreateBaseBuilderAsync(
             appScope,
-            builder =>
-            {
-                builder.WithThreadAndOp("test thread");
-            },
+            builder => { builder.WithThreadAndOp("test thread"); },
             cancellationToken);
 
         // Act

@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
@@ -107,9 +109,9 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("First", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Second", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Third", createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithPost("First", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+            .WithPost("Second", createdAtOffset: TimeSpan.FromSeconds(2))
+            .WithPost("Third", createdAtOffset: TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -124,7 +126,7 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
         Assert.That(result!.Posts[0].MessageHtml, Is.EqualTo("First"));
         Assert.That(result.Posts[1].MessageHtml, Is.EqualTo("Second"));
         Assert.That(result.Posts[2].MessageHtml, Is.EqualTo("Third"));
-        Assert.That(result.Posts, Is.Ordered.By(nameof(Hikkaba.Infrastructure.Models.Post.PostDetailsModel.CreatedAt)).Ascending);
+        Assert.That(result.Posts, Is.Ordered.By(nameof(PostDetailsModel.CreatedAt)).Ascending);
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -138,9 +140,9 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("Post 1", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Post 2", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Post 3", createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithPost("Post 1", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+            .WithPost("Post 2", createdAtOffset: TimeSpan.FromSeconds(2))
+            .WithPost("Post 3", createdAtOffset: TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -168,9 +170,9 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Normal post", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Deleted post", isDeleted: true, createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithPost("OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+            .WithPost("Normal post", createdAtOffset: TimeSpan.FromSeconds(2))
+            .WithPost("Deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -197,9 +199,9 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPost("Normal post", createdAtOffset: System.TimeSpan.FromSeconds(2))
-            .WithPost("Deleted post", isDeleted: true, createdAtOffset: System.TimeSpan.FromSeconds(3));
+            .WithPost("OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1))
+            .WithPost("Normal post", createdAtOffset: TimeSpan.FromSeconds(2))
+            .WithPost("Deleted post", isDeleted: true, createdAtOffset: TimeSpan.FromSeconds(3));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -323,7 +325,7 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
             .WithDefaultAdmin()
             .WithCategory("b", "Random")
             .WithThread("Test thread")
-            .WithPost("OP post", isOriginalPost: true, createdAtOffset: System.TimeSpan.FromSeconds(1));
+            .WithPost("OP post", isOriginalPost: true, createdAtOffset: TimeSpan.FromSeconds(1));
 
         await builder.SaveAsync(cancellationToken);
 
@@ -350,8 +352,8 @@ internal sealed class GetThreadDetailsTests : IntegrationTestBase
             .WithCategory("b", "Random")
             .WithThread("Test thread")
             .WithPost("OP post", isOriginalPost: true)
-            .WithPostWithPicture("Post with picture", "image.jpg", createdAtOffset: System.TimeSpan.FromSeconds(1))
-            .WithPostWithAudio("Post with audio", "audio.mp3", createdAtOffset: System.TimeSpan.FromSeconds(2));
+            .WithPostWithPicture("Post with picture", "image.jpg", createdAtOffset: TimeSpan.FromSeconds(1))
+            .WithPostWithAudio("Post with audio", "audio.mp3", createdAtOffset: TimeSpan.FromSeconds(2));
 
         await builder.SaveAsync(cancellationToken);
 

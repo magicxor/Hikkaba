@@ -4,10 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Repositories.Contracts;
-using Hikkaba.Shared.Models;
-using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
+using Hikkaba.Tests.Integration.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,18 +14,6 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 internal sealed class SetPostDeletedTests : IntegrationTestBase
 {
-    private static void SetupUserContext(IServiceScope scope, int adminId)
-    {
-        var userContext = scope.ServiceProvider.GetRequiredService<IUserContext>();
-        userContext.SetUser(new CurrentUser
-        {
-            Id = adminId,
-            UserName = "admin",
-            Roles = ["Administrator"],
-            ModeratedCategories = [],
-        });
-    }
-
     [CancelAfter(TestDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_WhenTrue_MarksPostAsDeleted(
@@ -41,7 +28,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Post to delete", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
@@ -72,7 +59,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Deleted post", isOriginalPost: true, isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
@@ -101,7 +88,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Post to track modification", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -136,7 +123,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Post to track modifier", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
@@ -167,15 +154,12 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Existing post", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
 
         // Act & Assert
-        Assert.ThrowsAsync<InvalidOperationException>(async () =>
-        {
-            await repository.SetPostDeletedAsync(999999, true, cancellationToken);
-        });
+        Assert.ThrowsAsync<InvalidOperationException>(async () => { await repository.SetPostDeletedAsync(999999, true, cancellationToken); });
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]
@@ -194,7 +178,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Post 3", "127.0.0.3", "Safari");
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
 
@@ -228,7 +212,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Already deleted post", isOriginalPost: true, isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IPostRepository>();
         var postId = builder.LastPostId;
@@ -259,7 +243,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
             .WithPost("Post content to preserve", "192.168.1.100", "TestBrowser", isOriginalPost: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var postId = builder.LastPostId;

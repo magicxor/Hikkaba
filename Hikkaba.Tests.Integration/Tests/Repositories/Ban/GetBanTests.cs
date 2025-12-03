@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -59,7 +60,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         Assert.That(result.BannedIpAddress, Is.Not.Null);
         Assert.That(result.BannedCidrLowerIpAddress, Is.Null);
         Assert.That(result.BannedCidrUpperIpAddress, Is.Null);
-        Assert.That(result.CreatedAt, Is.Not.EqualTo(default(System.DateTime)));
+        Assert.That(result.CreatedAt, Is.Not.EqualTo(default(DateTime)));
         Assert.That(result.CreatedById, Is.GreaterThan(0));
     }
 

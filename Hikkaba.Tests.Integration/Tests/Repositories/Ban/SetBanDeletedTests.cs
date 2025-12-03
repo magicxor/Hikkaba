@@ -1,10 +1,11 @@
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
-using Hikkaba.Shared.Models;
-using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
+using Hikkaba.Tests.Integration.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Ban;
@@ -24,18 +25,6 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         return (builder.LastBanId, builder.Admin.Id);
     }
 
-    private static void SetupUserContext(IServiceScope scope, int adminId)
-    {
-        var userContext = scope.ServiceProvider.GetRequiredService<IUserContext>();
-        userContext.SetUser(new CurrentUser
-        {
-            Id = adminId,
-            UserName = "admin",
-            Roles = ["Administrator"],
-            ModeratedCategories = [],
-        });
-    }
-
     [CancelAfter(TestDefaults.TestTimeout)]
     [Test]
     public async Task SetBanDeleted_WhenSettingToDeleted_MarksBanAsDeleted(
@@ -44,7 +33,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (banId, adminId) = await SeedBanDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
@@ -79,7 +68,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
             .WithExactBan("10.0.0.1", "deleted ban", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
@@ -107,7 +96,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (banId, adminId) = await SeedBanDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
 
@@ -124,6 +113,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         var banAfterSecondDelete = await repository.GetBanAsync(banId, cancellationToken);
         Assert.That(banAfterSecondDelete, Is.Not.Null);
         Assert.That(banAfterSecondDelete!.IsDeleted, Is.True);
+
         // ModifiedAt should be updated even if IsDeleted status doesn't change
         Assert.That(banAfterSecondDelete.ModifiedAt, Is.Not.Null);
     }
@@ -136,13 +126,13 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (banId, adminId) = await SeedBanDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
-        var ip = System.Net.IPAddress.Parse("192.168.1.100");
+        var ip = IPAddress.Parse("192.168.1.100");
 
         // Verify ban is found before deletion
-        var activeBanBefore = await repository.FindActiveBanAsync(new Hikkaba.Infrastructure.Models.Ban.ActiveBanFilter
+        var activeBanBefore = await repository.FindActiveBanAsync(new ActiveBanFilter
         {
             UserIpAddress = ip.GetAddressBytes(),
         }, cancellationToken);
@@ -152,10 +142,11 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         await repository.SetBanDeletedAsync(banId, true, cancellationToken);
 
         // Assert - ban should not be found after deletion
-        var activeBanAfter = await repository.FindActiveBanAsync(new Hikkaba.Infrastructure.Models.Ban.ActiveBanFilter
+        var activeBanAfter = await repository.FindActiveBanAsync(new ActiveBanFilter
         {
             UserIpAddress = ip.GetAddressBytes(),
         }, cancellationToken);
+
         Assert.That(activeBanAfter, Is.Null);
     }
 
@@ -174,13 +165,13 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
             .WithExactBan("172.16.0.1", "ban to restore", isDeleted: true);
 
         await builder.SaveAsync(cancellationToken);
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
-        var ip = System.Net.IPAddress.Parse("172.16.0.1");
+        var ip = IPAddress.Parse("172.16.0.1");
 
         // Verify ban is NOT found before restoration
-        var activeBanBefore = await repository.FindActiveBanAsync(new Hikkaba.Infrastructure.Models.Ban.ActiveBanFilter
+        var activeBanBefore = await repository.FindActiveBanAsync(new ActiveBanFilter
         {
             UserIpAddress = ip.GetAddressBytes(),
         }, cancellationToken);
@@ -190,10 +181,11 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         await repository.SetBanDeletedAsync(builder.LastBanId, false, cancellationToken);
 
         // Assert - ban should be found after restoration
-        var activeBanAfter = await repository.FindActiveBanAsync(new Hikkaba.Infrastructure.Models.Ban.ActiveBanFilter
+        var activeBanAfter = await repository.FindActiveBanAsync(new ActiveBanFilter
         {
             UserIpAddress = ip.GetAddressBytes(),
         }, cancellationToken);
+
         Assert.That(activeBanAfter, Is.Not.Null);
         Assert.That(activeBanAfter!.Reason, Is.EqualTo("ban to restore"));
     }

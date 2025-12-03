@@ -7,10 +7,9 @@ using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Enums;
-using Hikkaba.Shared.Models;
-using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
+using Hikkaba.Tests.Integration.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,18 +29,6 @@ internal sealed class CreateBanTests : IntegrationTestBase
         return (builder.LastThread.Id, builder.LastPostId, builder.Admin.Id);
     }
 
-    private static void SetupUserContext(IServiceScope scope, int adminId)
-    {
-        var userContext = scope.ServiceProvider.GetRequiredService<IUserContext>();
-        userContext.SetUser(new CurrentUser
-        {
-            Id = adminId,
-            UserName = "admin",
-            Roles = ["Administrator"],
-            ModeratedCategories = [],
-        });
-    }
-
     private static DateTime GetBanEndsAt(IServiceScope scope)
     {
         var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
@@ -56,7 +43,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("192.168.1.100");
@@ -100,7 +87,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("192.168.1.100");
@@ -144,7 +131,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (threadId, _, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("10.0.0.1");
@@ -186,7 +173,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (threadId, postId, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -227,7 +214,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         // Arrange
         using var appScope = await CreateAppScopeAsync(cancellationToken);
         var (threadId, _, adminId) = await SeedBasicDataAsync(appScope.ServiceScope, cancellationToken);
-        SetupUserContext(appScope.ServiceScope, adminId);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, adminId);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var ip = IPAddress.Parse("192.168.1.50");
@@ -288,7 +275,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         builder.WithPost("test post", "192.168.1.200", "Safari");
         await builder.SaveAsync(cancellationToken);
 
-        SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
+        UserContextUtils.SetupUserContext(appScope.ServiceScope, builder.Admin.Id);
 
         var repository = appScope.ServiceScope.ServiceProvider.GetRequiredService<IBanRepository>();
         var dbContext = appScope.ServiceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

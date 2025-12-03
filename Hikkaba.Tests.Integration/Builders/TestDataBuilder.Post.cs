@@ -118,7 +118,7 @@ internal sealed partial class TestDataBuilder
         if (mentionedCategoryAlias != null)
         {
             targetCategory = _categories.FirstOrDefault(c => c.Alias == mentionedCategoryAlias)
-                ?? throw new InvalidOperationException($"Category with alias '{mentionedCategoryAlias}' not found");
+                             ?? throw new InvalidOperationException($"Category with alias '{mentionedCategoryAlias}' not found");
         }
         else
         {
@@ -130,7 +130,7 @@ internal sealed partial class TestDataBuilder
         if (mentionedThreadTitle != null)
         {
             targetThread = _threads.FirstOrDefault(t => ReferenceEquals(t.Category, targetCategory) && t.Title == mentionedThreadTitle)
-                ?? throw new InvalidOperationException($"Thread with title '{mentionedThreadTitle}' not found in category '{targetCategory.Alias}'");
+                           ?? throw new InvalidOperationException($"Thread with title '{mentionedThreadTitle}' not found in category '{targetCategory.Alias}'");
         }
         else
         {
@@ -142,19 +142,19 @@ internal sealed partial class TestDataBuilder
         if (mentionedPostMessageText != null)
         {
             targetPost = _posts.FirstOrDefault(p => ReferenceEquals(p.Thread, targetThread) && p.MessageText == mentionedPostMessageText)
-                ?? throw new InvalidOperationException($"Post with message '{mentionedPostMessageText}' not found in thread '{targetThread.Title}'");
+                         ?? throw new InvalidOperationException($"Post with message '{mentionedPostMessageText}' not found in thread '{targetThread.Title}'");
         }
         else if (mentionedThreadTitle != null)
         {
             // If thread title specified but no post text, use OP
             targetPost = _posts.FirstOrDefault(p => ReferenceEquals(p.Thread, targetThread) && p.IsOriginalPost)
-                ?? throw new InvalidOperationException($"OP post not found in thread '{targetThread.Title}'");
+                         ?? throw new InvalidOperationException($"OP post not found in thread '{targetThread.Title}'");
         }
         else
         {
             // No parameters - use last post in last thread
             targetPost = _posts.LastOrDefault(p => ReferenceEquals(p.Thread, targetThread))
-                ?? throw new InvalidOperationException($"No posts found in thread '{targetThread.Title}'");
+                         ?? throw new InvalidOperationException($"No posts found in thread '{targetThread.Title}'");
         }
 
         return targetPost;
