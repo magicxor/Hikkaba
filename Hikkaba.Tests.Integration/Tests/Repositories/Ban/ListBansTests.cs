@@ -8,7 +8,7 @@ using Hikkaba.Paging.Enums;
 using Hikkaba.Paging.Models;
 using Hikkaba.Tests.Integration.Builders;
 using Hikkaba.Tests.Integration.Constants;
-using Hikkaba.Tests.Integration.Utils;
+using Hikkaba.Tests.Integration.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hikkaba.Tests.Integration.Tests.Repositories.Ban;
@@ -577,7 +577,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
         // Assert
         Assert.That(result.Data, Has.Count.EqualTo(3));
-        Assert.That(result.Data, NUnitUtils.IsOrderedBy(fieldName, direction));
+        Assert.That(result.Data, Is.OrderedBy(fieldName, direction));
     }
 
     [CancelAfter(TestDefaults.TestTimeout)]

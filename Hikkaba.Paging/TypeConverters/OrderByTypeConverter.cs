@@ -20,45 +20,46 @@ public class OrderByTypeConverter : TypeConverter
         return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
     }
 
+    public static OrderByItem? ConvertFromQueryString(string? stringValue)
+    {
+        if (stringValue is null)
+        {
+            return null;
+        }
+
+        string? field;
+        var direction = OrderByDirection.Asc;
+
+        if (stringValue.Contains(',', StringComparison.Ordinal))
+        {
+            var parts = stringValue.Split(',');
+            field = parts[0];
+            direction = parts[1] == "desc" ? OrderByDirection.Desc : OrderByDirection.Asc;
+        }
+        else
+        {
+            field = stringValue;
+        }
+
+        var orderByItem = new OrderByItem
+        {
+            Field = field,
+            Direction = direction,
+        };
+
+        return orderByItem;
+    }
+
     /// <inheritdoc />
     public override object? ConvertFrom(ITypeDescriptorContext? context,
         CultureInfo? culture,
         object? value)
     {
-        switch (value)
+        return value switch
         {
-            case null:
-            {
-                return null;
-            }
-
-            case string stringValue:
-            {
-                string? field;
-                var direction = OrderByDirection.Asc;
-
-                if (stringValue.Contains(',', StringComparison.Ordinal))
-                {
-                    var parts = stringValue.Split(',');
-                    field = parts[0];
-                    direction = parts[1] == "desc" ? OrderByDirection.Desc : OrderByDirection.Asc;
-                }
-                else
-                {
-                    field = stringValue;
-                }
-
-                var orderByItem = new OrderByItem
-                {
-                    Field = field,
-                    Direction = direction,
-                };
-
-                return orderByItem;
-            }
-
-            default:
-                return base.ConvertFrom(context, culture, value);
-        }
+            null => null,
+            string stringValue => ConvertFromQueryString(stringValue),
+            _ => base.ConvertFrom(context, culture, value)
+        };
     }
 }

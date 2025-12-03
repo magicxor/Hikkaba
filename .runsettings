@@ -10,7 +10,7 @@
           <CodeCoverage>
             <ModulePaths>
               <Exclude>
-                <ModulePath>Hikkaba.Tests.*</ModulePath>
+                <ModulePath>*.Tests.*</ModulePath>
               </Exclude>
             </ModulePaths>
 
