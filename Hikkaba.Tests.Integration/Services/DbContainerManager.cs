@@ -21,7 +21,7 @@ internal sealed class DbContainerManager
 
         var containerBuilder = new MsSqlBuilder()
             .WithName(containerName)
-            .WithImage("magicxor/mssql-fts:2022-latest")
+            .WithImage("magicxor/mssql-fts:2025-latest")
             .WithExposedPort(TestDefaults.DbPort)
             .WithPassword(TestDefaults.DbPassword)
             .WithAutoRemove(true)

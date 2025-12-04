@@ -21,7 +21,7 @@ services:
     container_name: hikkaba.db.dev.local
     domainname: hikkaba.db.dev.local
     hostname: hikkaba.db.dev.local
-    image: "magicxor/mssql-fts:2022-latest"
+    image: "magicxor/mssql-fts:2025-latest"
     user: root
     environment:
       MSSQL_SA_PASSWORD: "dev_passworD@4568919"
@@ -87,7 +87,7 @@ services:
       - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-exploretraces-app/grafana-exploretraces-app-latest.zip;grafana-traces-app
 
   minio:
-    image: quay.io/minio/minio:RELEASE.2025-04-03T14-56-28Z
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: hikkaba.minio.dev.local
     hostname: hikkaba.minio.dev.local
     ports:
