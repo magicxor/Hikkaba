@@ -129,24 +129,20 @@ internal sealed class StringExtensionsTests
 
     [TestCase("", 0, "")]
     [TestCase("", 10, "")]
+    [TestCase("abc", 0, "")]
+    [TestCase("abc", 1, "a")]
+    [TestCase("abc", 2, "ab")]
+    [TestCase("abc", 3, "abc")]
     [TestCase("abc", 10, "abc")] // Length > text length
     [TestCase("abcdef", 6, "abcdef")] // Length == text length
     [TestCase("abcdefghij", 10, "abcdefghij")] // Length == text length
     [TestCase("abcdefghijk", 10, "abcdefg...")] // Length < text length
     [TestCase("1234", 4, "1234")] // Length == text length
     [TestCase("12345", 4, "1...")] // Length < text length, length = 4
-    [TestCase("1234", 3, "...")] // Length < text length, length = 3
-    public void Cut_WhenTextLengthNotExceedsLengthOrLengthIs3_ShouldReturnExpected(string source, int length, string expected)
+    [TestCase("1234", 3, "123")] // Length < text length, length = 3
+    public void Cut_WhenNotNull_ShouldReturnExpected(string source, int length, string expected)
     {
         var result = source.Cut(length);
         Assert.That(result, Is.EqualTo(expected));
-    }
-
-    [TestCase("abc", 0)]
-    [TestCase("abc", 1)]
-    [TestCase("abc", 2)]
-    public void Cut_WhenLengthIsLessThan3_ShouldThrowArgumentOutOfRangeException(string source, int length)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = source.Cut(length));
     }
 }

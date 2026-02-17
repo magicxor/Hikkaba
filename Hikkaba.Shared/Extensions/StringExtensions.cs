@@ -108,7 +108,7 @@ public static class StringExtensions
         const string ellipsis = "...";
         if (!string.IsNullOrEmpty(text) && text.Length > maxLength)
         {
-            if (maxLength < ellipsis.Length)
+            if (maxLength <= ellipsis.Length)
             {
                 return text.AsSpan(0, maxLength).ToString();
             }
