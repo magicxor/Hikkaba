@@ -11,7 +11,7 @@ internal sealed class StringExtensionsTests
     public void TryLeft_WhenNull_ShouldReturnNull()
     {
         const string? source = null;
-        var result = source.TryLeft(1);
+        var result = source.TakeLeft(1);
         Assert.That(result, Is.Null);
     }
 
@@ -29,7 +29,7 @@ internal sealed class StringExtensionsTests
     [TestCase("abc", 999, "abc")]
     public void TryLeft_WhenArgumentsValid_ShouldReturnExpectedResult(string source, int maxLength, string expectedResult)
     {
-        var actualResult = source.TryLeft(maxLength);
+        var actualResult = source.TakeLeft(maxLength);
         Assert.That(actualResult, Is.EqualTo(expectedResult));
     }
 
@@ -37,14 +37,14 @@ internal sealed class StringExtensionsTests
     [TestCase("a", -2)]
     public void TryLeft_WhenMaxLengthIsLessThanZero_ShouldThrowArgumentOutOfRangeException(string source, int maxLength)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = source.TryLeft(maxLength));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = source.TakeLeft(maxLength));
     }
 
     [Test]
     public void TryRight_WhenNull_ShouldReturnNull()
     {
         const string? source = null;
-        var result = source.TryRight(1);
+        var result = source.TakeRight(1);
         Assert.That(result, Is.Null);
     }
 
@@ -62,7 +62,7 @@ internal sealed class StringExtensionsTests
     [TestCase("abc", 999, "abc")]
     public void TryRight_WhenArgumentsValid_ShouldReturnExpectedResult(string source, int maxLength, string expectedResult)
     {
-        var actualResult = source.TryRight(maxLength);
+        var actualResult = source.TakeRight(maxLength);
         Assert.That(actualResult, Is.EqualTo(expectedResult));
     }
 
@@ -70,7 +70,7 @@ internal sealed class StringExtensionsTests
     [TestCase("a", -2)]
     public void TryRight_WhenMaxLengthIsLessThanZero_ShouldThrowArgumentOutOfRangeException(string source, int maxLength)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = source.TryRight(maxLength));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = source.TakeRight(maxLength));
     }
 
     [TestCase(null, null, true)]

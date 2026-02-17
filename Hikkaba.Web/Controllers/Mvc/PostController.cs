@@ -143,7 +143,7 @@ public sealed class PostController : BaseMvcController
                 MessageHtml = _messagePostProcessor.MessageToSafeHtml(viewModel.CategoryAlias, viewModel.ThreadId, viewModel.Message ?? string.Empty),
                 MessageText = _messagePostProcessor.MessageToPlainText(viewModel.Message ?? string.Empty),
                 UserIpAddress = UserIpAddressBytes,
-                UserAgent = UserAgent.TryLeft(Defaults.MaxUserAgentLength),
+                UserAgent = UserAgent.TakeLeft(Defaults.MaxUserAgentLength),
                 CategoryAlias = viewModel.CategoryAlias,
                 ThreadId = viewModel.ThreadId,
                 MentionedPosts = _messagePostProcessor.GetMentionedPosts(viewModel.Message ?? string.Empty),

@@ -43,7 +43,7 @@
         @if (Model.ShowThreadLocalUserHash)
         {
           <div class="post-header-flex-item">
-            <span class="text-success" data-full-hash="@(Model.ThreadLocalUserHash)" title="@(Model.ThreadLocalUserHash)">@(Model.ThreadLocalUserHash.TryLeft(8))</span>
+            <span class="text-success" data-full-hash="@(Model.ThreadLocalUserHash)" title="@(Model.ThreadLocalUserHash)">@(Model.ThreadLocalUserHash.TakeLeft(8))</span>
           </div>
         }
 
