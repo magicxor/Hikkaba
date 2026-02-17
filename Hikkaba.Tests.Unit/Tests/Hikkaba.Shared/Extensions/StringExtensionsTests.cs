@@ -8,7 +8,7 @@ namespace Hikkaba.Tests.Unit.Tests.Hikkaba.Shared.Extensions;
 internal sealed class StringExtensionsTests
 {
     [Test]
-    public void TryLeft_WhenNull_ShouldReturnNull()
+    public void TakeLeft_WhenNull_ShouldReturnNull()
     {
         const string? source = null;
         var result = source.TakeLeft(1);
@@ -27,7 +27,7 @@ internal sealed class StringExtensionsTests
     [TestCase("abc", 3, "abc")]
     [TestCase("abc", 4, "abc")]
     [TestCase("abc", 999, "abc")]
-    public void TryLeft_WhenArgumentsValid_ShouldReturnExpectedResult(string source, int maxLength, string expectedResult)
+    public void TakeLeft_WhenArgumentsValid_ShouldReturnExpectedResult(string source, int maxLength, string expectedResult)
     {
         var actualResult = source.TakeLeft(maxLength);
         Assert.That(actualResult, Is.EqualTo(expectedResult));
@@ -35,13 +35,13 @@ internal sealed class StringExtensionsTests
 
     [TestCase("", -1)]
     [TestCase("a", -2)]
-    public void TryLeft_WhenMaxLengthIsLessThanZero_ShouldThrowArgumentOutOfRangeException(string source, int maxLength)
+    public void TakeLeft_WhenMaxLengthIsLessThanZero_ShouldThrowArgumentOutOfRangeException(string source, int maxLength)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = source.TakeLeft(maxLength));
     }
 
     [Test]
-    public void TryRight_WhenNull_ShouldReturnNull()
+    public void TakeRight_WhenNull_ShouldReturnNull()
     {
         const string? source = null;
         var result = source.TakeRight(1);
@@ -60,7 +60,7 @@ internal sealed class StringExtensionsTests
     [TestCase("abc", 3, "abc")]
     [TestCase("abc", 4, "abc")]
     [TestCase("abc", 999, "abc")]
-    public void TryRight_WhenArgumentsValid_ShouldReturnExpectedResult(string source, int maxLength, string expectedResult)
+    public void TakeRight_WhenArgumentsValid_ShouldReturnExpectedResult(string source, int maxLength, string expectedResult)
     {
         var actualResult = source.TakeRight(maxLength);
         Assert.That(actualResult, Is.EqualTo(expectedResult));
@@ -68,7 +68,7 @@ internal sealed class StringExtensionsTests
 
     [TestCase("", -1)]
     [TestCase("a", -2)]
-    public void TryRight_WhenMaxLengthIsLessThanZero_ShouldThrowArgumentOutOfRangeException(string source, int maxLength)
+    public void TakeRight_WhenMaxLengthIsLessThanZero_ShouldThrowArgumentOutOfRangeException(string source, int maxLength)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = source.TakeRight(maxLength));
     }

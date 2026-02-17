@@ -76,7 +76,7 @@ public static class StringExtensions
         return maxLength switch
         {
             0 => string.Empty,
-            < 0 => throw new ArgumentOutOfRangeException(nameof(maxLength), $"{nameof(maxLength)} must be greater than 0"),
+            < 0 => throw new ArgumentOutOfRangeException(nameof(maxLength), $"{nameof(maxLength)} must be greater than or equal to 0"),
             _ => text.Length <= maxLength ? text : text[^maxLength..],
         };
     }
