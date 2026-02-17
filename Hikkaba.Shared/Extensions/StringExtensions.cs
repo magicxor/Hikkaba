@@ -113,7 +113,7 @@ public static class StringExtensions
                 return text.AsSpan(0, maxLength).ToString();
             }
 
-            text = string.Concat(text.AsSpan(0, maxLength - 3), ellipsis);
+            text = string.Concat(text.AsSpan(0, maxLength - ellipsis.Length), ellipsis);
         }
 
         return text;
