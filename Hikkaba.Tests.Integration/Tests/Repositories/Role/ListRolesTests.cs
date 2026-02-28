@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Role;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -17,7 +14,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
 {
     #region Basic listing tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListRoles_WhenNoRoles_ReturnsEmptyList(
         CancellationToken cancellationToken)
@@ -36,7 +33,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
         Assert.That(result, Is.Empty);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListRoles_WhenSingleRole_ReturnsOneRole(
         CancellationToken cancellationToken)
@@ -62,7 +59,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
         Assert.That(result[0].NormalizedName, Is.EqualTo("TESTROLE"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListRoles_WhenMultipleRoles_ReturnsAllRoles(
         CancellationToken cancellationToken)
@@ -92,7 +89,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
         Assert.That(names, Does.Contain("Gamma"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListRoles_WhenDefaultRoles_ReturnsAdminAndModerator(
         CancellationToken cancellationToken)
@@ -124,7 +121,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
 
     #region Ordering tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(nameof(RoleModel.NormalizedName), OrderByDirection.Asc)]
     [TestCase(nameof(RoleModel.NormalizedName), OrderByDirection.Desc)]
     [TestCase(nameof(RoleModel.Name), OrderByDirection.Asc)]
@@ -158,7 +155,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
         Assert.That(result, Is.OrderedBy(fieldName, direction));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListRoles_WhenOrderByNormalizedNameAsc_ReturnsAlphabeticallySortedRoles(
         CancellationToken cancellationToken)
@@ -187,7 +184,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
         Assert.That(result[2].Name, Is.EqualTo("Zeta"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListRoles_WhenOrderByNormalizedNameDesc_ReturnsReverseSortedRoles(
         CancellationToken cancellationToken)
@@ -220,7 +217,7 @@ internal sealed class ListRolesTests : IntegrationTestBase
 
     #region Role properties tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListRoles_ReturnsCorrectRoleProperties(
         CancellationToken cancellationToken)

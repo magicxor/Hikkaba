@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -15,7 +11,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 internal sealed class SetPostDeletedTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_WhenTrue_MarksPostAsDeleted(
         CancellationToken cancellationToken)
@@ -46,7 +42,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         Assert.That(deletedPost.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_WhenFalse_UndeletesPosts(
         CancellationToken cancellationToken)
@@ -75,7 +71,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         Assert.That(restoredPost.IsDeleted, Is.False);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_SetsModifiedAt(
         CancellationToken cancellationToken)
@@ -110,7 +106,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         Assert.That(modifiedPost.ModifiedAt, Is.Not.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_SetsModifiedById(
         CancellationToken cancellationToken)
@@ -141,7 +137,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         Assert.That(modifiedPost.ModifiedById, Is.EqualTo(builder.Admin.Id));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_WhenPostDoesNotExist_ThrowsException(
         CancellationToken cancellationToken)
@@ -163,7 +159,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         Assert.ThrowsAsync<InvalidOperationException>(async () => { await repository.SetPostDeletedAsync(999999, true, cancellationToken); });
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_DeleteMultiplePosts_AllMarkedDeleted(
         CancellationToken cancellationToken)
@@ -202,7 +198,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         Assert.That(allPosts[2].IsDeleted, Is.False);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_WhenAlreadyDeleted_RemainsDeleted(
         CancellationToken cancellationToken)
@@ -233,7 +229,7 @@ internal sealed class SetPostDeletedTests : IntegrationTestBase
         Assert.That(post.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetPostDeleted_DoesNotAffectOtherPostFields(
         CancellationToken cancellationToken)

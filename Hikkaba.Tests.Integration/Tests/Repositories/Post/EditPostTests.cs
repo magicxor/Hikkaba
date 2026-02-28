@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -14,7 +11,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 internal sealed class EditPostTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditPost_WhenValidRequest_UpdatesPostContent(
         CancellationToken cancellationToken)
@@ -48,7 +45,7 @@ internal sealed class EditPostTests : IntegrationTestBase
         Assert.That(updatedPost.MessageHtml, Is.EqualTo("<p>Updated message html</p>"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditPost_DoesNotChangeOtherFields(
         CancellationToken cancellationToken)
@@ -92,7 +89,7 @@ internal sealed class EditPostTests : IntegrationTestBase
         Assert.That(updatedPost.BlobContainerId, Is.EqualTo(originalPost.BlobContainerId));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditPost_CanUpdateToEmptyMessage(
         CancellationToken cancellationToken)
@@ -126,7 +123,7 @@ internal sealed class EditPostTests : IntegrationTestBase
         Assert.That(updatedPost.MessageHtml, Is.EqualTo(string.Empty));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditPost_WhenPostDoesNotExist_ThrowsException(
         CancellationToken cancellationToken)
@@ -155,7 +152,7 @@ internal sealed class EditPostTests : IntegrationTestBase
         });
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditPost_CanUpdateDeletedPost(
         CancellationToken cancellationToken)
@@ -191,7 +188,7 @@ internal sealed class EditPostTests : IntegrationTestBase
         Assert.That(updatedPost.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditPost_PreservesSpecialCharacters(
         CancellationToken cancellationToken)

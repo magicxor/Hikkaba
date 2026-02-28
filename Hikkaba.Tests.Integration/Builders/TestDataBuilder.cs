@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Data.Context;
 using Hikkaba.Tests.Integration.Utils;
@@ -11,7 +8,7 @@ namespace Hikkaba.Tests.Integration.Builders;
 internal sealed partial class TestDataBuilder
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly GuidGenerator _guidGenerator = new();
+    private int _guidCounter;
 
     public TestDataBuilder(IServiceScope scope)
     {
@@ -23,6 +20,11 @@ internal sealed partial class TestDataBuilder
     public IHashService HashService { get; }
 
     public TimeProvider TimeProvider { get; }
+
+    private Guid NextGuid(string seed)
+    {
+        return StableDataGen.GenerateDeterministicGuid($"{seed}_{_guidCounter++}");
+    }
 
     public async Task SaveAsync(CancellationToken cancellationToken)
     {

@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Extensions.Time.Testing;
 
 namespace Hikkaba.Tests.Integration;

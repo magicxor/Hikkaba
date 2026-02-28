@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -11,7 +9,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Thread;
 
 internal sealed class GetCategoryThreadTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenThreadExists_ReturnsThreadInfo(
         CancellationToken cancellationToken)
@@ -43,7 +41,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         Assert.That(result.CategoryName, Is.EqualTo("Random"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenThreadDoesNotExist_ReturnsNull(
         CancellationToken cancellationToken)
@@ -70,7 +68,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenCategoryAliasMismatch_ReturnsNull(
         CancellationToken cancellationToken)
@@ -101,7 +99,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenThreadIsDeleted_WithoutIncludeDeleted_ReturnsNull(
         CancellationToken cancellationToken)
@@ -130,7 +128,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenThreadIsDeleted_WithIncludeDeleted_ReturnsThread(
         CancellationToken cancellationToken)
@@ -160,7 +158,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         Assert.That(result!.ThreadId, Is.EqualTo(thread.Id));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenCategoryIsDeleted_WithoutIncludeDeleted_ReturnsNull(
         CancellationToken cancellationToken)
@@ -189,7 +187,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenCategoryIsDeleted_WithIncludeDeleted_ReturnsThread(
         CancellationToken cancellationToken)
@@ -220,7 +218,7 @@ internal sealed class GetCategoryThreadTests : IntegrationTestBase
         Assert.That(result.CategoryAlias, Is.EqualTo("b"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategoryThread_WhenMultipleThreadsExist_ReturnsCorrectOne(
         CancellationToken cancellationToken)

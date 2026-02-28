@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -16,7 +14,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
 {
     #region Basic edit tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditCategory_WhenValidRequest_UpdatesCategorySuccessfully(
         CancellationToken cancellationToken)
@@ -63,7 +61,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
         Assert.That(updatedCategory.MaxThreadCount, Is.EqualTo(200));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditCategory_WhenEdited_SetsModifiedByAndModifiedAt(
         CancellationToken cancellationToken)
@@ -112,7 +110,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
         Assert.That(updatedCategory.CreatedAt, Is.EqualTo(originalCreatedAt));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditCategory_WhenOnlyNameChanged_UpdatesOnlyName(
         CancellationToken cancellationToken)
@@ -157,7 +155,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
 
     #region Display options tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditCategory_WhenToggleDisplayOptions_UpdatesCorrectly(
         CancellationToken cancellationToken)
@@ -225,7 +223,7 @@ internal sealed class EditCategoryTests : IntegrationTestBase
 
     #region Visibility tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(false, true)]
     [TestCase(true, false)]
     public async Task EditCategory_WhenToggleHidden_UpdatesCorrectly(

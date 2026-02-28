@@ -1,3 +1,3 @@
-namespace Hikkaba.Tests.Integration.Models;
+﻿namespace Hikkaba.Tests.Integration.Models;
 
-internal sealed record ContainerInfo(ushort Port, string Host);
+public record ContainerInfo(ushort Port, string Host);

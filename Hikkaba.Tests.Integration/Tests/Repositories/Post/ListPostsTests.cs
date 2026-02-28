@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -13,7 +11,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 internal sealed class ListPostsTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_WhenNoFilters_ReturnsNonDeletedNonHiddenPosts(
         CancellationToken cancellationToken)
@@ -48,7 +46,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         Assert.That(result.TotalItemCount, Is.EqualTo(2));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_WithIncludeDeleted_ReturnsAllPosts(
         CancellationToken cancellationToken)
@@ -82,7 +80,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         Assert.That(result.TotalItemCount, Is.EqualTo(2));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_WithIncludeHidden_ReturnsPostsFromHiddenCategories(
         CancellationToken cancellationToken)
@@ -132,7 +130,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         Assert.That(resultWithHidden.Data, Has.Count.EqualTo(2));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_WithPaging_ReturnsCorrectPage(
         CancellationToken cancellationToken)
@@ -186,7 +184,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         Assert.That(page2.Data[1].MessageHtml, Is.EqualTo("Post 4"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_WithoutIncludeTotalCount_DoesNotReturnTotalCount(
         CancellationToken cancellationToken)
@@ -219,7 +217,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         Assert.That(result.TotalItemCount, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_WhenThreadIsDeleted_WithoutIncludeDeleted_ExcludesThreadPosts(
         CancellationToken cancellationToken)
@@ -252,7 +250,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         Assert.That(result.TotalItemCount, Is.EqualTo(0));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_WhenCategoryIsDeleted_WithoutIncludeDeleted_ExcludesCategoryPosts(
         CancellationToken cancellationToken)
@@ -285,7 +283,7 @@ internal sealed class ListPostsTests : IntegrationTestBase
         Assert.That(result.TotalItemCount, Is.EqualTo(0));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListPosts_ReturnsPostsWithAttachmentsInfo(
         CancellationToken cancellationToken)

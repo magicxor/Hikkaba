@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Entities;
 using Hikkaba.Shared.Constants;
 using Microsoft.AspNetCore.Identity;
@@ -61,8 +56,8 @@ internal sealed partial class TestDataBuilder
             LastLoginAt = lastLoginAt,
             LockoutEnabled = lockoutEnabled,
             LockoutEnd = lockoutEnd,
-            SecurityStamp = _guidGenerator.GenerateSeededGuid().ToString(),
-            ConcurrencyStamp = _guidGenerator.GenerateSeededGuid().ToString(),
+            SecurityStamp = NextGuid(emailValue + "_SecurityStamp").ToString(),
+            ConcurrencyStamp = NextGuid(emailValue + "_ConcurrencyStamp").ToString(),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime,
         };
         _users.Add(user);
