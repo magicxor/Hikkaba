@@ -22,7 +22,7 @@ internal sealed class Program
 
     public static async Task Main(string[] args)
     {
-        await using var customAppFactory = new CustomAppFactory("Server=tcp:localhost,62140;Encrypt=False;Database=Hikkaba;User ID=SA;Password=dev_passworD@4568919;Persist Security Info=False;TrustServerCertificate=True;MultiSubnetFailover=True");
+        await using var customAppFactory = new CustomAppFactory("Server=tcp:localhost,41443;Encrypt=False;Database=Hikkaba;User ID=SA;Password=dev_pass_098;Persist Security Info=False;TrustServerCertificate=True;MultiSubnetFailover=True");
         using var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var seedRepository = scope.ServiceProvider.GetRequiredService<ISeedRepository>();
