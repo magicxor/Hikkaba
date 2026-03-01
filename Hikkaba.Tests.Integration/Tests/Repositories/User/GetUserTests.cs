@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Hikkaba.Infrastructure.Models.User;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
@@ -13,7 +8,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.User;
 
 internal sealed class GetUserTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetUser_WhenUserExists_ReturnsUser(
         CancellationToken cancellationToken)
@@ -41,7 +36,7 @@ internal sealed class GetUserTests : IntegrationTestBase
         Assert.That(result.UserRoles[0].Name, Is.EqualTo(Defaults.AdministratorRoleName));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetUser_WhenUserDoesNotExist_ReturnsNull(
         CancellationToken cancellationToken)
@@ -57,7 +52,7 @@ internal sealed class GetUserTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetUser_WhenUserHasNoRoles_ReturnsUserWithEmptyRoles(
         CancellationToken cancellationToken)
@@ -81,7 +76,7 @@ internal sealed class GetUserTests : IntegrationTestBase
         Assert.That(result!.UserRoles, Is.Empty);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetUser_WhenUserHasMultipleRoles_ReturnsAllRoles(
         CancellationToken cancellationToken)
@@ -107,7 +102,7 @@ internal sealed class GetUserTests : IntegrationTestBase
         Assert.That(result.UserRoles.Select(r => r.Name), Contains.Item(Defaults.ModeratorRoleName));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetUser_ReturnsCorrectUserDetails(
         CancellationToken cancellationToken)
@@ -146,7 +141,7 @@ internal sealed class GetUserTests : IntegrationTestBase
         Assert.That(result.LockoutEnd, Is.Not.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetUser_WhenUserIsDeleted_ReturnsUser(
         CancellationToken cancellationToken)

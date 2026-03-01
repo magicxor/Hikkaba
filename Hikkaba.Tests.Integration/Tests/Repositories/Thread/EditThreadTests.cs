@@ -1,7 +1,4 @@
-using System;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Thread;
@@ -17,7 +14,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Thread;
 
 internal sealed class EditThreadTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_WhenValidRequest_UpdatesThread(
         CancellationToken cancellationToken)
@@ -54,7 +51,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(updatedThread.BumpLimit, Is.EqualTo(500));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_WhenThreadNotFound_ReturnsDomainError(
         CancellationToken cancellationToken)
@@ -85,7 +82,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_WhenThreadIsDeleted_StillUpdatesThread(
         CancellationToken cancellationToken)
@@ -124,7 +121,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(updatedThread.BumpLimit, Is.EqualTo(300));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_OnlyUpdatesTitle(
         CancellationToken cancellationToken)
@@ -162,7 +159,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(updatedThread.BumpLimit, Is.EqualTo(originalBumpLimit));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_OnlyUpdatesBumpLimit(
         CancellationToken cancellationToken)
@@ -199,7 +196,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(updatedThread.BumpLimit, Is.EqualTo(999));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_PreservesOtherThreadProperties(
         CancellationToken cancellationToken)
@@ -252,7 +249,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(updatedThread.IsCyclic, Is.EqualTo(thread.IsCyclic));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_WhenEmptyTitle_UpdatesToEmptyTitle(
         CancellationToken cancellationToken)
@@ -288,7 +285,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(updatedThread.Title, Is.EqualTo(string.Empty));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_CanSetBumpLimitToZero(
         CancellationToken cancellationToken)
@@ -324,7 +321,7 @@ internal sealed class EditThreadTests : IntegrationTestBase
         Assert.That(updatedThread.BumpLimit, Is.EqualTo(0));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditThread_DoesNotAffectOtherThreads(
         CancellationToken cancellationToken)

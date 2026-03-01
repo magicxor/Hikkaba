@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Entities;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -16,7 +13,7 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
 {
     #region Basic set moderators tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryModerators_WhenNoModeratorsExist_AddsModerators(
         CancellationToken cancellationToken)
@@ -51,7 +48,7 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         Assert.That(category.Moderators.Select(m => m.Moderator.UserName), Contains.Item("moderator2"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryModerators_WhenModeratorsExist_ReplacesModerators(
         CancellationToken cancellationToken)
@@ -90,7 +87,7 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         Assert.That(category.Moderators.Select(m => m.Moderator.UserName), Contains.Item("moderator3"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryModerators_WhenEmptyList_RemovesAllModerators(
         CancellationToken cancellationToken)
@@ -125,7 +122,7 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
 
     #region Single moderator tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryModerators_WhenSingleModerator_AddsSingleModerator(
         CancellationToken cancellationToken)
@@ -161,7 +158,7 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
 
     #region Multiple categories tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryModerators_WhenMultipleCategories_SetsOnlySpecifiedCategory(
         CancellationToken cancellationToken)
@@ -205,7 +202,7 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
         Assert.That(randomCategory.Moderators.Single().Moderator.UserName, Is.EqualTo("random_mod"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryModerators_WhenSameModeratorMultipleCategories_WorksCorrectly(
         CancellationToken cancellationToken)
@@ -260,7 +257,7 @@ internal sealed class SetCategoryModeratorsTests : IntegrationTestBase
 
     #region Idempotency tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryModerators_WhenSetSameModeratorsAgain_RemainsUnchanged(
         CancellationToken cancellationToken)

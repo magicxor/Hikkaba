@@ -4,6 +4,7 @@ using Hikkaba.Data.Context;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Shared.Utils;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
@@ -77,7 +78,7 @@ internal sealed class CustomAppFactory
                 services.AddDbContext<ApplicationDbContext>((provider, options) =>
                 {
                     var webHostEnvironment = provider.GetRequiredService<IWebHostEnvironment>();
-                    if (webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+                    if (webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName))
                     {
                         options.EnableSensitiveDataLogging();
                     }
@@ -97,6 +98,6 @@ internal sealed class CustomAppFactory
                 logging.SetMinimumLevel(LogLevel.Trace);
             })
             .UseNLog()
-            .UseEnvironment(Defaults.AspNetEnvIntegrationTesting);
+            .UseEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName);
     }
 }

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
@@ -45,7 +42,7 @@ internal sealed partial class TestDataBuilder
             IsCyclic = isCyclic,
             IsDeleted = isDeleted,
             BumpLimit = bumpLimit,
-            Salt = _guidGenerator.GenerateSeededGuid(),
+            Salt = NextGuid(title + "_Salt"),
             Category = LastCategory,
         };
         _threads.Add(thread);
@@ -69,7 +66,7 @@ internal sealed partial class TestDataBuilder
             IsPinned = false,
             IsClosed = isClosed,
             BumpLimit = 500,
-            Salt = _guidGenerator.GenerateSeededGuid(),
+            Salt = NextGuid((isClosed ? "closed thread" : "test thread 1") + "_Salt"),
             Category = LastCategory,
         };
         _threads.Add(thread);
@@ -104,7 +101,7 @@ internal sealed partial class TestDataBuilder
         var post = new Post
         {
             IsOriginalPost = true,
-            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            BlobContainerId = NextGuid(title + "_OP_Post"),
             CreatedAt = LastThread.CreatedAt,
             IsSageEnabled = false,
             IsDeleted = false,
@@ -133,7 +130,7 @@ internal sealed partial class TestDataBuilder
     {
         EnsureCategoryExists();
         var utcNow = createdAt ?? TimeProvider.GetUtcNow().UtcDateTime;
-        var salt = _guidGenerator.GenerateSeededGuid();
+        var salt = NextGuid(title + "_Salt");
 
         var thread = new Thread
         {
@@ -159,7 +156,7 @@ internal sealed partial class TestDataBuilder
         var opPost = new Post
         {
             IsOriginalPost = true,
-            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            BlobContainerId = NextGuid(title + "_OP_Post"),
             CreatedAt = utcNow,
             IsSageEnabled = false,
             IsDeleted = false,
@@ -175,7 +172,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Audio
                 {
-                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    BlobId = NextGuid(title + "_OP_Post_Audio"),
                     FileNameWithoutExtension = "test_audio",
                     FileExtension = ".mp3",
                     FileSize = 1024,
@@ -191,7 +188,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Document
                 {
-                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    BlobId = NextGuid(title + "_OP_Post_Document"),
                     FileNameWithoutExtension = "test_document",
                     FileExtension = ".pdf",
                     FileSize = 2048,
@@ -203,7 +200,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Notice
                 {
-                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    BlobId = NextGuid(title + "_OP_Post_Notice"),
                     Text = "Admin notice",
                     CreatedAt = utcNow,
                     CreatedBy = modifiedBy,
@@ -213,7 +210,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Picture
                 {
-                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    BlobId = NextGuid(title + "_OP_Post_Picture"),
                     FileNameWithoutExtension = "test_picture",
                     FileExtension = ".jpg",
                     FileSize = 4096,
@@ -230,7 +227,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Video
                 {
-                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    BlobId = NextGuid(title + "_OP_Post_Video"),
                     FileNameWithoutExtension = "test_video",
                     FileExtension = ".mp4",
                     FileSize = 8192,
@@ -248,7 +245,7 @@ internal sealed partial class TestDataBuilder
         var replyPost = new Post
         {
             IsOriginalPost = false,
-            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            BlobContainerId = NextGuid(title + "_Reply_Post"),
             CreatedAt = utcNow.AddMinutes(1),
             IsSageEnabled = false,
             IsDeleted = false,
@@ -262,7 +259,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Picture
                 {
-                    BlobId = _guidGenerator.GenerateSeededGuid(),
+                    BlobId = NextGuid(title + "_Reply_Post_Picture"),
                     FileNameWithoutExtension = "reply_picture",
                     FileExtension = ".png",
                     FileSize = 2048,
@@ -311,7 +308,7 @@ internal sealed partial class TestDataBuilder
             var post = new Post
             {
                 IsOriginalPost = thread.Posts.Count == 0 && i == 0,
-                BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+                BlobContainerId = NextGuid(thread.Title + "_Post_" + i),
                 CreatedAt = startingAt.AddSeconds(i),
                 IsSageEnabled = isSageEnabled,
                 IsDeleted = isDeleted,

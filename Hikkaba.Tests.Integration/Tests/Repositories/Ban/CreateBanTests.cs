@@ -1,8 +1,4 @@
-using System;
-using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Models.Error;
@@ -37,7 +33,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         return timeProvider.GetUtcNow().UtcDateTime.AddDays(7);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateBan_WhenValidRequest_CreatesBanSuccessfully(
         CancellationToken cancellationToken)
@@ -81,7 +77,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         Assert.That(ban.CreatedById, Is.EqualTo(adminId));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateBan_WhenBanForSamePostExists_ReturnsConflictError(
         CancellationToken cancellationToken)
@@ -125,7 +121,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.Conflict));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateBan_WhenCategorySpecific_CreatesBanForCategory(
         CancellationToken cancellationToken)
@@ -167,7 +163,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         Assert.That(ban.CategoryId, Is.Not.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateBan_WithDeletePostAction_DeletesRelatedPost(
         CancellationToken cancellationToken)
@@ -208,7 +204,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         Assert.That(post!.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateBan_WithRangeBan_CreatesBanWithCidrRange(
         CancellationToken cancellationToken)
@@ -252,7 +248,7 @@ internal sealed class CreateBanTests : IntegrationTestBase
         Assert.That(ban.BannedCidrUpperIpAddress, Is.Not.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateBan_WithDeleteAllPostsInThread_DeletesAllPostsFromSameIp(
         CancellationToken cancellationToken)

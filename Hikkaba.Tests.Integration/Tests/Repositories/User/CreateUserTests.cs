@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.User;
@@ -14,7 +11,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.User;
 
 internal sealed class CreateUserTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateUser_WhenValidRequest_CreatesUserSuccessfully(
         CancellationToken cancellationToken)
@@ -47,7 +44,7 @@ internal sealed class CreateUserTests : IntegrationTestBase
         Assert.That(createdUser.Email, Is.EqualTo("newuser@example.com"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateUser_WhenDuplicateUserName_ReturnsError(
         CancellationToken cancellationToken)
@@ -76,7 +73,7 @@ internal sealed class CreateUserTests : IntegrationTestBase
         Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateUser_WhenWeakPassword_ReturnsError(
         CancellationToken cancellationToken)
@@ -100,7 +97,7 @@ internal sealed class CreateUserTests : IntegrationTestBase
         Assert.That(result.Value, Is.TypeOf<DomainError>(), "Expected error result for weak password");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateUser_SetsCreatedAtTimestamp(
         CancellationToken cancellationToken)

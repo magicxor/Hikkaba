@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Enums;
@@ -38,7 +35,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         return builder.LastBanId;
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetBan_WhenBanExists_ReturnsBanDetails(
         CancellationToken cancellationToken)
@@ -65,7 +62,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         Assert.That(result.CreatedById, Is.GreaterThan(0));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetBan_WhenRangeBanExists_ReturnsBanWithCidrRange(
         CancellationToken cancellationToken)
@@ -87,7 +84,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         Assert.That(result.BannedCidrUpperIpAddress, Is.Not.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetBan_WhenBanDoesNotExist_ReturnsNull(
         CancellationToken cancellationToken)
@@ -105,7 +102,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetBan_WhenBanIsDeleted_StillReturnsBan(
         CancellationToken cancellationToken)
@@ -134,7 +131,7 @@ internal sealed class GetBanTests : IntegrationTestBase
         Assert.That(result.Reason, Is.EqualTo("deleted ban reason"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetBan_WhenBanHasCategoryAlias_ReturnsCategoryAlias(
         CancellationToken cancellationToken)

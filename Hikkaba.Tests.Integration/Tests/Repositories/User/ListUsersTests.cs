@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.User;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -15,7 +11,7 @@ internal sealed class ListUsersTests : IntegrationTestBase
 {
     #region IncludeDeleted filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(true, 3)]
     [TestCase(false, 2)]
     public async Task ListUsers_WhenIncludeDeleted_ReturnsExpectedCount(
@@ -49,7 +45,7 @@ internal sealed class ListUsersTests : IntegrationTestBase
 
     #region User roles tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListUsers_WhenUserHasRoles_ReturnsUserWithRoles(
         CancellationToken cancellationToken)
@@ -86,7 +82,7 @@ internal sealed class ListUsersTests : IntegrationTestBase
         Assert.That(userWithoutRole.UserRoles, Is.Empty);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListUsers_WhenUserHasMultipleRoles_ReturnsAllRoles(
         CancellationToken cancellationToken)
@@ -118,7 +114,7 @@ internal sealed class ListUsersTests : IntegrationTestBase
 
     #region User details tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListUsers_ReturnsCorrectUserDetails(
         CancellationToken cancellationToken)
@@ -162,7 +158,7 @@ internal sealed class ListUsersTests : IntegrationTestBase
 
     #region Empty result tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListUsers_WhenNoUsers_ReturnsEmptyList(
         CancellationToken cancellationToken)
@@ -181,7 +177,7 @@ internal sealed class ListUsersTests : IntegrationTestBase
         Assert.That(result, Is.Empty);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListUsers_WhenAllUsersDeleted_AndIncludeDeletedFalse_ReturnsEmptyList(
         CancellationToken cancellationToken)

@@ -1,8 +1,4 @@
-using System;
-using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.User;
@@ -18,7 +14,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.User;
 
 internal sealed class EditUserTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditUser_WhenValidRequest_UpdatesUserSuccessfully(
         CancellationToken cancellationToken)
@@ -65,7 +61,7 @@ internal sealed class EditUserTests : IntegrationTestBase
         Assert.That(userRoles[0].RoleId, Is.EqualTo(adminRoleId));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditUser_WhenUserNotFound_ReturnsError(
         CancellationToken cancellationToken)
@@ -93,7 +89,7 @@ internal sealed class EditUserTests : IntegrationTestBase
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditUser_WhenChangingRoles_UpdatesRolesCorrectly(
         CancellationToken cancellationToken)
@@ -133,7 +129,7 @@ internal sealed class EditUserTests : IntegrationTestBase
         Assert.That(userRoles[0].RoleId, Is.EqualTo(moderatorRoleId));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditUser_WhenRemovingAllRoles_RemovesAllRoles(
         CancellationToken cancellationToken)
@@ -170,7 +166,7 @@ internal sealed class EditUserTests : IntegrationTestBase
         Assert.That(userRoles, Is.Empty);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditUser_WhenSettingLockoutEndDate_SetsLockoutCorrectly(
         CancellationToken cancellationToken)
@@ -211,7 +207,7 @@ internal sealed class EditUserTests : IntegrationTestBase
         Assert.That(updatedUser.LockoutEnd!.Value.UtcDateTime, Is.EqualTo(lockoutEndDate).Within(TimeSpan.FromSeconds(1)));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditUser_WhenAssigningMultipleRoles_AssignsAllRoles(
         CancellationToken cancellationToken)

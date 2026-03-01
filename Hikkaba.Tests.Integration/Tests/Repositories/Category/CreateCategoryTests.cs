@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -17,7 +14,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
 {
     #region Basic create tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateCategory_WhenValidRequest_CreatesCategorySuccessfully(
         CancellationToken cancellationToken)
@@ -65,7 +62,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         Assert.That(createdCategory.MaxThreadCount, Is.EqualTo(100));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateCategory_WhenCreated_SetsCreatedByAndCreatedAt(
         CancellationToken cancellationToken)
@@ -109,7 +106,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         Assert.That(createdCategory.ModifiedAt, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateCategory_WhenHidden_SetsIsHiddenTrue(
         CancellationToken cancellationToken)
@@ -146,7 +143,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
         Assert.That(createdCategory.IsHidden, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateCategory_WithAllDisplayOptions_SetsAllOptionsCorrectly(
         CancellationToken cancellationToken)
@@ -192,7 +189,7 @@ internal sealed class CreateCategoryTests : IntegrationTestBase
 
     #region Multiple categories tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateCategory_WhenMultipleCategoriesCreated_AllHaveUniqueIds(
         CancellationToken cancellationToken)

@@ -1,8 +1,4 @@
-using System;
-using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
 using Hikkaba.Infrastructure.Models.Error;
@@ -57,7 +53,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         };
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenValidRequest_CreatesThreadAndPost(
         CancellationToken cancellationToken)
@@ -98,7 +94,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(opPost.IsOriginalPost, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenCategoryNotFound_ReturnsDomainError(
         CancellationToken cancellationToken)
@@ -124,7 +120,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenCategoryIsDeleted_ReturnsDomainError(
         CancellationToken cancellationToken)
@@ -150,7 +146,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_UsesCategoryDefaultBumpLimit(
         CancellationToken cancellationToken)
@@ -179,7 +175,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(thread.BumpLimit, Is.EqualTo(250));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenCategoryDefaultBumpLimitIsZero_UsesDefaultBumpLimit(
         CancellationToken cancellationToken)
@@ -208,7 +204,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(thread.BumpLimit, Is.EqualTo(Defaults.DefaultBumpLimit));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_SetsCorrectClientInfo(
         CancellationToken cancellationToken)
@@ -241,7 +237,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(post.OsType, Is.EqualTo("Windows"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_SetsLastBumpAtToCreatedAt(
         CancellationToken cancellationToken)
@@ -271,7 +267,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(thread.LastBumpAt, Is.EqualTo(thread.CreatedAt));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenMaxThreadCountReached_DeletesOldestThread(
         CancellationToken cancellationToken)
@@ -326,7 +322,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(threadCount, Is.EqualTo(3));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenMaxThreadCountReached_DeletesOldestThreadWithAllAttachmentsAndRelations(
         CancellationToken cancellationToken)
@@ -454,7 +450,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(admin, Is.Not.Null, "Admin user should not be cascade deleted");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenMaxThreadCountReached_DeletesOldestThreadWithCrossThreadReplies(
         CancellationToken cancellationToken)
@@ -562,7 +558,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(middleThreadAfter!.Posts, Has.Count.EqualTo(1), "Middle thread should still have its OP");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_WhenMaxThreadCountReached_DeletesOldestThreadWithCrossThreadMentions(
         CancellationToken cancellationToken)
@@ -667,7 +663,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(replyPostAfter, Is.Not.Null, "Reply post in middle thread should still exist");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_SetsCorrectIpAddress(
         CancellationToken cancellationToken)
@@ -698,7 +694,7 @@ internal sealed class CreateThreadTests : IntegrationTestBase
         Assert.That(post.UserIpAddress, Is.EqualTo(IPAddress.Parse(testIp).GetAddressBytes()));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateThread_NewThreadHasDefaultFlags(
         CancellationToken cancellationToken)

@@ -117,3 +117,25 @@ Hikkaba is an imageboard written using ASP.NET Core and Entity Framework Core, d
 ### Search
 
 <img width="878" alt="search" src="https://github.com/user-attachments/assets/44781cfd-2198-43c3-b0bb-a0d1ee68432f" />
+
+## Usage
+
+Database migrations can be applied using the following command:
+
+```powershell
+dotnet ef database update --project Hikkaba.Data --startup-project Hikkaba.Web --connection "Server=tcp:localhost,41443;Encrypt=False;Database=Hikkaba;User ID=SA;Password=YOUR_PASsWORD;Persist Security Info=False;TrustServerCertificate=True;MultiSubnetFailover=True"
+```
+
+Run the application using:
+
+```powershell
+dotnet run --project Hikkaba.Web
+```
+
+Seed the database with test data using:
+
+```powershell
+$headers=@{}
+$headers.Add("content-type", "application/json")
+$response = Invoke-WebRequest -Uri 'http://localhost:5000/api/v1/maintenance/seed?key=YOUR_KEY' -Method POST -Headers $headers
+```

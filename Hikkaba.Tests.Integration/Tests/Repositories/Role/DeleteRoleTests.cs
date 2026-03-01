@@ -1,7 +1,4 @@
-using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -18,7 +15,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
 {
     #region Basic delete tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenValidRoleId_DeletesRoleSuccessfully(
         CancellationToken cancellationToken)
@@ -46,7 +43,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
         Assert.That(deletedRole, Is.Null, "Role should be deleted from database");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenDeleted_RoleNoLongerInList(
         CancellationToken cancellationToken)
@@ -88,7 +85,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
 
     #region Not found tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenRoleNotFound_ReturnsNotFoundError(
         CancellationToken cancellationToken)
@@ -107,7 +104,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
         Assert.That(error.ErrorMessage, Is.EqualTo("Role not found."));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenZeroRoleId_ReturnsNotFoundError(
         CancellationToken cancellationToken)
@@ -125,7 +122,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
         Assert.That(error.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenNegativeRoleId_ReturnsNotFoundError(
         CancellationToken cancellationToken)
@@ -147,7 +144,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
 
     #region Double delete tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenDeletedTwice_SecondDeleteReturnsNotFound(
         CancellationToken cancellationToken)
@@ -180,7 +177,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
 
     #region Delete with user associations tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenRoleHasUsers_DeletesRoleAndUserRoleAssociations(
         CancellationToken cancellationToken)
@@ -234,7 +231,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
 
     #region Delete default roles tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenDeletingAdministratorRole_DeletesSuccessfully(
         CancellationToken cancellationToken)
@@ -261,7 +258,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
         Assert.That(deletedRole, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenDeletingModeratorRole_DeletesSuccessfully(
         CancellationToken cancellationToken)
@@ -292,7 +289,7 @@ internal sealed class DeleteRoleTests : IntegrationTestBase
 
     #region Multiple roles deletion tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task DeleteRole_WhenDeletingMultipleRoles_AllAreDeleted(
         CancellationToken cancellationToken)

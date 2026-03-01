@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Shared.Constants;
+using Hikkaba.Web.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -27,8 +28,13 @@ internal class Program
     public static async Task Main(string[] args)
     {
         // NLog: set up the logger first to catch all errors
-        var loggingConfiguration = new XmlLoggingConfiguration(NlogFileName);
-        LogManager.Configuration = loggingConfiguration;
+        // Skip if integration test configuration is already loaded
+        if (!LoggerUtils.IsIntegrationTestLogging())
+        {
+            LogManager.Configuration = new XmlLoggingConfiguration(NlogFileName);
+        }
+
+        var loggingConfiguration = LogManager.Configuration;
 
         try
         {
@@ -44,18 +50,29 @@ internal class Program
         finally
         {
             // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-            LogManager.Shutdown();
+            if (!LoggerUtils.IsIntegrationTestLogging())
+            {
+                LogManager.Shutdown();
+            }
         }
     }
 
-    private static IHostBuilder CreateHostBuilder(string[] args, LoggingConfiguration loggingConfiguration) =>
+    private static IHostBuilder CreateHostBuilder(string[] args, LoggingConfiguration? loggingConfiguration) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables(EnvPrefix))
             .ConfigureLogging((hostBuilderContext, logging) =>
             {
                 logging.ClearProviders();
                 logging.SetMinimumLevel(LogLevel.Trace);
-                logging.AddNLogWeb(loggingConfiguration);
+
+                if (loggingConfiguration != null)
+                {
+                    logging.AddNLogWeb(loggingConfiguration);
+                }
+                else
+                {
+                    logging.AddNLogWeb();
+                }
 
                 var hikkabaConfig = hostBuilderContext.Configuration
                     .GetSection(nameof(HikkabaConfiguration))
