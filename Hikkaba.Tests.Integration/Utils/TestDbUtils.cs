@@ -39,9 +39,9 @@ public static class TestDbUtils
         return ApplicationDbContextManagerPool.Get();
     }
 
-    public static void ReturnMetaManagerToPool(RespawnableContextManager<ApplicationDbContext> ApplicationDbContextManager)
+    public static void ReturnMetaManagerToPool(RespawnableContextManager<ApplicationDbContext> applicationDbContextManager)
     {
-        ApplicationDbContextManagerPool.Return(ApplicationDbContextManager);
+        ApplicationDbContextManagerPool.Return(applicationDbContextManager);
     }
 
     public static void DisposePools()
