@@ -1,8 +1,6 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using Hikkaba.Data.Context;
-using Hikkaba.Tests.Integration.Extensions;
+using Hikkaba.Tests.Integration.Exceptions;
 using Hikkaba.Tests.Integration.Models;
 using Hikkaba.Tests.Integration.Services;
 using Hikkaba.Tests.Integration.Utils;
@@ -16,36 +14,47 @@ namespace Hikkaba.Tests.Integration.Tests;
 [Parallelizable(scope: ParallelScope.Fixtures)]
 internal abstract class IntegrationTestBase
 {
-    private RespawnableContextManager<ApplicationDbContext>? _contextManager;
+    [SuppressMessage("Structure", "NUnit1032:An IDisposable field/property should be Disposed in a TearDown method", Justification = "Object from pool")]
+    private RespawnableContextManager<ApplicationDbContext>? _dbManager;
 
     [OneTimeSetUp]
-    public async Task BaseOneTimeSetUpAsync()
+    public void BaseOneTimeSetUp()
     {
-        _contextManager = await TestDbUtils.CreateNewRandomDbContextManagerAsync();
+        _dbManager = TestDbUtils.LeaseMetaManagerFromPool();
+
+        TestLogUtils.WriteProgressMessage("Base.OneTimeSetUp");
     }
 
     [OneTimeTearDown]
-    public async Task BaseOneTimeTearDownAsync()
+    public void BaseOneTimeTearDown()
     {
-        await _contextManager.StopIfNotNullAsync();
+        TestDbUtils.ReturnMetaManagerToPool(_dbManager ?? throw new IntegrationTestException("MetaManager is null in OneTimeTearDown"));
+
+        TestLogUtils.WriteProgressMessage("Base.OneTimeTearDown");
     }
 
-    [MustDisposeResource]
-    protected async Task<IAppScope> CreateAppScopeAsync(CancellationToken cancellationToken)
+    private async Task MigrateAsync(DbContext dbContext, CancellationToken cancellationToken)
     {
-        var connectionString = await _contextManager!.CreateRespawnedDbConnectionStringAsync();
-        var customAppFactory = new CustomAppFactory(connectionString);
-
-        var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
         if ((await dbContext.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
         {
             await dbContext.Database.MigrateAsync(cancellationToken);
         }
+    }
+
+    [MustDisposeResource]
+    protected async Task<AppScope> CreateAppScopeAsync(CancellationToken cancellationToken)
+    {
+        var dbConnectionString = await _dbManager!.CreateRespawnedDbConnectionStringAsync();
+        var customAppFactory = new CustomApiFactory(dbConnectionString);
+
+        var scope = customAppFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        await MigrateAsync(applicationDbContext, cancellationToken);
 
         return new AppScope
         {
+            ApplicationDbContext = applicationDbContext,
             ServiceScope = scope,
             AppFactory = customAppFactory,
         };

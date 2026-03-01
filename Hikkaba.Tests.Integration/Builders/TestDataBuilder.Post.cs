@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using Blake3;
 using Hikkaba.Data.Entities;
 using Hikkaba.Data.Entities.Attachments;
+using Thread = Hikkaba.Data.Entities.Thread;
 
 namespace Hikkaba.Tests.Integration.Builders;
 
@@ -41,7 +39,7 @@ internal sealed partial class TestDataBuilder
         var post = new Post
         {
             IsOriginalPost = isOriginalPost,
-            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
+            BlobContainerId = blobContainerId ?? NextGuid(messageText + ipAddress + userAgent),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.Add(createdAtOffset ?? TimeSpan.Zero),
             IsSageEnabled = isSageEnabled,
             IsDeleted = isDeleted,
@@ -91,7 +89,7 @@ internal sealed partial class TestDataBuilder
         {
             IsOriginalPost = isOriginalPost,
             IsDeleted = false,
-            BlobContainerId = _guidGenerator.GenerateSeededGuid(),
+            BlobContainerId = NextGuid(messageText + ipAddress + userAgent + mentionedPostMessageText),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime,
             IsSageEnabled = false,
             MessageText = messageText,
@@ -183,7 +181,7 @@ internal sealed partial class TestDataBuilder
         var post = new Post
         {
             IsOriginalPost = false,
-            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
+            BlobContainerId = blobContainerId ?? NextGuid(messageText + ipAddress + userAgent),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.Add(createdAtOffset ?? TimeSpan.Zero),
             IsSageEnabled = false,
             MessageText = messageText,
@@ -196,7 +194,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Audio
                 {
-                    BlobId = audioBlobId ?? _guidGenerator.GenerateSeededGuid(),
+                    BlobId = audioBlobId ?? NextGuid(messageText + ipAddress + userAgent + audioFileName),
                     FileNameWithoutExtension = audioFileName,
                     FileExtension = "mp3",
                     FileSize = 3671469,
@@ -233,7 +231,7 @@ internal sealed partial class TestDataBuilder
         var post = new Post
         {
             IsOriginalPost = false,
-            BlobContainerId = blobContainerId ?? _guidGenerator.GenerateSeededGuid(),
+            BlobContainerId = blobContainerId ?? NextGuid(messageText + ipAddress + userAgent),
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime.Add(createdAtOffset ?? TimeSpan.Zero),
             IsSageEnabled = false,
             MessageText = messageText,
@@ -246,7 +244,7 @@ internal sealed partial class TestDataBuilder
             [
                 new Picture
                 {
-                    BlobId = pictureBlobId ?? _guidGenerator.GenerateSeededGuid(),
+                    BlobId = pictureBlobId ?? NextGuid(messageText + ipAddress + userAgent + pictureFileName),
                     FileNameWithoutExtension = pictureFileName,
                     FileExtension = "jpg",
                     FileSize = 204316,

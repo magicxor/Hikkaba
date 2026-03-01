@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Hikkaba.Data.Entities;
 using Hikkaba.Shared.Constants;
 
@@ -32,7 +29,7 @@ internal sealed partial class TestDataBuilder
         {
             Name = roleName,
             NormalizedName = roleName.ToUpperInvariant(),
-            ConcurrencyStamp = _guidGenerator.GenerateSeededGuid().ToString(),
+            ConcurrencyStamp = NextGuid(roleName).ToString(),
         };
         _roles.Add(role);
         _dbContext.Roles.Add(role);

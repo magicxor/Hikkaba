@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.User;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -15,7 +11,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 {
     #region Basic tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategoryModerators_WhenCategoryHasModerators_ReturnsModeratorsWithFlag(
         CancellationToken cancellationToken)
@@ -51,7 +47,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
         Assert.That(mod1.IsCategoryModerator, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategoryModerators_WhenModeratorNotInCategory_ReturnsWithFlagFalse(
         CancellationToken cancellationToken)
@@ -92,7 +88,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 
     #region IncludeDeleted tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(true, 3)] // admin + active_mod + deleted_mod
     [TestCase(false, 2)] // admin + active_mod
     public async Task ListCategoryModerators_WhenIncludeDeleted_ReturnsExpectedCount(
@@ -129,7 +125,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 
     #region Multiple moderators tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategoryModerators_WhenMultipleModerators_ReturnsAllWithCorrectFlags(
         CancellationToken cancellationToken)
@@ -179,7 +175,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 
     #region Administrator tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategoryModerators_IncludesAdministrators(
         CancellationToken cancellationToken)
@@ -216,7 +212,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 
     #region User details tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategoryModerators_ReturnsCorrectUserDetails(
         CancellationToken cancellationToken)
@@ -254,7 +250,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 
     #region Empty result tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategoryModerators_WhenNoModeratorsExist_ReturnsOnlyAdmin(
         CancellationToken cancellationToken)
@@ -287,7 +283,7 @@ internal sealed class ListCategoryModeratorsTests : IntegrationTestBase
 
     #region Cross-category tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategoryModerators_WhenModeratorInMultipleCategories_ReturnsCorrectFlagPerCategory(
         CancellationToken cancellationToken)

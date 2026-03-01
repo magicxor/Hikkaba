@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Tests.Integration.Builders;
@@ -11,7 +9,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.User;
 
 internal sealed class SetUserDeletedTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetUserDeleted_WhenSettingToDeleted_MarksUserAsDeleted(
         CancellationToken cancellationToken)
@@ -37,7 +35,7 @@ internal sealed class SetUserDeletedTests : IntegrationTestBase
         Assert.That(user.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetUserDeleted_WhenRestoringUser_MarksUserAsNotDeleted(
         CancellationToken cancellationToken)
@@ -63,7 +61,7 @@ internal sealed class SetUserDeletedTests : IntegrationTestBase
         Assert.That(user.IsDeleted, Is.False);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetUserDeleted_WhenAlreadyDeleted_KeepsUserDeleted(
         CancellationToken cancellationToken)
@@ -89,7 +87,7 @@ internal sealed class SetUserDeletedTests : IntegrationTestBase
         Assert.That(user.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetUserDeleted_DoesNotAffectOtherUsers(
         CancellationToken cancellationToken)

@@ -8,6 +8,7 @@ using Hikkaba.Application.Contracts;
 using Hikkaba.Application.Implementations;
 using Hikkaba.Application.Telemetry.Metrics;
 using Hikkaba.Data.Context;
+using Hikkaba.Data.Entities;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -16,6 +17,7 @@ using Hikkaba.Infrastructure.Repositories.Implementations.Interceptors;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Shared.Services.Contracts;
 using Hikkaba.Shared.Services.Implementations;
+using Hikkaba.Shared.Utils;
 using Hikkaba.Web.ActionFilters;
 using Hikkaba.Web.Binding.Providers;
 using Hikkaba.Web.Metrics;
@@ -30,6 +32,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.StaticFiles;
@@ -58,7 +61,7 @@ internal static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>((provider, options) =>
         {
             var webHostEnvironment = provider.GetRequiredService<IWebHostEnvironment>();
-            if (webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+            if (webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName))
             {
                 options.EnableSensitiveDataLogging();
             }
@@ -77,7 +80,7 @@ internal static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        if (!webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting) || !string.IsNullOrEmpty(connectionString))
+        if (!webHostEnvironment.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName) || !string.IsNullOrEmpty(connectionString))
         {
             // "EmptyConnectionString" is used for dotnet ef tools
             return services.AddHikkabaDbContext(connectionString ?? "EmptyConnectionString");
@@ -182,7 +185,7 @@ internal static class DependencyInjection
     {
         var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
 
-        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting) || hikkabaConfig == null)
+        if (webHostEnvironment.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName) || hikkabaConfig == null)
         {
             services.AddDataProtection(options =>
                 {
@@ -233,6 +236,22 @@ internal static class DependencyInjection
         return services;
     }
 
+    public static IServiceCollection AddHikkabaIdentity(this IServiceCollection services)
+    {
+        services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Stores.MaxLengthForKeys = 128;
+            })
+            .AddRoles<ApplicationRole>()
+            .AddSignInManager<ApplicationSignInManager>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, int>>()
+            .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, int>>();
+
+        return services;
+    }
+
     internal static IServiceCollection ConfigureHikkabaIdentity(this IServiceCollection services)
     {
         return services
@@ -270,7 +289,7 @@ internal static class DependencyInjection
         var hikkabaConfig = configuration.GetSection(nameof(HikkabaConfiguration)).Get<HikkabaConfiguration>();
 
         // disable captcha for integration testing
-        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting) || hikkabaConfig == null)
+        if (webHostEnvironment.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName) || hikkabaConfig == null)
         {
             return services;
         }
@@ -290,7 +309,7 @@ internal static class DependencyInjection
     internal static IServiceCollection AddHikkabaObservabilityTools(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         // disable observability tools for integration testing
-        if (webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+        if (webHostEnvironment.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName))
         {
             return services;
         }

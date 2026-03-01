@@ -1,12 +1,12 @@
-using System;
-using System.Threading.Tasks;
 using Hikkaba.Tests.Integration.Extensions;
 using Hikkaba.Tests.Integration.Services;
+using Hikkaba.Tests.Integration.Utils;
+using NLog;
 
 namespace Hikkaba.Tests.Integration;
 
 [SetUpFixture]
-internal sealed class GlobalSetUp
+public sealed class GlobalSetUp
 {
     private static DbContainerManager? GlobalDbContainerManager { get; set; }
 
@@ -30,6 +30,8 @@ internal sealed class GlobalSetUp
     [OneTimeTearDown]
     public async Task RunAfterAnyTestsAsync()
     {
+        TestDbUtils.DisposePools();
         await GlobalDbContainerManager.StopIfNotNullAsync();
+        LogManager.Shutdown();
     }
 }

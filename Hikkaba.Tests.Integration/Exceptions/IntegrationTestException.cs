@@ -1,5 +1,3 @@
-using System;
-
 namespace Hikkaba.Tests.Integration.Exceptions;
 
 internal sealed class IntegrationTestException : Exception

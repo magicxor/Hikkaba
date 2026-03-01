@@ -1,7 +1,4 @@
-using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Role;
@@ -17,7 +14,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
 {
     #region Basic create tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateRole_WhenValidRequest_CreatesRoleSuccessfully(
         CancellationToken cancellationToken)
@@ -46,7 +43,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         Assert.That(createdRole!.Name, Is.EqualTo("NewRole"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateRole_WhenCreated_SetsNormalizedName(
         CancellationToken cancellationToken)
@@ -72,7 +69,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         Assert.That(createdRole.NormalizedName, Is.EqualTo("TESTROLE"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateRole_WhenMixedCaseName_SetsCorrectNormalizedName(
         CancellationToken cancellationToken)
@@ -103,7 +100,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
 
     #region Duplicate role tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateRole_WhenDuplicateName_ReturnsError(
         CancellationToken cancellationToken)
@@ -132,7 +129,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         Assert.That(error.ErrorMessage, Does.Contain("Role creation failed"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateRole_WhenDuplicateNameDifferentCase_ReturnsError(
         CancellationToken cancellationToken)
@@ -164,7 +161,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
 
     #region Multiple roles tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateRole_WhenMultipleRolesCreated_AllHaveUniqueIds(
         CancellationToken cancellationToken)
@@ -192,7 +189,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
         Assert.That(roleId1, Is.Not.EqualTo(roleId3));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreateRole_WhenCreatedAfterExistingRoles_HasHigherId(
         CancellationToken cancellationToken)
@@ -224,7 +221,7 @@ internal sealed class CreateRoleTests : IntegrationTestBase
 
     #region Special characters tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("Role With Spaces")]
     [TestCase("Role-With-Dashes")]
     [TestCase("Role_With_Underscores")]

@@ -1,6 +1,4 @@
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -26,7 +24,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         return (builder.LastBanId, builder.Admin.Id);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetBanDeleted_WhenSettingToDeleted_MarksBanAsDeleted(
         CancellationToken cancellationToken)
@@ -54,7 +52,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         Assert.That(banAfter.ModifiedById, Is.EqualTo(adminId));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetBanDeleted_WhenRestoringDeletedBan_MarksBanAsNotDeleted(
         CancellationToken cancellationToken)
@@ -89,7 +87,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         Assert.That(banAfter.ModifiedById, Is.EqualTo(builder.Admin.Id));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetBanDeleted_WhenBanAlreadyDeleted_UpdatesModifiedAtAndModifiedBy(
         CancellationToken cancellationToken)
@@ -119,7 +117,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         Assert.That(banAfterSecondDelete.ModifiedAt, Is.Not.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetBanDeleted_WhenDeleted_BanNotFoundByFindActiveBan(
         CancellationToken cancellationToken)
@@ -151,7 +149,7 @@ internal sealed class SetBanDeletedTests : IntegrationTestBase
         Assert.That(activeBanAfter, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetBanDeleted_WhenRestored_BanFoundByFindActiveBan(
         CancellationToken cancellationToken)

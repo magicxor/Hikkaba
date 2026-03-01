@@ -24,7 +24,7 @@ services:
     image: "magicxor/mssql-fts:2025-latest"
     user: root
     environment:
-      MSSQL_SA_PASSWORD: "dev_passworD@4568919"
+      MSSQL_SA_PASSWORD: "dev_pass_098"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
       MSSQL_IP_ADDRESS: "0.0.0.0"

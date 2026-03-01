@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -13,7 +11,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 internal sealed class SearchPostsTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("category", 0)] // we only search by post content and thread title
     [TestCase("thread", 1, Ignore = "Temporary disabled due to ongoing query performance improvements")] // search by thread title is temporarily disabled
     [TestCase("post", 2)] // only 2 non-deleted posts are returned

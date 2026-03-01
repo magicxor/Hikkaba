@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Category;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -17,7 +14,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
 {
     #region Basic listing tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategories_WhenNoCategories_ReturnsEmptyList(
         CancellationToken cancellationToken)
@@ -38,7 +35,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         Assert.That(result, Is.Empty);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategories_WhenCategoriesExist_ReturnsAllCategories(
         CancellationToken cancellationToken)
@@ -66,7 +63,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
 
     #region IncludeHidden filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(true, 2)]
     [TestCase(false, 1)]
     public async Task ListCategories_WhenIncludeHidden_ReturnsExpectedCount(
@@ -99,7 +96,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
 
     #region IncludeDeleted filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(true, 2)]
     [TestCase(false, 1)]
     public async Task ListCategories_WhenIncludeDeleted_ReturnsExpectedCount(
@@ -132,7 +129,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
 
     #region Combined filters tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(true, true, 4)]
     [TestCase(true, false, 2)]
     [TestCase(false, true, 2)]
@@ -171,7 +168,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
 
     #region Ordering tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(nameof(CategoryDetailsModel.Name), OrderByDirection.Asc)]
     [TestCase(nameof(CategoryDetailsModel.Name), OrderByDirection.Desc)]
     [TestCase(nameof(CategoryDetailsModel.Alias), OrderByDirection.Asc)]
@@ -212,7 +209,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
         Assert.That(result, Is.OrderedBy(fieldName, direction));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategories_WhenOrderByMultipleFields_ReturnsCorrectlyOrderedResults(
         CancellationToken cancellationToken)
@@ -249,7 +246,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
                 .Then.Ascending.By(nameof(CategoryDetailsModel.Name)));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategories_WhenNoOrderBySpecified_ReturnsOrderedByName(
         CancellationToken cancellationToken)
@@ -278,7 +275,7 @@ internal sealed class ListCategoriesTests : IntegrationTestBase
 
     #region Category properties tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListCategories_WhenCategoryHasAllProperties_ReturnsCorrectModel(
         CancellationToken cancellationToken)

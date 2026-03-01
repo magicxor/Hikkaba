@@ -1,6 +1,4 @@
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -12,7 +10,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Ban;
 
 internal sealed class FindActiveBanTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("176.213.241.52", true, "exact ban reason")]
     [TestCase("176.213.241.53", false, null)]
     [TestCase("10.0.0.1", false, null)]
@@ -56,7 +54,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         }
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("176.213.224.37", true, "range ban reason")]
     [TestCase("176.213.224.100", true, "range ban reason")]
     [TestCase("176.213.224.254", true, "range ban reason")]
@@ -100,7 +98,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         }
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task FindActiveBan_WhenSearchingWithCategoryAlias_ReturnsBanForCategory(
         CancellationToken cancellationToken)
@@ -145,7 +143,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         Assert.That(resultSystemWide, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task FindActiveBan_WhenBanIsDeleted_ReturnsNull(
         CancellationToken cancellationToken)
@@ -173,7 +171,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task FindActiveBan_WhenBanIsExpired_ReturnsNull(
         CancellationToken cancellationToken)
@@ -201,7 +199,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task FindActiveBan_WhenActiveAndExpiredBansExist_ReturnsActiveBan(
         CancellationToken cancellationToken)
@@ -231,7 +229,7 @@ internal sealed class FindActiveBanTests : IntegrationTestBase
         Assert.That(result!.Reason, Is.EqualTo("active ban"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task FindActiveBan_WhenActiveAndDeletedBansExist_ReturnsActiveBan(
         CancellationToken cancellationToken)
