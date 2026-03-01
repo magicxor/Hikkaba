@@ -1,7 +1,4 @@
-using System;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Ban;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -18,7 +15,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 {
     #region IpAddress filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("176.213.241.52", true)]
     [TestCase("b550:f112:2801:51d4:fdaf:21d8:6bbc:aaba", true)]
     [TestCase("176.213.241.53", false)]
@@ -57,7 +54,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         Assert.That(any, Is.EqualTo(expectedFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("176.213.224.37", true)]
     [TestCase("2001:4860:0000:bbbb:0000:0000:0000:0", true)]
     [TestCase("95.189.128.0", false)]
@@ -100,7 +97,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region IncludeDeleted filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(true, 2)]
     [TestCase(false, 1)]
     public async Task ListBans_WhenIncludeDeleted_ReturnsExpectedCount(
@@ -139,7 +136,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region Date filters tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(-10, -5, 1)] // CreatedNotBefore 10 days ago, CreatedNotAfter 5 days ago -> 1 ban (7 days ago)
     [TestCase(-10, -8, 0)] // CreatedNotBefore 10 days ago, CreatedNotAfter 8 days ago -> 0 bans
     [TestCase(-16, -1, 1)] // CreatedNotBefore 6 days ago, CreatedNotAfter 1 day ago -> 1 ban (7 days ago)
@@ -179,7 +176,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         Assert.That(result.Data, Has.Count.EqualTo(expectedCount));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(5, 15, 1)] // EndsNotBefore 5 days from now, EndsNotAfter 15 days from now -> 1 ban (ends in 10 days)
     [TestCase(11, 20, 0)] // EndsNotBefore 11 days from now, EndsNotAfter 20 days from now -> 0 bans
     [TestCase(1, 9, 0)] // EndsNotBefore 1 day from now, EndsNotAfter 9 days from now -> 0 bans
@@ -223,7 +220,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region CountryIsoCode filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("US", 1)]
     [TestCase("RU", 1)]
     [TestCase("DE", 0)]
@@ -264,7 +261,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region AutonomousSystemNumber filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(15169, 1)] // Google ASN
     [TestCase(32934, 1)] // Facebook ASN
     [TestCase(99999, 0)] // Non-existent ASN
@@ -305,7 +302,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region AutonomousSystemOrganization filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase("Google", 1)]
     [TestCase("Facebook", 1)]
     [TestCase("LLC", 2)] // Both contain LLC
@@ -347,7 +344,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region CategoryId filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListBans_WhenFilteringByCategoryId_ReturnsOnlyCategoryBans(
         CancellationToken cancellationToken)
@@ -411,7 +408,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region RelatedPostId filter tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListBans_WhenFilteringByRelatedPostId_ReturnsOnlyRelatedBan(
         CancellationToken cancellationToken)
@@ -464,7 +461,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region Combined filters tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListBans_WhenCombiningMultipleFilters_ReturnsCorrectResults(
         CancellationToken cancellationToken)
@@ -532,7 +529,7 @@ internal sealed class ListBansTests : IntegrationTestBase
 
     #region Ordering tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(nameof(BanDetailsModel.CreatedAt), OrderByDirection.Asc)]
     [TestCase(nameof(BanDetailsModel.CreatedAt), OrderByDirection.Desc)]
     [TestCase(nameof(BanDetailsModel.EndsAt), OrderByDirection.Asc)]
@@ -581,7 +578,7 @@ internal sealed class ListBansTests : IntegrationTestBase
         Assert.That(result.Data, Is.OrderedBy(fieldName, direction));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListBans_WhenOrderByMultipleFields_ReturnsCorrectlyOrderedResults(
         CancellationToken cancellationToken)

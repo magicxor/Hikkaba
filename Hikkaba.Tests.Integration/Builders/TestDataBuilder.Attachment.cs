@@ -17,7 +17,7 @@ internal sealed partial class TestDataBuilder
         EnsureLastPostExists();
         var audio = new Audio
         {
-            BlobId = _guidGenerator.GenerateSeededGuid(),
+            BlobId = NextGuid(fileNameWithoutExtension + fileExtension + fileSize + title),
             Post = _lastPost!,
             FileNameWithoutExtension = fileNameWithoutExtension,
             FileExtension = fileExtension,
@@ -43,7 +43,7 @@ internal sealed partial class TestDataBuilder
         EnsureLastPostExists();
         var document = new Document
         {
-            BlobId = _guidGenerator.GenerateSeededGuid(),
+            BlobId = NextGuid(fileNameWithoutExtension + fileExtension + fileSize),
             Post = _lastPost!,
             FileNameWithoutExtension = fileNameWithoutExtension,
             FileExtension = fileExtension,
@@ -62,7 +62,7 @@ internal sealed partial class TestDataBuilder
         EnsureAdminExists();
         var notice = new Notice
         {
-            BlobId = _guidGenerator.GenerateSeededGuid(),
+            BlobId = NextGuid(text),
             Post = _lastPost!,
             Text = text,
             CreatedAt = TimeProvider.GetUtcNow().UtcDateTime,
@@ -87,7 +87,7 @@ internal sealed partial class TestDataBuilder
         EnsureLastPostExists();
         var picture = new Picture
         {
-            BlobId = _guidGenerator.GenerateSeededGuid(),
+            BlobId = NextGuid(fileNameWithoutExtension + fileExtension + fileSize + width + height),
             Post = _lastPost!,
             FileNameWithoutExtension = fileNameWithoutExtension,
             FileExtension = fileExtension,
@@ -114,7 +114,7 @@ internal sealed partial class TestDataBuilder
         EnsureLastPostExists();
         var video = new Video
         {
-            BlobId = _guidGenerator.GenerateSeededGuid(),
+            BlobId = NextGuid(fileNameWithoutExtension + fileExtension + fileSize),
             Post = _lastPost!,
             FileNameWithoutExtension = fileNameWithoutExtension,
             FileExtension = fileExtension,

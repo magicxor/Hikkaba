@@ -1,10 +1,11 @@
-using System;
 using System.Data.Common;
-using Hikkaba.Shared.Constants;
+using System.Diagnostics.CodeAnalysis;
 using Hikkaba.Data.Context;
 using Hikkaba.Data.Utils;
 using Hikkaba.Infrastructure.Models.Configuration;
+using Hikkaba.Shared.Utils;
 using Hikkaba.Tests.Integration.Utils;
+using Hikkaba.Web;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
@@ -17,22 +18,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NLog;
-using NLog.Config;
-using NLog.Web;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Hikkaba.Tests.Integration;
 
-internal sealed class CustomAppFactory
-    : WebApplicationFactory<Web.Program>
+internal sealed class CustomApiFactory
+    : WebApplicationFactory<Program>
 {
-    private readonly string _connectionString;
+    private readonly string _dbConnectionString;
+    private readonly string _currentTempRoot;
 
-    public CustomAppFactory(string connectionString)
+    public CustomApiFactory(string dbConnectionString)
     {
-        LogManager.Configuration = new XmlLoggingConfiguration("nlog.config");
-        _connectionString = connectionString;
+        var tempRootSubDirName = Guid.NewGuid().ToString();
+        _currentTempRoot = Path.Combine("tempRoots", tempRootSubDirName);
+        _dbConnectionString = dbConnectionString;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -89,12 +88,12 @@ internal sealed class CustomAppFactory
                 services.AddDbContext<ApplicationDbContext>((provider, options) =>
                 {
                     var webHostEnvironment = provider.GetRequiredService<IWebHostEnvironment>();
-                    if (webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+                    if (webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName))
                     {
                         options.EnableSensitiveDataLogging();
                     }
 
-                    options.UseSqlServer(_connectionString, ContextConfiguration.SqlServerOptionsAction);
+                    options.UseSqlServer(_dbConnectionString, ContextConfiguration.SqlServerOptionsAction);
 
                     var isQueryLoggingEnabled = bool.Parse("false");
                     if (isQueryLoggingEnabled)
@@ -103,7 +102,6 @@ internal sealed class CustomAppFactory
                             eventData =>
                             {
                                 TestLogUtils.WriteProgressMessage(eventData.ToString());
-                                TestLogUtils.WriteConsoleMessage(eventData.ToString());
                             });
                     }
                 });
@@ -114,13 +112,39 @@ internal sealed class CustomAppFactory
 
                 services.AddSingleton<TimeProvider>(x => FakeTimeProviderFactory.Create());
             })
-            .ConfigureLogging(logging =>
+            .UseEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName);
+    }
+
+    // To detect redundant calls
+    private bool _disposedValue;
+
+    ~CustomApiFactory() => Dispose(false);
+
+    // Protected implementation of Dispose pattern.
+    [SuppressMessage("Roslynator", "RCS1075:Avoid empty catch clause that catches System.Exception", Justification = "For tests, we don't need to handle exceptions here")]
+    [SuppressMessage("CodeSmell", "ERP022:Unobserved exception in a generic exception handler", Justification = "For tests, we don't need to handle exceptions here")]
+    protected override void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
             {
-                // remove other logging providers, such as remote loggers or unnecessary event logs
-                logging.ClearProviders();
-                logging.SetMinimumLevel(LogLevel.Trace);
-            })
-            .UseNLog()
-            .UseEnvironment(Defaults.AspNetEnvIntegrationTesting);
+                // dispose managed state (managed objects)
+            }
+
+            // free unmanaged resources
+            try
+            {
+                Directory.Delete(_currentTempRoot, true);
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
+            _disposedValue = true;
+        }
+
+        // Call the base class implementation.
+        base.Dispose(disposing);
     }
 }

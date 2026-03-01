@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
 using Hikkaba.Tests.Integration.Builders;
@@ -13,7 +10,7 @@ internal sealed class GetCategoryTests : IntegrationTestBase
 {
     #region Basic get tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategory_WhenCategoryExists_ReturnsCategory(
         CancellationToken cancellationToken)
@@ -37,7 +34,7 @@ internal sealed class GetCategoryTests : IntegrationTestBase
         Assert.That(result.Name, Is.EqualTo("Anime Discussion"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategory_WhenCategoryDoesNotExist_ReturnsNull(
         CancellationToken cancellationToken)
@@ -63,7 +60,7 @@ internal sealed class GetCategoryTests : IntegrationTestBase
 
     #region IncludeDeleted tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategory_WhenDeletedAndIncludeDeletedFalse_ReturnsNull(
         CancellationToken cancellationToken)
@@ -85,7 +82,7 @@ internal sealed class GetCategoryTests : IntegrationTestBase
         Assert.That(result, Is.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategory_WhenDeletedAndIncludeDeletedTrue_ReturnsCategory(
         CancellationToken cancellationToken)
@@ -109,7 +106,7 @@ internal sealed class GetCategoryTests : IntegrationTestBase
         Assert.That(result.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategory_WhenNotDeletedAndIncludeDeletedTrue_ReturnsCategory(
         CancellationToken cancellationToken)
@@ -136,7 +133,7 @@ internal sealed class GetCategoryTests : IntegrationTestBase
 
     #region Category properties tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategory_WhenCategoryExists_ReturnsAllProperties(
         CancellationToken cancellationToken)
@@ -179,7 +176,7 @@ internal sealed class GetCategoryTests : IntegrationTestBase
 
     #region Multiple categories tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetCategory_WhenMultipleCategoriesExist_ReturnsCorrectCategory(
         CancellationToken cancellationToken)

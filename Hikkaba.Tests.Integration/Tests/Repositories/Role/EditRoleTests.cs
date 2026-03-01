@@ -1,6 +1,4 @@
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Error;
 using Hikkaba.Infrastructure.Models.Role;
@@ -17,7 +15,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
 {
     #region Basic edit tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenValidRequest_UpdatesRoleSuccessfully(
         CancellationToken cancellationToken)
@@ -50,7 +48,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         Assert.That(updatedRole.Name, Is.EqualTo("NewName"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenUpdated_UpdatesNormalizedName(
         CancellationToken cancellationToken)
@@ -83,7 +81,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         Assert.That(updatedRole.NormalizedName, Is.EqualTo("NEWROLENAME"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenSameNameProvided_SucceedsWithoutChange(
         CancellationToken cancellationToken)
@@ -120,7 +118,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
 
     #region Not found tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenRoleNotFound_ReturnsNotFoundError(
         CancellationToken cancellationToken)
@@ -145,7 +143,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         Assert.That(error.ErrorMessage, Is.EqualTo("Role not found."));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenNegativeRoleId_ReturnsNotFoundError(
         CancellationToken cancellationToken)
@@ -173,7 +171,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
 
     #region Duplicate name tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenRenamingToExistingName_ReturnsError(
         CancellationToken cancellationToken)
@@ -206,7 +204,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
         Assert.That(error.ErrorMessage, Does.Contain("Role update failed"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenRenamingToExistingNameDifferentCase_ReturnsError(
         CancellationToken cancellationToken)
@@ -240,7 +238,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
 
     #region Case change tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenChangingCase_UpdatesSuccessfully(
         CancellationToken cancellationToken)
@@ -278,7 +276,7 @@ internal sealed class EditRoleTests : IntegrationTestBase
 
     #region Multiple edits tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task EditRole_WhenEditedMultipleTimes_AppliesAllChanges(
         CancellationToken cancellationToken)

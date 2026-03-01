@@ -1,6 +1,4 @@
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Ban.PostingRestrictions;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -50,7 +48,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
         return builder.LastThread.Id;
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetPostingRestrictionStatus_WhenNoRestrictions_ReturnsSuccess(
         CancellationToken cancellationToken)
@@ -80,7 +78,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
         Assert.That(successResult.BumpLimit, Is.GreaterThan(0));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetPostingRestrictionStatus_WhenUserIsBanned_ReturnsBanModel(
         CancellationToken cancellationToken)
@@ -109,7 +107,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
         Assert.That(banResult.RestrictionEndsAt, Is.Not.Null);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetPostingRestrictionStatus_WhenCategoryNotFound_ReturnsFailure(
         CancellationToken cancellationToken)
@@ -134,7 +132,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
         Assert.That(result.RestrictionType, Is.EqualTo(PostingRestrictionType.CategoryNotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetPostingRestrictionStatus_WhenThreadNotFound_ReturnsFailure(
         CancellationToken cancellationToken)
@@ -159,7 +157,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
         Assert.That(result.RestrictionType, Is.EqualTo(PostingRestrictionType.ThreadNotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetPostingRestrictionStatus_WhenIpAddressIsNull_ReturnsIpNotFound(
         CancellationToken cancellationToken)
@@ -183,7 +181,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
         Assert.That(result.RestrictionType, Is.EqualTo(PostingRestrictionType.IpAddressNotFound));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetPostingRestrictionStatus_WhenThreadIsClosed_ReturnsThreadClosed(
         CancellationToken cancellationToken)
@@ -208,7 +206,7 @@ internal sealed class GetPostingRestrictionStatusTests : IntegrationTestBase
         Assert.That(result.RestrictionType, Is.EqualTo(PostingRestrictionType.ThreadClosed));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task GetPostingRestrictionStatus_WhenCreatingNewThread_ReturnsSuccessWithNullThreadSalt(
         CancellationToken cancellationToken)

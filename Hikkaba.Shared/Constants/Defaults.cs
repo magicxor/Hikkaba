@@ -89,8 +89,6 @@ public static class Defaults
         .Concat(SupportedVideoExtensions)
         .Select(x => "." + x));
 
-    public const string AspNetEnvIntegrationTesting = "IntegrationTesting";
-
     /// <summary>
     /// <para><a href="https://www.w3.org/TR/2012/WD-html-markup-20121011/datatypes.html#common.data.datetime-def">Date and time</a> (RFC 3339, ISO 8601).</para>
     /// <para>This format string should be used to output DateTime to following elements:</para>

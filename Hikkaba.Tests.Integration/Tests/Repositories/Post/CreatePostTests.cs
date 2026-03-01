@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Application.Contracts;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Models.Attachments.StreamContainers;
@@ -68,7 +63,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         };
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_WhenValidRequest_CreatesPostSuccessfully(
         CancellationToken cancellationToken)
@@ -106,7 +101,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(createdPost.IsOriginalPost, Is.False);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_WhenSageEnabled_DoesNotBumpThread(
         CancellationToken cancellationToken)
@@ -141,7 +136,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(updatedThread.LastBumpAt, Is.EqualTo(originalBumpTime));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_WhenNotSage_BumpsThread(
         CancellationToken cancellationToken)
@@ -175,7 +170,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(updatedThread.LastBumpAt, Is.GreaterThanOrEqualTo(originalBumpTime));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_InCyclicThread_DeletesOldestPost(
         CancellationToken cancellationToken)
@@ -222,7 +217,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(originalPost, Is.Not.Null, "Original post should not be deleted");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_InCyclicThread_DeletesOldestPostWithAllAttachmentsAndRelations(
         CancellationToken cancellationToken)
@@ -341,7 +336,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(admin, Is.Not.Null, "Admin user should not be cascade deleted");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_InCyclicThread_DeletesOldestPostWithCrossThreadReplies(
         CancellationToken cancellationToken)
@@ -445,7 +440,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(crossThreadPosts, Has.Count.EqualTo(1), "Cross-thread reply post should still exist");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_InCyclicThread_DeletesOldestPostWithCrossThreadMentions(
         CancellationToken cancellationToken)
@@ -550,7 +545,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(otherThread, Is.Not.Null, "Other thread should still exist");
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_WithMentionedPosts_CreatesReplies(
         CancellationToken cancellationToken)
@@ -588,7 +583,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(reply!.PostId, Is.EqualTo(originalPostId));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_SetsCorrectClientInfo(
         CancellationToken cancellationToken)
@@ -625,7 +620,7 @@ internal sealed class CreatePostTests : IntegrationTestBase
         Assert.That(createdPost.OsType, Is.EqualTo("Windows"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task CreatePost_SetsCorrectIpAddress(
         CancellationToken cancellationToken)

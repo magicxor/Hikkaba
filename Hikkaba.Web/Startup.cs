@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Hikkaba.Infrastructure.Models.Configuration;
 using Hikkaba.Infrastructure.Models.Extensions;
+using Hikkaba.Shared.Utils;
 using Hikkaba.Web.Extensions;
 using Hikkaba.Web.Middleware;
 using Microsoft.AspNetCore.Identity;
@@ -45,18 +46,12 @@ internal class Startup
 
         services.AddHikkabaDbContext(_configuration, _webHostEnvironment);
 
-        services.AddDefaultIdentity<ApplicationUser>()
-            .AddRoles<ApplicationRole>()
-            .AddSignInManager<ApplicationSignInManager>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, int>>()
-            .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, int>>();
-
         services.AddHikkabaDataProtection(_configuration, _webHostEnvironment)
             .AddHikkabaHttpServerConfig()
             .AddHikkabaRepositories()
             .AddHikkabaServices()
             .AddHikkabaCookieConfig()
+            .AddHikkabaIdentity()
             .ConfigureHikkabaIdentity()
             .AddHikkabaMvc(_configuration, _webHostEnvironment)
             .AddHikkabaObservabilityTools(_configuration, _webHostEnvironment)
@@ -99,7 +94,7 @@ internal class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            if (!env.IsEnvironment(Defaults.AspNetEnvIntegrationTesting))
+            if (!env.IsEnvironment(EnvironmentHelper.IntegrationTestsEnvironmentName))
             {
                 endpoints.MapHealthChecks("/health");
             }

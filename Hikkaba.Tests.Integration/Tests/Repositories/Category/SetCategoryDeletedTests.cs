@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Data.Context;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Shared.Constants;
@@ -15,7 +13,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
 {
     #region Delete tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryDeleted_WhenSetToTrue_DeletesCategory(
         CancellationToken cancellationToken)
@@ -43,7 +41,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         Assert.That(deletedCategory.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryDeleted_WhenSetToFalse_RestoresCategory(
         CancellationToken cancellationToken)
@@ -69,7 +67,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         Assert.That(restoredCategory.IsDeleted, Is.False);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryDeleted_WhenDeleted_SetsModifiedByAndModifiedAt(
         CancellationToken cancellationToken)
@@ -105,7 +103,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         Assert.That(deletedCategory.ModifiedAt, Is.GreaterThanOrEqualTo(originalCreatedAt));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryDeleted_WhenRestored_UpdatesModifiedByAndModifiedAt(
         CancellationToken cancellationToken)
@@ -143,7 +141,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
 
     #region Multiple categories tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryDeleted_WhenMultipleCategoriesExist_DeletesOnlySpecifiedCategory(
         CancellationToken cancellationToken)
@@ -183,7 +181,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
 
     #region Idempotency tests
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryDeleted_WhenAlreadyDeleted_RemainsDeleted(
         CancellationToken cancellationToken)
@@ -211,7 +209,7 @@ internal sealed class SetCategoryDeletedTests : IntegrationTestBase
         Assert.That(category.IsDeleted, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task SetCategoryDeleted_WhenAlreadyNotDeleted_RemainsNotDeleted(
         CancellationToken cancellationToken)

@@ -1,8 +1,4 @@
-using System;
-using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Models.Thread;
 using Hikkaba.Infrastructure.Repositories.Contracts;
@@ -28,7 +24,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     ];
 
     private static async Task<TestDataBuilder> CreateBaseBuilderAsync(
-        IAppScope appScope,
+        AppScope appScope,
         Action<TestDataBuilder> configure,
         CancellationToken cancellationToken)
     {
@@ -43,7 +39,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
     }
 
     private static async Task<PagedResult<ThreadPreviewModel>> QueryPageAsync(
-        IAppScope appScope,
+        AppScope appScope,
         CancellationToken cancellationToken,
         int pageNumber = 1,
         bool includeDeleted = false)
@@ -62,7 +58,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 1. Pagination: correct thread count on page
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(3, 3, Description = "3 threads => all 3 shown")]
     [TestCase(5, 5, Description = "5 threads => all 5 shown")]
     [TestCase(6, 5, Description = "6 threads => only first 5 shown")]
@@ -99,7 +95,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 2. Sorting: threads sorted by LastBumpAt descending
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_Always_ReturnsSortedByLastBumpAtDescending(
         CancellationToken cancellationToken)
@@ -136,7 +132,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 3. Bump limit: posts after bump limit don't affect sorting
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenBumpLimitReached_IgnoresPostsAfterLimitForSorting(
         CancellationToken cancellationToken)
@@ -180,7 +176,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 4. Deleted threads: excluded and don't affect page size
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenIncludeDeletedIsFalse_ExcludesDeletedThreads(CancellationToken cancellationToken)
     {
@@ -219,7 +215,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 5. Pinned threads: always first, not repeated on other pages
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenThreadIsPinned_ReturnsItFirstOnFirstPage(
         CancellationToken cancellationToken)
@@ -254,7 +250,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         Assert.That(result.Data[0].IsPinned, Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenRequestingSecondPage_DoesNotRepeatPinnedThread(
         CancellationToken cancellationToken)
@@ -293,7 +289,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 6. Result fields: all fields match expected values
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenQuerying12ThreadsPage2_ReturnsCorrectPagingMetadata(CancellationToken cancellationToken)
     {
@@ -331,7 +327,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 7. Thread preview: shows OP + latest posts, correct post count
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [TestCase(1, 1, new[] { "OP post" }, Description = "1 post (OP only) => shows 1 post")]
     [TestCase(2, 2, new[] { "OP post", "post 2" }, Description = "2 posts => shows all 2 posts")]
     [TestCase(3, 3, new[] { "OP post", "post 2", "post 3" }, Description = "3 posts => shows all 3 posts")]
@@ -384,7 +380,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 8. Thread local user hash: correctly calculated
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_Always_ReturnsPostsWithCorrectThreadLocalUserHash(
         CancellationToken cancellationToken)
@@ -418,7 +414,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 9. Category filter: only threads from requested category
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenCategoryAliasSpecified_ReturnsOnlyThreadsFromThatCategory(
         CancellationToken cancellationToken)
@@ -453,7 +449,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 10. Deleted posts: excluded from preview
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenPostIsDeleted_ExcludesItFromPreview(
         CancellationToken cancellationToken)
@@ -486,7 +482,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 11. Sage posts: don't affect thread's LastBumpAt
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenPostHasSageEnabled_DoesNotAffectThreadSorting(CancellationToken cancellationToken)
     {
@@ -524,7 +520,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 12. Empty page: returns empty when page number exceeds total
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenPageNumberExceedsTotal_ReturnsEmptyData(
         CancellationToken cancellationToken)
@@ -550,7 +546,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 13. Attachments: posts with audio and pictures are included
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenPostsHaveAttachments_IncludesThemInPreview(
         CancellationToken cancellationToken)
@@ -584,7 +580,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 14. Empty threads: threads without posts are excluded
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenThreadHasNoPosts_ExcludesItFromResults(
         CancellationToken cancellationToken)
@@ -620,7 +616,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 15. Threads with only deleted posts: excluded from results
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenThreadHasOnlyDeletedPosts_ExcludesItFromResults(
         CancellationToken cancellationToken)
@@ -660,7 +656,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 16. IncludeDeleted: deleted threads appear in chronological order
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenIncludeDeletedIsTrue_ReturnsDeletedThreadsInChronologicalOrder(
         CancellationToken cancellationToken)
@@ -701,7 +697,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         Assert.That(result.Data, Is.Ordered.By(nameof(ThreadPreviewModel.LastBumpAt)).Descending);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenIncludeDeletedIsTrue_DeletedThreadsAppearOnCorrectPages(
         CancellationToken cancellationToken)
@@ -757,7 +753,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 17. IncludeDeleted: deleted posts appear in thread preview
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenIncludeDeletedIsTrue_ReturnsDeletedPostsInPreview(
         CancellationToken cancellationToken)
@@ -790,7 +786,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         Assert.That(thread.Posts, Is.Ordered.By(nameof(PostDetailsModel.CreatedAt)).Ascending);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenIncludeDeletedIsTrue_DeletedPostsDoNotAffectThreadSorting(
         CancellationToken cancellationToken)
@@ -829,7 +825,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
         Assert.That(threadWithDeletedPost.Posts.Any(p => p.MessageHtml == "very fresh deleted post" && p.IsDeleted), Is.True);
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenIncludeDeletedIsTrue_ThreadWithOnlyDeletedPostsAppears(
         CancellationToken cancellationToken)
@@ -871,7 +867,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 18. IsClosed: closed threads are returned with correct flag
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenThreadIsClosed_ReturnsIsClosedTrue(
         CancellationToken cancellationToken)
@@ -903,7 +899,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 19. IsCyclic: cyclic threads are returned with correct flag
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenThreadIsCyclic_ReturnsIsCyclicTrue(
         CancellationToken cancellationToken)
@@ -935,7 +931,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 20. Multiple pinned threads: sorted by LastBumpAt among themselves
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenMultiplePinnedThreads_SortedByLastBumpAtAmongPinned(
         CancellationToken cancellationToken)
@@ -979,7 +975,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 21. Deleted category: threads from deleted category are excluded
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenCategoryIsDeleted_ReturnsNoThreads(
         CancellationToken cancellationToken)
@@ -1007,7 +1003,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 22. Same LastBumpAt: threads sorted by Id descending as fallback
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenThreadsHaveSameLastBumpAt_SortsByIdDescending(
         CancellationToken cancellationToken)
@@ -1040,7 +1036,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 23. Empty category: returns empty result
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenCategoryHasNoThreads_ReturnsEmptyResult(
         CancellationToken cancellationToken)
@@ -1066,7 +1062,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 24. BumpLimit fallback: uses category default when thread BumpLimit is 0
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenThreadBumpLimitIsZero_UsesCategoryDefaultBumpLimit(
         CancellationToken cancellationToken)
@@ -1094,7 +1090,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 25. Thread fields: CreatedAt and ModifiedAt are correctly returned
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_Always_ReturnsCorrectCreatedAtAndModifiedAt(
         CancellationToken cancellationToken)
@@ -1122,7 +1118,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 26. Category fields: CategoryId, CategoryAlias, CategoryName are correctly returned
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_Always_ReturnsCorrectCategoryFields(
         CancellationToken cancellationToken)
@@ -1149,7 +1145,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 27. Post fields: UserIpAddress, UserAgent, IsSageEnabled are correctly returned
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_Always_ReturnsCorrectPostFields(
         CancellationToken cancellationToken)
@@ -1186,7 +1182,7 @@ internal sealed class ListThreadPreviewsTests : IntegrationTestBase
 
     #region 28. ShowThreadLocalUserHash: correctly inherited from category
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPreviews_WhenCategoryHasShowThreadLocalUserHash_ReturnsCorrectFlag(
         CancellationToken cancellationToken)

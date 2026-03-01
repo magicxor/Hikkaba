@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Hikkaba.Infrastructure.Models.Post;
 using Hikkaba.Infrastructure.Repositories.Contracts;
 using Hikkaba.Paging.Enums;
@@ -14,7 +11,7 @@ namespace Hikkaba.Tests.Integration.Tests.Repositories.Post;
 
 internal sealed class ListThreadPostsTests : IntegrationTestBase
 {
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPosts_WhenThreadHasPosts_ReturnsAllNonDeletedPosts(
         CancellationToken cancellationToken)
@@ -47,7 +44,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         Assert.That(result[1].MessageHtml, Is.EqualTo("Second post"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPosts_WithIncludeDeleted_ReturnsAllPosts(
         CancellationToken cancellationToken)
@@ -77,7 +74,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         Assert.That(result, Has.Count.EqualTo(2));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPosts_WithPostIdFilter_ReturnsSinglePost(
         CancellationToken cancellationToken)
@@ -111,7 +108,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         Assert.That(result[0].Id, Is.EqualTo(targetPostId));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPosts_WhenThreadIsDeleted_WithoutIncludeDeleted_ReturnsEmpty(
         CancellationToken cancellationToken)
@@ -140,7 +137,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         Assert.That(result, Has.Count.EqualTo(0));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPosts_WhenCategoryIsDeleted_WithoutIncludeDeleted_ReturnsEmpty(
         CancellationToken cancellationToken)
@@ -169,7 +166,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         Assert.That(result, Has.Count.EqualTo(0));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPosts_OrderByDescending_ReturnsPostsInDescendingOrder(
         CancellationToken cancellationToken)
@@ -202,7 +199,7 @@ internal sealed class ListThreadPostsTests : IntegrationTestBase
         Assert.That(result[2].MessageHtml, Is.EqualTo("First post"));
     }
 
-    [CancelAfter(TestDefaults.TestTimeout)]
+    [CancelAfter(TestInfraDefaults.TestTimeout)]
     [Test]
     public async Task ListThreadPosts_ReturnsPostsWithReplies(
         CancellationToken cancellationToken)
